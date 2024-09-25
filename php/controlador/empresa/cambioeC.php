@@ -100,6 +100,23 @@ if(isset($_GET['guardarTipoContribuyente']))
 {
 	echo json_encode($controlador->guardarTipoContribuyente($_POST['parametros']));
 }
+if(isset($_GET['TVcatalogo']))
+{
+  $parametros = $_POST['parametros'];
+  echo json_encode($controlador->TVcatalogo($parametros));
+}
+if(isset($_GET['guardar']))
+{
+	$parametros = $_POST;
+  echo json_encode($controlador->GrabarArticulos($parametros));
+}
+if(isset($_GET['detalle']))
+{
+  $id = $_POST['id'];
+  $item = $_POST['item'];
+  $entidad = $_POST['entidad'];
+  echo json_encode($controlador->detalle_linea($id, $item, $entidad));
+}
 
 class cambioeC 
 {
@@ -516,6 +533,318 @@ class cambioeC
 
 			control_procesos('N',"Edicion datos empres",$texto.' Por:'.$_SESSION['INGRESO']['CodigoU']);
 		}
+	}
+
+	function TVcatalogo($parametros)
+	{
+		$item = $parametros['item'];
+		$entidad = $parametros['ent'];
+    // print_r($parametros);die();
+    $nl = $parametros['nivel'];
+	  $h='';
+		if($nl!='')
+		{
+
+      if($nl==1)
+      {
+        $datos = $this->modelo->nivel1($entidad, $item);
+        foreach ($datos as $key => $value) {
+           $h.= '<li  title="Presione Suprimir para eliminar">
+                  <label id="label_'.str_replace('.','_','A1_'.$key).'" for="A1_'.$key.'">'.$value['Autorizacion'].'</label>
+                  <input type="checkbox" id="A1_'.$key.'" onclick="TVcatalogo(2,\'A1_'.$key.'\',\''.$value['Autorizacion'].'\',\'\',\'\')" />
+                 <ol id="hijos_'.str_replace('.','_','A1_'.$key).'"></ol></li>';
+        }
+      }
+
+      if($nl==2)
+      {
+        $datos = $this->modelo->nivel2($entidad, $item, $parametros['auto']);
+        foreach ($datos as $key => $value) {
+           $h.= '<li  title="Presione Suprimir para eliminar">
+                  <label id="label_'.str_replace('.','_','A2_'.$key).'" for="A2_'.$key.'">'.$value['Serie'].'</label>
+                  <input type="checkbox" id="A2_'.$key.'" onclick="TVcatalogo(3,\'A2_'.$key.'\',\''.$parametros['auto'].'\',\''.$value['Serie'].'\',\'\')" />
+                 <ol id="hijos_'.str_replace('.','_','A2_'.$key).'"></ol></li>';
+        }
+      }
+
+      if($nl==3)
+      {
+        $datos = $this->modelo->nivel3($entidad, $item, $parametros['auto'],$parametros['serie']);
+        foreach ($datos as $key => $value) {
+           $h.= '<li  title="Presione Suprimir para eliminar">
+                  <label id="label_'.str_replace('.','_','A3_'.$key).'" for="A3_'.$key.'">'.$value['Fact'].'</label>
+                  <input type="checkbox" id="A3_'.$key.'" onclick="TVcatalogo(4,\'A3_'.$key.'\',\''.$parametros['auto'].'\',\''.$parametros['serie'].'\',\''.$value['Fact'].'\')" />
+                 <ol id="hijos_'.str_replace('.','_','A3_'.$key).'"></ol></li>';
+        }
+      }
+
+      if($nl==4)
+      {
+        $datos = $this->modelo->nivel4($entidad, $item, $parametros['auto'],$parametros['serie'],$parametros['fact']);
+        foreach ($datos as $key => $value) {
+          $h.='<li class="file" id="label_'.str_replace('.','_','A4_'.$key).'" title=""><a href="#" onclick="detalle_linea(\''.$value['ID'].'\',\'A4_'.$key.'\')">'.$value['Concepto'].'</a></li>';
+
+
+           // $h.= '<li  title="Presione Suprimir para eliminar">
+           //        <label id="label_'.str_replace('.','_','A4_'.$key).'" for="A4_'.$key.'">'.$value['Concepto'].'</label>
+           //        <input type="checkbox" id="A4_'.$key.'" onclick="detalle_linea(\''.$value['ID'].'\')" />
+           //       <ol id="hijos_'.str_replace('.','_','A2_'.$key).'"></ol></li>';
+        }
+      }
+
+		}else
+		{
+			$codigo = 'A';
+		  $detalle = 'AUTORIZACIONES';
+
+			 $h = '<li  title="Presione Suprimir para eliminar">
+							    <label id="label_'.str_replace('.','_','A').'" for="A">AUTORIZACIONES</label>
+							    <input type="checkbox" id="A" onclick="TVcatalogo(1,\'A\',\'\',\'\',\'\')" />
+							   <ol id="hijos_'.str_replace('.','_','A').'"></ol></li>';
+		}
+
+		return $h;
+	}
+	function detalle_linea($id, $item, $entidad)
+	{
+    if(is_numeric($id))
+    {
+      $datos = $this->modelo->Catalogo_Lineas($entidad, $item, $id);
+    }
+		return $datos;
+	}
+	function  GrabarArticulos($parametros)
+	{
+        $Codigo = $parametros['TextCodigo'];
+        $TxtLargo = TextoValido($parametros['TxtLargo']);
+        $TxtAncho = TextoValido($parametros['TxtAncho']);
+        $TxtAncho =  TextoValido($parametros['TxtEspa']);
+        $TxtPosFact  =  TextoValido($parametros['TxtPosFact']);
+		$Item = $parametros['item'];
+		$Entidad = $parametros['entidad'];
+        if($parametros['CTipo']== ""){$parametros['CTipo'] = "FA";} 
+
+        $datos = $this->modelo->validar_codigo($Codigo, $Item, $Entidad);
+
+        //SetAdoAddNew("Catalogo_Lineas");
+
+		$sql = "";
+		$campos = array();
+        if(count($datos) <= 0 ){
+            //control_procesos("F","Creación de Punto de Venta de ".$parametros['CTipo']."-".$parametros['TxtNumSerieUno'].$parametros['TxtNumSerieDos']);
+            //control_procesos( "F","Creación de Fecha de Vencimiento de ".$parametros['TextCodigo']." ".$parametros['MBFechaVenc']);
+            //control_procesos( "F","Creación de Autorización de ".$parametros['TextCodigo']." ".$parametros['TxtNumAutor']);
+            //control_procesos("F","Creación de Serie de ".$parametros['TextCodigo']." ".$parametros['TxtNumSerieUno'].$parametros['TxtNumSerieDos']);
+            //control_procesos( "F", "Creación de Secuencial Inicial de ".$parametros['TextCodigo']." ".$parametros['TxtNumSerietres1']);
+
+			$campos['Codigo'] = "'".$parametros['TextCodigo']."'";
+			$campos['Item'] = "'".intval($Item)."'";
+			$campos['Periodo'] = "'".$_SESSION['INGRESO']['periodo']."'";
+			$campos['TL'] = 1;
+
+            /*SetAdoFields("Codigo", $parametros['TextCodigo']);
+            SetAdoFields("Item", intval($Item));
+            SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
+            SetAdoFields("TL", 1);*/
+
+            $Codigo = "A.".$parametros['TxtNumAutor'].".".$parametros['TxtNumSerieUno'].$parametros['TxtNumSerieDos'].".".$parametros['CTipo'].".".$parametros['TextCodigo'];
+            $Cuenta = $parametros['TextLinea'];
+        }else{
+            //control_procesos("F", "Modificación de Punto de Venta de ".$parametros['CTipo']."-".$parametros['TxtNumSerieUno'].$parametros['TxtNumSerieDos']);
+            $this->modelo->elimina_linea($Codigo, $Item, $Entidad);              
+            $datos1 = $this->modelo->validar_codigo($Codigo, $Item, $Entidad);
+            //if($parametros['MBFechaVenc'] <> $datos[0]["Vencimiento"]->format('Y-m-d')){ control_procesos("F", "Modifico: Fecha de Vencimiento de ".$parametros['TextCodigo']." ".$parametros['MBFechaVenc']);}
+            //if($parametros['TxtNumAutor'] <> $datos[0]["Autorizacion"]){ control_procesos("F", "Modifico: Autorización de ".$parametros['TextCodigo']." ".$parametros['TxtNumAutor']);}
+            //if($parametros['TxtNumSerieUno'].$parametros['TxtNumSerieDos'] <> $datos[0]["Serie"]){ control_procesos("F", "Modifico: Serie de ".$parametros['TextCodigo']." ".$parametros['TxtNumSerieUno'].$parametros['TxtNumSerieDos']);}
+            //if($parametros['TxtNumSerietres1'] <> $datos[0]["Secuencial"]){ control_procesos("F","Modifico: Secuencial Inicial de ".$parametros['TextCodigo']." ".$parametros['TxtNumSerietres1']);}
+
+			$campos['Codigo'] = "'".$parametros['TextCodigo']."'";
+			$campos['Item'] = "'".$Item."'";
+			$campos['Periodo'] = "'".$_SESSION['INGRESO']['periodo']."'";
+			$campos['TL'] = 1;
+
+            /*SetAdoFields("Codigo", $parametros['TextCodigo']);
+            SetAdoFields("Item", $Item);
+            SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
+            SetAdoFields("TL", 1);*/
+        }
+
+		$campos['Concepto'] = "'".$parametros['TextLinea']."'";
+		$campos['CxC'] = "'".substr($parametros['MBoxCta'], 0, -1)."'";
+		$campos['CxC_Anterior'] = "'".substr($parametros['MBoxCta_Anio_Anterior'], 0, -1)."'";
+		$campos['Cta_Venta'] = substr($parametros['MBoxCta_Venta'], 0, -1);
+		$campos['Logo_Factura'] = "'".$parametros['TxtLogoFact']."'";
+		$campos['Largo'] = $parametros['TxtLargo'];
+		$campos['Ancho'] = $parametros['TxtAncho'];
+		$campos['Espacios'] = $parametros['TxtEspa'];
+		$campos['Pos_Factura'] = $parametros['TxtPosFact'];
+		$campos['Pos_Y_Fact'] = $parametros['TxtPosY'];
+		$campos['Fact_Pag'] = $parametros['TxtNumFact'];
+		$campos['ItemsxFA'] = $parametros['TxtItems'];
+		$campos['Fact'] = "'".$parametros['TxtLogoFact']."'";
+		// 'SRI'
+		$campos['Fecha'] = "'".$parametros['MBFechaIni']."'";
+		$campos['Vencimiento'] = "'".$parametros['MBFechaVenc']."'";
+		$campos['Secuencial'] = $parametros['TxtNumSerietres1'];
+		$campos['Autorizacion'] = "'".$parametros['TxtNumAutor']."'";
+		$campos['Serie'] = "'".$parametros['TxtNumSerieUno'] . $parametros['TxtNumSerieDos']."'";
+		$campos['Nombre_Establecimiento'] = "'".$parametros['TxtNombreEstab']."'";
+		$campos['Direccion_Establecimiento'] = "'".$parametros['TxtDireccionEstab']."'";
+		$campos['Telefono_Estab'] = "'".$parametros['TxtTelefonoEstab']."'";
+		$campos['Logo_Tipo_Estab'] = "'".$parametros['TxtLogoTipoEstab']."'";
+
+        /*SetAdoFields("Concepto", $parametros['TextLinea']);
+        SetAdoFields("CxC", substr($parametros['MBoxCta'], 0, -1));
+        SetAdoFields("CxC_Anterior", substr($parametros['MBoxCta_Anio_Anterior'], 0, -1));
+        SetAdoFields("Cta_Venta", substr($parametros['MBoxCta_Venta'], 0, -1));
+        SetAdoFields("Logo_Factura", $parametros['TxtLogoFact']);
+        SetAdoFields("Largo", $parametros['TxtLargo']);
+        SetAdoFields("Ancho", $parametros['TxtAncho']);
+        SetAdoFields("Espacios", $parametros['TxtEspa']);
+        SetAdoFields("Pos_Factura", $parametros['TxtPosFact']);
+        SetAdoFields("Pos_Y_Fact", $parametros['TxtPosY']);
+        SetAdoFields("Fact_Pag", $parametros['TxtNumFact']);
+        SetAdoFields("ItemsxFA", $parametros['TxtItems']);
+        SetAdoFields("Fact", $parametros['CTipo']);
+        // 'SRI
+        SetAdoFields("Fecha", $parametros['MBFechaIni']);
+        SetAdoFields("Vencimiento", $parametros['MBFechaVenc']);
+        SetAdoFields("Secuencial", $parametros['TxtNumSerietres1']);
+        SetAdoFields("Autorizacion", $parametros['TxtNumAutor']);
+        SetAdoFields("Serie", $parametros['TxtNumSerieUno'] . $parametros['TxtNumSerieDos']);
+        SetAdoFields("Nombre_Establecimiento", $parametros['TxtNombreEstab']);
+        SetAdoFields("Direccion_Establecimiento", $parametros['TxtDireccionEstab']);
+        SetAdoFields("Telefono_Estab", $parametros['TxtTelefonoEstab']);
+        SetAdoFields("Logo_Tipo_Estab", $parametros['TxtLogoTipoEstab']);*/
+        if (isset($parametros['CheqMes']) && $parametros['CheqMes'] != 'false') {
+			$campos['Imp_Mes'] = 1;
+            //SetAdoFields("Imp_Mes", 1);
+        }
+        //SetAdoUpdate();
+		$this->modelo->crearActualizarRegistro($Entidad, $Item, "Catalogo_Lineas", $campos);
+
+
+		//print_r($Entidad.",". $Item.",". $Codigo.",".$parametros['TxtNumSerieUno'].",".$parametros['TxtNumSerieDos'].",".$parametros['TxtNumAutor']);die();
+		$datos = $this->modelo->facturas_formato($Entidad, $Item, $Codigo,$parametros['TxtNumSerieUno'],$parametros['TxtNumSerieDos'],$parametros['TxtNumAutor']);
+        //SetAdoAddNew("Facturas_Formatos");
+
+		$campos = array(
+			"Cod_CxC" => "'".$parametros['TextCodigo']."'",
+			"Item" => "'".$Item."'",
+			"Periodo" => "'".$_SESSION['INGRESO']['periodo']."'",
+			"Concepto" => "'".$parametros['TextLinea']."'",
+			"Formato_Factura" => "'".$parametros['TxtLogoFact']."'",
+			"Largo" => $parametros['TxtLargo'],
+			"Ancho" => $parametros['TxtAncho'],
+			"Espacios" => $parametros['TxtEspa'],
+			"Pos_Factura" => $parametros['TxtPosFact'],
+			"Pos_Y_Fact" => $parametros['TxtPosY'],
+			"Fact_Pag" => $parametros['TxtNumFact'],
+			"TC" => "'".$parametros['CTipo']."'",
+			// 'SRI'
+			"Fecha_Inicio" => "'".$parametros['MBFechaIni']."'",
+			"Fecha_Final" => "'".$parametros['MBFechaVenc']."'",
+			"Autorizacion" => "'".$parametros['TxtNumAutor']."'",
+			"Serie" => "'".$parametros['TxtNumSerieUno'] . $parametros['TxtNumSerieDos']."'",
+			"Nombre_Establecimiento" => "'".$parametros['TxtNombreEstab']."'",
+			"Direccion_Establecimiento" => "'".$parametros['TxtDireccionEstab']."'",
+			"Telefono_Estab" => "'".$parametros['TxtTelefonoEstab']."'",
+			"Logo_Tipo_Estab" => "'".$parametros['TxtLogoTipoEstab']."'"
+		);
+
+        /*SetAdoFields("Cod_CxC", $parametros['TextCodigo']);
+        SetAdoFields("Item", $Item);
+        SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
+        SetAdoFields("Concepto", $parametros['TextLinea']);
+        SetAdoFields("Formato_Factura", $parametros['TxtLogoFact']);
+        SetAdoFields("Largo", $parametros['TxtLargo']);
+        SetAdoFields("Ancho", $parametros['TxtAncho']);
+        SetAdoFields("Espacios", $parametros['TxtEspa']);
+        SetAdoFields("Pos_Factura", $parametros['TxtPosFact']);
+        SetAdoFields("Pos_Y_Fact", $parametros['TxtPosY']);
+        SetAdoFields("Fact_Pag", $parametros['TxtNumFact']);
+        SetAdoFields("TC", $parametros['CTipo']);
+        // 'SRI
+        SetAdoFields("Fecha_Inicio", $parametros['MBFechaIni']);
+        SetAdoFields("Fecha_Final", $parametros['MBFechaVenc']);
+        SetAdoFields("Autorizacion", $parametros['TxtNumAutor']);
+        SetAdoFields("Serie", $parametros['TxtNumSerieUno'] . $parametros['TxtNumSerieDos']);
+        SetAdoFields("Nombre_Establecimiento", $parametros['TxtNombreEstab']);
+        SetAdoFields("Direccion_Establecimiento", $parametros['TxtDireccionEstab']);
+        SetAdoFields("Telefono_Estab", $parametros['TxtTelefonoEstab']);
+        SetAdoFields("Logo_Tipo_Estab", $parametros['TxtLogoTipoEstab']);*/
+        if(count($datos)<=0)
+        {
+            //SetAdoUpdate();
+			$this->modelo->crearActualizarRegistro($Entidad, $Item, "Facturas_Formatos", $campos);
+        }else
+        {
+            //SetAdoFieldsWhere("ID", $datos[0]['ID']);
+            //SetAdoUpdateGeneric();
+			$this->modelo->crearActualizarRegistro($Entidad, $Item, "Facturas_Formatos", $campos, 1, array("ID" => $datos[0]['ID']));
+        }
+
+        // 'Numeracion de FA,NC,GR,ETC
+        switch ($parametros['CTipo']) {
+            case 'NC':
+            $datos = $this->modelo->NC($Entidad, $Item, $parametros['TxtNumSerieUno'],$parametros['TxtNumSerieDos']);
+            break;
+            case 'GR':
+            $datos = $this->modelo->GR($Entidad, $Item, $parametros['TxtNumSerieUno'],$parametros['TxtNumSerieDos']);
+            break;                
+            default:
+            $datos = $this->modelo->FACTURAS($Entidad, $Item, $parametros['CTipo'],$parametros['TxtNumSerieUno'],$parametros['TxtNumSerieDos']);
+            break;
+        }
+    
+        if(count($datos)>0) {
+            foreach ($datos as $key => $value) {
+                $datos2 = $this->modelo->codigos($Entidad, $Item, $value['Periodo'],$value['Item'],$value['TC'],$value['Serie_X']);
+				$campos = array();
+                //SetAdoAddNew("Codigos");
+                if(count($datos2)>0)
+                {
+					$campos['Numero'] = $value['TC_No']+1;
+					//$campos['ID'] = $datos2[0]['ID'];
+
+                    /*SetAdoFields("Numero", $value['TC_No']+1);
+                    SetAdoFieldsWhere("ID", $datos2[0]['ID']);
+                    SetAdoUpdateGeneric();*/
+
+					$this->modelo->crearActualizarRegistro($Entidad, $Item, "Codigos", $campos, 1, array("ID" => $datos2[0]['ID']));
+                }else
+                {
+					$campos['Item'] = "'".$value['Item']."'";
+					$campos['Periodo'] = "'".$value['Periodo']."'";
+					$campos['Concepto'] = "'".$value['TC']."_SERIE_".$value['Serie_X']."'";
+					$campos['Numero'] = $value['TC_No']+1;
+
+					$this->modelo->crearActualizarRegistro($Entidad, $Item, "Codigos", $campos);
+
+                    /*SetAdoFields("Item", $value['Item']);
+                    SetAdoFields("Periodo", $value['Periodo']);
+                    SetAdoFields("Concepto", $value['TC']."_SERIE_".$value['Serie_X']);
+                    SetAdoFields("Numero", $value['TC_No']+1);
+                    SetAdoUpdate();*/
+                }
+            }
+        }else{
+            /*SetAdoAddNew("Codigos");
+            SetAdoFields("Item", $Item);
+            SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
+            SetAdoFields("Concepto", $parametros['CTipo'] . "_SERIE_" . $parametros['TxtNumSerieUno'] . $parametros['TxtNumSerieDos']);
+            SetAdoFields("Numero", intval($parametros['TxtNumSerietres1']));
+            SetAdoUpdate();*/
+
+			$campos['Item'] = "'".$Item."'";
+			$campos['Periodo'] = "'".$_SESSION['INGRESO']['periodo']."'";
+			$campos['Concepto'] = "'".$parametros['CTipo'] . "_SERIE_" . $parametros['TxtNumSerieUno'] . $parametros['TxtNumSerieDos']."'";
+			$campos['Numero'] = intval($parametros['TxtNumSerietres1']);
+			$this->modelo->crearActualizarRegistro($Entidad, $Item, "Codigos", $campos);
+        }  
+
+        return 1;
+
 	}
 
 }

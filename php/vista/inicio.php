@@ -290,6 +290,10 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'lineas_cxc':
 				require_once("facturacion/lineas_cxc.php");
 				break;
+				
+			case 'lineas_cxc_fact':
+				require_once("facturacion/lineas_cxc_fact.php");
+				break;
 
 			case 'cierre_diario':
 				require_once("facturacion/cierre_diario_caja.php");

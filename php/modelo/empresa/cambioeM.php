@@ -440,7 +440,234 @@ class cambioeM
 		return $this->db->String_Sql($sql,'MYSQL');
 	}
 
+	//FUNCIONES LINEAS CXC
 
+	function empresas_datos($entidad,$Item)
+	{
+		$sql="SELECT  ID,Empresa,Item,IP_VPN_RUTA,Base_Datos,Usuario_DB,Contrasena_DB,Tipo_Base,Puerto   FROM lista_empresas WHERE ID_Empresa=".$entidad." AND Item = '".$Item."' AND Item <> '".G_NINGUNO."' ORDER BY Empresa";
+		$resp = $this->db->datos($sql,'MY SQL');
+		// print_r($sql);die();
+		  $datos=[];
+		foreach ($resp as $key => $value) {
+		
+					$datos[]=['id'=>$value['ID'],'text'=>$value['Empresa'],'host'=>$value['IP_VPN_RUTA'],'usu'=>$value['Usuario_DB'],'pass'=>$value['Contrasena_DB'],'base'=>$value['Base_Datos'],'Puerto'=>$value['Puerto'],'Item'=>$value['Item']];				
+		 }
+
+	      return $datos;
+	}
+
+	function Catalogo_Lineas($entidad, $item, $id=false)
+	{
+		
+		// print_r($cuenta);die();
+		$conn_sql = $this->empresas_datos($entidad,$item);
+	   $sql="SELECT * 
+        	FROM Catalogo_Lineas 
+        	WHERE Item = '".$item."' 
+        	AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+        	AND TL <> 0 ";
+        	if($id)
+        	{
+        		$sql.=" AND ID = '".$id."'"; 
+        	}
+       	// print_r($sql);die();
+       	//return $this->db->datos($sql);
+		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+	}
+
+	function nivel1($entidad, $item)
+	{
+		$conn_sql = $this->empresas_datos($entidad,$item);
+		$sql= "SELECT DISTINCT Autorizacion FROM Catalogo_Lineas
+			WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+			AND  Item = '$item' 
+			AND TL <> 0";
+		//print_r($sql);die();
+       	//return $this->db->datos($sql);
+		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+
+	}
+
+	function nivel2($entidad, $item, $autorizacion)
+	{
+		$conn_sql = $this->empresas_datos($entidad,$item);
+		$sql= "SELECT DISTINCT Serie FROM Catalogo_Lineas
+		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+		AND Item = '".$item."' 
+		AND Autorizacion = '".$autorizacion."'
+		AND TL <> 0";
+       	//return $this->db->datos($sql);
+		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+	}
+
+	function nivel3($entidad, $item, $autorizacion,$serie)
+	{
+		$conn_sql = $this->empresas_datos($entidad,$item);
+		$sql="SELECT DISTINCT Fact FROM Catalogo_Lineas
+			WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+			AND Item = '".$item."' 
+			AND Autorizacion = '".$autorizacion."'
+			AND Serie = '".$serie."'
+			AND TL <> 0";
+       	//return $this->db->datos($sql);
+		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+	}
+
+	function nivel4($entidad, $item, $autorizacion,$serie,$fact)
+	{
+		$conn_sql = $this->empresas_datos($entidad,$item);
+		$sql="SELECT ID,Concepto FROM Catalogo_Lineas
+			WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+			AND Item = '".$item."' 
+			AND Autorizacion = '".$autorizacion."'
+			AND Serie = '".$serie."'
+			AND TL <> 0
+			AND Fact = '".$fact."'";
+       	//return $this->db->datos($sql);
+		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+	}
+
+	function validar_codigo($codigo, $item, $entidad)
+	{
+		$conn_sql = $this->empresas_datos($entidad,$item);
+		$sql="SELECT *
+      		FROM Catalogo_Lineas
+      		WHERE Codigo = '".$codigo."'
+      		AND Item = '".$item."' 
+      		AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+      		AND TL <> 0 ";      		
+       	//return $this->db->datos($sql);
+		//print_r($sql."\n");
+		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+	}
+
+	function elimina_linea($Codigo, $item, $entidad)
+	{
+		$conn_sql = $this->empresas_datos($entidad,$item);
+		$sql= "DELETE 
+              FROM Catalogo_Lineas 
+              WHERE Codigo = '".$Codigo."' 
+              AND Item = '".$item."' 
+              AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+              AND TL <> 0";
+        //return $this->db->String_Sql($sql);
+		//print_r($sql."\n");
+		return $this->db->ejecutar_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+	}
+
+	function facturas_formato($entidad, $item, $Codigo,$TxtNumSerieUno,$TxtNumSerieDos,$TxtNumAutor)
+	{
+		$conn_sql = $this->empresas_datos($entidad,$item);
+		 $sql = "SELECT * 
+         	FROM Facturas_Formatos 
+         	WHERE Item = '".$item."' 
+         	AND  Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+         	AND Cod_CxC = '".$Codigo."' 
+         	AND Serie = '".$TxtNumSerieUno.$TxtNumSerieDos."' 
+         	AND Autorizacion = '".$TxtNumAutor."' ";
+
+       	//return $this->db->datos($sql);
+		//print_r($sql."\n");
+		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+	}
+
+	function NC($entidad, $item, $TxtNumSerieUno,$TxtNumSerieDos)
+	{
+		$conn_sql = $this->empresas_datos($entidad,$item);
+		 $sql = "SELECT Periodo, Item, 'NC' As TC, Serie_NC As Serie_X, MAX(Secuencial_NC) As TC_No 
+                 FROM Trans_Abonos 
+                
+                 GROUP BY Periodo, Item, Serie_NC 
+                 ORDER BY Periodo, Item, Serie_NC ";
+		//return $this->db->datos($sql);
+		//print_r($sql."\n");
+		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+	}
+
+	function GR($entidad, $item, $TxtNumSerieUno,$TxtNumSerieDos)
+
+	{
+		$conn_sql = $this->empresas_datos($entidad,$item);
+		  $sql = "SELECT Periodo, Item, 'GR' As TC, Serie_GR As Serie_X, MAX(Remision) As TC_No 
+                 FROM Facturas_Auxiliares 
+                 WHERE Serie_GR = '".$TxtNumSerieUno.$TxtNumSerieDos."' 
+                 GROUP BY Periodo, Item, Serie_GR 
+                 ORDER BY Periodo, Item, Serie_GR ";
+        //return $this->db->datos($sql);
+		//print_r($sql."\n");
+		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+	}
+	function FACTURAS($entidad, $item, $CTipo,$TxtNumSerieUno,$TxtNumSerieDos)
+	{
+		$conn_sql = $this->empresas_datos($entidad,$item);
+		$sql = "SELECT Periodo, Item, TC, Serie As Serie_X, MAX(Factura) As TC_No
+                 FROM Facturas 
+                 WHERE TC = '".$CTipo."' 
+                 AND Serie = '".$TxtNumSerieUno.$TxtNumSerieDos."' 
+                 GROUP BY Periodo, Item, TC, Serie 
+                 ORDER BY Periodo, Item, TC, Serie ";
+        //return $this->db->datos($sql);
+		//print_r($sql."\n");
+		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+	}
+
+	function codigos($entidad, $empItem, $periodo,$item,$tc,$Serie_X)
+	{
+		$conn_sql = $this->empresas_datos($entidad,$empItem);
+		$sql = "SELECT * 
+           		FROM Codigos 
+            	WHERE Periodo = '".$periodo."' 
+            	AND Item = '".$item."' 
+            	AND Concepto = '".$tc."_SERIE_".$Serie_X."'";
+
+        //return $this->db->datos($sql);
+		//print_r($sql."\n");
+		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+	}
+
+	function crearActualizarRegistro($entidad, $item, $tabla, $campos, $actualizar=0, $where=array()){
+		$conn_sql = $this->empresas_datos($entidad,$item);
+		$sql = "";
+		if($actualizar){
+			$sql = "UPDATE ".$tabla." SET ";
+
+			$arrCampos = array();
+			foreach($campos as $key => $value){
+				array_push($arrCampos, $key."=".$value);
+			}
+			$camposJoin = join(", ", $arrCampos);
+			$sql .= $camposJoin . " WHERE ";
+
+			$whereJoin = '';
+			if(count($where)>0){
+				$arrWhere = array();
+				foreach($where as $key => $value){
+					array_push($arrWhere, $key."=".$value);
+				}
+				$whereJoin = join(", ", $arrWhere);
+			}
+
+			$sql .= $whereJoin;
+		}else{
+			$sql = "INSERT INTO ".$tabla." ";
+
+			$arrCampos = array();
+			foreach($campos as $key => $value){
+				array_push($arrCampos, $key);
+			}
+			$camposJoin = join(", ", $arrCampos);
+			$sql .= "(" . $camposJoin . ") VALUES ";
+
+			$arrValues = array();
+			foreach($campos as $key => $value){
+				array_push($arrValues, $value);
+			}
+			$valuesJoin = join(", ", $arrValues);
+			$sql .= "(" . $valuesJoin . ")";
+		}
+		//print_r($sql."\n");
+		return $this->db->ejecutar_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+	}
 
 }
 
