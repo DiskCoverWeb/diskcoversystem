@@ -98,6 +98,38 @@ class lista_comprasM
        	return $datos;
 	}
 
+	function lineas_compras_solicitados_proveedores($orden=false,$id=false,$codigoC=false)
+	{
+		$sql = "SELECT TP.Periodo, TP.Fecha, Codigo_Inv, Hora, Producto, Cantidad, Precio, Total, Total_IVA, No_Hab, Cta_Venta, TP.Item, TP.CodigoU, Orden_No, Cta_Venta_0, TC, Factura, Autorizacion, Serie, Codigo_Sup, CodigoC, Opc1, Opc2, Opc3, TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,Marca,C.Cliente as 'proveedor' 
+		FROM Trans_Pedidos TP
+		inner join Catalogo_Marcas CM on TP.CodMarca = CM.CodMar
+		inner join Clientes C on TP.CodigoC = C.Codigo
+
+		WHERE  CM.Item = TP.Item
+		AND CM.Periodo = TP.Periodo
+		AND TP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+		AND TC = 'B' 
+		AND TP.Item='".$_SESSION['INGRESO']['item']."' ";
+		if($orden)
+		{
+			$sql.=" AND Orden_No = '".$orden."' ";
+		}
+				
+		if($id)
+		{
+			$sql.=" AND TP.ID = '".$id."' ";
+		}
+
+		if($codigoC)
+		{
+			$sql.=" AND TP.CodigoC = '".$codigoC."' ";
+		}
+
+		// print_r($sql);die();
+		$datos = $this->conn->datos($sql);
+       	return $datos;
+	}
+
 	function buscar_familia($query=false,$pag=false)
 	{
 		if($pag==false)

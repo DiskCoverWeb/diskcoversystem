@@ -1068,7 +1068,7 @@ class solicitud_materialC
 		$tr = '';
 		foreach ($datos as $key => $value) {
 			// print_r($value);die();
-			$proveedores = $this->modelo->proveedores_seleccionados_x_producto($value['Codigo_Inv']);
+			$proveedores = $this->modelo->proveedores_seleccionados_x_producto($value['Codigo_Inv'],$parametros['orden']);
 			$op = '';
 			foreach ($proveedores as $key2 => $value2) {
 				$op.='<option value="'.$value['CodigoC'].'"  selected="">'.$value2['Cliente'].'</option>';
@@ -1107,8 +1107,9 @@ class solicitud_materialC
 					<td>
 						<button class="btn btn-sm btn-primary" type="button" onclick="mostrar_proveedor(\''.$value['ID'].'\',\''.$value['Codigo_Inv'].'\',\''.$value['Orden_No'].'\')"><i class="fa fa fa-user"></i> Seleccionar proveedor</button>';
 						if($value['CodigoC']!='.')
-						{
-							$tr.='<label> Proveedor Asignado </label>';
+						{	$prov = $this->modelo->proveedores($query=false,$value['CodigoC']);
+							// print_r($prov);die();
+							$tr.='<label> Proveedor :<br>'.$prov[0]['Cliente'].' Asignado </label>';
 						}
 						$tr.='
 					</td>

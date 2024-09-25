@@ -236,6 +236,7 @@ if(isset($_GET['orden']))
   function guardar_seleccion_proveedor(codigo,orden)
   {
     costo = $('#txt_costoAct').val()
+    var ord = '<?php echo $orden; ?>';
     if(costo=='')
     {
 
@@ -260,6 +261,7 @@ if(isset($_GET['orden']))
                 $('#myModal_provedor').modal('hide');
                 $('#txt_costoAct').val('')
                 $('#txt_costoAnt').val('')
+                lineas_pedido_aprobacion_solicitados_proveedor(ord)
               }
           },
           error: function (error) {
