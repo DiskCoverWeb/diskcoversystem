@@ -1306,7 +1306,7 @@ function buscarPuntoVenta(item)
         <h4 class="modal-title">Nuevo usuario</h4>
       </div>
       <div class="modal-body">        
-        <input type="text" name="txt_id_usu" id="txt_id_usu" class="form-control input-xs">
+        <input type="hidden" name="txt_id_usu" id="txt_id_usu" class="form-control input-xs">
         <b>Usuario</b><br>
         <input type="text" name="" id="txt_usu" class="form-control input-xs">
         <b>Clave</b><br>
