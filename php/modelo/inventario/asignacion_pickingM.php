@@ -166,6 +166,38 @@ class asignacion_pickingM
         return $this->db->datos($sql);   
     }
 
+     function lista_stock_ubicado($bodega=false,$cod_barras  =false,$grupo=false)
+    {
+        $sql="select TK.*,Producto
+            FROM Trans_Kardex TK
+            INNER JOIN Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv
+            where TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+            AND TK.Item = '".$_SESSION['INGRESO']['item']."'
+            AND TK.Item = CP.Item
+            AND TK.Orden_No <> '0'
+            AND TK.Orden_No <> '.'
+            AND TK.Orden_No <> '0.'
+            AND TK.CodBodega <> '-1'
+            AND TK.T = 'E'";
+            if($bodega)
+            {
+                $sql.=" AND CodBodega = '".$bodega."'";
+            }
+            if($cod_barras)
+            {
+                $sql.=" AND  TK.Codigo_Barra like '%".$cod_barras."%'";
+            }
+            if($grupo)
+            {
+                $sql.=" AND CP.Codigo_Inv = '".$grupo."' ";
+
+            }
+
+            // print_r($sql);die();
+        return $this->db->datos($sql);
+    }
+
+
 
 
 

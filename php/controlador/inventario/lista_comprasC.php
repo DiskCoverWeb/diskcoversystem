@@ -97,10 +97,10 @@ class lista_comprasC
 					<td>'.$value['Codigo_Inv'].'</td>
 					<td>'.$value['Producto'].'</td>
 					<td width="20px">'.$value['Cantidad'].'</td>
-					<td>'.$value['Precio'].'</td>
+					<td>'.number_format($value['Precio'],$_SESSION['INGRESO']['Dec_PVP'],'.','').'</td>
 					<td>'.$value['Fecha']->format('Y-m-d').'</td>
 					<td>'.$value['Fecha_Ent']->format('Y-m-d').'</td>					
-					<td>'.$value['Total'].'</td>				
+					<td>'.number_format($value['Total'],2,'.','').'</td>				
 					<td>'.$value['proveedor'].'</td>
 					
 				</tr>';
@@ -247,7 +247,7 @@ class lista_comprasC
 				
 				// print_r($fami);die();
 			  $tablaHTML[$pos]['medidas']=$tablaHTML[$pos_head]['medidas'];
-			  $tablaHTML[$pos]['datos']=array($key+1,$fami[0]['Producto'],$value['Codigo_Inv'],$value['Producto'],$value['Marca'],$value['Cantidad'],'','','','','',$value['Precio'],'',$value['Total'],'','');
+			  $tablaHTML[$pos]['datos']=array($key+1,$fami[0]['Producto'],$value['Codigo_Inv'],$value['Producto'],$value['Marca'],$value['Cantidad'],'','','','','',$value['Precio'],'',number_format($value['Total'],2,'.',''),'','');
 			  $pos = $pos+1;
 			}
 

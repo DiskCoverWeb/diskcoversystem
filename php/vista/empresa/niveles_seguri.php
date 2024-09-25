@@ -10,6 +10,23 @@
    todos_modulos();
    autocmpletar();
    autocmpletar_usuario();
+
+  $('#ddl_usuarios').on('select2:select', function (e) {
+        // console.log(e);
+        limpiar();
+        var data = e.params.data.data;    
+        $('#txt_usu').val(data.Usuario);
+        $('#txt_cla').val(data.Clave);
+        $('#txt_nom').val(data.Nombre_Usuario);
+        $('#txt_ced').val(data.CI_NIC);
+        $('#txt_ema').val(data.Email);
+        $('#txt_id_usu').val(data.ID);
+
+        console.log(data);
+  }); 
+
+
+
   });
 
   function autocmpletar(){
@@ -262,15 +279,22 @@
              // Swal.fire(,'s','info');
            }
 
+           opPuntoEmi = '<option value="">Seleccione Empresa</option>';
            $.each(response.empresas,function(i,item){
-              listado_empresas.push(item)
+            console.log(item);
+                 listado_empresas.push(item)
+                 if(item.dbSQLSERVER==1)
+                 {
+                    opPuntoEmi+='<option value="'+item.id+'">'+item.text+'</option>'
+                 }
               })
           
             var enti = $('#ddl_entidad').val();
             $('#lbl_enti').text(enti);
     			 	$('#myModal_espera').modal('hide');				
     				$('#tbl_modulos').html(response.tbl);
-            $('#usuarios_tbl').html(response.usuarios);  
+            $('#usuarios_tbl').html(response.usuarios); 
+            $('#ddl_empresa_puntoEmi').html(opPuntoEmi); 
             // DoubleScroll(document.getElementById('tbl_modulos'));
     		}
     	});
@@ -468,22 +492,75 @@ function guardar()
       });
 
  }
+
+ function limpiar() {
+
+    $('#txt_id_usu').val('');
+    $('#txt_usu').val('');
+    $('#txt_cla').val('');
+    $('#txt_nom').val('');
+    $('#txt_ced').val('');
+    // $('#ddl_entidad').val('');
+    $('#txt_ema').val('');
+
+    //SRI
+
+    $('#txt_id_CatLin').val('');
+    $('#rbl_emision').prop('checked',false);
+    $('#txt_estab').val('');
+    $('#txt_emision').val('');
+    $('#txt_email2').val('');
+    $('#txt_direccion').val('');
+    $('#txt_telefono').val('');
+    $('#txt_logo').val('');
+ }
  function guardarN()
  {
+  var id = $('#txt_id_usu').val();
   var usu=$('#txt_usu').val();
   var cla=$('#txt_cla').val();
   var nom=$('#txt_nom').val();
   var ced=$('#txt_ced').val();
   var ent=$('#ddl_entidad').val();
   var ema=$('#txt_ema').val();
+
+  //SRI
+
+  var ddl_empresa=$('#ddl_empresa_puntoEmi').val();
+  var cbx=$('#rbl_emision').prop('checked');
+  var idCL = $('#txt_id_CatLin').val();
+  var estab=$('#txt_estab').val();
+  var emision=$('#txt_emision').val();
+  var email=$('#txt_email2').val();
+  var dir=$('#txt_direccion').val();
+  var tel=$('#txt_telefono').val();
+  var logo=$('#txt_logo').val();
+  if(ddl_empresa=='' && cbx==true)
+  {
+    Swal.fire('Seleccione una empresa','','info');
+    return false
+  }
+
+
   var parametros = 
   {
+    'id':id,
     'usu':usu,
     'cla':cla,
     'nom':nom,
     'ced':ced,
     'ent':ent,
     'ema':ema,
+    'idCL':idCL,
+    'cbx':cbx,
+    'emp':ddl_empresa,
+    'estab':estab,
+    'emision':emision,
+    'email2':email,
+    'direc':dir,
+    'tel':tel,
+    'logo':logo,
+
   }
   if(ent != "")
   {
@@ -508,10 +585,12 @@ function guardar()
            {
 
           $('#myModal_espera').modal('hide'); 
+         
              Swal.fire({
                  type: 'success',
-                 title: 'Usuario Creado!',
+                 title: 'Usuario Guardado!',
                  showConfirmButton: true});
+          
           $('#myModal').modal('hide'); 
            }else if(response == -2)
            {
@@ -921,7 +1000,72 @@ function acceso_pagina(entidad,item)
 }
 
 
+function showemision()
+{
+   console.log(listado_empresas);
+   console.log(listado_empresas_modificados);
+   if($('#rbl_emision').prop('checked'))
+   {
+      $('#pnl_punto_emision').css('display','block');
+   }else
+   {
+      $('#pnl_punto_emision').css('display','none');    
+   }
+}
 
+function habilitarEdit()
+{
+  $('#btn_edit').css('display','initial');
+}
+
+function nuevoUsuario()
+{
+  limpiar();
+  $('#ddl_usuarios').empty();
+  $('#btn_edit').css('display','none');
+  $('#pnl_punto_emision').css('display','none');
+  $('#pnl_punto_emision_check').css('display','none');
+}
+function EditUsuario()
+{
+
+  $('#pnl_punto_emision_check').css('display','block');
+}
+
+function buscarPuntoVenta(item)
+{
+  // $('#myModal_espera').modal('show');
+  var id = $('#txt_id_usu').val();
+  var enti =$('#ddl_entidad').val();
+  var parametros = 
+  {
+    'entidad':enti,
+    'item':item,
+    'idUsu':id,
+    'ci':$('#txt_ced').val(),
+  }
+    $.ajax({
+      data:  {parametros:parametros},
+      url:   '../controlador/empresa/niveles_seguriC.php?buscarPuntoVenta=true',
+      type:  'post',
+      dataType: 'json',       
+      success:  function (response) { 
+        $('#myModal_espera').modal('hide');
+        console.log(response);
+         //SRI
+
+          $('#txt_id_CatLin').val(response.id);
+          $('#txt_estab').val(response.estab);
+          $('#txt_emision').val(response.punto);
+          $('#txt_email2').val(response.correo);
+          $('#txt_direccion').val(response.direccion);
+          $('#txt_telefono').val(response.telefono);
+          $('#txt_logo').val(response.logo);
+
+      }
+    }); 
+
+}
 </script>
 <!-- 
 <style>
@@ -1044,13 +1188,15 @@ function acceso_pagina(entidad,item)
 	<div class="col-sm-4">    
    <b>Usuario</b> <br>
     <div class="input-group">
-        <select class="form-control input" id="ddl_usuarios"  name="ddl_usuarios" onchange="todos_modulos();buscar_permisos();">
+        <select class="form-control input" id="ddl_usuarios"  name="ddl_usuarios" onchange="habilitarEdit();todos_modulos();buscar_permisos();">
           <option value="">Seleccione Usuario</option>
         </select>
         <!-- <div class="input-group-btn"> -->
-          <span class="input-group-btn">
-        
-          <button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#myModal"><span class="fa fa-plus"></span> Nuevo</button>
+        <span class="input-group-btn" id="btn_nuevo">        
+            <button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#myModal" onclick="nuevoUsuario()"><span class="fa fa-plus"></span> Nuevo</button>
+        </span>
+         <span class="input-group-btn" id="btn_edit" style="display:none;" >        
+            <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#myModal" onclick="EditUsuario()" ><span class="fa fa-edit"></span></button>
         </span>
         <!-- </div> -->
       </div>
@@ -1159,24 +1305,79 @@ function acceso_pagina(entidad,item)
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h4 class="modal-title">Nuevo usuario</h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body">        
+        <input type="text" name="txt_id_usu" id="txt_id_usu" class="form-control input-xs">
         <b>Usuario</b><br>
-        <input type="text" name="" id="txt_usu" class="form-control">
+        <input type="text" name="" id="txt_usu" class="form-control input-xs">
         <b>Clave</b><br>
-        <input type="text" name="" id="txt_cla" class="form-control">
+        <input type="text" name="" id="txt_cla" class="form-control input-xs">
         <b>Nombre completo</b><br>
-        <input type="text" name="" id="txt_nom" class="form-control">
+        <input type="text" name="" id="txt_nom" class="form-control input-xs">
         <div class="row">
             <div class="col-sm-6">
                 <b>Cedula</b><br>
-                <input type="text" name="" id="txt_ced" class="form-control">
+                <input type="text" name="" id="txt_ced" class="form-control input-xs">
               
             </div>
             <div class="col-sm-6">
               <b>Email</b><br>
-               <input type="text" name="" id="txt_ema" class="form-control">
+               <input type="text" name="" id="txt_ema" class="form-control input-xs">
               
             </div>
+        </div>
+        <div class="row" id="pnl_punto_emision_check" style="display:none;">
+          <div class="col-sm-12">
+              <label><input type="checkbox" name="rbl_emision" id="rbl_emision" onclick="showemision()"> Asignar Usuario a establecimiento o punto de emision</label>
+          </div>
+        </div>
+        <div class="row" id="pnl_punto_emision" style="display: none;">
+          <div class="col-sm-12">
+            <b>Empresa</b>
+            <select class="form-control input-xs" id="ddl_empresa_puntoEmi" name="ddl_empresa_puntoEmi" onchange="buscarPuntoVenta(this.value)" >
+              <option value="">Seleccione Empresa</option>
+            </select>            
+          </div>
+          <div class="col-sm-3">
+            <b>Serie</b>           
+            <input type="hidden" name="txt_id_CatLin" id="txt_id_CatLin">
+            <div class="input-group">
+              <div class="input-group-addon input-xs" style="padding: 0px;border: none;">                
+                <input type="" name="txt_estab" id="txt_estab" class="form-control input-xs" onkeyup=" solo_3_numeros(this.id);solo_numeros(this)">
+              </div>
+               <div class="input-group-addon input-xs" style="padding: 0px;border: none;">                
+                <input type="" name="txt_emision" id="txt_emision" class="form-control input-xs" onkeyup=" solo_3_numeros(this.id);solo_numeros(this)">
+              </div>
+            </div>            
+          </div>
+          <div class="col-sm-9">
+              <b>Correo electronico</b>
+              <input type="" name="txt_email2" id="txt_email2" class="form-control input-xs">            
+          </div>
+          <div class="col-sm-12">
+              <b>Direccion</b>
+              <input type="" name="txt_direccion" id="txt_direccion" class="form-control input-xs">    
+              <br>        
+          </div>
+          <div class="col-sm-6">
+            <div class="input-group">
+                 <div class="input-group-addon input-xs">
+                   <b>Telefono:</b>
+                 </div>          
+                <input type="text" name="txt_telefono" id="txt_telefono" value='' class="form-control input-xs" />
+            </div>            
+          </div>
+           <div class="col-sm-6">
+            <div class="input-group">
+                 <div class="input-group-addon input-xs">
+                   <b>Logotipo (GIF):</b>
+                 </div>          
+                <input type="text" name="txt_logo" id="txt_logo" value='' class="form-control input-xs" />
+            </div>            
+          </div>
+
+
+          
+
         </div>
       </div>
       <div class="modal-footer">

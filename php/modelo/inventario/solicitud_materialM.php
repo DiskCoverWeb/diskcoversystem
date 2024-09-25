@@ -302,7 +302,7 @@ class solicitud_materialM
        	return $datos;
 	}
 
-	function proveedores($query=false)
+	function proveedores($query=false,$CodigoC=false)
 	{
 		$sql = "SELECT CI_RUC,Cliente,CP.Codigo as 'Codigo'
 		FROM Clientes C
@@ -313,6 +313,10 @@ class solicitud_materialM
 		if($query)
 		{
 			$sql.="	AND Cliente like '%".$query."%'";
+		}
+		if($CodigoC)
+		{
+			$sql.="	AND C.Codigo = '".$CodigoC."'";
 		}
 		$sql.="group by CI_RUC,Cliente,CP.Codigo
 		ORDER BY C.Cliente OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
@@ -386,6 +390,7 @@ class solicitud_materialM
 		{
 			$sql.=" AND TP.Codigo_Inv = '".$codigo_inv."'";
 		}
+		// print_r($sql);die();
 		$datos = $this->conn->datos($sql);
        	return $datos;
 	}

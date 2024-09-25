@@ -619,3 +619,15 @@ function contarDecimales(num) {
     const decimales = num.toString().split('.')[1];
     return decimales ? decimales.length : 0;
 }
+
+function solo_3_numeros(id)
+{  
+  var v = $('#'+id).val();
+  if(v.length >3)
+  {
+   val  = v.substr(0,3);
+    $('#'+id).val(val);
+  }else{
+    $('#'+id).val(v);
+  }
+}

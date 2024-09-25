@@ -1,5 +1,16 @@
 <script>
 
+    // window.addEventListener('beforeunload', function (e) {
+    //     // Mensaje personalizado (no será visible en la mayoría de los navegadores)
+    //     const message = "¿Estás seguro de que deseas abandonar la página?";
+    //     e.preventDefault();
+    //     e.returnValue = message;
+    //     return message;
+    // });
+    function eliminarTildes(cadena) {
+        return cadena.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }   
+
     let diccionarioTP =
         [
             { 'TP': 'BENEFICI', 'inputname': 'tipoBenef' },
@@ -13,13 +24,46 @@
         ];
 
     $(document).ready(function () {
-        beneficiario();
+
+        const today = new Date();
+        const dayOfWeek = today.toLocaleDateString('es-Mx', { weekday: 'short' });
+        const DiaActual =  eliminarTildes(dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1).toLowerCase());
+
+        $('#diaEntr').val(DiaActual);
+
+        if($('#diaEntr').val()!='')
+        {
+            // console.log(DiaActual);
+            initPAge();
+            beneficiario();
+
+             const selectElement = document.getElementById('diaEntr');
+            let previousValue = selectElement.value; // Guardar valor actual
+
+            selectElement.addEventListener('change', function (e) {
+                const confirmChange = confirm("¿Estás seguro de que deseas cambiar la opción es posible que los nuevos Beneficiario agregados se pierdan?");
+                
+                if (!confirmChange) {
+                    selectElement.value = previousValue;
+                } else {
+                    previousValue = selectElement.value;
+                    initPAge();
+                    $('#beneficiario').empty();
+                }
+            });
+
+        }
+
+
+
+
+        // beneficiario();
         beneficiario_new();
         // tipoCompra();
         $('#beneficiario').on('select2:select', function (e) {
             var data = e.params.data;//Datos beneficiario seleccionado
-            console.log(data);
-            tipoCompra(data)
+            // console.log(data.data);
+            tipoCompra(data.data)
             listaAsignacion();
 
         });
@@ -36,6 +80,27 @@
 
     });
 
+
+    function initPAge()
+    {
+        var parametros = 
+        {
+            'dia':$('#diaEntr').val(),
+        }
+         $.ajax({
+            url: '../controlador/inventario/asignacion_osC.php?initPAge=true',
+            type: 'POST',
+            dataType: 'json',
+            data: { parametros: parametros },
+            success: function (data) {
+               
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+
     //Metodos
     function beneficiario() {
         $('#beneficiario').select2({
@@ -47,11 +112,12 @@
                 data: function (params) {
                     return {
                         query: params.term,
+                        dia: $('#diaEntr').val(),
                     }
                 },
                 processResults: function (data) {
                     return {
-                        results: data.results
+                        results: data
                     };
                 },
                 cache: true
@@ -95,13 +161,13 @@
         url_ = '';
         if(tipo=='84.02')
         {
-            console.log('sss');
+            // console.log('sss');
             let url_ = '../controlador/inventario/asignacion_osC.php?autocom_pro=true';
-            console.log(url_);
+            // console.log(url_);
         }else
         {
             let url_ = '../controlador/inventario/alimentos_recibidosC.php?autocom_pro=true';
-            console.log(url_);
+            // console.log(url_);
 
         }
         $('#ddl_producto').select2({
@@ -258,6 +324,8 @@
             // data: { param: datos },
             success: function (data) {
 
+                console.log(data);
+
             var op = '';
             var option = '';
             data.forEach(function(item,i){
@@ -277,7 +345,7 @@
 
 
                // llenarComboList(data,'tipoCompra');
-               console.log(data);
+               // console.log(data);
             },
             error: function (error) {
                 console.log(error);
@@ -286,7 +354,7 @@
     }
 
 function llenarDatos(datos) {
-        console.log(datos);
+        // console.log(datos);
          // await tipoCompra();
         
        // $('#beneficiario').val(datos.Beneficiario);
@@ -294,13 +362,13 @@ function llenarDatos(datos) {
         $('#tipoEstado').val(datos.Estado);//Tipo de Estado
         $('#tipoEntrega').val(datos.TipoEntega);//Tipo de Entrega
         $('#horaEntrega').val(datos.Hora); //Hora de Entrega
-        $('#diaEntr').val(datos.Dia_Entrega.toUpperCase());//Dia de Entrega
+        // $('#diaEntr').val(datos.Dia_Entrega.toUpperCase());//Dia de Entrega
         $('#frecuencia').val(datos.Frecuencia);//Frecuencia
         $('#tipoBenef').val(datos.TipoBene);//Tipo de Beneficiario
         $('#totalPersAten').val(datos.No_Soc);//Total, Personas Atendidas
         $('#tipoPobl').val(datos.Area);//Tipo de Poblacion
         $('#acciSoci').val(datos.AccionSocial);//Accion Social
-        $('#vuln').val(datos.vulneravilidad);//Vulnerabilidad
+        $('#vuln').val(datos.vulnerabilidad);//Vulnerabilidad
         $('#tipoAten').val(datos.TipoAtencion);//Tipo de Atencion
         $('#CantGlobSugDist').val(datos.Salario);//Cantidad global sugerida a distribuir
         $('#CantGlobDist').val(datos.Descuento);//Cantidad global a distribuir
@@ -652,7 +720,16 @@ function llenarDatos(datos) {
                             <div class="input-group-addon input-xs">
                                 <b>Día Entrega</b>
                             </div>
-                            <input type="text" name="diaEntr" id="diaEntr" class="form-control input-xs">
+                            <select class="form-control input-xs" id="diaEntr">
+                                <option value="Lun">Lunes</option>
+                                <option value="Mar">Martes</option>
+                                <option value="Mie">Miercoles</option>
+                                <option value="Jue">Jueves</option>
+                                <option value="Vie">Viernes</option>
+                                <option value="Sáb">Sabado</option>
+                                <option value="Dom">Domingo</option>
+                            </select>
+                            <!-- <input type="text" name="diaEntr" id="diaEntr" class="form-control input-xs"> -->
                         </div>
                     </div>
                 </div>
