@@ -73,6 +73,24 @@ function imprimir_excel()
   window.open('../controlador/inventario/lista_comprasC.php?imprimir_excel=true&orden_pdf='+orden,'_blank');
 }
 
+function grabar_kardex()
+{
+  var orden = '<?php echo $orden; ?>';
+  var parametros = 
+      {
+        'orden':orden,
+      }
+      $.ajax({
+          url:   '../controlador/inventario/lista_comprasC.php?grabar_kardex=true',
+          type:  'post',
+          data: {parametros:parametros},
+          dataType: 'json',
+          success:  function (response) {     
+                              
+          }
+      });
+}
+
 
 
 </script>
@@ -95,7 +113,7 @@ function imprimir_excel()
             </button>
           </div>  
           <div class="col-xs-2 col-md-2 col-sm-2">
-            <button title="Guardar"  class="btn btn-default" onclick="grabar_solicitud_proveedor()">
+            <button title="Guardar"  class="btn btn-default" onclick="grabar_kardex()">
               <img src="../../img/png/grabar.png" >
             </button>
           </div>
