@@ -4524,6 +4524,7 @@ function dimenciones_tabl($len)
       }
 
       // print_r($_SESSION['INGRESO']);die();
+      // print_r($MesComp);die();
 
       if($_SESSION['INGRESO']['Num_Meses_CD'] and $query=='Diario')
       {

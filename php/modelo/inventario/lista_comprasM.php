@@ -531,7 +531,36 @@ class lista_comprasM
 		return $this->conn->datos($sql);
 	
 	}
-	
+
+	function eliminar_asiento_K($orden,$CodigoPrv)
+	{
+		$sql = "DELETE   
+				FROM Trans_Pedidos  
+				WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+				AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+	     		AND Orden_No = '".$orden."' 
+	     		AND CodigoC = '".$CodigoPrv."' 
+	     		AND TC = 'B'";  
+	    return $this->conn->String_Sql($sql);
+
+	}
+	function eliminar_asiento()
+	{
+		 $cid=$this->conn;
+		$sql = "DELETE Asiento WHERE Item='".$_SESSION['INGRESO']['item']."' AND CodigoU='".$_SESSION['INGRESO']['Id']."' AND T_No ='".$_SESSION['INGRESO']['modulo_']."'";
+		
+		return $this->conn->String_Sql($sql);
+
+	}
+
+	function eliminar_asiento_sc($orden)
+	{
+		 $cid=$this->conn;
+		$sql = "DELETE Asiento_SC WHERE Item='".$_SESSION['INGRESO']['item']."' AND CodigoU='".$_SESSION['INGRESO']['CodigoU']."' AND Factura ='".$orden."' ";
+		
+	return $this->conn->String_Sql($sql);
+
+	}
 
 
 }

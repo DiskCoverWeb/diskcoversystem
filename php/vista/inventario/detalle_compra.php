@@ -80,12 +80,20 @@ function grabar_kardex()
       {
         'orden':orden,
       }
+      $('#myModal_espera').modal('show');
       $.ajax({
           url:   '../controlador/inventario/lista_comprasC.php?grabar_kardex=true',
           type:  'post',
           data: {parametros:parametros},
           dataType: 'json',
-          success:  function (response) {     
+          success:  function (response) {   
+            $('#myModal_espera').modal('hide');
+            if(response.resp==1)
+            {
+              Swal.fire(response.com,"","success").then(function(){
+                location.href = 'inicio.php?mod=03&acc=lista_compras';
+              })
+            }  
                               
           }
       });
