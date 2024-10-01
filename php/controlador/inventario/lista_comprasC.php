@@ -316,7 +316,7 @@ class lista_comprasC
 		                    'ru'=> '',
 		                    'co'=> $cta[0]['Codigo'],// codigo de cuenta cc
 		                    'tip'=>$cta[0]['SubCta'],//tipo de cuenta(CE,CD,..--) biene de catalogo subcuentas TC
-		                    'tic'=> 1, //debito o credito (1 o 2);
+		                    'tic'=> 2, //debito o credito (1 o 2);
 		                    'sub'=> $value['CodigoC'], //Codigo se trae catalogo subcuenta
 		                    'sub2'=>$cta[0]['Cuenta'],//nombre del beneficiario
 		                    'fecha_sc'=> date('Y-m-d'), //fecha 
@@ -349,7 +349,7 @@ class lista_comprasC
 			                  "efectivo_as" =>$value2['fecha']->format('Y-m-d'), // observacion si TC de catalogo de cuenta
 			                  "chq_as" => 0,
 			                  "moneda" => 1,
-			                  "tipo_cue" => 1,
+			                  "tipo_cue" => 2,
 			                  "cotizacion" => 0,
 			                  "con" => 0,// depende de moneda
 			                  "t_no" => '99',
@@ -372,7 +372,7 @@ class lista_comprasC
 			                  "efectivo_as" =>$value2['fecha']->format('Y-m-d'), // observacion si TC de catalogo de cuenta
 			                  "chq_as" => 0,
 			                  "moneda" => 1,
-			                  "tipo_cue" => 2,
+			                  "tipo_cue" => 1,
 			                  "cotizacion" => 0,
 			                  "con" => 0,// depende de moneda
 			                  "t_no" => '99',
