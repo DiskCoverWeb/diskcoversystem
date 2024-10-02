@@ -10,6 +10,7 @@
      $('#ddl_productos').on('select2:select', function (e) {
       var data = e.params.data.data;
       $('#txt_costo').val(data.Costo);
+      $('#txt_stock').val(data.Existencia);
       console.log(data);
     });
 
@@ -336,6 +337,9 @@
         <div class="col-sm-1">
           <b>Costo</b>
           <input type="text" name="txt_costo" id="txt_costo" class="form-control input-sm" placeholder="0"  onblur="calcular()" >
+        </div><div class="col-sm-1">
+          <b>Stock</b>
+          <input type="text" name="txt_stock" id="txt_stock" class="form-control input-sm" readonly >
         </div>
         <div class="col-sm-1">
           <b>Cantidad</b>
@@ -348,7 +352,7 @@
 
        
         
-        <div class="col-sm-2 text-right">
+        <div class="col-sm-1 text-right">
           <br>
             <button type="button" class="bt  btn-sm btn-primary" onclick="guardar_linea()" >Agregar</button>
         </div>
