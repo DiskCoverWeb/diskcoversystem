@@ -80,7 +80,7 @@ function grabar_kardex()
       {
         'orden':orden,
       }
-      $('#myModal_espera').modal('show');
+    //  $('#myModal_espera').modal('show');
       $.ajax({
           url:   '../controlador/inventario/lista_comprasC.php?grabar_kardex=true',
           type:  'post',

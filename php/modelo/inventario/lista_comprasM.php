@@ -491,12 +491,12 @@ class lista_comprasM
 	function datos_asiento_haber_trans($orden,$codigo)
 	{
     // 'LISTA DE CODIGO DE ANEXOS
-     $sql = "SELECT SUM(Total) as 'total',Codigo_Inv as 'cuenta',Fecha as 'fecha',TC 
+     $sql = "SELECT SUM(Total) as 'total',Cta_Venta_0 as 'cuenta',Fecha as 'fecha',TC 
              FROM Trans_Pedidos  
              WHERE Item = '".$_SESSION['INGRESO']['item']."' 
              AND Orden_No = '".$orden."'
              AND CodigoC = '".$codigo."' ";              
-        $sql.=" GROUP BY Orden_No,Codigo_Inv,Fecha,TC";
+        $sql.=" GROUP BY Orden_No,Cta_Venta_0,Fecha,TC";
           // print_r($sql);die();
         return $this->conn->datos($sql);
   
@@ -547,7 +547,7 @@ class lista_comprasM
 	function eliminar_asiento()
 	{
 		 $cid=$this->conn;
-		$sql = "DELETE Asiento WHERE Item='".$_SESSION['INGRESO']['item']."' AND CodigoU='".$_SESSION['INGRESO']['Id']."' AND T_No ='".$_SESSION['INGRESO']['modulo_']."'";
+		$sql = "DELETE Asiento WHERE Item='".$_SESSION['INGRESO']['item']."' AND CodigoU='".$_SESSION['INGRESO']['CodigoU']."' AND T_No ='".$_SESSION['INGRESO']['modulo_']."'";
 		
 		return $this->conn->String_Sql($sql);
 

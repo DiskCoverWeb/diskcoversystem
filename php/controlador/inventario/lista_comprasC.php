@@ -299,6 +299,9 @@ class lista_comprasC
 			$cta[0]['SubCta'] = "P";
 		}
 
+		// esto sirve solo para este proceso que no viene de asientos_K /coloca cta de inventario donde falte
+		$this->validar_cta_inventario($parametros);
+
 		$orden = $parametros['orden'];
 		$provedor = $this->modelo->lineas_compras_solicitados_proveedores($parametros['orden']);
 		foreach ($provedor as $key => $value) 
@@ -333,7 +336,7 @@ class lista_comprasC
 
 
 
-		   	//ingreso asiento debe
+		   	//ingreso asiento haber
 					$asiento_debe = $this->modelo->datos_asiento_debe_trans($parametros['orden'],$value['CodigoC']);
 					// print_r($asiento_debe);die();
 					$fecha = $asiento_debe[0]['fecha']->format('Y-m-d');		
@@ -357,17 +360,17 @@ class lista_comprasC
 						 ingresar_asientos($parametros_debe);
 					}
 
-	        // asiento para el haber
+	        // asiento para el debe
 					$asiento_haber  = $this->modelo->datos_asiento_haber_trans($parametros['orden'],$value['CodigoC']);
 					// print_r($asiento_haber);die();
 					foreach ($asiento_haber as $key2 => $value2) {
-						$inv = $this->modelo->catalogo_cuentas_cta_inv($value2['cuenta']);	
-						$cuenta = $this->modelo->catalogo_cuentas($inv[0]['Cta_Inventario']);		
+						// $inv = $this->modelo->catalogo_cuentas_cta_inv($value2['cuenta']);	
+						$cuenta = $this->modelo->catalogo_cuentas($value2['cuenta']);		
 						// print_r($cuenta);die();	
 							$parametros_haber = array(
 			                  "va" =>round($value2['total'],2),//valor que se trae del otal sumado
 			                  "dconcepto1" =>$cuenta[0]['Cuenta'],
-			                  "codigo" => $inv[0]['Cta_Inventario'], // cuenta de codigo de 
+			                  "codigo" => $cuenta[0]['Codigo'], // cuenta de codigo de 
 			                  "cuenta" => $cuenta[0]['Cuenta'], // detalle de cuenta;
 			                  "efectivo_as" =>$value2['fecha']->format('Y-m-d'), // observacion si TC de catalogo de cuenta
 			                  "chq_as" => 0,
@@ -410,6 +413,7 @@ class lista_comprasC
 				               	$resp = $this->ingDescargos->generar_comprobantes($parametro_comprobante);
 				                // $cod = explode('-',$num_comprobante);
 				                // die();
+				                // print_r($resp);die();
 				                if($resp==$num_comprobante)
                 				{
 				                	if($this->ingresar_trans_kardex_entrada($orden,$num_comprobante,$fecha,$ruc,$nombre)==1)
@@ -420,8 +424,9 @@ class lista_comprasC
 				                		if($resp==1)
 				                		{
 				                			$this->modelo->eliminar_asiento();
-				                			// $this->ingDescargos->eliminar_aiseto_sc($orden);                			
-				                			mayorizar_inventario_sp();
+				                			$orden = date('Ymd');
+				                			$this->modelo->eliminar_asiento_sc($orden);                			
+				                			//mayorizar_inventario_sp();
 				                			// return array('resp'=>1,'com'=>$num_comprobante);
 				                			$msj.= 'comprobante '.$num_comprobante.' Generado <br>';
 				                		}else
@@ -452,10 +457,28 @@ class lista_comprasC
 						}
 						
 					// print_r($value);die();
+						// print_r($value);
+						// print_r($msj);die();
 				}
 
 				return array('resp'=>1,'com'=>$msj);
 
+	}
+
+	function validar_cta_inventario($parametros)
+	{
+		// print_r($parametros);die();
+		$lineas = $this->modelo->lineas_compras_solicitados($parametros['orden'],false,false);
+		foreach ($lineas as $key => $value) {
+			if($value['Cta_Venta_0']== '.' || $value['Cta_Venta_0']== '')
+			{
+				$inv = $this->modelo->catalogo_cuentas_cta_inv($value['Codigo_Inv']);
+				SetAdoAddNew("Trans_Pedidos"); 		
+			    SetAdoFields('Cta_Venta_0',$inv[0]['Cta_Inventario']); 
+			    SetAdoFieldsWhere('ID',$value['ID']);
+			    SetAdoUpdateGeneric();
+			}
+		}
 	}
 
 	function ingresar_trans_kardex_entrada($orden,$comprobante,$fechaC,$CodigoPrv,$nombre)
