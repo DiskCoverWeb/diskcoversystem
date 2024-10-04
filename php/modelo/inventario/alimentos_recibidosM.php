@@ -553,9 +553,10 @@ class alimentos_recibidosM
 
 		$sql = "SELECT TF.ID,CP.Proceso,Cumple,Carga,CodigoC,Conductor,Codigo_Inv
 				FROM Trans_Fletes TF 
-				right join Catalogo_Proceso CP on CP.Cmds = TF.TP 
+				INNER join Catalogo_Proceso CP on CP.Cmds = TF.TP 
 				WHERE  TF.Item = '".$_SESSION['INGRESO']['item']."' 
 				AND TF.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				and TF.Item = CP.Item
 				AND Codigo_Inv= '".$pedido."'";
 				// print_r($sql);die();
 		return $this->db->datos($sql);
