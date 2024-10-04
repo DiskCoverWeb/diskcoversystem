@@ -1056,7 +1056,20 @@ class alimentos_recibidosC
 					<td>'.number_format($value['TOTAL'],2,'.','').'</td>
 					<td>'.$value['Porc_C'].'</td>
 					<td>'.$proceso.'</td>
-					<td><button type="button" class="btn-sm btn-primary btn" onclick="editar_pedido(\''.$value['ID'].'\')"><i class="fa fa-pencil"></i></button></td>
+					<td><button type="button" class="btn-sm btn-primary btn" onclick="editar_pedido(\''.$value['ID'].'\')"><i class="fa fa-pencil"></i></button>';
+					if($value['Motivo_Edicion']!='' &&  $value['Motivo_Edicion']!='.')
+					{
+						$tr.='<div class="btn-group pull-right">
+								<button type="button" class="btn-warning btn btn-sm" data-toggle="dropdown" aria-expanded="false">
+									<i class="fa fa-commenting"></i>
+								</button>
+								<ul class="dropdown-menu">
+											<li><a href="#">'.$value['Motivo_Edicion'].'</a></li>
+									</ul>
+							</div>';
+					}
+
+					$tr.='</td>
 
 				  </tr>';
 		}
@@ -1135,6 +1148,7 @@ class alimentos_recibidosC
 		SetAdoFields('Cod_C',$parametros['ddl_tipo_alimento_edi']);
 		SetAdoFields('Porc_C',$parametros['txt_temperatura_edi']);
 		SetAdoFields('TOTAL',$parametros['txt_cant_edi']);
+		SetAdoFields('Motivo_Edicion',$parametros['txt_motivo_edit']);
 
 		SetAdoFields('Envio_No',$new_cod);
 		SetAdoFieldsWhere('ID',$parametros['txt_id_edi']);
