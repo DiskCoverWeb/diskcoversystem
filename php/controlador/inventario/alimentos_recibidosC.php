@@ -1511,8 +1511,8 @@ class alimentos_recibidosC
 	function estado_trasporte($parametros)
 	{
 		$codigo = $parametros['pedido'];
-		$estado[0]['placa'] = '';
 		$estado =  $this->modelo->estado_trasporte($codigo);
+		$estado[0]['placa'] = '.';
 		if($estado[0]['CodigoC']!='.')
 		{
 			$placa = $this->modelo->placar_search($codigo);			
