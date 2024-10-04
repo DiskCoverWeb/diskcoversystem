@@ -364,10 +364,17 @@ class alimentos_recibidosC
 					break;
 			}
 
+			// print_r($placa);die();
+			// print_r($transporte);die();
 			foreach ($transporte as $key => $value) {
 				// print_r($value);die();
-				$Cmds = str_replace('_ESTTRANS','', $key);
-				$Cmds = str_replace('_','.', $Cmds);
+				$Cmds = '.';
+				$pos = strpos($key, '_ESTTRANS');
+				if ($pos !== false) {
+				   
+					$Cmds = str_replace('_ESTTRANS','', $key);
+					$Cmds = str_replace('_','.', $Cmds);
+				} 
 				SetAdoAddNew('Trans_Fletes');
 			    SetAdoFields('TP',$Cmds);
 			    SetAdoFields('Referencia','ESTTRANS');
@@ -1504,7 +1511,19 @@ class alimentos_recibidosC
 	function estado_trasporte($parametros)
 	{
 		$codigo = $parametros['pedido'];
-		return $this->modelo->estado_trasporte($codigo);
+		$estado[0]['placa'] = '';
+		$estado =  $this->modelo->estado_trasporte($codigo);
+		if($estado[0]['CodigoC']!='.')
+		{
+			$placa = $this->modelo->placar_search($codigo);			
+			$estado[0]['placa'] = $placa[0]['Proceso'];
+		}
+		
+
+		// print_r($estado);die();
+		return $estado;
+
+
 	}
 
 	function editar_comentarios_trans_correos($pedido,$asunto,$texto)
