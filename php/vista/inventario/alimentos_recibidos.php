@@ -917,11 +917,6 @@ function autocoplet_ingreso_donante(){
 									</div>									
 										<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>										
 									</div>
-
-									
-
-
-									
 								</div>
 								<div class="col-sm-4">
 									<div class="input-group">
@@ -1007,7 +1002,7 @@ function autocoplet_ingreso_donante(){
 								</div>												
 							</div>			
 					</div>
-					<div class="col-sm-12 col-md-4" style="padding:0px">
+					<div class="col-sm-12 col-md-4">
 						<div class="col-sm-6 col-md-12">
 							<div class="form-group">
 									<label class="col-sm-6 control-label">Fecha de Ingreso</label>
