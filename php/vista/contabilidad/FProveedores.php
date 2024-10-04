@@ -455,7 +455,7 @@ function limpiar_t()
                                     <b>CI / RUC</b>
                                     <input type="text" id="txt_ruc" name="txt_ruc"  style="z-index:auto" class="form-control input-sm">              
                                   </div>
-                                  <div class="col-xs-2 col-sm-2">
+                                  <div class="col-xs-2 col-sm-2 col-md-1">
                                     <br>
                                     <button type="button" class="btn btn-sm" onclick="validar_sriC($('#txt_ruc').val())">
                                       <img src="../../img/png/SRI.jpg" style="width: 100%">
