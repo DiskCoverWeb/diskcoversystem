@@ -1060,7 +1060,7 @@ class alimentos_recibidosC
 					if($value['Motivo_Edicion']!='' &&  $value['Motivo_Edicion']!='.')
 					{
 						$tr.='<div class="btn-group pull-right">
-								<button type="button" class="btn-warning btn btn-sm" data-toggle="dropdown" aria-expanded="false">
+								<button type="button" class="btn-success btn btn-sm" data-toggle="dropdown" aria-expanded="false">
 									<i class="fa fa-commenting"></i>
 								</button>
 								<ul class="dropdown-menu">
