@@ -455,13 +455,13 @@ function limpiar_t()
                                     <b>CI / RUC</b>
                                     <input type="text" id="txt_ruc" name="txt_ruc"  style="z-index:auto" class="form-control input-sm">              
                                   </div>
-                                  <div class="col-xs-2 col-sm-1">
+                                  <div class="col-xs-2 col-sm-2">
                                     <br>
                                     <button type="button" class="btn btn-sm" onclick="validar_sriC($('#txt_ruc').val())">
                                       <img src="../../img/png/SRI.jpg" style="width: 100%">
                                     </button>                    
                                   </div>        
-                                  <div class="col-xs-6 col-sm-7">
+                                  <div class="col-xs-6 col-sm-6">
                                     <b>Nombre de proveedor</b>
                                     <input type="hidden" id="txt_id_prove" name="txt_id_prove" class="form-control input-sm">  
                                     <div class="input-group">
