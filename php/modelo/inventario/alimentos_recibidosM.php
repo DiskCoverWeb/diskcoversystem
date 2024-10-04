@@ -562,6 +562,19 @@ class alimentos_recibidosM
 		return $this->db->datos($sql);
 	}
 
+	function estado_gaveta($pedido)
+	{
+
+		$sql = "select Entrada,Producto from Trans_Kardex TK
+				inner join Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv				
+				WHERE  TK.Item = '".$_SESSION['INGRESO']['item']."' 
+				AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				AND Orden_No = '".$pedido."' 
+				AND TK.Codigo_Inv like 'GA.%'";
+				// print_r($sql);die();
+		return $this->db->datos($sql);
+	}
+
 	function placar_search($pedido)
 	{
 		$sql = "SELECT TF.ID,CP.Proceso,Cumple,Carga,CodigoC,Conductor,Codigo_Inv

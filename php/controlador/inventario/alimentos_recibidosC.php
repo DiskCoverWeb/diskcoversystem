@@ -286,6 +286,11 @@ if(isset($_GET['estado_trasporte']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->estado_trasporte($parametros));
 }
+if(isset($_GET['estado_gaveta']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->estado_gaveta($parametros));
+}
 
 if(isset($_GET['gavetas']))
 {
@@ -1522,6 +1527,21 @@ class alimentos_recibidosC
 
 		// print_r($estado);die();
 		return $estado;
+
+
+	}
+
+
+
+	function estado_gaveta($parametros)
+	{
+		$codigo = $parametros['pedido'];
+		$gavetas =  $this->modelo->estado_gaveta($codigo);
+		if(count($gavetas)==0)
+		{
+			$gavetas[0] = array('Entrada'=>'','Producto'=>'No hay gavetas');
+		}
+		return $gavetas;
 
 
 	}
