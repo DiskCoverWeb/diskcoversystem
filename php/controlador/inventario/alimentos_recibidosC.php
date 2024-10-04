@@ -363,11 +363,14 @@ class alimentos_recibidosC
 					$tipo_ve = 'liviano';
 					break;
 			}
+
 			foreach ($transporte as $key => $value) {
-				$Cmds = explode('_', $key);
+				// print_r($value);die();
+				$Cmds = str_replace('_ESTTRANS','', $key);
+				$Cmds = str_replace('_','.', $Cmds);
 				SetAdoAddNew('Trans_Fletes');
-			    SetAdoFields('TP',$Cmds[0]);
-			    SetAdoFields('Referencia',$Cmds[1]);
+			    SetAdoFields('TP',$Cmds);
+			    SetAdoFields('Referencia','ESTTRANS');
 			    SetAdoFields('Cumple',$value);
 			    SetAdoFields('CodigoC',$placa);	
 			    SetAdoFields('Carga',$tipo_ve);	
