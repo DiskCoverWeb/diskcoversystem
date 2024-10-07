@@ -1155,6 +1155,7 @@ async function datos_empresa()
 
 	 function guardar()
 	 {
+		$('#myModal_espera').show();
 	   //parametros = $('#form_datos').serialize();
 	   let parametros = {
 			'TextCodigo': $('#TextCodigo').val(),
@@ -1194,13 +1195,18 @@ async function datos_empresa()
         dataType:'json',       
 	      success: function(data)
 	      {
+			$('#myModal_espera').hide();
 	       	console.log(data);
 	       	if(data==1)
 	       	{
 	       		TVcatalogo();
 	       		Swal.fire('El proceso de grabar se realizo con exito','','success');
 	       	}
-	      }
+	      },
+		  error: (err) => {
+			$('#myModal_espera').hide();
+			Swal.fire('Ocurrio un error al procesar su solicitud. Error: ' + err, '', 'error');
+		  }
 	    })
 	 }
 
@@ -2153,9 +2159,9 @@ async function datos_empresa()
 															</div>
 															<div class="col-sm-12">
 																<div class="form-group">
-																	<label for="inputEmail3" class="col-sm-5 control-label">FORMATO GRAFICO DEL DOCUMENTO (EXTENSION:GIF)</label>
+																	<label for="TxtLogoFact" class="col-sm-5 control-label">FORMATO GRAFICO DEL DOCUMENTO (EXTENSION:GIF)</label>
 																	<div class="col-sm-7">
-																		<input type="text" class="form-control input-xs" id="TxtLogoFact" name="TxtLogoFact" placeholder="Email">
+																		<input type="text" class="form-control input-xs" id="TxtLogoFact" name="TxtLogoFact">
 																	</div>
 																	</div>	
 															</div>				     	

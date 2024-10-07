@@ -5,8 +5,8 @@ require_once(dirname(__DIR__, 3) . "/lib/fpdf/cabecera_pdf.php");
 
 $controlador = new facturarC();
 if (isset($_GET['lineas_factura'])) {
-   // $parametros = $_POST['parametros'];
-   echo json_encode($controlador->lineas_facturas());
+   $parametros = $_POST['parametros'];
+   echo json_encode($controlador->lineas_facturas($parametros));
 }
 if (isset($_GET['DCMod'])) {
    //$parametros = $_POST['parametros'];
@@ -317,10 +317,11 @@ class facturarC
       return '0';
 
    }
-   function lineas_facturas()
+   function lineas_facturas($parametros)
    {
       // $codigoCliente = $parametro['codigoCliente'];
-      $datos = $this->modelo->lineas_factura($tabla = 1);
+      //revisar parametros como opcional
+      $datos = $this->modelo->lineas_factura($tabla = 1, $parametros['tamanioTblBody']);
       $TextFacturaNo = Leer_Campo_Empresa("Mod_Fact");
       $Mod_PVP = Leer_Campo_Empresa("Mod_PVP");
       $DCEjecutivo = Leer_Campo_Empresa("Comision_Ejecutivo");
