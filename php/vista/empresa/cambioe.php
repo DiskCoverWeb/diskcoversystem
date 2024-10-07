@@ -410,9 +410,10 @@ function autocompletarCempresa(){
 function cambiarEmpresa()
 {
 	$('#myModal_espera').modal('show');
-	var parametros = $('#form_empresa').serialize();
+	var parametros = $('#form_empresa').find(':not(#tab_5 input, #tab_5 select)').serialize();
 	var parametros = parametros+'&ciu='+$('#ddl_ciudad option:selected').text();
-	$.ajax({
+	console.log(parametros);
+	/*$.ajax({
 		type: "POST",
 		 url: '../controlador/empresa/cambioeC.php?editar_datos_empresa=true',
 		data:parametros,
@@ -437,12 +438,12 @@ function cambiarEmpresa()
 			}
 
 		}
-	});
+	});*/
 }
 
 function mmasivo()
 {
-	var parametros = $('#form_empresa').serialize();
+	var parametros = $('#form_empresa').find(':not(#tab_5 input, #tab_5 select)').serialize();
 	$.ajax({
 		type: "POST",
 		 url: '../controlador/empresa/cambioeC.php?mensaje_masivo=true',
@@ -463,7 +464,7 @@ function mmasivo()
 }
 function mgrupo()
 {
-	var parametros = $('#form_empresa').serialize();
+	var parametros = $('#form_empresa').find(':not(#tab_5 input, #tab_5 select)').serialize();
 	$.ajax({
 		type: "POST",
 		 url: '../controlador/empresa/cambioeC.php?mensaje_grupo=true',
@@ -485,7 +486,7 @@ function mgrupo()
 }
 function mindividual()
 {
-	var parametros = $('#form_empresa').serialize();
+	var parametros = $('#form_empresa').find(':not(#tab_5 input, #tab_5 select)').serialize();
 	$.ajax({
 		type: "POST",
 		 url: '../controlador/empresa/cambioeC.php?mensaje_indi=true',
@@ -508,7 +509,7 @@ function mindividual()
 function cambiarEmpresaMa()
 {
 	$('#myModal_espera').modal('show');
-	var parametros = $('#form_empresa').serialize();
+	var parametros = $('#form_empresa').find(':not(#tab_5 input, #tab_5 select)').serialize();
 	$.ajax({
 		type: "POST",
 		 url: '../controlador/empresa/cambioeC.php?guardar_masivo=true',
@@ -590,7 +591,7 @@ function asignar_clave()
 	if($('#entidad').val()==''){Swal.fire('Seleccione una entidad','','info');return false;}
 	// if($('#ciudad').val()==''){Swal.fire('Seleccione una Ciudad','','info');return false;}
 	if($('#empresas').val()==''){Swal.fire('Seleccione una empresa','','info');return false;}
-	var parametros = $('#form_empresa').serialize();
+	var parametros = $('#form_empresa').find(':not(#tab_5 input, #tab_5 select)').serialize();
 	$.ajax({
 		type: "POST",
 		 url: '../controlador/empresa/cambioeC.php?asignar_clave=true',

@@ -658,6 +658,7 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			//Inscripciones -> Formularios -> Voluntarios
 			case 'migrar_datos':
 				require_once("migracion/migrar_datos.php");
+				break;
 			//Migracion -> Archivo -> Migrar_esquemas
 			case 'migrar_esquemas':
 				require_once('migracion/migrar_esquemas.php');
