@@ -412,8 +412,7 @@ function cambiarEmpresa()
 	$('#myModal_espera').modal('show');
 	var parametros = $('#form_empresa').find(':not(#tab_5 input, #tab_5 select)').serialize();
 	var parametros = parametros+'&ciu='+$('#ddl_ciudad option:selected').text();
-	console.log(parametros);
-	/*$.ajax({
+	$.ajax({
 		type: "POST",
 		 url: '../controlador/empresa/cambioeC.php?editar_datos_empresa=true',
 		data:parametros,
@@ -438,7 +437,7 @@ function cambiarEmpresa()
 			}
 
 		}
-	});*/
+	});
 }
 
 function mmasivo()
