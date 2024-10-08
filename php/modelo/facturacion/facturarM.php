@@ -64,7 +64,7 @@ class facturarM
 
 
 
-  function lineas_factura($tabla = false)
+  function lineas_factura($tabla = false, $altoTabla=0)
   {
     $sql = "SELECT * 
             FROM Asiento_F 
@@ -72,9 +72,9 @@ class facturarM
             AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "' 
             ORDER BY A_No";
     if ($tabla) {
+      $altoTabla = $altoTabla == 0 ? 100 : $altoTabla;
       $botones[0] = array('boton' => 'Eliminar linea', 'icono' => '<i class="fa fa-trash"></i>', 'tipo' => 'danger', 'id' => 'A_No,CODIGO');
-      $datos = grilla_generica_new($sql, 'Asiento_F', '', $titulo = false, $botones, $check = false, $imagen = false, 1, 1, 1, 100);
-
+      $datos = grilla_generica_new($sql, 'Asiento_F', '', $titulo = false, $botones, $check = false, $imagen = false, 1, 1, 1, $altoTabla);
     } else {
       $datos = $this->db->datos($sql);
     }
