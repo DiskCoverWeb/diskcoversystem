@@ -263,6 +263,23 @@
   function buscar_modal()
   {
     $('#myModal_buscar').modal('show');
+    query = $('#txt_search_producto').val();
+     $.ajax({
+          url:   '../controlador/inventario/solicitud_materialC.php?productos=true&q='+query,
+          type:  'post',
+          // data: {parametros:parametros},
+          dataType: 'json',
+          success:  function (response) {
+            console.log(response);
+            var tr = '';
+            response.forEach(function(i,item){
+               tr+='<tr><td>'+item.id+'</td><td>'+item.text+'</td><td>'+item.data.Costo+'</td></tr>';
+            })
+
+            $('#tbl_producto_search').html(tr);
+          
+          }
+      });
   }
 
 </script>
@@ -457,7 +474,7 @@
                         <th>Costo</th>
                         <th></th>
                       </thead>
-                      <tbody>
+                      <tbody id="tbl_producto_search">
                         <tr>
                           <td></td>
                           <td></td>
