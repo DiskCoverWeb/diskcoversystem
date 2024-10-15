@@ -11,7 +11,7 @@ class solicitud_materialM
         $this->conn = new db();
     }
 
-    function cargar_productos($fami,$query=false,$pag=false)
+    function cargar_productos($fami=false,$query=false,$pag=false)
 	{
 		if($pag==false)
 		{
@@ -24,9 +24,12 @@ class solicitud_materialM
 		 WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 		 AND item='".$_SESSION['INGRESO']['item']."' 
 		 AND TC='P' 
-		 AND Codigo_Inv like '".$fami."%'
 		 AND LEN(Cta_Inventario)>3 
 		 AND LEN(Cta_Costo_Venta)>3 ";
+		 if($fami)
+		 {
+		 	$sql.=" AND Codigo_Inv like '".$fami."%'";
+		 }
 		if($query) 
 		{
 			$sql.=" AND Codigo_Inv+' '+Producto LIKE '%".$query."%'";
@@ -52,7 +55,7 @@ class solicitud_materialM
 		 AND TC='I' ";
 		if($query) 
 		{
-			$sql.=" AND Codigo_Inv+' '+Producto LIKE '%".$query."%'";
+			$sql.=" AND Codigo_Inv = '".$query."'";
 		}
 		$sql.=" ORDER BY ID OFFSET ".$pag." ROWS FETCH NEXT 25 ROWS ONLY;";
 

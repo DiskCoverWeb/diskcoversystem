@@ -1,8 +1,9 @@
 <script type="text/javascript">
 
   $(document).ready(function () {
-    familias();
-    $('#ddl_productos').select2();
+    productos();
+    // familias();
+    // $('#ddl_productos').select2();
     // $('#ddl_marca').select2();
      marcas()
     linea_pedido();
@@ -11,6 +12,8 @@
       var data = e.params.data.data;
       $('#txt_costo').val(data.Costo);
       $('#txt_stock').val(data.Existencia);
+      $('#ddl_familia').text('Familia: '+data.familia);
+      $('#ddl_idfamilia').text(data.codfamilia);
       console.log(data);
     });
 
@@ -40,12 +43,11 @@
 
   function productos()
   {
-    familia = $('#ddl_familia').val();
     $('#ddl_productos').select2({
         placeholder: 'Seleccione',
         width:'100%',
         ajax: {
-            url:   '../controlador/inventario/solicitud_materialC.php?productos=true&fami='+familia,
+            url:   '../controlador/inventario/solicitud_materialC.php?productos=true',
             dataType: 'json',
             delay: 250,
             processResults: function (data) {
@@ -59,25 +61,25 @@
     });
   }
 
-  function familias()
-  {
-    $('#ddl_familia').select2({
-        placeholder: 'Seleccione',
-        width:'100%',
-        ajax: {
-            url:   '../controlador/inventario/solicitud_materialC.php?familia=true',
-            dataType: 'json',
-            delay: 250,
-            processResults: function (data) {
-              // console.log(data);
-              return {
-                results: data
-            };
-        },
-        cache: true
-      }
-    });
-  }
+  // function familias()
+  // {
+  //   $('#ddl_familia').select2({
+  //       placeholder: 'Seleccione',
+  //       width:'100%',
+  //       ajax: {
+  //           url:   '../controlador/inventario/solicitud_materialC.php?familia=true',
+  //           dataType: 'json',
+  //           delay: 250,
+  //           processResults: function (data) {
+  //             // console.log(data);
+  //             return {
+  //               results: data
+  //           };
+  //       },
+  //       cache: true
+  //     }
+  //   });
+  // }
 
   function guardar_linea()
   {
@@ -95,16 +97,16 @@
        Swal.fire("Cantidad no valida",'','info');
        return false;
      }
-      if(costo==0 || costo =='')
-     {
-       Swal.fire("Costo no valida",'','info');
-       return false;
-     }
+     //  if(costo==0 || costo =='')
+     // {
+     //   Swal.fire("Costo no valida",'','info');
+     //   return false;
+     // }
      var parametros = 
      {
         'cantidad':cant,
         'productos':prod,
-        'familia':$('#ddl_familia').val(),
+        'familia':$('#ddl_idfamilia').val(),
         'marca':$('#ddl_marca').val(),
         'fecha':$('#txt_fecha').val(),
         'fechaEnt':$('#txt_fechaEnt').val(),
@@ -258,6 +260,11 @@
       });
   }
 
+  function buscar_modal()
+  {
+    $('#myModal_buscar').modal('show');
+  }
+
 </script>
 <section class="content">
   <div class="row">
@@ -297,19 +304,28 @@
         <div class="col-sm-2">
             <b>Fecha</b>
             <input type="date" name="txt_fecha" id="txt_fecha" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>" readonly >
-        </div>
-        <div class="col-sm-2">
-            <b>Familias </b>
-            <select class="form-control" id="ddl_familia" name="ddl_familia" onchange="productos()" >
-              <option value="">Seleccione familia</option>
-            </select>
-        </div>
-        <div class="col-sm-3">
+        </div>        
+        <div class="col-sm-5">
             <b>Producto / articulo </b>
-            <select class="form-control" id="ddl_productos" name="ddl_productos">
-              <option value="">Seleccione producto</option>
-            </select>
+            <div class="input-group">
+              <select class="form-control" id="ddl_productos" name="ddl_productos">
+                <option value="">Seleccione producto</option>
+              </select>         
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-primary btn-flat btn-xs" onclick="buscar_modal()"><i class="fa fa-search"></i></button>
+              </span>
+            </div>
+
+               
+            <label id="ddl_familia" name="ddl_familia" ></label>
+            <input type="hidden" name="ddl_idfamilia" id="ddl_idfamilia">
         </div>
+      <!--   <div class="col-sm-2">
+            <b>Familias </b> -->
+            <!-- <select class="form-control" id="ddl_familia" name="ddl_familia" onchange="productos()" >
+              <option value="">Seleccione familia</option>
+            </select> -->
+        <!-- </div> -->
         <div class="col-sm-3">
           <b>Marcas </b>
           <div class="input-group">
@@ -336,7 +352,7 @@
         </div> 
         <div class="col-sm-1">
           <b>Costo</b>
-          <input type="text" name="txt_costo" id="txt_costo" class="form-control input-sm" placeholder="0"  onblur="calcular()" >
+          <input type="text" name="txt_costo" id="txt_costo" class="form-control input-sm" placeholder="0"  onblur="calcular()" readonly>
         </div><div class="col-sm-1">
           <b>Stock</b>
           <input type="text" name="txt_stock" id="txt_stock" class="form-control input-sm" readonly >
@@ -407,6 +423,49 @@
                 <div class="col-sm-12">
                     <b>Nombre de marca</b>
                     <input type="" class="form-control input-sm" name="txt_new_marca" id="txt_new_marca">
+                </div>
+                
+              </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="guardar_marca()">Guardar</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+   <div id="myModal_buscar" class="modal fade myModalBuscar" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Buscar productos</h4>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-sm-12">
+                    <b>Nombre producto</b>
+                    <input type="" class="form-control input-sm" name="txt_search_producto" id="txt_search_producto">
+                    <br>
+                </div>
+                <div class="col-sm-12">
+                    <table class="table table-hover">
+                      <thead>
+                        <th>Codigo</th>
+                        <th>Producto</th>
+                        <th>Costo</th>
+                        <th></th>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                      </tbody>
+                    </table>
                 </div>
                 
               </div>

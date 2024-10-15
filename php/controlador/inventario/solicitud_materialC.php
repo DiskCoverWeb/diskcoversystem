@@ -254,12 +254,23 @@ class solicitud_materialC
     function autocomplet_producto($fami,$query)
 	{
 		// print_r($fami);die();
-		$datos = $this->modelo->cargar_productos($fami,$query);
+		$datos = $this->modelo->cargar_productos(false,$query);
 		// print_r($datos);die();
 		$productos = array();
 		foreach ($datos as $key => $value) {			
 			// $costo =  $this->ing_descargos->costo_venta($value['Codigo_Inv']);
 			// $costoTrans = $this->ing_descargos->costo_producto($value['Codigo_Inv']);
+			$codInv = explode('.',$value['Codigo_Inv']);
+			$codFam = $codInv[0].'.'.$codInv[1];
+			$familia = $this->modelo->cargar_familia($codFam,false);
+			$value['familia']  = '';
+			$value['codfamilia'] = '';
+			if(count($familia)>0)
+			{
+				$value['familia'] = $familia[0]['Producto'];
+				$value['codfamilia'] = $familia[0]['Codigo_Inv'];
+			}
+			// print_r($familia);die();
 
 			$FechaInventario = date('Y-m-d');
 		 	$CodBodega = '01';

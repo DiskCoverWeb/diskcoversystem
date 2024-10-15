@@ -987,9 +987,9 @@ function autocoplet_ingreso_donante(){
 											<div class="row">
 												<b>Llegaron en gavetas?</b><br>
 												<label class="label-success btn-sm btn">
-												<input type="radio" id="" value="SI" name="rbx_gaveta" onclick="show_gaveta()">SI</label>
+												<input type="radio" id="rbx_gaveta" value="SI" name="rbx_gaveta" onclick="show_gaveta()">SI</label>
 												<label class="label-danger btn-sm btn">
-												<input type="radio" id="" value="NO" name="rbx_gaveta" onclick="show_gaveta()" checked>NO</label>												
+												<input type="radio" id="rbx_gaveta_no" value="NO" name="rbx_gaveta" onclick="show_gaveta()" checked>NO</label>												
 											</div>
 												
 
