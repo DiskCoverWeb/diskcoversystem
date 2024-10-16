@@ -274,7 +274,7 @@ class solicitud_materialC
 
 			$FechaInventario = date('Y-m-d');
 		 	$CodBodega = '01';
-		 	$costo_existencias = Leer_Codigo_Inv($value['Codigo_Inv'],$FechaInventario,$CodBodega,$CodMarca='');
+		 	$costo_existencias['respueta'] = Leer_Codigo_Inv($value['Codigo_Inv'],$FechaInventario,$CodBodega,$CodMarca='');
 
 			if($costo_existencias['respueta']!=1)
 			{
@@ -395,6 +395,7 @@ class solicitud_materialC
 					<td>'.$value['Codigo_Inv'].'</td>
 					<td>'.$value['Producto'].'</td>
 					<td>'.$value['Cantidad'].'</td>
+					<td>'.$value['Unidad'].'</td>
 					<td>'.$value['Precio'].'</td>
 					<td>'.$value['Marca'].'</td>
 					<td>'.$value['Fecha']->format('Y-m-d').'</td>

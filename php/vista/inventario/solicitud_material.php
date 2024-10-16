@@ -12,6 +12,7 @@
       var data = e.params.data.data;
       $('#txt_costo').val(data.Costo);
       $('#txt_stock').val(data.Existencia);
+      $('#txt_uni').val(data.Unidad);
       $('#ddl_familia').text('Familia: '+data.familia);
       $('#ddl_idfamilia').text(data.codfamilia);
       console.log(data);
@@ -263,23 +264,47 @@
   function buscar_modal()
   {
     $('#myModal_buscar').modal('show');
+   // bucar_producto_modal();
+    
+  }
+
+  function bucar_producto_modal()
+  {
+    $('#myModal_espera').modal('show');
+
     query = $('#txt_search_producto').val();
      $.ajax({
           url:   '../controlador/inventario/solicitud_materialC.php?productos=true&q='+query,
           type:  'post',
           // data: {parametros:parametros},
-          dataType: 'json',
+          dataType: 'json',          
           success:  function (response) {
+            $('#myModal_espera').modal('hide');
             console.log(response);
             var tr = '';
-            response.forEach(function(i,item){
-               tr+='<tr><td>'+item.id+'</td><td>'+item.text+'</td><td>'+item.data.Costo+'</td></tr>';
+            response.forEach(function(item,i){
+
+               tr+=`<tr><td>`+item.id+`</td><td>`+item.text+`</td><td>`+item.data.Costo+`</td><td>
+                        <button class=" btn-sm btn btn-primary" onclick="usar_producto('`+item.id+`','`+item.text+`','`+item.data.Costo+`','`+item.data.familia+`','`+item.data.Existencia+`','`+item.data.codfamilia+`','`+item.data.Unidad+`')"><i class="bx bx-box"></i>Usar</button></td></tr>`;
             })
 
             $('#tbl_producto_search').html(tr);
           
           }
       });
+  }
+
+  function usar_producto(cod,prod,cost,fami,stock,codfam,uni)
+  {    
+    $('#ddl_productos').empty();
+    $('#myModal_buscar').modal('hide');
+    $('#txt_costo').val(cost)
+    $('#ddl_familia').text(fami)
+    $('#ddl_idfamilia').val(codfam)
+    $('#txt_stock').val(stock)
+    $('#txt_uni').val(uni)
+
+    $('#ddl_productos').append($('<option>',{value:  cod, text: prod,selected: true }));
   }
 
 </script>
@@ -363,14 +388,19 @@
             <b>Fecha Entrega</b>
             <input type="date" name="txt_fechaEnt" id="txt_fechaEnt" class="form-control input-sm" value="<?php echo date('Y-m-d'); ?>" >
         </div>
-        <div class="col-sm-5">
+        <div class="col-sm-4">
             <b>Observacion</b>  
             <input type="text" name="txt_observacion" id="txt_observacion" class="form-control input-sm" placeholder="Observacion" >
+        </div>
+        <div class="col-sm-1">
+          <b>unidad</b>
+          <input type="text" name="txt_uni" id="txt_uni" class="form-control input-sm" placeholder="0"  onblur="calcular()" readonly>
         </div> 
         <div class="col-sm-1">
           <b>Costo</b>
           <input type="text" name="txt_costo" id="txt_costo" class="form-control input-sm" placeholder="0"  onblur="calcular()" readonly>
-        </div><div class="col-sm-1">
+        </div>
+        <div class="col-sm-1">
           <b>Stock</b>
           <input type="text" name="txt_stock" id="txt_stock" class="form-control input-sm" readonly >
         </div>
@@ -402,6 +432,7 @@
               <th>Codigo</th>
               <th>Producto</th>
               <th>Cantidad</th>
+              <th>Unidad</th>   
               <th>Costo</th>   
               <th>Marca</th>          
               <th>Fecha Solicitud</th>
@@ -452,7 +483,7 @@
     </div>
   </div>
 
-   <div id="myModal_buscar" class="modal fade myModalBuscar" role="dialog">
+   <div id="myModal_buscar" class="modal fade myModalBuscar" role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary">
@@ -461,13 +492,17 @@
             </div>
             <div class="modal-body">
               <div class="row">
-                <div class="col-sm-12">
+                <div class="col-sm-10">
                     <b>Nombre producto</b>
                     <input type="" class="form-control input-sm" name="txt_search_producto" id="txt_search_producto">
                     <br>
                 </div>
-                <div class="col-sm-12">
-                    <table class="table table-hover">
+                <div class="col-sm-2">
+                  <br>
+                  <button type="button" class="btn btn-primary" onclick="bucar_producto_modal()"><i class="fa fa-search"></i> Buscar</button>                  
+                </div> 
+                <div class="col-sm-12" style="overflow-y: scroll; height: 300px;">
+                    <table class="table table-hover text-sm">
                       <thead>
                         <th>Codigo</th>
                         <th>Producto</th>
