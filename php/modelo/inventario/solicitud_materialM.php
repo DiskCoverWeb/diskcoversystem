@@ -146,6 +146,14 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
 		// print_r($sql);die();
 		return $this->conn->String_Sql($sql);
 	}
+
+	function EliminarSolicitud($orden)
+	{
+		$sql = "DELETE FROM Trans_Pedidos WHERE Orden_No = '".$orden."'";
+
+		// print_r($sql);die();
+		return $this->conn->String_Sql($sql);
+	}
 	// ------------------------------------------Aprobacion de solicitud---------------------------------------------------------
 
 	function pedidos_contratista($orden=false,$id=false,$fecha=false,$contratista=false)
@@ -176,14 +184,20 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
 
 	function lineas_pedido_solicitados($orden=false,$id=false)
 	{
-		$sql = "SELECT TP.Periodo, Fecha, Codigo_Inv, Hora, Producto, Cantidad, Precio, Total, Total_IVA, No_Hab, Cta_Venta, TP.Item, CodigoU, Orden_No, Cta_Venta_0, TC, Factura, Autorizacion, Serie, Codigo_Sup, CodigoC, Opc1, Opc2, Opc3, Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,Marca 
+		$sql = "SELECT TP.Periodo, TP.Fecha, TP.Codigo_Inv, Hora, TP.Producto, TP.Cantidad, Precio, Total, Total_IVA, No_Hab, Cta_Venta, 
+TP.Item, CodigoU, Orden_No, Cta_Venta_0, TP.TC, TP.Factura, Autorizacion, Serie, TP.Codigo_Sup, CodigoC, Opc1, Opc2, Opc3, 
+TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unidad 
+
 		FROM Trans_Pedidos TP
 		inner join Catalogo_Marcas CM on TP.CodMarca = CM.CodMar
-
-		WHERE  CM.Item = TP.Item
-		AND CM.Periodo = TP.Periodo
+		inner join Catalogo_Productos CP on TP.Codigo_Inv = CP.Codigo_Inv 
+		WHERE CM.Item = TP.Item 
+		AND CM.Periodo = TP.Periodo 
+		AND TP.Periodo = CP.Periodo 
+		AND TP.Item = CP.Item 
+		AND CM.Periodo = TP.Periodo 
 		AND TP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
-		AND TC = 'S' 
+		AND TP.TC = 'S' 
 		AND TP.Item='".$_SESSION['INGRESO']['item']."' ";
 		if($orden)
 		{
@@ -273,13 +287,20 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
 
 	function lineas_pedido_solicitados_proveedor($orden)
 	{
-		$sql = "SELECT  TP.Periodo, Fecha, Codigo_Inv, Hora, Producto, Cantidad, Precio, Total, Total_IVA, No_Hab, Cta_Venta, TP.Item, CodigoU, Orden_No, Cta_Venta_0, TC, Factura, Autorizacion, Serie, Codigo_Sup, CodigoC, Opc1, Opc2, Opc3, Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,Marca 
+		$sql = "SELECT TP.Periodo, TP.Fecha, TP.Codigo_Inv, Hora, TP.Producto, TP.Cantidad, Precio, Total, Total_IVA, No_Hab, Cta_Venta, 
+TP.Item, CodigoU, Orden_No, Cta_Venta_0, TP.TC, TP.Factura, Autorizacion, Serie, TP.Codigo_Sup, CodigoC, Opc1, Opc2, Opc3, 
+TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unidad 
+
 		FROM Trans_Pedidos TP
 		inner join Catalogo_Marcas CM on TP.CodMarca = CM.CodMar
-		WHERE  CM.Item = TP.Item
-		AND CM.Periodo = TP.Periodo
+		inner join Catalogo_Productos CP on TP.Codigo_Inv = CP.Codigo_Inv 
+		WHERE CM.Item = TP.Item 
+		AND CM.Periodo = TP.Periodo 
+		AND TP.Periodo = CP.Periodo 
+		AND TP.Item = CP.Item 
+		AND CM.Periodo = TP.Periodo 
 		AND TP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
-		AND TC = 'E' 
+		AND TP.TC = 'E' 
 		 AND Orden_No = '".$orden."'
 		AND TP.Item='".$_SESSION['INGRESO']['item']."' ";
 		$datos = $this->conn->datos($sql);
@@ -404,7 +425,7 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
        	return $datos;
 	}
 
-	function proveedores_seleccionados_x_producto($producto,$orden=false)
+	function proveedores_seleccionados_x_producto($producto,$orden=false,$proveedor=false)
 	{
 		$sql = "SELECT  T.*,C.* 
 		FROM Trans_Ticket  T
@@ -415,6 +436,10 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
 		if($orden)
 		{
 			$sql.="AND Orden_No = '".$orden."'";
+		}
+		if($proveedor)
+		{
+			$sql.="AND CodigoC = '".$proveedor."'";
 		}
 
 		// print_r($sql);die();

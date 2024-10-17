@@ -220,6 +220,7 @@ if(isset($_GET['orden']))
           data: {parametros:parametros},
           dataType: 'json',
           success:  function (response) {
+            $('#ddl_proveedores_list').empty();
             $('#ddl_proveedores_list').html(response.option);
             $('#txt_costoAnt').val(response.CostoTotal);
            
@@ -270,6 +271,47 @@ if(isset($_GET['orden']))
             // Puedes manejar el error aquí si es necesario
           },
       });
+  }
+
+  function lineaSolProv(linea)
+  {
+    $('#txt_linea_Select').val(linea);
+  }
+
+  function usar_cliente(nombre, ruc, codigocliente, email, T,grupo)
+  {
+    linea = $('#txt_linea_Select').val();
+    parametros = 
+    {
+      'linea':linea,
+      'proveedor':codigocliente,
+    }
+     $.ajax({
+          url:   '../controlador/inventario/solicitud_materialC.php?AddProveedorExta=true',
+          type:  'post',
+          data: {parametros:parametros},
+          dataType: 'json',
+          success:  function (response) {
+            if(response==1)
+            {
+              Swal.fire("Proveedor asignado","","success");
+               $('#ddl_selector_'+linea).append($('<option>',{value:  codigocliente, text: nombre,selected: true }));
+              $('#myModal').modal('hide');
+            }else
+            {              
+              Swal.fire("el proveedor ya esta asignado a este producto","","info");
+            }
+          
+          
+          },
+          error: function (error) {
+            $('#myModal_espera').modal('hide');
+            console.error('Error en numero_comprobante:', error);
+            // Puedes manejar el error aquí si es necesario
+          },
+      });
+
+   
   }
 
 
@@ -323,7 +365,8 @@ if(isset($_GET['orden']))
   </div>
   <div class="row">
     <form id="form_lineas">
-    <div class="col-sm-12">
+    <div class="col-sm-12">      
+      <input type="hidden" name="txt_linea_Select" id="txt_linea_Select" value="">
         <table class="table">
           <thead>
             <thead>

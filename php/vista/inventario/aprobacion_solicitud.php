@@ -230,7 +230,8 @@ function imprimir_excel()
               <th>item</th>
               <th>Codigo</th>
               <th>Producto</th>
-              <th>Cantidad</th>              
+              <th>Cantidad</th>  
+              <th>Unidad</th>              
               <th>Costo</th>
               <th>Fecha Solicitud</th>
               <th>Fecha Entrega</th>
