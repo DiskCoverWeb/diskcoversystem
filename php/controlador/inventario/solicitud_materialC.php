@@ -286,7 +286,7 @@ class solicitud_materialC
 
 			$FechaInventario = date('Y-m-d');
 		 	$CodBodega = '01';
-		 	$costo_existencias['respueta'] = Leer_Codigo_Inv($value['Codigo_Inv'],$FechaInventario,$CodBodega,$CodMarca='');
+		 	$costo_existencias = Leer_Codigo_Inv($value['Codigo_Inv'],$FechaInventario,$CodBodega,$CodMarca='');
 
 			if($costo_existencias['respueta']!=1)
 			{
@@ -409,10 +409,10 @@ class solicitud_materialC
 					<td>'.$value['Cantidad'].'</td>
 					<td>'.$value['Unidad'].'</td>
 					<td>'.$value['Precio'].'</td>
+					<td>'.$value['Total'].'</td>
 					<td>'.$value['Marca'].'</td>
 					<td>'.$value['Fecha']->format('Y-m-d').'</td>
 					<td>'.$value['Fecha_Ent']->format('Y-m-d').'</td>
-					<td>'.$value['Total'].'</td>
 					<td>'.$value['Comentario'].'</td>
 					<td>
 						<button class="btn btn-sm btn-danger" onclick="eliminar_linea(\''.$value['ID'].'\')"><i class="fa fa fa-trash"></i></button>
@@ -421,7 +421,7 @@ class solicitud_materialC
 				$total+=$value['Total'];
 		}
 
-		$tr.='<tr><td colspan="6"></td><td><b>TOTAL</b></td><td><b>'.$total.'</b></td><td></td><td></td></tr>';
+		$tr.='<tr><td colspan="5"></td><td><b>TOTAL</b></td><td><b>'.$total.'</b></td><td></td><td></td><td></td></tr>';
 
 
 		return $tr;
