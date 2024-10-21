@@ -232,10 +232,10 @@ function imprimir_excel()
               <th>Producto</th>
               <th>Cantidad</th>  
               <th>Unidad</th>              
-              <th>Costo</th>
+              <th>Costo ref</th>
+              <th>Total ref</th>
               <th>Fecha Solicitud</th>
               <th>Fecha Entrega</th>
-              <th>Total</th>
               <th>Observacion</th>
               <th>Aprobado</th>
               <th></th>

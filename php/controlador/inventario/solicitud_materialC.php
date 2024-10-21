@@ -453,7 +453,9 @@ class solicitud_materialC
 
 	function EliminarSolicitud($parametros)
 	{
-		return $this->modelo->EliminarSolicitud($parametros['orden']);
+		$tc = false;
+		if(isset($parametros['tipo'])){$tc = $parametros['tipo'];}
+		return $this->modelo->EliminarSolicitud($parametros['orden'],$tc);
 	}
 
 
@@ -636,15 +638,15 @@ class solicitud_materialC
 					<td width="20px"><input type="text" id="txt_cant_'.$value['ID'].'" name="txt_cant_'.$value['ID'].'" value="'.$value['Cantidad'].'" class="form-control input-sm"></td>
 
 					<td>'.$value['Unidad'].'</td>
-					<td>'.$value['Precio'].'</td>
-					<td>'.$value['Fecha']->format('Y-m-d').'</td>
-					<td>'.$value['Fecha_Ent']->format('Y-m-d').'</td>					
+					<td>'.$value['Precio'].'</td>				
 					<td>'.$value['Total'].'</td>				
+					<td>'.$value['Fecha']->format('Y-m-d').'</td>
+					<td>'.$value['Fecha_Ent']->format('Y-m-d').'</td>	
 					<td>'.$value['Comentario'].'</td>
 					<td><input type="checkbox" name="rbl_a_'.$value['ID'].'"  id="rbl_a_'.$value['ID'].'"></td>
 					<td>
-						<button type="button" class="btn btn-sm btn-primary" onclick="guardar_linea_aprobacion(\''.$value['ID'].'\')"><i class="fa fa fa-save"></i></button>
-						<button type="button" class="btn btn-sm btn-danger" onclick="eliminar_linea(\''.$value['ID'].'\')"><i class="fa fa fa-trash"></i></button>
+						<button type="button" class="btn btn-sm btn-primary" onclick="guardar_linea_aprobacion(\''.$value['ID'].'\')" title="Guardar Cantidad" ><i class="fa fa fa-save"></i></button>
+						<button type="button" class="btn btn-sm btn-danger" onclick="eliminar_linea(\''.$value['ID'].'\')" title="Eliminar linea" ><i class="fa fa fa-trash"></i></button>
 						
 					</td>
 				</tr>';
@@ -947,8 +949,15 @@ class solicitud_materialC
 					<td>'.$value['Fecha_Ent']->format('Y-m-d').'</td>
 					<td>'.$value['Total'].'</td>	
 					<td>
-						<button type="button" class="btn btn-sm btn-primary" onclick="imprimir_pdf(\''.$value['Orden_No'].'\')" ><i class="fa fa-file-pdf-o"></i></butto>
-						<button type="button" class="btn btn-sm btn-default" onclick="imprimir_excel(\''.$value['Orden_No'].'\')" ><i class="fa fa-file-excel-o"></i></butto>
+					<div class="input-group-btn">
+						<button type="button" class="btn btn-sm btn-danger" title="Eliminar pedido" onclick="eliminar_solicitud(\''.$value['Orden_No'].'\')"><i class="fa fa-trash"></i></butto>
+						<button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Informe
+						<span class="fa fa-caret-down"></span></button>
+						<ul class="dropdown-menu">
+							<li><a href="#" onclick="imprimir_pdf(\''.$value['Orden_No'].'\')"> <i class="fa fa-file-pdf-o"></i>PDF</a></li>
+							<li><a href="#" onclick="imprimir_excel(\''.$value['Orden_No'].'\')"><i class="fa fa-file-excel-o"></i> Excel</a></li>
+						</ul>
+					</div>
 					</td>						
 				</tr>';
 				$total+=$value['Total'];
@@ -997,25 +1006,23 @@ class solicitud_materialC
 					<td>'.$value['Producto'].'</td>
 					<td>'.$value['Cantidad'].'</td>
 					<td>'.$value['Unidad'].'</td>
-					<td>'.$value['Precio'].'</td>
-					<td>'.$value['Fecha']->format('Y-m-d').'</td>
-					<td>'.$value['Fecha_Ent']->format('Y-m-d').'</td>					
+					<td>'.$value['Precio'].'</td>				
 					<td>'.$value['Total'].'</td>
+					<td>'.$value['Fecha']->format('Y-m-d').'</td>
+					<td>'.$value['Fecha_Ent']->format('Y-m-d').'</td>	
 					<td>'.$value['Comentario'].'</td>
 					<td width="28%">
-						<div class="input-group input-group-sm">
-							<select class="form-control select2_prove" id="ddl_selector_'.$value['ID'].'" onclick="llenarProveedores(\'ddl_selector_'.$value['ID'].'\')" name="ddl_selector_'.$value['ID'].'[]" multiple="multiple" row="2">
-							<option disabled value="">Seleccione proveedor</option>
-							</select>
-							<span class="input-group-btn">
+						<div class="input-group margin">
+							<div class="input-group-btn">
 								<button type="button" class="btn btn-sm btn-primary" onclick="addCliente();lineaSolProv('.$value['ID'].')"><i class="fa fa-user-plus"></i></button>
-							</span>
+							</div>
+							<select class="form-control select2_prove" id="ddl_selector_'.$value['ID'].'" onclick="llenarProveedores(\'ddl_selector_'.$value['ID'].'\')" name="ddl_selector_'.$value['ID'].'[]" multiple="multiple">
+								<option disabled value="">Seleccione proveedor</option>
+							</select>
 						</div>
-
-					
-
 					</td>
-				<!---	<td>
+					<!---
+					<td>
 						<button class="btn btn-sm btn-primary" onclick="eliminar_linea(\''.$value['ID'].'\')"><i class="fa fa fa-save"></i></button>
 					</td>
 					-->
@@ -1092,8 +1099,22 @@ class solicitud_materialC
 					<td>'.$value['Fecha_Ent']->format('Y-m-d').'</td>
 					<td>'.$value['Total'].'</td>
 					<td>
+
+						<div class="input-group-btn">
+							<button type="button" class="btn btn-sm btn-danger" title="Eliminar pedido" onclick="eliminar_solicitud(\''.$value['Orden_No'].'\')"><i class="fa fa-trash"></i></butto>
+							<button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Informe
+							<span class="fa fa-caret-down"></span></button>
+							<ul class="dropdown-menu">
+								<li><a href="#" onclick="imprimir_pdf(\''.$value['Orden_No'].'\')"> <i class="fa fa-file-pdf-o"></i>PDF</a></li>
+								<li><a href="#" onclick="imprimir_excel(\''.$value['Orden_No'].'\')"><i class="fa fa-file-excel-o"></i> Excel</a></li>
+							</ul>
+						</div>
+
+<!--
 						<button type="button" class="btn btn-sm btn-default" onclick="imprimir_pdf(\''.$value['Orden_No'].'\')" ><i class="fa fa-file-pdf-o"></i></butto>
 						<button type="button" class="btn btn-sm btn-default" onclick="imprimir_excel(\''.$value['Orden_No'].'\')" ><i class="fa fa-file-excel-o"></i></butto>
+
+						-->
 						
 					</td>						
 				</tr>';
@@ -1149,10 +1170,11 @@ class solicitud_materialC
 					<td>'.$value['Codigo_Inv'].'</td>
 					<td>'.$value['Producto'].'</td>
 					<td>'.$value['Cantidad'].'</td>
+					<td>'.$value['Unidad'].'</td>
 					<td>'.$value['Precio'].'</td>
+					<td>'.$value['Total'].'</td>
 					<td>'.$value['Fecha']->format('Y-m-d').'</td>
 					<td>'.$value['Fecha_Ent']->format('Y-m-d').'</td>
-					<td>'.$value['Total'].'</td>
 					<td>'.$value['Comentario'].'</td>
 					<td width="28%">
 						<div class="input-group input-group-sm">
@@ -1395,8 +1417,23 @@ class solicitud_materialC
 		$data = $this->modelo->proveedores_seleccionados_x_producto($parametros['codigo'],$parametros['orden']);
 		$lista = '';
 		foreach ($data as $key => $value) {
-			$lista.='<option value="'.$value['CodigoC'].'">'.$value['Cliente'].'</option>';
+			$lista.='<tr>
+				<td>
+					'.$value['Cliente'].'
+					<input type="hidden" class="form-control input-sm" name="txt_codigoC_'.$value['T.ID'].'" id="txt_codigoC_'.$value['T.ID'].'">
+				</td>
+				<td>					
+	                  <input type="text" class="form-control input-sm" name="txt_cantidad_prov_'.$value['T.ID'].'" id="txt_cantidad_prov_'.$value['T.ID'].'">
+				</td>
+				<td>
+					<input type="text" class="form-control input-sm" value="'.$value['Precio'].'" name="txt_costoAnt" id="txt_costoAnt" readonly>
+				</td>
+				<td>
+	                  <input type="text" class="form-control input-sm" name="txt_costoAct_'.$value['T.ID'].'" id="txt_costoAct_'.$value['T.ID'].'">
+	             </td>
+			</tr>';
 		}
+		$lista.="<tr><td></td><td><label>".$data[0]['Cantidad']."</label></td><td></td></tr>";
 		return array('option'=>$lista,'CostoTotal'=>$data[0]['Total']);
 
 		// print_r($data);die();

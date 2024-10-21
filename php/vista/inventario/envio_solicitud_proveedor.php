@@ -76,7 +76,7 @@ if(isset($_GET['orden']))
 
                  $('.select2_prove').select2({
                       placeholder: 'Seleccione',
-                      width:'100%',
+                      // width:'100%',
                       ajax: {
                           url:   '../controlador/inventario/solicitud_materialC.php?lista_proveedores=true',
                           dataType: 'json',
@@ -264,10 +264,10 @@ if(isset($_GET['orden']))
               <th>Producto</th>
               <th>Cant</th>
               <th>Unidad</th>
-              <th>Costo</th>
+              <th>Costo ref</th>
+              <th>Total ref</th>
               <th>Fecha solicitud</th>
               <th>Fecha Entrega</th>
-              <th>Total</th>
               <th>Observacion</th>
               <th>Proveedores</th>
             </thead>
