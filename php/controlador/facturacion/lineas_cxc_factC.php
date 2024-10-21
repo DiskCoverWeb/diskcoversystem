@@ -60,9 +60,9 @@ class lineas_cxc_factC
         $datos = $this->modelo->nivel2($parametros['auto']);
         foreach ($datos as $key => $value) {
            $h.= '<li  title="Presione Suprimir para eliminar">
-                  <label id="label_'.str_replace('.','_','A2_'.$key).'" for="A2_'.$key.'">'.$value['Serie'].'</label>
-                  <input type="checkbox" id="A2_'.$key.'" onclick="TVcatalogo(3,\'A2_'.$key.'\',\''.$parametros['auto'].'\',\''.$value['Serie'].'\',\'\')" />
-                 <ol id="hijos_'.str_replace('.','_','A2_'.$key).'"></ol></li>';
+                  <label id="label_'.str_replace('.','_','A2_'.$key).'" for="A2_'.$key.$value['Serie'].'">'.$value['Serie'].'</label>
+                  <input type="checkbox" id="A2_'.$key.$value['Serie'].'" onclick="TVcatalogo(3,\'A2_'.$key.'\',\''.$parametros['auto'].'\',\''.$value['Serie'].'\',\'\')" />
+                 <ol id="hijos_'.str_replace('.','_','A2_'.$key).$value['Serie'].'"></ol></li>';
         }
       }
 
@@ -71,9 +71,9 @@ class lineas_cxc_factC
         $datos = $this->modelo->nivel3($parametros['auto'],$parametros['serie']);
         foreach ($datos as $key => $value) {
            $h.= '<li  title="Presione Suprimir para eliminar">
-                  <label id="label_'.str_replace('.','_','A3_'.$key).'" for="A3_'.$key.'">'.$value['Fact'].'</label>
-                  <input type="checkbox" id="A3_'.$key.'" onclick="TVcatalogo(4,\'A3_'.$key.'\',\''.$parametros['auto'].'\',\''.$parametros['serie'].'\',\''.$value['Fact'].'\')" />
-                 <ol id="hijos_'.str_replace('.','_','A3_'.$key).'"></ol></li>';
+                  <label id="label_'.str_replace('.','_','A3_'.$key).'" for="A3_'.$key.$parametros['serie'].$value['Fact'].'">'.$value['Fact'].'</label>
+                  <input type="checkbox" id="A3_'.$key.$parametros['serie'].$value['Fact'].'" onclick="TVcatalogo(4,\'A3_'.$key.'\',\''.$parametros['auto'].'\',\''.$parametros['serie'].'\',\''.$value['Fact'].'\')" />
+                 <ol id="hijos_'.str_replace('.','_','A3_'.$key).$parametros['serie'].$value['Fact'].'"></ol></li>';
         }
       }
 
