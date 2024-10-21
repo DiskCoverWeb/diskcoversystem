@@ -58,7 +58,7 @@
 			data:{parametros:parametros},
 			dataType:'json',
 			beforeSend: function () {
-				$('#hijos_'+che).html("<img src='../../img/gif/loader4.1.gif' style='width:20%' />");
+				$('#hijos_'+che+serie+fact).html("<img src='../../img/gif/loader4.1.gif' style='width:20%' />");
 			},
 			success: function(data)
 			{
@@ -71,7 +71,7 @@
 					// cod = cod.replace(//g,'_');
 					console.log(cod);
 					console.log(data);
-					$('#hijos_'+cod).html(data);
+					$('#hijos_'+cod+serie+fact).html(data);
 					// if('hijos_01_01'=='hijos_'+cod)
 					// {
 					//   $('#hijos_'+cod).html('<li>hola</li>');

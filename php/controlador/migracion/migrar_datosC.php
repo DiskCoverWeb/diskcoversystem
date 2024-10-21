@@ -8,9 +8,22 @@
 require_once(dirname(__DIR__,2). '/modelo/migracion/migrar_datosM.php');
 $controlador = new migrar_datosC();
 
+if(isset($_GET['ConsultarBasesDatos'])){
+	$query = '';
+	if (isset($_GET['query'])) {
+		$query = $_GET['query'];
+	}
+    echo json_encode($controlador->getDatabases($query));
+}
+
+if(isset($_GET['generarEsquemas']))
+{
+	echo json_encode($controlador->generarEsquemas($_GET['basedatos']));
+}
+
 if(isset($_GET['generarArchivos']))
 {
-	echo json_encode($controlador->generarArchivos());
+	echo json_encode($controlador->generarArchivos($_GET['basedatos']));
 }
 if(isset($_GET['generarSP']))
 {
@@ -26,8 +39,67 @@ class migrar_datosC
 		$this->modelo = new migrar_datosM();
 	}
 
+	function getDatabases($query){
+        $databases = $this->modelo->getDatabases($query);
+        if(count($databases) > 0){
+            $excluye = ["master", "model", "msdb", "tempdb"];
+            $datos = array();
+            $indice = 0;
+            foreach($databases as $db){
+                if(!in_array($db['name'], $excluye)){
+                    $opcion = array(
+                        'id' => $indice,
+                        'text' => $db['name']
+                    );
+                    array_push($datos, $opcion);
+                    $indice += 1;
+                }
+            }
+            
+            return $datos;
+        }
+    }
+
+	function generarEsquemas($basedatos){
+		set_time_limit(0);
+		ini_set('memory_limit', '1024M');
+
+		$link_remo = '/files/Esquemas/';
+		$link = dirname(__DIR__,3).'/TEMP/Esquemas_'.$_SESSION['INGRESO']['item'].'/';
+		if(!file_exists(dirname(__DIR__,3).'/TEMP/'))
+	   	{
+	   		mkdir(dirname(__DIR__,3).'/TEMP/',0777,true);
+	   	}
+	   	if(!file_exists($link))
+	   	{
+	   		mkdir($link,0777,true);
+	   	}	    
+
+		$this->modelo->generarEsquemas($link, $basedatos);
+
+		//$archivo = $link.'Z'.$basedatos . '.sql';
+
+		$archivo = $link.'Z'.$basedatos . '.sql';
+
+		// Verifica si el archivo existe
+		if (file_exists($archivo)) {
+		    // Establece las cabeceras para la descarga
+		    header('Content-Description: File Transfer');
+		    header('Content-Type: application/octet-stream');
+		    header('Content-Disposition: attachment; filename="' . basename($archivo) . '"');
+		    header('Expires: 0');
+		    header('Cache-Control: must-revalidate');
+		    header('Pragma: public');
+		    header('Content-Length: ' . filesize($archivo));
+		    
+		    // Lee el archivo y lo envía al navegador
+		    readfile($archivo);
+		    exit;
+		}
+	}
+
 	
-	function generarArchivos()
+	function generarArchivos($basedatos)
 	{
 		set_time_limit(0);
 	    	ini_set('memory_limit', '1024M');
@@ -43,10 +115,10 @@ class migrar_datosC
 	   		mkdir($link,0777,true);
 	   	}	    
 
-		$this->modelo->generarArchivos($link);
+		$this->modelo->generarArchivos($link, $basedatos);
 		// $this->Enviar_ftp($link,$link_remo);
 
-		$archivo = $link.'Z'.$_SESSION['INGRESO']['Base_Datos'] . '.sql';
+		$archivo = $link.'Z'.$basedatos . '.sql';
 
 		// Verifica si el archivo existe
 		if (file_exists($archivo)) {
