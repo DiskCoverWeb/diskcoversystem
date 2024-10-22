@@ -144,7 +144,7 @@ class lista_comprasC
 					<td colspan="2">'.$value2['proveedor'].'</td>					
 				</tr>';
 			}			
-			$tr.='<tr><td colspan="6"></td><td>TOTAL</td><td><b>'.$total_prov.'</b></td><td colspan="2"></td></tr></tbody></table>';			
+			$tr.='<tr><td colspan="5"></td><td>TOTAL</td><td><b>'.$total_prov.'</b></td><td colspan="2"></td></tr></tbody></table>';			
 		}
 		return $tr;
 	}
