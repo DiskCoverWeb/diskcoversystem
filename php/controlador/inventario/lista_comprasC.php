@@ -130,7 +130,7 @@ class lista_comprasC
 			$total_prov = 0;
 			foreach ($lineas as $key2 => $value2) {
 				$total_prov = $total_prov+number_format($value2['Total'],2,'.','');
-				$total_prov_org = $total_prov+number_format($value2['Total_Original'],2,'.','');
+				$total_prov_org = $total_prov_org+number_format($value2['Total_Original'],2,'.','');
 				$tr.='<tr>
 					<td>'.($key2+1).'</td>
 					<td>'.$value2['Codigo_Inv'].'</td>
