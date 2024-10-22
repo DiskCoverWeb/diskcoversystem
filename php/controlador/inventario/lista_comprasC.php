@@ -130,6 +130,7 @@ class lista_comprasC
 			$total_prov = 0;
 			foreach ($lineas as $key2 => $value2) {
 				$total_prov = $total_prov+number_format($value2['Total'],2,'.','');
+				$total_prov_org = $total_prov+number_format($value2['Total_Original'],2,'.','');
 				$tr.='<tr>
 					<td>'.($key2+1).'</td>
 					<td>'.$value2['Codigo_Inv'].'</td>
@@ -144,7 +145,7 @@ class lista_comprasC
 					<td colspan="2">'.$value2['proveedor'].'</td>					
 				</tr>';
 			}			
-			$tr.='<tr><td colspan="5"></td><td>TOTAL</td><td><b>'.$total_prov.'</b></td><td colspan="2"></td></tr></tbody></table>';			
+			$tr.='<tr><td colspan="4"></td><td>TOTAL REF</td><td><b>'.$total_prov.'</b></td><td></td><td>'.$total_prov_org.'</td><td colspan="2"></td></tr></tbody></table>';			
 		}
 		return $tr;
 	}
