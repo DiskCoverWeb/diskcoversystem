@@ -492,6 +492,11 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 				require_once("inventario/catalogo_producto.php");
 				break;
 
+			//Facturacion -> Archivo -> Catalogo de inventario
+			case 'catalogoProBaq':
+				require_once("inventario/catalogo_producto_baq.php");
+				break;
+
 			//Inventario -> Archivo -> Asignación categorias generales
 			case 'catalogo_bodega':
 				require_once("inventario/catalogo_bodega.php");
