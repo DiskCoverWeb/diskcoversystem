@@ -110,7 +110,7 @@ class lista_comprasC
 		foreach ($datos as $key => $value) {
 			$tr.='<table class="table">
 			<thead>
-			 <tr><td colspan="9"><b>'.$value['Cliente'].'</b></td><td class="text-right"><button class="btn btn-sm btn-primary" onclick="comprobante_individual(\''.$parametros['orden'].'\',\''.$value['CodigoC'].'\')"><i class="fa fa-bill"></i>Generar comprobante</button></td></tr>
+			 <tr><td colspan="9"><b>'.$value['Cliente'].'</b></td><td class="text-right"><button type="button" class="btn btn-sm btn-primary" onclick="comprobante_individual(\''.$parametros['orden'].'\',\''.$value['CodigoC'].'\')"><i class="fa fa-bill"></i>Generar comprobante</button></td></tr>
 			 </thead>
             <thead>
               <th>item</th>
