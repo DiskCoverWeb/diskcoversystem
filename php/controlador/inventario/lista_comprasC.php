@@ -117,10 +117,12 @@ class lista_comprasC
               <th>Codigo</th>
               <th>Producto</th>
               <th>Cantidad</th>              
+              <th>Costo Ref</th>
+              <th>Total Ref</th>           
               <th>Costo</th>
+              <th>Total</th>
               <th>Fecha Solicitud</th>
               <th>Fecha Entrega</th>
-              <th>Total</th>
               <th colspan="2">Proveedor</th>
             </thead>
             <tbody>';
@@ -133,10 +135,12 @@ class lista_comprasC
 					<td>'.$value2['Codigo_Inv'].'</td>
 					<td>'.$value2['Producto'].'</td>
 					<td width="20px">'.$value2['Cantidad'].'</td>
-					<td>'.number_format($value2['Precio'],$_SESSION['INGRESO']['Dec_PVP'],'.','').'</td>
+					<td>'.number_format($value2['Precio'],$_SESSION['INGRESO']['Dec_PVP'],'.','').'</td>		
+					<td>'.number_format($value2['Total'],2,'.','').'</td>	
+					<td>'.number_format($value2['Costo_Original'],$_SESSION['INGRESO']['Dec_PVP'],'.','').'</td>		
+					<td>'.number_format($value2['Total_original'],2,'.','').'</td>	
 					<td>'.$value2['Fecha']->format('Y-m-d').'</td>
-					<td>'.$value2['Fecha_Ent']->format('Y-m-d').'</td>					
-					<td>'.number_format($value2['Total'],2,'.','').'</td>				
+					<td>'.$value2['Fecha_Ent']->format('Y-m-d').'</td>						
 					<td colspan="2">'.$value2['proveedor'].'</td>					
 				</tr>';
 			}			
