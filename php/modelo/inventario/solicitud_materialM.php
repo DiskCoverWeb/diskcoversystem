@@ -409,7 +409,7 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
        	return $datos;
 	}
 
-	function lineas_pedido_aprobacion_solicitados_proveedor($orden,$codigo_inv=false)
+	function lineas_pedido_aprobacion_solicitados_proveedor($orden=false,$codigo_inv=false,$id=false)
 	{
 		$sql = "SELECT TP.Periodo, TP.Fecha, TP.Codigo_Inv, Hora, TP.Producto, TP.Cantidad, Precio, Total, Total_IVA, No_Hab, Cta_Venta,
 				TP.Item, CodigoU, Orden_No, Cta_Venta_0, TP.TC, TP.Factura, Autorizacion, Serie, TP.Codigo_Sup, CodigoC, Opc1, Opc2,
@@ -425,11 +425,18 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
 		AND CM.Periodo = TP.Periodo 
 		AND TP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND TP.TC = 'T' 
-		 AND Orden_No = '".$orden."'
 		AND Tp.Item='".$_SESSION['INGRESO']['item']."'  ";
+		if($orden)
+		{
+			$sql.=" AND Orden_No = '".$orden."' ";
+		}
 		if($codigo_inv)
 		{
 			$sql.=" AND TP.Codigo_Inv = '".$codigo_inv."'";
+		}
+		if($id)
+		{
+			$sql.=" AND TP.ID = '".$id."'";
 		}
 		// print_r($sql);die();
 		$datos = $this->conn->datos($sql);

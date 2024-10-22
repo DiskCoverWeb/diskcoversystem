@@ -233,7 +233,7 @@ if(isset($_GET['lista_provee']))
 
 if(isset($_GET['guardar_seleccion_proveedor']))
 {
-	$parametros = $_POST['parametros'];
+	$parametros = $_POST;
 	echo json_encode($controlador->guardar_seleccion_proveedor($parametros));
 }
 
@@ -1181,10 +1181,15 @@ class solicitud_materialC
 							<select class="form-control select2_prove" id="ddl_selector_'.$value['ID'].'" name="ddl_selector_'.$value['ID'].'[]" multiple="multiple" row="2" disabled >
 								'.$op.'
 							</select>
-							<span class="input-group-btn">
+							';
+							if($value['CodigoC']=='.')
+							{
+							 $tr.='<span class="input-group-btn">
 								<button type="button" class="btn btn-sm btn-primary" onclick="addCliente();lineaSolProv('.$value['ID'].')"><i class="fa fa-user-plus"></i></button>
 							</span>
-						</div>
+							';
+							}
+						$tr.='</div>
 					</td>
 
 					<!---
@@ -1197,7 +1202,7 @@ class solicitud_materialC
 
 					-->
 					<td>
-						<button class="btn btn-sm btn-primary" type="button" onclick="mostrar_proveedor(\''.$value['ID'].'\',\''.$value['Codigo_Inv'].'\',\''.$value['Orden_No'].'\')"><i class="fa fa fa-user"></i> Seleccionar proveedor</button>';
+						';
 						if($value['CodigoC']!='.')
 						{	$prov = $this->modelo->proveedores($query=false,$value['CodigoC']);
 							if(count($prov)>0)
@@ -1209,6 +1214,9 @@ class solicitud_materialC
 								$datos = Leer_Datos_Clientes($value['CodigoC'],$Por_Codigo=true,false,false);
 								$tr.="<label style='color: red;'>".$datos['Cliente']." no esta asignado a CxCxP </label>";
 							}
+						}else
+						{
+							$tr.='<button class="btn btn-sm btn-primary" type="button" onclick="mostrar_proveedor(\''.$value['ID'].'\',\''.$value['Codigo_Inv'].'\',\''.$value['Orden_No'].'\')"><i class="fa fa fa-user"></i> Seleccionar proveedor</button>';
 						}
 						$tr.='
 					</td>
@@ -1416,25 +1424,30 @@ class solicitud_materialC
 		// print_r($parametros);die();
 		$data = $this->modelo->proveedores_seleccionados_x_producto($parametros['codigo'],$parametros['orden']);
 		$lista = '';
+		$id = '';
 		foreach ($data as $key => $value) {
+			$id.=$value['IDT'].',';
 			$lista.='<tr>
 				<td>
 					'.$value['Cliente'].'
-					<input type="hidden" class="form-control input-sm" name="txt_codigoC_'.$value['T.ID'].'" id="txt_codigoC_'.$value['T.ID'].'">
+					<input type="hidden" class="form-control input-sm" name="txt_codigoC_'.$value['IDT'].'" id="txt_codigoC_'.$value['IDT'].'" value="'.$value['CodigoC'].'">
+					<input type="hidden" class="form-control input-sm" name="txt_idProv_'.$value['IDT'].'" id="txt_idProv_'.$value['IDT'].'" value="'.$value['IDT'].'">
 				</td>
 				<td>					
-	                  <input type="text" class="form-control input-sm" name="txt_cantidad_prov_'.$value['T.ID'].'" id="txt_cantidad_prov_'.$value['T.ID'].'">
+	                  <input type="text" class="form-control input-sm" name="txt_cantidad_prov_'.$value['IDT'].'" id="txt_cantidad_prov_'.$value['IDT'].'" value="0">
 				</td>
 				<td>
 					<input type="text" class="form-control input-sm" value="'.$value['Precio'].'" name="txt_costoAnt" id="txt_costoAnt" readonly>
 				</td>
 				<td>
-	                  <input type="text" class="form-control input-sm" name="txt_costoAct_'.$value['T.ID'].'" id="txt_costoAct_'.$value['T.ID'].'">
+	                  <input type="text" class="form-control input-sm" name="txt_costoAct_'.$value['IDT'].'" id="txt_costoAct_'.$value['IDT'].'" value="0">
 	             </td>
 			</tr>';
 		}
-		$lista.="<tr><td></td><td><label>".$data[0]['Cantidad']."</label></td><td></td></tr>";
-		return array('option'=>$lista,'CostoTotal'=>$data[0]['Total']);
+		$id = substr($id,0,-1);
+		$lista.="<tr><td>Total</td><td><label id='lbl_total_linea'>".$data[0]['Cantidad']."</label></td><td></td></tr>";
+
+		return array('option'=>$lista,'CostoTotal'=>$data[0]['Total'],'idProve'=>$id);
 
 		// print_r($data);die();
 	}
@@ -1444,13 +1457,88 @@ class solicitud_materialC
 	{
 		// print_r($parametros);die();
 
-		SetAdoAddNew("Trans_Pedidos");         
-    	// SetAdoFields("TC",'B');  //BUY compra en ingles        
-    	SetAdoFields("CodigoC",$parametros['CodigoC']);
-    	SetAdoFields("HABIT",$parametros['costo']);
+		$lineas = array();
+		$cant_total = 0;
+		$precio_colocado = 1;
+		$proveedores = explode(',',$parametros['txt_id_prove']);
+		foreach ($proveedores as $key => $value) {
+			$cant_total+= floatval($parametros['txt_cantidad_prov_'.$value]);	
+			if($cant_total<=$parametros['total'])
+			{
 
-    	SetAdoFieldsWhere('ID',$parametros['idProducto'] );
-    	return  SetAdoUpdateGeneric();	      
+				if($parametros['txt_cantidad_prov_'.$value]!=0 && $parametros['txt_cantidad_prov_'.$value]!='' && $parametros['txt_costoAct_'.$value]!='' && $parametros['txt_costoAct_'.$value]!=0)
+				{
+					$lineas[$key]['cantidad'] = $parametros['txt_cantidad_prov_'.$value];	
+					$lineas[$key]['costo'] = $parametros['txt_costoAct_'.$value];	
+					$lineas[$key]['CodigoC'] = $parametros['txt_codigoC_'.$value];	
+				}else if ($parametros['txt_cantidad_prov_'.$value]!=0 && $parametros['txt_cantidad_prov_'.$value]!='' && ($parametros['txt_costoAct_'.$value]=='' || $parametros['txt_costoAct_'.$value]==0)) {
+					return -3;
+				}
+			}else
+			{
+				return -2;
+			}
+		}
+
+		if($cant_total!=$parametros['total'])
+		{
+			return -2;
+		}
+
+		// print_r($lineas);die();
+
+		$linea_org = $this->modelo->lineas_pedido_aprobacion_solicitados_proveedor(false,false,$parametros['txt_id_linea']);
+
+		// print_r($linea_org);die();
+
+		foreach ($lineas as $key => $value) {
+			if($key==0)
+			{
+				SetAdoAddNew("Trans_Pedidos");         
+		    	// SetAdoFields("TC",'B');  //BUY compra en ingles        
+		    	SetAdoFields("CodigoC",$value['CodigoC']);
+		    	SetAdoFields("Costo_Original",$value['costo']);
+		    	SetAdoFields("Cantidad",$value['cantidad']);
+		    	SetAdoFields("Total_Original",($value['cantidad']*$value['costo']));
+		    	SetAdoFieldsWhere('ID',$parametros['txt_id_linea']);
+		    	SetAdoUpdateGeneric();	      
+			}else
+			{
+				SetAdoAddNew("Trans_Pedidos");
+		        SetAdoFields("Codigo_Inv",$linea_org[0]['Codigo_Inv']);
+		        SetAdoFields("Fecha",$linea_org[0]['Fecha']);
+		        SetAdoFields("Fecha_Ent",$linea_org[0]['Fecha_Ent']);
+		        SetAdoFields("Producto",$linea_org[0]['Producto']);
+		        SetAdoFields("Cantidad",$value['cantidad']);
+		        SetAdoFields("Precio",$linea_org[0]['Precio']);
+		        SetAdoFields("Costo_Original",$value['costo']);
+		        SetAdoFields("TC",'T');
+		    	SetAdoFields("Total",($value['cantidad']*$linea_org[0]['Precio']));
+		    	SetAdoFields("Total_Original",($value['cantidad']*$value['costo']));
+		        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+		        SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
+		        SetAdoFields("CodigoU",$linea_org[0]['CodigoU']);
+		        SetAdoFields("Comentario",$linea_org[0]['Comentario']);
+		        SetAdoFields("CodMarca",$linea_org[0]['CodMarca']);     
+		    	SetAdoFields("CodigoC",$value['CodigoC']);    
+		    	SetAdoFields("Orden_No",$linea_org[0]['Orden_No']);
+				SetAdoUpdate();
+			}
+		}
+
+
+		return 1;
+		
+
+		print_r($lineas);die();
+
+		// SetAdoAddNew("Trans_Pedidos");         
+    	// // SetAdoFields("TC",'B');  //BUY compra en ingles        
+    	// SetAdoFields("CodigoC",$parametros['CodigoC']);
+    	// SetAdoFields("HABIT",$parametros['costo']);
+
+    	// SetAdoFieldsWhere('ID',$parametros['idProducto'] );
+    	// return  SetAdoUpdateGeneric();	      
 
 	}
 

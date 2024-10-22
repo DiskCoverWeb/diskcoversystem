@@ -35,7 +35,8 @@ class lista_comprasM
 					$sql.=" AND Cliente like '%".$contratista."%' ";
 				}		
 
-				$sql.=" Group by TP.Fecha,TP.Fecha_Ent,Orden_No,Cliente";
+				$sql.=" Group by TP.Fecha,TP.Fecha_Ent,Orden_No,Cliente ORDER BY FECHA";
+				print_r($sql);die();
 		$datos = $this->conn->datos($sql);
        	return $datos;
 	}

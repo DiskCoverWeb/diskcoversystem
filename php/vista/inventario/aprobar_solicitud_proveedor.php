@@ -222,8 +222,8 @@ if(isset($_GET['orden']))
           success:  function (response) {
            // $('#ddl_proveedores_list').empty();
 
-            console.log(response);
             $('#tbl_body_prov').html(response.option);
+            $('#txt_id_prove').val(response.idProve);
           //  $('#txt_costoAnt').val(response.CostoTotal);
            
           
@@ -239,38 +239,40 @@ if(isset($_GET['orden']))
   function guardar_seleccion_proveedor(codigo,orden)
   {
     // costo = $('#txt_costoAct').val()
-    // var ord = '<?php echo $orden; ?>';
+    var ord = '<?php echo $orden; ?>';
     // if(costo=='')
     // {
 
     //     Swal.fire("El costo no puede estar vacio","","info")
     //   return false;
     // }
+    var total = $('#lbl_total_linea').text();
     data = $('#form_proveedor_seleccionado').serialize();
-console.log(data);
-    return false;
+    data = data+'&total='+total;
 
 
-    parametros = 
-    {
-      'idProducto':$('#txt_id_linea').val(),
-      'CodigoC':$('#ddl_proveedores_list').val(),
-      'costo':$('#txt_costoAct').val(),
-    }
+   
      $.ajax({
           url:   '../controlador/inventario/solicitud_materialC.php?guardar_seleccion_proveedor=true',
           type:  'post',
-          data: {parametros:parametros},
+          data: data,
           dataType: 'json',
           success:  function (response) {
               if(response==1)
               {
                 Swal.fire("Proveedor Asignado","","success")
-                $('#myModal_provedor').modal('hide');
-                $('#txt_costoAct').val('')
-                $('#txt_costoAnt').val('')
+                $('#myModal_provedor').modal('hide');               
                 lineas_pedido_aprobacion_solicitados_proveedor(ord)
               }
+              if(response==-2)
+              {
+                Swal.fire("La cantidad no concide con el total","","info");
+              }
+               if(response==-3)
+              {
+                Swal.fire("El costo no debe ser cero o vacio","","info");
+              }
+
           },
           error: function (error) {
             $('#myModal_espera').modal('hide');
@@ -420,6 +422,7 @@ console.log(data);
             <div class="modal-body" style="background: antiquewhite;">
               <form id="form_proveedor_seleccionado">
               <input type="hidden" name="txt_id_linea" id="txt_id_linea">
+              <input type="hidden" name="txt_id_prove" id="txt_id_prove">
               <div class="row">
                 <div class="col-sm-12">
                   <table class="table text-sm">

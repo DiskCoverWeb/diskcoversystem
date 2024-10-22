@@ -52,6 +52,12 @@ if(isset($_GET['grabar_kardex']))
 	echo json_encode($controlador->grabar_kardex($parametros));
 }
 
+if(isset($_GET['grabar_kardex_indi']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->grabar_kardex($parametros));
+}
+
 /**
  * 
  */
@@ -102,7 +108,22 @@ class lista_comprasC
 		$datos = $this->modelo->lineas_compras_solicitados_proveedores($parametros['orden']);
 		$tr = '';
 		foreach ($datos as $key => $value) {
-			$tr.='<tr><td colspan="9"><b>'.$value['Cliente'].'</b></td></tr>';
+			$tr.='<table class="table">
+			<thead>
+			 <tr><td colspan="9"><b>'.$value['Cliente'].'</b></td><td class="text-right"><button class="btn btn-sm btn-primary" onclick="comprobante_individual(\''.$parametros['orden'].'\',\''.$value['CodigoC'].'\')"><i class="fa fa-bill"></i>Generar comprobante</button></td></tr>
+			 </thead>
+            <thead>
+              <th>item</th>
+              <th>Codigo</th>
+              <th>Producto</th>
+              <th>Cantidad</th>              
+              <th>Costo</th>
+              <th>Fecha Solicitud</th>
+              <th>Fecha Entrega</th>
+              <th>Total</th>
+              <th colspan="2">Proveedor</th>
+            </thead>
+            <tbody>';
 			$lineas = $this->modelo->lineas_compras_solicitados($parametros['orden'],false,$value['CodigoC']);
 			$total_prov = 0;
 			foreach ($lineas as $key2 => $value2) {
@@ -116,10 +137,10 @@ class lista_comprasC
 					<td>'.$value2['Fecha']->format('Y-m-d').'</td>
 					<td>'.$value2['Fecha_Ent']->format('Y-m-d').'</td>					
 					<td>'.number_format($value2['Total'],2,'.','').'</td>				
-					<td>'.$value2['proveedor'].'</td>					
+					<td colspan="2">'.$value2['proveedor'].'</td>					
 				</tr>';
 			}			
-			$tr.='<tr><td colspan="6"></td><td>TOTAL</td><td><b>'.$total_prov.'</b></td><td></td></tr>';			
+			$tr.='<tr><td colspan="6"></td><td>TOTAL</td><td><b>'.$total_prov.'</b></td><td colspan="2"></td></tr></tbody></table>';			
 		}
 		return $tr;
 	}
@@ -299,11 +320,17 @@ class lista_comprasC
 			$cta[0]['SubCta'] = "P";
 		}
 
+		$prove = false;
+		if(isset($parametros['proveedor']))
+		{
+			$prove = $parametros['proveedor'];
+		}
+
 		// esto sirve solo para este proceso que no viene de asientos_K /coloca cta de inventario donde falte
 		$this->validar_cta_inventario($parametros);
 
 		$orden = $parametros['orden'];
-		$provedor = $this->modelo->lineas_compras_solicitados_proveedores($parametros['orden']);
+		$provedor = $this->modelo->lineas_compras_solicitados_proveedores($parametros['orden'],false,$prove);
 		foreach ($provedor as $key => $value) 
 		{
 			$nombre = $value['Cliente'];
