@@ -134,8 +134,11 @@ class enviar_emails
 
           // print_r('host:'.$mail->Host.'//Username:'.$mail->Username.'//pass:'.$mail->Password.'//Puerto:'.$mail->Port.'//Secure:'.$mail->SMTPSecure);die();
 
-          if ($mail->send()) {
-            $res = 1;
+          if(strlen($from)>3)
+          {
+            if ($mail->send()) {
+              $res = 1;
+            }
           }
 
         } catch (Exception $e) {
