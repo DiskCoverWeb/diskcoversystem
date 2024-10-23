@@ -229,8 +229,10 @@ function imprimir_excel()
             <thead>
               <th>item</th>
               <th>Codigo</th>
-              <th>Producto</th>
-              <th>Cantidad</th>  
+              <th>Producto</th>              
+              <th>Para Contr</th>             
+              <th>Stock</th> 
+              <th>Cantidad Comp</th>  
               <th>Unidad</th>              
               <th>Costo ref</th>
               <th>Total ref</th>
