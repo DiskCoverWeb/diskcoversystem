@@ -31,16 +31,17 @@ class enviar_emails
     $empresaGeneral = $this->Empresa_data();
     $server_externo = 0;
 
-    if ($empresaGeneral[0]["smtp_Servidor"] == "relay.dnsexit.com" ||  $empresaGeneral[0]["smtp_Servidor"] == "mail.diskcoversystem.com") 
+    if ($empresaGeneral[0]["smtp_Servidor"] == "mail.diskcoversystem.com") 
     {
 
       $server_externo = 1;
-      $empresaGeneral[0]['smtp_Servidor'] = "smtp.diskcoversystem.com";
+      $empresaGeneral[0]['smtp_Servidor'] = "imap.diskcoversystem.com";
       $empresaGeneral[0]['Email_Conexion'] = "admin";
       $empresaGeneral[0]['Email_Contraseña'] = "Admin@2023";
       $empresaGeneral[0]['smtp_SSL'] = 0;
-      $empresaGeneral[0]['smtp_Puerto'] = 26;
+      $empresaGeneral[0]['smtp_Puerto'] = 587;
     }
+
 
     $res = 1;
     // print_r($empresaGeneral);die();
@@ -89,7 +90,7 @@ class enviar_emails
             $mail->Port = $empresaGeneral[0]['smtp_Puerto'];
           }
 
-          $from = str_replace("@diskcoversystem.com","@smtp.diskcoversystem.com", $_SESSION['INGRESO']['Email_Conexion_CE']);
+          $from = str_replace("@diskcoversystem.com","@imap.diskcoversystem.com", $_SESSION['INGRESO']['Email_Conexion_CE']);
 
           $mail->setFrom($from, 'DiskCover System');
           $mail->addAddress($value); //Add a recipient
@@ -162,14 +163,16 @@ class enviar_emails
     $empresaGeneral = $this->Empresa_data();
     $server_externo = 0;
 
-    if ($empresaGeneral[0]["smtp_Servidor"] == "relay.dnsexit.com" ||  $empresaGeneral[0]["smtp_Servidor"] == "mail.diskcoversystem.com") 
+      // print_r('ingresa');die();
+    if ($empresaGeneral[0]["smtp_Servidor"] == "mail.diskcoversystem.com") 
     {
+
       $server_externo = 1;
-      $empresaGeneral[0]['smtp_Servidor'] = "smtp.diskcoversystem.com";
+      $empresaGeneral[0]['smtp_Servidor'] = "imap.diskcoversystem.com";
       $empresaGeneral[0]['Email_Conexion'] = "admin";
       $empresaGeneral[0]['Email_Contraseña'] = "Admin@2023";
       $empresaGeneral[0]['smtp_SSL'] = 0;
-      $empresaGeneral[0]['smtp_Puerto'] = 26;
+      $empresaGeneral[0]['smtp_Puerto'] = 587;
     }
 
     $res = 1;
@@ -220,7 +223,7 @@ class enviar_emails
             }
             $mail->Port = $empresaGeneral[0]['smtp_Puerto'];
           }
-          $from = str_replace("@diskcoversystem.com","@smtp.diskcoversystem.com", $_SESSION['INGRESO']['Email_Conexion_CE']);
+          $from = str_replace("@diskcoversystem.com","@imap.diskcoversystem.com", $_SESSION['INGRESO']['Email_Conexion_CE']);
           $mail->setFrom($from, 'DiskCover System');
           $mail->addAddress($value); //Add a recipient
           $mail->addReplyTo($from, 'Informacion');
@@ -242,9 +245,13 @@ class enviar_emails
           } //Set email format to HTML
           $mail->Subject = $titulo_correo;
           $mail->Body = $cuerpo_correo;
-          if ($mail->send()) {
-            $res = 1;
+          if(strlen($from)>3)
+          {
+            if ($mail->send()) {
+              $res = 1;
+            }
           }
+
 
         } catch (Exception $e) {
           // print_r($mail);
