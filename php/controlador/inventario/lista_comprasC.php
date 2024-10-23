@@ -130,6 +130,8 @@ class lista_comprasC
 			$total_prov = 0;
 			$total_prov_org = 0;
 			foreach ($lineas as $key2 => $value2) {
+				if($value2['Costo_Original']=='' || $value2['Costo_Original']==null){$value2['Costo_Original'] = 0;}
+				if($value2['Total_Original']=='' || $value2['Total_Original']==null){$value2['Total_Original'] = 0;}
 				$total_prov = $total_prov+number_format($value2['Total'],2,'.','');
 				$total_prov_org = $total_prov_org+number_format($value2['Total_Original'],2,'.','');
 				$tr.='<tr>
@@ -367,7 +369,7 @@ class lista_comprasC
 						// print_r($parametros);die();
 		             $this->modelo->generar_asientos_SC($parametros_SC);
 
-
+// print_r('expression');die();
 
 		   	//ingreso asiento haber
 					$asiento_debe = $this->modelo->datos_asiento_debe_trans($parametros['orden'],$value['CodigoC']);
