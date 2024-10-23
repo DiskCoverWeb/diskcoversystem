@@ -84,7 +84,6 @@ class lista_comprasC
 					<td><a href="inicio.php?mod='.$_SESSION['INGRESO']['modulo_'].'&acc=detalle_compra&orden='.$value['Orden_No'].'">'.$value['Cliente'].'</a></td>
 					<td>'.$value['Orden_No'].'</td>					
 					<td>'.$value['Fecha']->format('Y-m-d').'</td>
-					<td>'.$value['Fecha_Ent']->format('Y-m-d').'</td>
 					<td>'.$value['Total'].'</td>					
 					<td>
 						<button type="button" class="btn btn-sm btn-default" onclick="imprimir_pdf(\''.$value['Orden_No'].'\')" ><i class="fa fa-file-pdf-o"></i></butto>
@@ -339,6 +338,7 @@ class lista_comprasC
 
 		$orden = $parametros['orden'];
 		$provedor = $this->modelo->lineas_compras_solicitados_proveedores($parametros['orden'],false,$prove);
+		// print_r($provedor);die();
 		foreach ($provedor as $key => $value) 
 		{
 			$nombre = $value['Cliente'];
@@ -366,7 +366,7 @@ class lista_comprasC
 		                    'T_N'=> '99',
 		                    't'=> $sub[0]['TC'],                        
 		                  );
-						// print_r($parametros);die();
+						// print_r($parametros_SC);die();
 		             $this->modelo->generar_asientos_SC($parametros_SC);
 
 // print_r('expression');die();
@@ -508,7 +508,7 @@ class lista_comprasC
 			if($value['Cta_Venta_0']== '.' || $value['Cta_Venta_0']== '')
 			{
 				$inv = $this->modelo->catalogo_cuentas_cta_inv($value['Codigo_Inv']);
-				SetAdoAddNew("Trans_Pedidos"); 		
+					SetAdoAddNew("Trans_Pedidos"); 		
 			    SetAdoFields('Cta_Venta_0',$inv[0]['Cta_Inventario']); 
 			    SetAdoFieldsWhere('ID',$value['ID']);
 			    SetAdoUpdateGeneric();

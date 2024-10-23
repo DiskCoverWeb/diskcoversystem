@@ -16,7 +16,7 @@ class lista_comprasM
 
 	function pedidos_compra_contratista($orden=false,$id=false,$fecha=false,$contratista=false)
 	{
-		$sql = "SELECT  TP.Fecha,TP.Fecha_Ent,Orden_No,SUM(Total) as Total,Cliente
+		$sql = "SELECT  TP.Fecha,Orden_No,SUM(Total) as Total,Cliente
 				FROM Trans_Pedidos TP
 				inner Join Clientes C on TP.CodigoU = C.Codigo
 				WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
@@ -35,7 +35,7 @@ class lista_comprasM
 					$sql.=" AND Cliente like '%".$contratista."%' ";
 				}		
 
-				$sql.=" Group by TP.Fecha,TP.Fecha_Ent,Orden_No,Cliente ORDER BY FECHA";
+				$sql.=" Group by TP.Fecha,Orden_No,Cliente ORDER BY FECHA";
 				// print_r($sql);die();
 		$datos = $this->conn->datos($sql);
        	return $datos;
@@ -283,6 +283,8 @@ class lista_comprasM
            ,0
            ,'".$_SESSION['INGRESO']['item']."'
            ,'".$_SESSION['INGRESO']['CodigoU']."')";
+
+           // print_r($sql);die();
 
            $this->conn->String_Sql($sql);
 		 
