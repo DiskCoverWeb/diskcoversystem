@@ -639,8 +639,8 @@ class solicitud_materialC
 					<td>'.($key+1).'</td>
 					<td>'.$value['Codigo_Inv'].'</td>
 					<td>'.$value['Producto'].'</td>
-					<td>2</td>
 					<td>100</td>
+					<td>2 </td>
 					<td width="20px">
 					<input type="text" id="txt_cant_'.$value['ID'].'" name="txt_cant_'.$value['ID'].'" value="'.$value['Cantidad'].'" class="form-control input-sm"></td>
 
