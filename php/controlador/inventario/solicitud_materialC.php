@@ -112,11 +112,16 @@ if(isset($_GET['grabar_solicitud_proveedor']))
 if(isset($_GET['pedido_solicitados_proveedor']))
 {
 	$query = '';
+	$parametros = '';
 	if(isset($_GET['q']))
 	{
 		$query = $_GET['q'];
 	}
-	echo json_encode($controlador->pedido_solicitados_proveedor($query));
+	if(isset($_POST['parametros']))
+	{
+		$parametros = $_POST['parametros'];
+	}
+	echo json_encode($controlador->pedido_solicitados_proveedor($query,$parametros));
 }
 
 
@@ -966,9 +971,16 @@ class solicitud_materialC
 	}
 
 
-	function pedido_solicitados_proveedor($query)
+	function pedido_solicitados_proveedor($query,$parametros)
 	{
-		$datos = $this->modelo->envio_pedidos_contratista($query);
+		$orden=false;
+		if($parametros!='')
+		{
+			$orden = $parametros['orden'];
+		}
+
+		// print_r($parametros);die();
+		$datos = $this->modelo->envio_pedidos_contratista($orden,$query);
 		// $lista = array();
 		// foreach ($datos as $key => $value) {
 		// 	$lista[] = array('id'=>$value['Orden_No'],'text'=>$value['Nombre_Completo'].' -- '.$value['Orden_No'],'data'=>$value);
