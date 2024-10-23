@@ -107,7 +107,6 @@ function EliminarSolicitud(orden)
 					<th>Contratista</th>
 					<th>Orden</th>
 					<th>Fecha Solicitud</th>
-					<th>Fecha Entrega</th>
 					<th>Presupuesto</th>
 					<th></th>
 				</thead>

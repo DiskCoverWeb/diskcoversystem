@@ -162,7 +162,7 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
 
 	function pedidos_contratista($orden=false,$id=false,$fecha=false,$contratista=false)
 	{
-		$sql = "SELECT  TP.Fecha,TP.Fecha_Ent,Orden_No,SUM(Total) as Total,Cliente
+		$sql = "SELECT  TP.Fecha,Orden_No,SUM(Total) as Total,Cliente
 				FROM Trans_Pedidos TP
 				inner Join Clientes C on TP.CodigoU = C.Codigo
 				WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
@@ -181,7 +181,9 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
 					$sql.=" AND Cliente like '%".$contratista."%' ";
 				}		
 
-				$sql.=" Group by TP.Fecha,TP.Fecha_Ent,Orden_No,Cliente ORDER BY TP.Fecha ";
+				$sql.=" Group by TP.Fecha,Orden_No,Cliente ORDER BY TP.Fecha ";
+
+				// print_r($sql);die();
 		$datos = $this->conn->datos($sql);
        	return $datos;
 	}
@@ -242,7 +244,7 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
 
 	function envio_pedidos_contratista($orden=false,$id=false,$fecha=false,$contratista=false)
 	{
-		$sql = "SELECT  TP.Fecha,TP.Fecha_Ent,Orden_No,SUM(Total) as Total,Cliente
+		$sql = "SELECT  TP.Fecha,Orden_No,SUM(Total) as Total,Cliente
 				FROM Trans_Pedidos TP
 				inner Join Clientes C on TP.CodigoU = C.Codigo
 				WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
@@ -261,7 +263,7 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
 					$sql.=" AND Cliente like '%".$contratista."%' ";
 				}								
 
-				$sql.=" Group by TP.Fecha,TP.Fecha_Ent,Orden_No,Cliente ORDER BY TP.Fecha";
+				$sql.=" Group by TP.Fecha,Orden_No,Cliente ORDER BY TP.Fecha";
 
 				// print_r($sql);die();
 		$datos = $this->conn->datos($sql);
@@ -331,7 +333,7 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
 		  $sql.=" AND ID = '".$id."' ";
 		}
 
-
+// print_r($sql);die();
 		$datos = $this->conn->datos($sql);
        	return $datos;
 	}
@@ -363,7 +365,7 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
 
 	function lista_pedido_aprobacion_solicitados_proveedor($orden=false,$id=false,$fecha=false,$contratista=false)
 	{
-		$sql = "SELECT  TP.Fecha,TP.Fecha_Ent,Orden_No,SUM(Total) as Total,Cliente
+		$sql = "SELECT  TP.Fecha,Orden_No,SUM(Total) as Total,Cliente
 				FROM Trans_Pedidos TP
 				inner Join Clientes C on TP.CodigoU = C.Codigo
 				WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."'
@@ -382,7 +384,7 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
 					$sql.=" AND Cliente like '%".$contratista."%' ";
 				}					
 
-				$sql.=" Group by TP.Fecha,TP.Fecha_Ent,Orden_No,Cliente";
+				$sql.=" Group by TP.Fecha,Orden_No,Cliente";
 
 				// print_r($sql);die();
 		$datos = $this->conn->datos($sql);

@@ -444,7 +444,6 @@ class solicitud_materialC
 					<td><a href="inicio.php?mod='.$_SESSION['INGRESO']['modulo_'].'&acc=aprobacion_solicitud&orden='.$value['Orden_No'].'">'.$value['Cliente'].'</a></td>
 					<td>'.$value['Orden_No'].'</td>					
 					<td>'.$value['Fecha']->format('Y-m-d').'</td>
-					<td>'.$value['Fecha_Ent']->format('Y-m-d').'</td>
 					<td>'.$value['Total'].'</td>					
 					<td>
 						<button type="button" class="btn btn-sm btn-default" onclick="imprimir_pdf(\''.$value['Orden_No'].'\')" ><i class="fa fa-file-pdf-o"></i></butto>
@@ -951,7 +950,6 @@ class solicitud_materialC
 					<td><a href="inicio.php?mod='.$_SESSION['INGRESO']['modulo_'].'&acc=solicitud_proveedor&orden='.$value['Orden_No'].'">'.$value['Cliente'].'</a></td>
 					<td>'.$value['Orden_No'].'</td>					
 					<td>'.$value['Fecha']->format('Y-m-d').'</td>
-					<td>'.$value['Fecha_Ent']->format('Y-m-d').'</td>
 					<td>'.$value['Total'].'</td>	
 					<td>
 					<div class="input-group-btn">
@@ -1110,7 +1108,6 @@ class solicitud_materialC
 					<td><a href="inicio.php?mod='.$_SESSION['INGRESO']['modulo_'].'&acc=aprobar_proveedor&orden='.$value['Orden_No'].'">'.$value['Cliente'].'</a></td>
 					<td>'.$value['Orden_No'].'</td>					
 					<td>'.$value['Fecha']->format('Y-m-d').'</td>
-					<td>'.$value['Fecha_Ent']->format('Y-m-d').'</td>
 					<td>'.$value['Total'].'</td>
 					<td>
 
