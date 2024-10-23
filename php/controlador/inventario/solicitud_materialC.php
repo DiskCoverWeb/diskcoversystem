@@ -1050,35 +1050,37 @@ class solicitud_materialC
 
 			//id de el producto
 			$id = str_replace('ddl_selector_', "", $key);
-			$linea = $this->modelo->Trans_Pedidos($id,false,false);			
-			$linea = $linea[0];
-			// print_r($id);die();
+			if ($key !== $id) {
+				$linea = $this->modelo->Trans_Pedidos($id,false,false);			
+				$linea = $linea[0];
+				// print_r($id);die();
 
-			foreach ($value as $key2 => $value2) {
-				// recorro todo los proveedores seleccionados
-				// print_r($value2);die();
+				foreach ($value as $key2 => $value2) {
+					// recorro todo los proveedores seleccionados
+					// print_r($value);die();
 
-				SetAdoAddNew("Trans_Ticket");
-		        SetAdoFields("Codigo_Inv",$linea['Codigo_Inv']);
-		        SetAdoFields("Fecha",$linea['Fecha']);
-		        SetAdoFields("Producto",$linea['Producto']);
-		        SetAdoFields("Cantidad",$linea['Cantidad']);
-		        SetAdoFields("Precio",$linea['Precio']);
-		        SetAdoFields("CodigoC",$value2);
-		        SetAdoFields("Total", $linea['Total']);
-		        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
-		        SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
-		        SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
-		        SetAdoFields("Orden_No",$linea['Orden_No']);				
-				SetAdoUpdate();
+					SetAdoAddNew("Trans_Ticket");
+			        SetAdoFields("Codigo_Inv",$linea['Codigo_Inv']);
+			        SetAdoFields("Fecha",$linea['Fecha']);
+			        SetAdoFields("Producto",$linea['Producto']);
+			        SetAdoFields("Cantidad",$linea['Cantidad']);
+			        SetAdoFields("Precio",$linea['Precio']);
+			        SetAdoFields("CodigoC",$value2);
+			        SetAdoFields("Total", $linea['Total']);
+			        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+			        SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
+			        SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+			        SetAdoFields("Orden_No",$linea['Orden_No']);				
+					SetAdoUpdate();
 
 
-				SetAdoAddNew("Trans_Pedidos");         
-	        	SetAdoFields("TC",'T');
+					SetAdoAddNew("Trans_Pedidos");         
+		        	SetAdoFields("TC",'T');
 
-	        	SetAdoFieldsWhere('ID',$id);
-	        	SetAdoUpdateGeneric();	        					
+		        	SetAdoFieldsWhere('ID',$id);
+		        	SetAdoUpdateGeneric();	        					
 
+				}
 			}
 			// print_r($linea);die();
 			// foreach ($value as $key2 => $value2) {
