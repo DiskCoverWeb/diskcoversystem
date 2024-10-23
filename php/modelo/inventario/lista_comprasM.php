@@ -36,7 +36,7 @@ class lista_comprasM
 				}		
 
 				$sql.=" Group by TP.Fecha,TP.Fecha_Ent,Orden_No,Cliente ORDER BY FECHA";
-				print_r($sql);die();
+				// print_r($sql);die();
 		$datos = $this->conn->datos($sql);
        	return $datos;
 	}
