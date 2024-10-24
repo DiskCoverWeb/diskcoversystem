@@ -11,14 +11,14 @@ require 'vendor/autoload.php';
 if(isset($_GET['EnviarVisual']))
 {
 	$controlor = new EnviarVisual();
-	$parametros = $_POST;
-	// $parametros = array(
-	// 	'to'=>'javier.farinango92@gmail.com',
-	// 	'body'=> 'hola nuevo email',
-	// 	'subject'=> "prueba correo",
-	// 	'HTML'=>1,
-	// 	'Archivo'=> array('ruta'=>''),
-	// 	);
+	// $parametros = $_POST;
+	$parametros = array(
+		'to'=>'javier.farinango92@gmail.com',
+		'body'=> 'hola nuevo email',
+		'subject'=> "prueba correo",
+		'HTML'=>1,
+		'Archivo'=> array('ruta'=>''),
+		);
 	echo json_decode($controlor->EnvioEmailVisual($parametros));
 }
 
