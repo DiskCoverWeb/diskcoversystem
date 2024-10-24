@@ -57,8 +57,8 @@ class EnviarVisual
 		          //Server settings
 		          // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                 //Enable verbose debug output
 		            $mail->isSMTP(); //Send using SMTP
-		            $mail->Helo = 'smtp.diskcoversystem.com';    
-				    $mail->Host = 'smtp.diskcoversystem.com';
+		            // $mail->Helo = 'smtp.diskcoversystem.com';    
+				    $mail->Host = 'imap.diskcoversystem.com';
 				    $mail->SMTPAuth = true;
 				    $mail->Username = 'admin';
 				    $mail->Password = 'Admin@2023';
@@ -66,7 +66,7 @@ class EnviarVisual
 				    $mail->SMTPAutoTLS = true; // Desactivar el inicio automático de TLS
 				    $mail->Port = 26;
 	         
-			        $from = "electronicos@smtp.diskcoversystem.com"; //str_replace("@diskcoversystem.com","@imap.diskcoversystem.com", $_SESSION['INGRESO']['Email_Conexion_CE']);
+			        $from = $parametros['from']; 
 			        $mail->addAddress($value);  
 			        $mail->setFrom($from, 'DiskCover System');
 			        $mail->addReplyTo($from, 'Informacion');
