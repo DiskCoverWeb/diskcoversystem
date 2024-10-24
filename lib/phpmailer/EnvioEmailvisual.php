@@ -74,14 +74,14 @@ class EnviarVisual
 			          //$mail->addCC('cc@example.com');
 			          //$mail->addBCC('bcc@example.com');
 
-			          //Attachments
-			          // print_r($archivos);die();
-			          // if ($archivos) {
+			          // Attachments
+			          if ($parametros['Archivo']!='') {
 
-			          //     foreach ($archivos as $key => $value) {
-			          //       $mail->AddAttachment($value);              
-			          //   }
-			          // }
+			          	  $archivos = explode(';',$parametros['Archivo'])
+			              foreach ($archivos as $key => $value) {
+			                $mail->AddAttachment($value);              
+			            }
+			          }
 			          //Content
 			          if ($parametros['HTML']) {
 			            $mail->isHTML(true);
