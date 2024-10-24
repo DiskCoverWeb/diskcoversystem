@@ -11,25 +11,25 @@
 	<div class="col-sm-8">
 		<form id="form_abonos">
 			<div class="row">
-				<div class="col-sm-2" style="">
+				<div class="col-sm-2">
 					<label class="control-label"
 						style="font-size: 11.5px;padding-right: 0px; white-space: nowrap;"><input type="checkbox"
 							name="CheqRecibo" id="CheqRecibo" checked> INGRESO CAJA No.</label>
 				</div>
-				<div class="col-sm-2 col-xs-4" style="">
+				<div class="col-sm-2 col-xs-4">
 					<input type="text" name="TxtRecibo" id="TxtRecibo" class="form-control input-xs" value="0000000"
 						style="padding-right: 0;">
 				</div>
-				<div class="col-sm-3 col-xs-3" style="">
+				<div class="col-sm-3 col-xs-3">
 					<div class="col-sm-6">
 						<label for="LabelDolares" style="font-size: 11.5px; padding-top:5px">COTIZACION</label>
 					</div>
-					<div class="col-sm-6 col-xs-5" style="">
+					<div class="col-sm-6 col-xs-5">
 						<input type="text" name="LabelDolares" id="LabelDolares"
 							class="form-control input-xs text-right" value="0.00" style="padding:0;">
 					</div>
 				</div>
-				<div class="col-sm-4 col-xs-5" style="">
+				<div class="col-sm-4 col-xs-5">
 					<div class="col-sm-6" style="padding:0;">
 						<label for="MBFecha" style="font-size: 11.5px;">Fecha
 							del
@@ -41,25 +41,25 @@
 					</div>
 				</div>
 			</div>
-			<div class="row" style="">
-				<div class="col-sm-4 col-xs-4" style="">
+			<div class="row">
+				<div class="col-sm-4 col-xs-4">
 					<div class="col-sm-6" style="padding:0">
-						<label for="DCTipo" style="font-size: 11.5px; white-space: nowrap; text-left" for="DCTipo">Tipo
+						<label for="DCTipo" style="font-size: 11.5px; white-space: nowrap" class="text-left" for="DCTipo">Tipo
 							de
 							Documento.</label>
 					</div>
-					<div class="col-sm-5 col-xs-4" style="">
-						<select class="form-control input-xs" id="DCTipo" name="DCTipo" style="padding: 0;">
+					<div class="col-sm-5 col-xs-4">
+						<select class="form-control input-xs" id="DCTipo" name="DCTipo" style="padding: 0;" onblur="DCSerie()">
 							<option value="FA">FA</option>
 						</select>
 					</div>
 				</div>
-				<div class="col-sm-3 col-xs-3" style="">
-					<div class="col-sm-3" style="">
+				<div class="col-sm-3 col-xs-3">
+					<div class="col-sm-3">
 						<label for="DCSerie" class="text-left">Serie.</label>
 					</div>
-					<div class="col-sm-9" style="">
-						<select class="form-control input-xs" id="DCSerie" name="DCSerie" onchange="DCFactura_()">
+					<div class="col-sm-9">
+						<select class="form-control input-xs" id="DCSerie" name="DCSerie" onblur="DCFactura_()">
 						</select>
 					</div>
 				</div>
@@ -84,7 +84,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="row" style="">
+			<div class="row">
 				<div class="col-sm-12 col-xs-10" style="padding:0px">
 					<div class="col-sm-2 col-xs-2">
 						<label for="DCAutorizacion">Autorizacion.</label>
@@ -95,7 +95,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="row" style="">
+			<div class="row">
 				<div class="col-sm-9 col-xs-8">
 					<input type="text" name="LblCliente" id="LblCliente" class="form-control input-xs"
 						placeholder="Cliente">
@@ -149,17 +149,17 @@
 								<option value="100">100</option>
 							</select>
 						</div>
-						<div class="col-sm-5" style="">
+						<div class="col-sm-5">
 							<div class="row">
 								<div class="col-sm-12">
 									<label for="" style="visibility: hidden;">ESPACIADO</label>
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-sm-7 col-xs-6 text-right" style="">
+								<div class="col-sm-7 col-xs-6 text-right">
 									<label for="TextRetIVAB">VALOR RETENIDO.</label>
 								</div>
-								<div class="col-sm-5" style="">
+								<div class="col-sm-5">
 									<input type="text" name="TextRetIVAB" id="TextRetIVAB"
 										class="form-control input-xs text-right" placeholder="0.00" value="0.00"
 										onblur="Calculo_Saldo()">
@@ -189,7 +189,7 @@
 								<option value="100">100</option>
 							</select>
 						</div>
-						<div class="col-sm-5" style="">
+						<div class="col-sm-5">
 							<div class="row">
 								<div class="col-sm-12">
 									<label for="" style="visibility: hidden;">ESPACIADO</label>
@@ -199,7 +199,7 @@
 								<div class="col-sm-7 col-xs-6 text-right">
 									<label for="TextRetIVAS">VALOR RETENIDO.</label>
 								</div>
-								<div class="col-sm-5" style="">
+								<div class="col-sm-5">
 									<input type="text" name="TextRetIVAS" id="TextRetIVAS"
 										class="form-control input-xs text-right" placeholder="0.00"
 										onblur="Calculo_Saldo()" value="0.00">
@@ -212,7 +212,7 @@
 			<div class="row">
 				<div class="col-sm-12 col-xs-7">
 					<div class="row">
-						<div class="col-sm-4 col-xs-7" style="">
+						<div class="col-sm-4 col-xs-7">
 							<label for="DCRetFuente">RETENCION EN LA FUENTE</label>
 							<select class="form-control input-xs" id="DCRetFuente" name="DCRetFuente">
 							</select>
@@ -250,7 +250,7 @@
 			<div class="row">
 				<div class="col-sm-12 col-xs-8">
 					<div class="row">
-						<div class="col-sm-5 col-xs-5" style="">
+						<div class="col-sm-5 col-xs-5">
 							<label for="DCBancoNom">CUENTA DEL BANCO </label>
 							<input type="hidden" name="DCBancoNom" id="DCBancoNom">
 							<select class="form-control input-xs" id="DCBanco" name="DCBanco"
@@ -290,7 +290,7 @@
 			<div class="row">
 				<div class="col-sm-12 col-xs-8">
 					<div class="row">
-						<div class="col-sm-5 col-xs-5" style="">
+						<div class="col-sm-5 col-xs-5">
 							<label for="DCTarjeta">TARJETA DE CREDITO</label>
 							<input type="hidden" name="DCTarjetaNom" id="DCTarjetaNom">
 							<select class="form-control input-xs" id="DCTarjeta" name="DCTarjeta"
@@ -346,38 +346,38 @@
 				<div class="col-sm-5 col-xs-6" style="padding-top:10px">
 					<div class="row">
 						<label for="TextCajaMN" class="col-sm-6 col-xs-6 control-label">Caja MN.</label>
-						<div class="col-sm-6 col-xs-6" style="">
+						<div class="col-sm-6 col-xs-6">
 							<input type="text" name="TextCajaMN" id="TextCajaMN"
-								class="form-control input-xs text-right" placeholder="00000000" value="0.00" style="">
+								class="form-control input-xs text-right" placeholder="00000000" value="0.00">
 						</div>
 					</div>
 					<div class="row">
 						<label for="TextCajaME" class="col-sm-6 col-xs-6 control-label">Caja ME.</label>
-						<div class="col-sm-6 col-xs-6" style="">
+						<div class="col-sm-6 col-xs-6">
 							<input type="text" name="TextCajaME" id="TextCajaME"
-								class="form-control input-xs text-right" placeholder="00000000" value="0.00" style="">
+								class="form-control input-xs text-right" placeholder="00000000" value="0.00">
 						</div>
 					</div>
 					<div class="row">
 						<label for="LabelPend" class="col-sm-6 col-xs-6 control-label">SALDO ACTUAL.</label>
-						<div class="col-sm-6 col-xs-6" style="">
+						<div class="col-sm-6 col-xs-6">
 							<input type="text" name="LabelPend" style="color:red;" id="LabelPend"
-								class="form-control input-xs text-right" placeholder="00000000" value="0.00" style="">
+								class="form-control input-xs text-right" placeholder="00000000" value="0.00">
 						</div>
 					</div>
 					<div class="row">
 						<label for="TextRecibido" class="col-sm-6 col-xs-6 control-label">VALOR RECIBIDO.</label>
-						<div class="col-sm-6 col-xs-6" style="">
+						<div class="col-sm-6 col-xs-6">
 							<input type="text" name="TextRecibido" id="TextRecibido"
-								class="form-control input-xs text-right" placeholder="00000000" value="0.00" style="">
+								class="form-control input-xs text-right" placeholder="00000000" value="0.00">
 						</div>
 					</div>
 					<div class="row">
 						<label for="LabelCambio" style="font-size: 11.5px;"
 							class="col-sm-6  col-xs-6 control-label">CAMBIO A ENTREGAR.</label>
-						<div class="col-sm-6 col-xs-6 " style="">
+						<div class="col-sm-6 col-xs-6 ">
 							<input type="text" name="LabelCambio" style="color:red;" id="LabelCambio"
-								class="form-control input-xs text-right" placeholder="00000000" value="0.00" style="">
+								class="form-control input-xs text-right" placeholder="00000000" value="0.00">
 						</div>
 					</div>
 

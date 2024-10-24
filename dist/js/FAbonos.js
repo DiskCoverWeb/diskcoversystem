@@ -135,6 +135,10 @@ function DCCodRet() {
 		}
 	});
 
+	$('#DCCodRet').on('select2:select', function (e) {
+		var data = e.params.data.datos;
+		$('#TextPorc').val(data.Porcentaje);
+	});
 }
 function DCTipo() {
 	$.ajax({

@@ -49,7 +49,7 @@ class FAbonosAnticipadoM
         return $this->db->datos($sql);
     }
 
-    function SelectDB_Combo_DCClientes($grupo = G_NINGUNO)
+    function SelectDB_Combo_DCClientes($grupo = G_NINGUNO, $query="")
     {
         $sql = "SELECT TOP 50 Grupo,Codigo,Cliente,Email,Email2
                 FROM Clientes
@@ -57,8 +57,12 @@ class FAbonosAnticipadoM
         if ($grupo != G_NINGUNO) {
             $sql .= " AND GRUPO = '" . $grupo . "'";
         }
+
+        if($query){
+            $sql .= " AND Cliente LIKE '%" . $query . "%'";
+        }
         $sql .= " ORDER BY Cliente"; // <> adFalse linea 56
-        //print_r($sql);
+        //print_r($sql);die();
         return $this->db->datos($sql);
     }
 
