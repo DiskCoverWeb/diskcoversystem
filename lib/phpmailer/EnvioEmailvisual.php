@@ -64,7 +64,8 @@ class EnviarVisual
 				    $mail->Password = 'Admin@2023';
 				    $mail->SMTPSecure = false; // Dejar en blanco para 'tls'
 				    $mail->SMTPAutoTLS = true; // Desactivar el inicio automático de TLS
-				    $mail->Port = 26;
+				    $mail->SMTPSecure = 'tls';
+				    $mail->Port = 587;
 	         
 			        $from = $parametros['from']; 
 			        $mail->addAddress($value);  
