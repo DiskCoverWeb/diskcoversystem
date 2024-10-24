@@ -1,5 +1,10 @@
 <?php 
 
+header("Access-Control-Allow-Origin: *"); // Permite todas las orígenes, puedes restringir a uno específico
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS"); // Métodos permitidos
+header("Access-Control-Allow-Headers: Content-Type"); // Encabezados permitidos
+
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
