@@ -77,7 +77,7 @@ class EnviarVisual
 			          // Attachments
 			          if ($parametros['Archivo']!='') {
 
-			          	  $archivos = explode(';',$parametros['Archivo'])
+			          	  $archivos = explode(';',$parametros['Archivo']);
 			              foreach ($archivos as $key => $value) {
 			                $mail->AddAttachment($value);              
 			            }
