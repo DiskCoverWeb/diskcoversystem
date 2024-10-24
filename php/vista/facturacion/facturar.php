@@ -80,15 +80,14 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 
 		let tamanoLienzo = lienzoElem[0].parentElement.style.minHeight;
 		console.log(tamanoLienzo);*/
+		//inicioAbono();
+		//inicioAbonoAnticipado();
 
 	});
 
-	/*document.addEventListener('DOMContentLoaded', () => {
-		
-		let lienzoElem = $('#interfaz_facturacion').parent();
-		lienzoElem.css('height', 'inherit');
-		lienzoElem.css('background-color', 'yellow');
-	})*/
+	document.addEventListener('DOMContentLoaded', () => {
+		//inicioAbonoAnticipado();
+	})
 
 	function fechaSistema() {
 		var fecha = new Date();
@@ -440,13 +439,33 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 
 	function DCMarca() {
 
-		$.ajax({
+		/*$.ajax({
 			type: "POST",
 			url: '../controlador/facturacion/facturarC.php?DCMarca=true',
 			//data: {parametros: parametros},
 			dataType: 'json',
 			success: function (data) {
 				llenarComboList(data, 'DCMarca');
+			}
+		});*/
+
+		$('#DCMarca').select2({
+			placeholder: 'Seleccione',
+			ajax: {
+				url: '../controlador/facturacion/facturarC.php?DCMarca=true',
+				dataType: 'json',
+				delay: 250,
+				data: function (params) {
+					return {
+						q: params.term,
+					}
+				},
+				processResults: function (data) {
+					return {
+						results: data
+					};
+				},
+				cache: true
 			}
 		});
 
@@ -488,15 +507,22 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 	}
 
 	function autocomplete_producto() {
-		var marca = $('#DCMarca').val();
-		var cod_marca = $('#DCMarca').val();
+		/*var marca = $('#DCMarca').val();
+		var cod_marca = $('#DCMarca').val();*/
 		// console.log(grupo);
 		$('#DCArticulos').select2({
 			placeholder: 'Producto',
 			ajax: {
-				url: '../controlador/facturacion/facturarC.php?DCArticulos=true&marca=' + marca + '&codMarca=' + cod_marca,
+				url: '../controlador/facturacion/facturarC.php?DCArticulos=true', //&marca=' + marca + '&codMarca=' + cod_marca
 				dataType: 'json',
 				delay: 250,
+				data: function (params) {
+					return {
+						q: params.term,
+						marca: $('#DCMarca').val(),
+						codMarca: $('#DCMarca').val()
+					}
+				},
 				processResults: function (data) {
 					return {
 						results: data
@@ -739,15 +765,16 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			url: '../controlador/facturacion/facturarC.php?Grabar_Factura_Actual=true&' + FA,
 			data: { parametros: parametros },
 			dataType: 'json',
-
+			beforeSend:function(){$('#myModal_espera').modal('show');},
 			success: function (data) {
+				$('#myModal_espera').modal('hide');
 				if (data.res == -2) {
 					alerta_reprocesar('ADVERTENCIA', data.men);
 				} else if (data.res == -3) {
 					alerta_reprocesar('Formulario de Confirmación', data.men);
 				} else if (data.res == 1) {
-					//Abonos(data.data);
-					Autorizar_Factura_Actual(data.data);
+					Abonos(data.data);
+					//Autorizar_Factura_Actual(data.data);
 				} else if (data.res == -1) {
 					Swal.fire({
 						title: 'Algo salió mal',
@@ -799,7 +826,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 
 
 	function Autorizar_Factura_Actual(FAc) {
-		// $('#myModal_espera').modal('show');
+		$('#myModal_espera').modal('show');
 		var FA = $("#FA").serialize();
 		var parametros = {
 			'TextObs': $('#TextObs').val(),
@@ -831,14 +858,22 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 
 				$('#myModal_espera').modal('hide');
 				if (data.AU == 1) {
-					var url = '../../TEMP/' + data.pdf + '.pdf';
-					window.open(url, '_blank');
-					Swal.fire('Factura Creada y Autorizada', '', 'success');
+					/*var url = '../../TEMP/' + data.pdf + '.pdf';
+					window.open(url, '_blank');*/
+					Swal.fire('Factura Creada y Autorizada', '', 'success')
+					.then((result)=>{
+						var url = '../../TEMP/' + data.pdf + '.pdf';
+						window.open(url, '_blank');
+					});
 					Eliminar_linea('', '');
 				} else {
-					Swal.fire('Factura creada pero no autorizada', '' , 'warning');
-					var url = '../../TEMP/' + data.pdf + '.pdf';
-					window.open(url, '_blank');
+					Swal.fire('Factura creada pero no autorizada', '' , 'warning')
+					.then((result) => {
+						var url = '../../TEMP/' + data.pdf + '.pdf';
+						window.open(url, '_blank');
+					});
+					/*var url = '../../TEMP/' + data.pdf + '.pdf';
+					window.open(url, '_blank');*/
 					Eliminar_linea('', '');
 				}
 			}
@@ -847,7 +882,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 
 
 	function Abonos(FA) {
-		Swal.fire({
+		/*Swal.fire({
 			title: 'PAGO AL CONTADO',
 			text: '',
 			type: 'warning',
@@ -900,7 +935,52 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 				Autorizar_Factura_Actual(FA);
 			}
 
-		})
+		})*/
+		if (FA['TC'] == "OP") {
+			Swal.fire({
+				title: 'Formulario de Grabación',
+				text: 'Anticipo de Abono',
+				type: 'info',
+				confirmButtonText: 'Sí!',
+				showCancelButton: true,
+				allowOutsideClick: false,
+				cancelButtonText: 'No!'
+			}).then((result) => {
+				if (result.value == true) {
+					/*var grupo = $('#DCGrupo_No').val();
+					var faFactura = $('#TextFacturaNo').val();
+					src = "../vista/modales.php?FAbonoAnticipado=true&tipo=FA&grupo=" + grupo + "&faFactura=" + faFactura;
+					$('#frame_anticipado').attr('src', src).show();*/
+					inicioAbonoAnticipado();
+					$('#my_modal_abono_anticipado').modal('show').on('hidden.bs.modal', function () {
+						Autorizar_Factura_Actual(FA);
+					})
+				}else{
+					Autorizar_Factura_Actual(FA);
+				}
+			})
+		} else {
+			Swal.fire({
+				title: 'Formulario de Grabación',
+				text: 'Pago al Contado',
+				type: 'info',
+				confirmButtonText: 'Sí!',
+				showCancelButton: true,
+				allowOutsideClick: false,
+				cancelButtonText: 'No!'
+			}).then((result) => {
+				if (result.value == true) {
+					/*src = "../vista/modales.php?FAbonos=true";
+					$('#frame').attr('src', src).show();*/
+					inicioAbono();
+					$('#my_modal_abonos').modal('show').on('hidden.bs.modal', function () {
+						Autorizar_Factura_Actual(FA);
+					})
+				}else{
+					Autorizar_Factura_Actual(FA);
+				}
+			})
+		}
 	}
 
 
@@ -1004,7 +1084,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 	function boton5() {
 		$('#myModal_suscripcion').modal('show');
 		$('#LblClienteCod').val($('#LabelCodigo').val());
-		$('#LblCliente').val($('#DCCliente option:selected').text());
+		$('#form_suscripcion #LblCliente').val($('#DCCliente option:selected').text());
 		delete_asientoP();
 		DGSuscripcion();
 		DCCtaVenta();
@@ -1227,10 +1307,15 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			data: { parametros: parametros },
 			dataType: 'json',
 			success: function (data) {
-				if (data.length > 0) {
-					llenarComboList(data, 'DCSerieGR');
+				//console.log(data);
+				/*if (data.length > 0) {
+					$('#LblGuiaR').val(data.Guia);
+					$('#LblAutGuiaRem').val(data.Auto);
+				}*/
+				if (data) {
+					$('#LblGuiaR').val(data.Guia);
+					$('#LblAutGuiaRem').val(data.Auto);
 				}
-
 			}
 		})
 
@@ -1337,6 +1422,771 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 	}
 	//------------------fin de suscripcion------------------
 
+	//------------------abonos------------------
+
+	function inicioAbono(){
+		DCVendedor();
+		DiarioCaja();
+		DCBanco();
+		DCTarjeta();
+		DCRetFuente();
+		DCRetISer();
+		DCRetIBienes();
+		DCCodRet();
+		DCTipo();
+		$('#form_abonos #DCTipo').on('change', DCSerie);
+	}
+
+	function DCVendedor() {
+		$('#DCVendedor').select2({
+			placeholder: 'Vendedor',
+			width: 'resolve',
+			ajax: {
+				url: '../controlador/contabilidad/FAbonosC.php?DCVendedor=true',
+				dataType: 'json',
+				delay: 250,
+				processResults: function (data) {
+					return {
+						results: data
+					};
+				},
+				cache: true
+			}
+		});
+
+	}
+
+	function DCBanco() {
+		$('#form_abonos #DCBanco').select2({
+			placeholder: 'Cuenta Banco',
+			ajax: {
+				url: '../controlador/contabilidad/FAbonosC.php?DCBanco=true',
+				dataType: 'json',
+				delay: 250,
+				processResults: function (data) {
+					return {
+						results: data
+					};
+				},
+				cache: true
+			}
+		});
+
+	}
+	function DCTarjeta() {
+		$('#DCTarjeta').select2({
+			placeholder: 'Cuenta Banco',
+			ajax: {
+				url: '../controlador/contabilidad/FAbonosC.php?DCTarjeta=true',
+				dataType: 'json',
+				delay: 250,
+				processResults: function (data) {
+					return {
+						results: data
+					};
+				},
+				cache: true
+			}
+		});
+
+	}
+	function DCRetFuente() {
+		$('#DCRetFuente').select2({
+			placeholder: 'Cuenta Banco',
+			ajax: {
+				url: '../controlador/contabilidad/FAbonosC.php?DCRetFuente=true',
+				dataType: 'json',
+				delay: 250,
+				processResults: function (data) {
+					return {
+						results: data
+					};
+				},
+				cache: true
+			}
+		});
+
+	}
+	function DCRetISer() {
+		$('#DCRetISer').select2({
+			placeholder: 'Cuenta Banco',
+			ajax: {
+				url: '../controlador/contabilidad/FAbonosC.php?DCRetISer=true',
+				dataType: 'json',
+				delay: 250,
+				processResults: function (data) {
+					return {
+						results: data
+					};
+				},
+				cache: true
+			}
+		});
+
+	}
+	function DCRetIBienes() {
+		$('#DCRetIBienes').select2({
+			placeholder: 'Cuenta Banco',
+			ajax: {
+				url: '../controlador/contabilidad/FAbonosC.php?DCRetIBienes=true',
+				dataType: 'json',
+				delay: 250,
+				processResults: function (data) {
+					return {
+						results: data
+					};
+				},
+				cache: true
+			}
+		});
+
+	}
+	function DCCodRet() {
+		var MBFecha = $('#form_abonos #MBFecha').val();
+		$('#DCCodRet').select2({
+			placeholder: 'Cuenta Banco',
+			ajax: {
+				url: '../controlador/contabilidad/FAbonosC.php?DCCodRet=true&MBFecha=' + MBFecha,
+				dataType: 'json',
+				delay: 250,
+				processResults: function (data) {
+					return {
+						results: data
+					};
+				},
+				cache: true
+			}
+		});
+
+		$('#DCCodRet').on('select2:select', function (e) {
+			var data = e.params.data.datos;
+			$('#TextPorc').val(data.Porcentaje);
+		});
+	}
+	function DCTipo() {
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosC.php?DCTipo=true',
+			// data: {parametros: parametros},
+			dataType: 'json',
+			success: function (data) {
+				llenarComboList(data, 'form_abonos #DCTipo');
+				DCSerie();
+			}
+		});
+
+	}
+
+	function DCSerie() {
+		var parametros =
+		{
+			'tipo': $('#form_abonos #DCTipo').val(),
+			'serie': $('#DCLineas').val().slice(-6),
+		}
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosC.php?DCSerie=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				if ($('#form_abonos #DCTipo').val() == 'PV') {
+					$('#Label2').text('Punto de Venta No.');
+				} else if ($('#form_abonos #DCTipo').val() == 'NV') {
+					$('#Label2').text('Nota de Venta No.');
+				} else {
+					$('#Label2').text('Factura No.');
+				}
+				llenarComboList(data, 'DCSerie');
+				DCFactura_();
+			}
+		});
+
+	}
+
+	function DCFactura_() {
+		var parametros =
+		{
+			'tipo': $('#form_abonos #DCTipo').val(),
+			'serie': $('#DCSerie').val(),
+			'factura': $('#TextFacturaNo').val()
+		}
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosC.php?DCFactura=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				llenarComboList(data, 'form_abonos #DCFactura');
+			}
+		});
+	}
+
+	function DCFactura1() {
+		var parametros =
+		{
+			'tipo': $('#form_abonos #DCTipo').val(),
+			'serie': $('#DCSerie').val(),
+			'factura': $('#form_abonos #DCFactura').val(),
+		}
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosC.php?DCFactura1=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				$('#LabelSaldo').val(parseFloat(data[0].Saldo_MN).toFixed(2));
+				$('#form_abonos #TextCajaMN').val(parseFloat(data[0].Saldo_MN).toFixed(2));
+				$('#form_abonos #LblCliente').val(data[0].Cliente);
+				$('#LblGrupo').val(data[0].Grupo);
+				$('#LabelDolares').val(parseFloat(data[0].Cotizacion).toFixed(2));
+				$('#Cta_Cobrar').val(data[0].Cta_CxP);
+				$('#CodigoC').val(data[0].CodigoC);
+				$('#CI_RUC').val(data[0].CI_RUC);
+				Calculo_Saldo();
+				// $('#').val(data[0].);
+				FechaCorte = new Date(data[0].Fecha.date.split(' ')[0]);
+				const fechaInput = new Date($('#form_abonos #MBFecha').val());
+				if (fechaInput < FechaCorte) {
+					Swal.fire({
+						title: 'Error',
+						text: 'No se puede grabar abonos con fecha inferior a la emision de la factura',
+						type: 'error',
+					});
+				}
+				var dia = FechaCorte.getDate();
+				var mes = FechaCorte.getMonth() + 1;
+				var anio = FechaCorte.getFullYear();
+				FechaCorte = `${anio}-${mes}-${dia}`;
+				$('#LabelAutorizacion').text(`Autorizacion Fecha de Emisión ${FechaCorte}`);
+			}
+		});
+	}
+
+	function DiarioCaja() {
+		var parametros =
+		{
+			'CheqRecibo': $('#form_abonos #CheqRecibo').prop('checked'),
+		}
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosC.php?DiarioCaja=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				$('#form_abonos #TxtRecibo').val(data);
+			}
+		});
+	}
+
+
+	function DCAutorizacionF() {
+		var parametros =
+		{
+			'tipo': $('#form_abonos #DCTipo').val(),
+			'serie': $('#DCSerie').val(),
+			'factura': $('#form_abonos #DCFactura').val(),
+		}
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosC.php?DCAutorizacion=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				llenarComboList(data, 'DCAutorizacion');
+			}
+		});
+
+	}
+
+	function Calculo_Saldo() {
+
+		var TotalCajaMN = $('#form_abonos #TextCajaMN').val();
+		var TotalCajaME = $('#TextCajaME').val();
+		var Total_IVA = 0;
+		var Total_Bancos = $('#TextCheque').val();
+		var Total_Tarjeta = $('#TextTotalBaucher').val();
+		var Total_Ret = $('#TextRet').val();
+		var Total_RetIVAB = $('#TextRetIVAB').val();
+		var Total_RetIVAS = $('#TextRetIVAS').val();
+		var Saldo = $('#LabelSaldo').val();
+		// console.log(TotalCajaMN);
+		// console.log(TotalCajaME);
+		// console.log(Total_IVA);
+		// console.log(Total_Bancos);
+		// console.log(Total_Tarjeta);
+		// console.log(Total_Ret);
+		// console.log(Total_RetIVAB);
+		// console.log(Total_RetIVAS);
+		// console.log(Saldo);
+		// console.log()
+
+
+		var TotalAbonos = parseFloat(TotalCajaMN) + parseFloat(TotalCajaME) + parseFloat(Total_Bancos) + parseFloat(Total_Tarjeta) + parseFloat(Total_IVA) + parseFloat(Total_Ret) + parseFloat(Total_RetIVAB) + parseFloat(Total_RetIVAS);
+		var SaldoDisp = parseFloat(Saldo) - parseFloat(TotalAbonos);
+		$('#form_abonos #LabelPend').val(SaldoDisp.toFixed(2));
+		$('#TextRecibido').val(TotalAbonos.toFixed(2));
+	}
+
+	function TextInteres() {
+		var TextInteres = $('#TextInteres').val();
+		if (TextInteres.substring(TextInteres.length, 1) == "%") {
+			var Valor = TextInteres.substring(0, TextInteres.length - 1);
+			console.log($('#form_abonos #LabelPend').val());
+			TextInteres = parseFloat(Valor) * parseFloat(($('#form_abonos #LabelPend').val()) / 100);
+			$('#TextInteres').val(TextInteres.toFixed(2));
+		} else {
+			console.log(TextInteres);
+		}
+	}
+
+	function TextRecibido() {
+		var TotalCajaMN = $('#form_abonos #TextCajaMN').val();
+		var TotalCajaME = $('#TextCajaME').val();
+		var Total_IVA = 0;
+		var Total_Bancos = $('#TextCheque').val();
+		var Total_Tarjeta = $('#TextTotalBaucher').val();
+		var Total_Ret = $('#TextRet').val();
+		var Total_RetIVAB = $('#TextRetIVAB').val();
+		var Total_RetIVAS = $('#TextRetIVAS').val();
+		var Saldo = $('#LabelSaldo').val();
+		var TotalAbonos = parseFloat(TotalCajaMN) + parseFloat(TotalCajaME) + parseFloat(Total_Bancos) + parseFloat(Total_Tarjeta) + parseFloat(Total_IVA) + parseFloat(Total_Ret) + parseFloat(Total_RetIVAB) + parseFloat(Total_RetIVAS);
+		var TextInteres = parseFloat($('#TextInteres').val());
+		var TextRecibido = TotalAbonos + TextInteres;
+		$('#TextRecibido').val(TextRecibido.toFixed(2));
+	}
+
+	function guardar_abonos() {
+
+		const fechaInput = new Date($('#form_abonos #MBFecha').val());
+		if (fechaInput < FechaCorte) {
+			Swal.fire({
+				title: 'Error',
+				text: 'No se puede grabar abonos con fecha inferior a la emision de la factura',
+				type: 'error',
+			});
+			return;
+		
+		}
+
+		Swal.fire({
+			title: 'Esta Seguro que desea grabar estos pagos.',
+			text: '',
+			type: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Si!'
+		}).then((result) => {
+			if (result.value == true) {
+				Grabar_abonos();
+			}
+		})
+	}
+
+	function Grabar_abonos() {
+		$('#myModal_espera').modal('show');
+		var datos = $('#form_abonos').serialize();
+		var fac = $('#DCSerie').val() + '-' + $('#form_abonos #DCFactura').val();
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosC.php?Grabar_abonos=true',
+			data: datos,
+			dataType: 'json',
+			success: function (data) {
+				$('#myModal_espera').modal('hide');
+				Swal.fire('Abono Guardado', '', 'success').then(function () {
+					cerrar_modal();
+				})
+			}
+		});
+
+	}
+
+	function cerrar_modal() {
+		parent.cerrarModal();
+	}
+
+	//------------------fin de abonos------------------
+
+	//--------------abono anticipado--------------
+
+	function inicioAbonoAnticipado(){
+		// Espera a que el DOM esté listo
+		//document.addEventListener("DOMContentLoaded", function () {
+
+		var txtCajaMN = document.querySelector("#form_abonos_anti #TextCajaMN");
+		DCCtaAnt();//Hay que enviar el subCtaGen como parametro.
+		DCBancoAnt();
+		var url = window.location.href;
+		var urlParams = new URLSearchParams(url.split('?')[1]);
+		var TipoFactura = urlParams.get('tipo');
+		var grupo = $('#DCGrupo_No').val();
+		var faFactura = $('#TextFacturaNo').val();
+
+
+		if (TipoFactura == "OP") {
+			document.querySelector("#form_abonos_anti #LabelPend").style.display = 'block';
+			document.getElementById("Label10").style.display = 'block';
+			document.getElementById("Frame1").style.display = 'block';
+			document.getElementById("Frame2").style.display = 'none';
+			DCTipoAnt(faFactura);
+		} else {
+			document.querySelector("#form_abonos_anti #LabelPend").style.display = 'none';
+			document.getElementById("Label10").style.display = 'none';
+			document.getElementById("Frame1").style.display = 'none';
+			document.getElementById("Frame2").style.display = 'block';
+			DCClientes(grupo);
+		}
+		var CheqRecibo = document.querySelector("#form_abonos_anti #CheqRecibo");
+		var txtRecibo = document.querySelector("#form_abonos_anti #TxtRecibo");
+		ReadSetDataNum("Recibo_No", true, false)
+			.then(function (data) {
+				// Aquí puedes trabajar con los datos
+				if (CheqRecibo.checked) {
+					txtRecibo.value = data.toString().padStart(7, '0');
+					console.log(txtRecibo.textContent);
+				} else {
+					txtRecibo.value = "";
+				}
+			})
+			.catch(function (error) {
+				// Manejo de errores si la solicitud Ajax falla
+				txtRecibo.value = "";
+				console.error("Error en la solicitud Ajax", error);
+			});
+
+
+
+
+		// Función clic en el botón "Aceptar"
+		window.Command1_Click = function () {
+			Swal.fire({
+				title: 'Formulario de Grabación',
+				text: 'Está Seguro que desea grabar Abono.',
+				type: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Si!'
+			}).then((result) => {
+				if (result.value == true) {
+					Grabar_abonosAnt();
+				}
+			});
+		};
+
+
+
+
+		//});
+	}
+
+	// Función para grabar abonos
+	function Grabar_abonosAnt() {
+
+		insertAsientoSC();
+		let Total = $('#form_abonos_anti #TextCajaMN').val();
+		insertarAsiento(0, Total, 0);
+		insertarAsiento(0, 0, Total);
+
+		var parametros = {
+			'codigo_cliente': $('#DCClientes').val(),
+			'sub_cta_gen': $('#DCCtaAnt').val().split(" ")[0]
+		};
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosAnticipadoC.php?AdoIngCaja_Catalogo_CxCxP=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				return data;
+			}
+		});
+
+		GrabarComprobante();
+	}
+
+	function llenarSelect(data, idSelect, dataName) {
+		var select = document.querySelector("#form_abonos_anti #" + idSelect);
+		if (data.length == 0) {
+			select.innerHTML = '';
+			var option = document.createElement("option");
+			option.text = "No existen datos";
+			option.value = "";
+			select.appendChild(option);
+		} else {
+			select.innerHTML = '';
+			for (var i = 0; i < data.length; i++) {
+				var option = document.createElement("option");
+				option.value = data[i][dataName];
+				option.text = data[i][dataName];
+				select.appendChild(option);
+			}
+		}
+	}
+
+	/*
+	Método conectado con el controlador para obtener todos los tipos de DCBanco existentes
+	en la base de datos. Si la data retornada contiene 'status' quiere decir que no hay datos
+	y se rellena el select con un 'No existen datos'.
+	Con el for llenamos el select de todos los datos que hayamos encontrado de la consulta SQL.
+	*/
+	function DCBancoAnt() {
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCBanco=true',
+			// data: {parametros: parametros},
+			dataType: 'json',
+			success: function (data) {
+				llenarSelect(data, "DCBanco", "NomCuenta")
+			}
+		});
+	}
+
+
+
+	function DCCtaAnt() {
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCCtaAnt=true',
+			//data: {parametros: parametros},
+			dataType: 'json',
+			success: function (data) {
+				console.log(data);
+				llenarSelect(data, "DCCtaAnt", "NomCuenta");
+			}
+		});
+	}
+
+	function DCTipoAnt(faFactura) {
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCTipo=true',
+			data: { 'fafactura': faFactura },
+			dataType: 'json',
+			success: function (data) {
+				llenarSelect(data, "DCTipo", "TC");
+			}
+		});
+	}
+
+	function DCClientes(grupo) {
+		//let strGrupo = grupo!=null ? `&grupo=${grupo}` : '';
+		/*$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCClientes=true' + strGrupo,
+			//data: {parametros: parametros},
+			dataType: 'json',
+			success: function (data) {
+				var select = document.getElementById("DCClientes");
+				if (data.length == 0) {
+					select.innerHTML = '';
+					var option = document.createElement("option");
+					option.text = "No existen datos";
+					option.value = "";
+					select.appendChild(option);
+				} else {
+					select.innerHTML = '';
+					for (var i = 0; i < data.length; i++) {
+						var option = document.createElement("option");
+						option.value = data[i]['Codigo'];
+						option.text = data[i]['Cliente'];
+						select.appendChild(option);
+					}
+				}
+			}
+		});*/
+
+		$('#DCClientes').select2({
+			placeholder: 'Seleccione',
+			ajax: {
+				url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCClientes=true',
+				dataType: 'json',
+				delay: 250,
+				data: function (params) {
+					return {
+						q: params.term,
+						grupo:  grupo!=null ? grupo : ''
+					}
+				},
+				processResults: function (data) {
+					return {
+						results: data
+					};
+				},
+				cache: true
+			}
+		});
+	}
+
+	function ReadSetDataNum(SQLs, ParaEmpresa, Incrementar) {
+		return new Promise(function (resolve, reject) {
+			$.ajax({
+				type: "POST",
+				url: '../controlador/contabilidad/FAbonosAnticipadoC.php?ReadSetDataNum=true',
+				data: {
+					'SQLs': SQLs,
+					'ParaEmpresa': ParaEmpresa,
+					'Incrementar': Incrementar
+				},
+				dataType: 'json',
+				success: function (data) {
+					resolve(data); // Resolvemos la promesa con los datos
+				},
+				error: function (error) {
+					reject(error); // Rechazamos la promesa en caso de error
+				}
+			});
+		});
+	}
+
+
+	function cerrar_modal_ant() {
+		window.parent.closeModal();
+	}
+
+	function Listar_Facturas_Pendientes() {
+		//console.log("TIPO FACTURA LOST FOCUS", TipoFactura);
+		var url = window.location.href;
+		var urlParams = new URLSearchParams(url.split('?')[1]);
+		var TipoFactura = urlParams.get('tipo');
+		var faFactura = $('#TextFacturaNo').val();
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCFactura=true',
+			data: {
+				'TipoFactura': TipoFactura,
+				'FaFactura': faFactura
+			},
+			dataType: 'json',
+			success: function (data) {
+				llenarSelect(data, "DCFactura", "Factura");
+			}
+		});
+	}
+
+	function insertAsientoSC() {
+		var parametros = {
+			'Fecha_V': $('#form_abonos_anti #MBFecha').val(),
+			'CodigoC': $('#DCClientes').val(),
+			'NombreC': $('#DCClientes').find("option:selected").text(),
+			'SubCtaGen': $('#DCCtaAnt').val(),
+			'Total': $('#form_abonos_anti #TextCajaMN').val(),
+			'Trans_No': 200
+		};
+
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosAnticipadoC.php?AdoIngCaja_Asiento_SC=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				return data;
+			}
+		});
+	}
+
+	function insertarAsiento(Parcial_MEs, Debes, Habers) {
+		if (document.getElementById("Frame2").style.display == 'block') {
+			var Cta_Aux = $('#form_abonos_anti #DCBanco').val().split(" ")[0];
+			if (Cta_Aux.length <= 1)
+				Cta_Aux = '0';//Cta_CajaG
+		} else {
+			Cta_Aux = '0';
+		}
+		var parametros = {
+			'trans_no': 200,
+			'CodCta': Cta_Aux,
+			'Parcial_MEs': Parcial_MEs,
+			'Debes': Debes,
+			'Habers': Habers,
+			'CodigoCli': $('#DCClientes').val()
+		};
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosAnticipadoC.php?AdoIngCaja_Asiento=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				return data;
+			}
+		});
+	}
+
+	function GrabarComprobante() {
+		var url = window.location.href;
+		var urlParams = new URLSearchParams(url.split('?')[1]);
+		var TipoFactura = urlParams.get('tipo');
+		var faFactura = $('#TextFacturaNo').val();
+		var grupo = $('#DCGrupo_No').val();
+		var parametros = {
+			'Fecha': $('#form_abonos_anti #MBFecha').val(),
+			'Total': $('#form_abonos_anti #TextCajaMN').val(),
+			'TipoFactura': TipoFactura,
+			'NombreC': $('#DCClientes').find("option:selected").text(),
+			'Factura': faFactura,
+			'Grupo': grupo,
+			'TxtConcepto': $('#TxtConcepto').val(),
+			'CodigoCli': $('#DCClientes').val(),
+			'Trans_No': 200
+		};
+		//console.log(parametros);
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosAnticipadoC.php?GrabarComprobante=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				EnviarEmail(data);
+			}
+		});
+
+	}
+
+	function EnviarEmail(parametros) {
+		/*var parametros = {
+			'CodigoCli': $('#DCClientes').val(),
+		};*/
+
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosAnticipadoC.php?EnviarEmail=true',
+			data: { parametros: parametros },
+			dataType: 'json',
+			success: function (data) {
+				if (data.res == 1) {
+					Swal.fire({
+						title: data.Titulo,
+						text: data.Mensaje,
+						type: 'info',
+						showCancelButton: true,
+						confirmButtonColor: '#3085d6',
+						cancelButtonColor: '#d33',
+						confirmButtonText: 'Si!'
+					}).then((result) => {
+						if (result.value == true) {
+							EnviarEmailAccept(data);
+						}
+					});
+				}
+			}
+		});
+	}
+
+	function EnviarEmailAccept(data){
+		$.ajax({
+			type: "POST",
+			url: '../controlador/contabilidad/FAbonosAnticipadoC.php?EnviarEmailAccept=true',
+			data: { parametros: data },
+			dataType: 'json',
+			success: function (data) {
+				
+			}
+		});
+	}
+
+	//------------------fin de abono anticipado------------------
+
 </script>
 
 <style>
@@ -1346,6 +2196,39 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 	body {
 		padding-right: 0px !important;
 	}
+	@media screen and (max-width: 600px) {
+			.table{
+				border: 0px;
+			}
+			.table caption {
+				font-size: 14px;
+			}
+			.table thead{
+				display: none;
+			}
+			.table tr{
+				margin-bottom: 8px;
+				border-bottom: 4px solid #ddd;
+				display: block;
+			}
+			.table th, .table td{
+				font-size: 12px;
+			}
+			.table td{
+				display: block;
+				border-bottom: 1px solid #ddd;
+				text-align: right;
+			}
+			.table td:last-child{
+				border-bottom: 0px;
+			}
+			.table td::before{
+				content: attr(data-label);
+				font-weight: bold;
+				text-transform: uppercase;
+				float: left;
+			}
+		}
 </style>
 <div id="interfaz_facturacion" style="display:flex; flex-direction:column; min-height:inherit;">
 
@@ -1939,7 +2822,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 </div>
 <div class="modal fade" id="cambiar_nombre" role="dialog" data-keyboard="false" data-backdrop="static" tabindex="-1">
 	<div class="modal-dialog modal-dialog modal-dialog-centered modal-sm"
-		style="margin-left: 300px; margin-top: 345px;">
+		style="margin-left: 25%; margin-top: 30%;">
 		<div class="modal-content">
 			<div class="modal-body text-center">
 				<textarea class="form-control" style="resize: none;" rows="4" id="TxtDetalle" name="TxtDetalle"
@@ -1951,100 +2834,102 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 
 <!-- Modal cliente nuevo -->
 <div id="myModal_guia" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
-	<div class="modal-dialog modal-md" style="width: 30%;">
+	<div class="modal-dialog modal-md" style="width: 30%;min-width:350px;">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 				<h4 class="modal-title">DATOS DE GUIA DE REMISION</h4>
 			</div>
 			<div class="modal-body">
-				<div class="row">
-					<div class="col-sm-12">
-						<b class="col-sm-6 control-label" style="padding: 0px">Fecha de emisión de guía</b>
-						<div class="col-sm-6" style="padding: 0px">
-							<input type="date" name="MBoxFechaGRE" id="MBoxFechaGRE" class="form-control input-xs"
-								value="<?php echo date('Y-m-d'); ?>" onblur="MBoxFechaGRE_LostFocus()">
+				<form id="form_guia">
+					<div class="row">
+						<div class="col-sm-12">
+							<b class="col-sm-6 control-label" style="padding: 0px">Fecha de emisión de guía</b>
+							<div class="col-sm-6" style="padding: 0px">
+								<input type="date" name="MBoxFechaGRE" id="MBoxFechaGRE" class="form-control input-xs"
+									value="<?php echo date('Y-m-d'); ?>" onblur="MBoxFechaGRE_LostFocus()">
+							</div>
 						</div>
-					</div>
-					<div class="col-sm-12" style="padding-top:5px">
-						<b class="col-sm-6 control-label" style="padding: 0px">Guía de remisión No.</b>
-						<div class="col-sm-3" style="padding: 0px">
-							<select class="form-control input-xs" id="DCSerieGR" name="DCSerieGR"
-								onchange="DCSerieGR_LostFocus()">
-								<option value="">No Existe</option>
-							</select>
+						<div class="col-sm-12" style="padding-top:5px">
+							<b class="col-sm-6 control-label" style="padding: 0px">Guía de remisión No.</b>
+							<div class="col-sm-3" style="padding: 0px">
+								<select class="form-control input-xs" id="DCSerieGR" name="DCSerieGR"
+									onblur="DCSerieGR_LostFocus()">
+									<option value="">No Existe</option>
+								</select>
+							</div>
+							<div class="col-sm-3" style="padding: 0px">
+								<input type="text" name="LblGuiaR" id="LblGuiaR" class="form-control input-xs"
+									value="000000">
+							</div>
 						</div>
-						<div class="col-sm-3" style="padding: 0px">
-							<input type="text" name="LblGuiaR" id="LblGuiaR" class="form-control input-xs"
-								value="000000">
+						<div class="col-sm-12">
+							<b>AUTORIZACION GUIA DE REMISION</b>
+							<input type="text" name="LblAutGuiaRem" id="LblAutGuiaRem" class="form-control input-xs"
+								value="0">
 						</div>
-					</div>
-					<div class="col-sm-12">
-						<b>AUTORIZACION GUIA DE REMISION</b>
-						<input type="text" name="LblAutGuiaRem" id="LblAutGuiaRem" class="form-control input-xs"
-							value="0">
-					</div>
-					<div class="col-sm-12" style="padding-top:5px">
-						<b class="col-sm-6 control-label" style="padding: 0px">Iniciación del traslados</b>
-						<div class="col-sm-6" style="padding: 0px">
-							<input type="date" name="MBoxFechaGRI" id="MBoxFechaGRI" class="form-control input-xs"
-								value="<?php echo date('Y-m-d'); ?>">
+						<div class="col-sm-12" style="padding-top:5px">
+							<b class="col-sm-6 control-label" style="padding: 0px">Iniciación del traslados</b>
+							<div class="col-sm-6" style="padding: 0px">
+								<input type="date" name="MBoxFechaGRI" id="MBoxFechaGRI" class="form-control input-xs"
+									value="<?php echo date('Y-m-d'); ?>">
+							</div>
 						</div>
-					</div>
-					<div class="col-sm-12" style="padding-top:5px">
-						<b class="col-sm-3 control-label" style="padding: 0px">Ciudad</b>
-						<div class="col-sm-9" style="padding: 0px">
-							<select class="form-control input-xs" style="width:100%" id="DCCiudadI" name="DCCiudadI">
+						<div class="col-sm-12" style="padding-top:5px">
+							<b class="col-sm-3 control-label" style="padding: 0px">Ciudad</b>
+							<div class="col-sm-9" style="padding: 0px">
+								<select class="form-control input-xs" style="width:100%" id="DCCiudadI" name="DCCiudadI">
+									<option value=""></option>
+								</select>
+							</div>
+						</div>
+						<div class="col-sm-12" style="padding-top:5px">
+							<b class="col-sm-6 control-label" style="padding: 0px">Finalización del traslados</b>
+							<div class="col-sm-6" style="padding: 0px">
+								<input type="date" name="MBoxFechaGRF" id="MBoxFechaGRF" class="form-control input-xs"
+									value="<?php echo date('Y-m-d'); ?>">
+							</div>
+						</div>
+						<div class="col-sm-12" style="padding-top:5px">
+							<b class="col-sm-3 control-label" style="padding: 0px">Ciudad</b>
+							<div class="col-sm-9" style="padding: 0px">
+								<select class="form-control input-xs" style="width:100%" id="DCCiudadF" name="DCCiudadF">
+									<option value=""></option>
+								</select>
+							</div>
+						</div>
+						<div class="col-sm-12" style="padding-top:5px">
+							<b>Nombre o razón social (Transportista)</b>
+							<select class="form-control input-xs" style="width:100%" id="DCRazonSocial"
+								name="DCRazonSocial">
 								<option value=""></option>
 							</select>
 						</div>
-					</div>
-					<div class="col-sm-12" style="padding-top:5px">
-						<b class="col-sm-6 control-label" style="padding: 0px">Finalización del traslados</b>
-						<div class="col-sm-6" style="padding: 0px">
-							<input type="date" name="MBoxFechaGRF" id="MBoxFechaGRF" class="form-control input-xs"
-								value="<?php echo date('Y-m-d'); ?>">
-						</div>
-					</div>
-					<div class="col-sm-12" style="padding-top:5px">
-						<b class="col-sm-3 control-label" style="padding: 0px">Ciudad</b>
-						<div class="col-sm-9" style="padding: 0px">
-							<select class="form-control input-xs" style="width:100%" id="DCCiudadF" name="DCCiudadF">
+						<div class="col-sm-12" style="padding-top:5px">
+							<b>Empresa de Transporte</b>
+							<select class="form-control input-xs" style="width:100%" id="DCEmpresaEntrega"
+								name="DCEmpresaEntrega">
 								<option value=""></option>
 							</select>
 						</div>
+						<div class="col-sm-4">
+							<b>Placa</b>
+							<input type="text" name="TxtPlaca" id="TxtPlaca" class="form-control input-xs" value="XXX-999">
+						</div>
+						<div class="col-sm-4">
+							<b>Pedido</b>
+							<input type="text" name="TxtPedido" id="TxtPedido" class="form-control input-xs">
+						</div>
+						<div class="col-sm-4">
+							<b>Zona</b>
+							<input type="text" name="TxtZona" id="TxtZona" class="form-control input-xs">
+						</div>
+						<div class="col-sm-12">
+							<b>Lugar entrega</b>
+							<input type="text" name="TxtLugarEntrega" id="TxtLugarEntrega" class="form-control input-xs">
+						</div>
 					</div>
-					<div class="col-sm-12" style="padding-top:5px">
-						<b>Nombre o razón social (Transportista)</b>
-						<select class="form-control input-xs" style="width:100%" id="DCRazonSocial"
-							name="DCRazonSocial">
-							<option value=""></option>
-						</select>
-					</div>
-					<div class="col-sm-12" style="padding-top:5px">
-						<b>Empresa de Transporte</b>
-						<select class="form-control input-xs" style="width:100%" id="DCEmpresaEntrega"
-							name="DCEmpresaEntrega">
-							<option value=""></option>
-						</select>
-					</div>
-					<div class="col-sm-4">
-						<b>Placa</b>
-						<input type="text" name="TxtPlaca" id="TxtPlaca" class="form-control input-xs" value="XXX-999">
-					</div>
-					<div class="col-sm-4">
-						<b>Pedido</b>
-						<input type="text" name="TxtPedido" id="TxtPedido" class="form-control input-xs">
-					</div>
-					<div class="col-sm-4">
-						<b>Zona</b>
-						<input type="text" name="TxtZona" id="TxtZona" class="form-control input-xs">
-					</div>
-					<div class="col-sm-12">
-						<b>Lugar entrega</b>
-						<input type="text" name="TxtLugarEntrega" id="TxtLugarEntrega" class="form-control input-xs">
-					</div>
-				</div>
+				</form>
 
 
 			</div>
@@ -2096,7 +2981,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 </script-->
 
 <div id="myModal_suscripcion" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
-	<div class="modal-dialog modal-md" style="width: 55%;">
+	<div class="modal-dialog modal-md" style="width: 55%;min-width:350px;">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -2291,8 +3176,8 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 					<div class="col-sm-2">
 						<div class="row">
 							<div class="col-sm-12">
-								<button class="btn btn-default btn-block" id="btn_g">
-									<img src="../../img/png/grabar.png" onclick="Command1();"><br> Guardar
+								<button class="btn btn-default btn-block" id="btn_g" onclick="Command1();">
+									<img src="../../img/png/grabar.png"><br> Guardar
 								</button>
 							</div>
 							<div class="col-sm-12" style="padding-top: 5px;">
@@ -2315,7 +3200,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 
 <!-- Modal reserva -->
 <div id="myModal_reserva" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
-	<div class="modal-dialog modal-md" style="width: 30%;">
+	<div class="modal-dialog modal-md" style="width: 30%;min-width:350px;">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -2396,7 +3281,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 
 <!-- Modal ordenes produccion -->
 <div id="myModal_ordenesProd" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
-	<div class="modal-dialog modal-md" style="width: 30%;">
+	<div class="modal-dialog modal-md" style="width: 30%;min-width:350px;">
 		<div class="modal-content">.
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -2502,7 +3387,394 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 				<h4 class="modal-title">INGRESO DE CAJA</h4>
 			</div>
 			<div class="modal-body">
-				<iframe src="" id="frame" width="100%" height="560px" marginheight="0" frameborder="0"></iframe>
+				<div class="row">
+					<div class="col-sm-10">
+						<form id="form_abonos">
+							<div class="row">
+								<div class="col-sm-2">
+									<label class="control-label"
+										style="font-size: 11.5px;padding-right: 0px; white-space: nowrap;"><input type="checkbox"
+											name="CheqRecibo" id="CheqRecibo" checked> INGRESO CAJA No.</label>
+								</div>
+								<div class="col-sm-2 col-xs-4">
+									<input type="text" name="TxtRecibo" id="TxtRecibo" class="form-control input-xs" value="0000000"
+										style="padding-right: 0;">
+								</div>
+								<div class="col-sm-3 col-xs-3">
+									<div class="col-sm-6">
+										<label for="LabelDolares" style="font-size: 11.5px; padding-top:5px">COTIZACION</label>
+									</div>
+									<div class="col-sm-6 col-xs-5">
+										<input type="text" name="LabelDolares" id="LabelDolares"
+											class="form-control input-xs text-right" value="0.00" style="padding:0;">
+									</div>
+								</div>
+								<div class="col-sm-4 col-xs-5">
+									<div class="col-sm-6" style="padding:0;">
+										<label for="MBFecha" style="font-size: 11.5px;">Fecha
+											del
+											abono</label>
+									</div>
+									<div class="col-sm-6 col-xs-6" style="padding: 0;">
+										<input type="date" name="MBFecha" id="MBFecha" class="form-control input-xs"
+											value="<?php echo date('Y-m-d'); ?>" style="padding:0;">
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-4 col-xs-4">
+									<div class="col-sm-6" style="padding:0">
+										<label for="DCTipo" style="font-size: 11.5px; white-space: nowrap;" class="text-left" for="DCTipo">Tipo
+											de
+											Documento.</label>
+									</div>
+									<div class="col-sm-5 col-xs-4">
+										<select class="form-control input-xs" id="DCTipo" name="DCTipo" style="padding: 0;" onblur="DCSerie();">
+											<option value="FA">FA</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-sm-3 col-xs-3">
+									<div class="col-sm-3">
+										<label for="DCSerie" class="text-left">Serie.</label>
+									</div>
+									<div class="col-sm-9">
+										<select class="form-control input-xs" id="DCSerie" name="DCSerie" onblur="DCFactura_()">
+										</select>
+									</div>
+								</div>
+								<div class="col-sm-3 col-xs-3">
+									<div class="col-sm-4" style="padding:0;">
+										<label for="DCFactura" style="font-size: 11.5px; white-space: nowrap;" id="Label2"
+											name="Label2">No.</label>
+									</div>
+									<div class="col-sm-8 col-xs-9" style="padding-right: 0;">
+										<select class="form-control input-xs" id="DCFactura" name="DCFactura"
+											onblur="DCAutorizacionF();DCFactura1()">
+										</select>
+									</div>
+								</div>
+								<div class="col-sm-2 col-xs-2" style="padding:0px">
+									<div class="col-sm-4">
+										<label for="LabelSaldo">Saldo</label>
+									</div>
+									<div class="col-sm-8 col-xs-8">
+										<input type="text" name="LabelSaldo" id="LabelSaldo" class="form-control input-xs text-right"
+											value="0.00">
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 col-xs-10" style="padding:0px">
+									<div class="col-sm-2 col-xs-2">
+										<label for="DCAutorizacion">Autorizacion.</label>
+									</div>
+									<div class="col-sm-10 col-xs-10">
+										<select class="form-control input-xs" id="DCAutorizacion" name="DCAutorizacion">
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-9 col-xs-8">
+									<input type="text" name="LblCliente" id="LblCliente" class="form-control input-xs"
+										placeholder="Cliente">
+									<input type="hidden" name="CodigoC" id="CodigoC" class="form-control input-xs"
+										placeholder="Cliente">
+									<input type="hidden" name="CI_RUC" id="CI_RUC" style="padding:5px 0px 0px 0px">
+								</div>
+								<div class="col-sm-3 col-xs-4">
+									<input type="text" name="LblGrupo" id="LblGrupo" class="form-control input-xs"
+										placeholder="Grupo No">
+								</div>
+							</div>
+
+
+							<div class="row">
+								<div class="col-sm-3 col-xs-2">
+									<label for="TxtSerieRet">Serie Retencion</label>
+									<input type="text" name="TxtSerieRet" id="TxtSerieRet" class="form-control input-xs"
+										placeholder="001" value="001001">
+								</div>
+								<div class="col-sm-3 col-xs-2">
+									<label for="TextCompRet">Retencion No</label>
+									<input type="text" name="TextCompRet" id="TextCompRet" class="form-control input-xs text-right"
+										placeholder="00000000" value="99999999">
+								</div>
+								<div class="col-sm-6 col-xs-8">
+									<label for="TxtAutoRet" id="LabelAutorizacion">Autorizacion </label>
+									<input type="text" name="TxtAutoRet" id="TxtAutoRet" class="form-control input-xs"
+										placeholder="Grupo No" value="000000000">
+								</div>
+							</div>
+
+
+							<div class="row">
+								<div class="col-sm-12 col-xs-7">
+									<div class="row">
+										<div class="col-sm-6 col-xs-8">
+											<label for="DCRetIBienes">RETENCION DEL I.V.A. EN BIENES</label>
+											<input type="hidden" name="DCRetIBienesNom" id="DCRetIBienesNom">
+											<select class="form-control input-xs" id="DCRetIBienes" name="DCRetIBienes"
+												onchange="$('#DCRetIBienesNom').val($('#DCRetIBienes option:selected').text())"
+												placeholder="Retencion en bienes">
+											</select>
+										</div>
+										<div class="col-sm-1" style="padding:0px">
+											<label for="CBienes">%</label>
+											<select class="form-control input-xs" id="CBienes" name="CBienes">
+												<option value="0">0</option>
+												<option value="10">10</option>
+												<option value="30">30</option>
+												<option value="100">100</option>
+											</select>
+										</div>
+										<div class="col-sm-5">
+											<div class="row">
+												<div class="col-sm-12">
+													<label for="" style="visibility: hidden;">ESPACIADO</label>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-7 col-xs-6 text-right">
+													<label for="TextRetIVAB">VALOR RETENIDO.</label>
+												</div>
+												<div class="col-sm-5">
+													<input type="text" name="TextRetIVAB" id="TextRetIVAB"
+														class="form-control input-xs text-right" placeholder="0.00" value="0.00"
+														onblur="Calculo_Saldo()">
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 col-xs-7">
+									<div class="row">
+										<div class="col-sm-6 col-xs-6">
+											<label for="DCRetISer">RETENCION DEL I.V.A. EN SERVICIO </label>
+											<input type="hidden" name="DCRetISerNom" id="DCRetISerNom">
+											<select class="form-control input-xs" id="DCRetISer" name="DCRetISer"
+												onchange="$('#DCRetISerNom').val($('#DCRetISer option:selected').text())">
+												<option value="">Retencion en servicios</option>
+											</select>
+										</div>
+										<div class="col-sm-1 col-xs-1" style="padding:0;">
+											<label for="CServicio">%</label>
+											<select class="form-control input-xs" id="CServicio" name="CServicio">
+												<option value="0">0</option>
+												<option value="20">20</option>
+												<option value="70">70</option>
+												<option value="100">100</option>
+											</select>
+										</div>
+										<div class="col-sm-5">
+											<div class="row">
+												<div class="col-sm-12">
+													<label for="" style="visibility: hidden;">ESPACIADO</label>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-7 col-xs-6 text-right">
+													<label for="TextRetIVAS">VALOR RETENIDO.</label>
+												</div>
+												<div class="col-sm-5">
+													<input type="text" name="TextRetIVAS" id="TextRetIVAS"
+														class="form-control input-xs text-right" placeholder="0.00"
+														onblur="Calculo_Saldo()" value="0.00">
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 col-xs-7">
+									<div class="row">
+										<div class="col-sm-4 col-xs-7">
+											<label for="DCRetFuente">RETENCION EN LA FUENTE</label>
+											<select class="form-control input-xs" id="DCRetFuente" name="DCRetFuente">
+											</select>
+										</div>
+										<div class="col-sm-2 col-xs-3" style="padding: 0;">
+											<label for="DCCodRet">CODIGO</label>
+											<select class="form-control input-xs" id="DCCodRet" name="DCCodRet">
+											</select>
+										</div>
+										<div class="col-sm-1 col-xs-2" style="padding-right: 0;">
+											<label for="TextPorc">%</label>
+											<input type="text" name="TextPorc" id="TextPorc" class="form-control input-xs"
+												placeholder="000">
+										</div>
+										<div class="col-sm-5">
+											<div class="row">
+												<div class="col-sm-12">
+													<label for="" style="visibility: hidden;">ESPACIADO</label>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-7 text-right">
+													<label for="TextRet">VALOR RETENIDO.</label>
+												</div>
+												<div class="col-sm-5">
+													<input type="text" name="TextRet" id="TextRet"
+														class="form-control input-xs text-right" placeholder="00000000"
+														onblur="Calculo_Saldo()" value="0.00">
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 col-xs-8">
+									<div class="row">
+										<div class="col-sm-5 col-xs-5">
+											<label for="DCBancoNom">CUENTA DEL BANCO </label>
+											<input type="hidden" name="DCBancoNom" id="DCBancoNom">
+											<select class="form-control input-xs" id="DCBanco" name="DCBanco"
+												onchange="$('#DCBancoNom').val($('#form_abonos #DCBanco option:selected').text())">
+											</select>
+										</div>
+										<div class="col-sm-1 col-xs-3" style="padding:0;">
+											<label for="TextCheqNo">CHEQUE </label>
+											<input type="text" name="TextCheqNo" id="TextCheqNo" class="form-control input-xs"
+												placeholder="00000000">
+										</div>
+										<div class="col-sm-3 col-xs-4">
+											<label for="TextBanco">NOMBRE DE BANCO</label>
+											<input type="text" name="TextBanco" id="TextBanco" class="form-control input-xs"
+												placeholder="00000000">
+										</div>
+										<div class="col-sm-3">
+											<div class="row">
+												<div class="col-sm-12">
+													<label for="" style="visibility: hidden;">ESPACIADO</label>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-6 text-right">
+													<label for="TextCheque">VALOR.</label>
+												</div>
+												<div class="col-sm-6">
+													<input type="text" name="TextCheque" id="TextCheque"
+														class="form-control input-xs text-right" placeholder="0.00"
+														onblur="Calculo_Saldo()" value="0.00">
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 col-xs-8">
+									<div class="row">
+										<div class="col-sm-5 col-xs-5">
+											<label for="DCTarjeta">TARJETA DE CREDITO</label>
+											<input type="hidden" name="DCTarjetaNom" id="DCTarjetaNom">
+											<select class="form-control input-xs" id="DCTarjeta" name="DCTarjeta"
+												onchange="$('#DCTarjetaNom').val($('#DCTarjeta option:selected').text())">
+												<option value="">Tarjeta credito</option>
+											</select>
+										</div>
+										<div class="col-sm-2 col-xs-3" style="padding:0;">
+											<label for="TextBaucher">BAUCHER</label>
+											<input type="text" name="TextBaucher" id="TextBaucher" class="form-control input-xs"
+												placeholder="00000000">
+										</div>
+										<div class="col-sm-2 col-xs-4">
+											<label for="TextInteres" style="font-size: 11.5px;">INTERES TARJETA</label>
+											<input type="text" name="TextInteres" id="TextInteres"
+												class="form-control input-xs text-right" placeholder="00000000" value="0"
+												onblur="TextInteres();TextRecibido();">
+										</div>
+										<div class="col-sm-3">
+											<div class="row">
+												<div class="col-sm-12">
+													<label for="" style="visibility: hidden;">ESPACIADO</label>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-6 text-right">
+													<label for="TextTotalBaucher">VALOR.</label>
+												</div>
+												<div class="col-sm-6">
+													<input type="text" name="TextTotalBaucher" id="TextTotalBaucher"
+														class="form-control input-xs text-right" placeholder="00000000"
+														onblur="Calculo_Saldo()" value="0.00">
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-7 col-xs-6">
+									<div class="row">
+										<div class="col-sm-12 col-xs-12" style="padding-top:10px">
+											<textarea placeholder="Observacion" rows="2" style="resize: none;"
+												class="form-control input-xs"></textarea>
+											<textarea placeholder="Nota" rows="2" style="resize: none;"
+												class="form-control input-xs"></textarea>
+											<label for="DCVendedor">Vendedor</label>
+											<select class="form-control input-xs" id="DCVendedor" name="DCVendedor">
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-5 col-xs-6" style="padding-top:10px">
+									<div class="row">
+										<label for="TextCajaMN" class="col-sm-6 col-xs-6 control-label">Caja MN.</label>
+										<div class="col-sm-6 col-xs-6">
+											<input type="text" name="TextCajaMN" id="TextCajaMN"
+												class="form-control input-xs text-right" placeholder="00000000" value="0.00">
+										</div>
+									</div>
+									<div class="row">
+										<label for="TextCajaME" class="col-sm-6 col-xs-6 control-label">Caja ME.</label>
+										<div class="col-sm-6 col-xs-6">
+											<input type="text" name="TextCajaME" id="TextCajaME"
+												class="form-control input-xs text-right" placeholder="00000000" value="0.00">
+										</div>
+									</div>
+									<div class="row">
+										<label for="LabelPend" class="col-sm-6 col-xs-6 control-label">SALDO ACTUAL.</label>
+										<div class="col-sm-6 col-xs-6">
+											<input type="text" name="LabelPend" style="color:red;" id="LabelPend"
+												class="form-control input-xs text-right" placeholder="00000000" value="0.00">
+										</div>
+									</div>
+									<div class="row">
+										<label for="TextRecibido" class="col-sm-6 col-xs-6 control-label">VALOR RECIBIDO.</label>
+										<div class="col-sm-6 col-xs-6">
+											<input type="text" name="TextRecibido" id="TextRecibido"
+												class="form-control input-xs text-right" placeholder="00000000" value="0.00">
+										</div>
+									</div>
+									<div class="row">
+										<label for="LabelCambio" style="font-size: 11.5px;"
+											class="col-sm-6  col-xs-6 control-label">CAMBIO A ENTREGAR.</label>
+										<div class="col-sm-6 col-xs-6 ">
+											<input type="text" name="LabelCambio" style="color:red;" id="LabelCambio"
+												class="form-control input-xs text-right" placeholder="00000000" value="0.00">
+										</div>
+									</div>
+
+								</div>
+							</div>
+							<input type="hidden" name="Cta_Cobrar" id="Cta_Cobrar">
+						</form>
+					</div>
+					<div class="col-sm-2">
+						<button class="btn btn-default" id="btn_g" onclick="guardar_abonos();"> <img
+								src="../../img/png/grabar.png"><br>&nbsp;Guardar&nbsp;</button>
+						<!-- <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button> --><br> <br>
+						<button class="btn btn-default" data-dismiss="modal"> <img src="../../img/png/bloqueo.png"><br>
+							Cancelar</button>
+					</div>
+				</div>
+				<!--<iframe src="" id="frame" width="100%" height="560px" marginheight="0" frameborder="0"></iframe>-->
 			</div>
 			<div class="modal-footer">
 				<!-- <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button> -->
@@ -2520,8 +3792,189 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 				<h4 class="modal-title">INGRESO DE ABONOS ANTICIPADOS</h4>
 			</div>
 			<div class="modal-body">
-				<iframe src="" id="frame_anticipado" width="100%" height="500px" marginheight="0"
-					frameborder="0"></iframe>
+				<!--<iframe src="" id="frame_anticipado" width="100%" height="500px" marginheight="0"
+					frameborder="0"></iframe>-->
+				<div class="row">
+					<div class="col-sm-10">
+						<form id="form_abonos_anti" class="row">
+
+							<div class="form-inline col-sm-12">
+								<div class="checkbox col-sm-4">
+									<input type="checkbox" id="CheqRecibo" name="CheqRecibo" checked>
+									<label for="CheqRecibo">RECIBO CAJA No.</label>
+								</div>
+								<div class="form-group col-sm-4">
+									<input type="" class="form-control" id="TxtRecibo" value="0">
+								</div>
+								<div class="form-group col-sm-4">
+									<label for="MBFecha">FECHA</label>
+									<input type="date" class="form-control" id="MBFecha" name="MBFecha"
+										value="<?php echo date('Y-m-d'); ?>">
+								</div>
+							</div>
+
+							<div class="col-sm-12" style="padding-top: 5px;" id="Frame1">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+									</div>
+									<div class="panel-body">
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="input-group">
+													<label class="input-group-addon" for="DCTipo" style="color: red;">TIPO</label>
+													<select class="form-control" id="DCTipo" name="DCTipo" style="width: 100%;" onchange="Listar_Facturas_Pendientes()">
+														<option value="">Seleccione</option>
+													</select>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="input-group">
+													<label class="input-group-addon" for="DCFactura">Factura No.</label>
+													<select class="form-control" id="DCFactura" name="DCFactura" style="width: 100%;">
+														<option value="">Factura</option>
+													</select>
+												</div>
+											</div>
+										</div>
+										<div style="padding: 5px;"></div>
+										<div class="row">
+											<div class="col-sm-5">
+												<div class="form-control">
+													<label  id="Label4">FECHA DE EMISION</label>
+												</div>
+											</div>
+											<div class="col-sm-3">                               
+												<div class="form-control">
+													<label  id="Label8"></label>
+												</div>                              
+											</div>
+											<div class="col-sm-4">
+												<div class="form-control" style="background-color: red;">
+													<label id="Label1" ></label>
+												</div>
+											</div>
+										</div>
+										<div style="padding: 5px;"></div>
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-control">
+													<label id="Label3"></label>
+												</div>
+											</div>
+										</div>
+										<div style="padding: 5px;"></div>
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-control">
+													<label id="Label6">Saldo Pendiente</label>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-control">
+													<label id="LabelSaldo"></label>
+												</div>
+											</div>
+										</div>
+										<div style="padding: 5px;"></div>
+										<div class="row">
+											<div class="col-sm-12" >
+												<div class="form-control " style="padding-bottom: 50px;">
+													<label id="LblObs" style="color: violet;">Observacion</label>
+												</div>
+											</div>
+										</div>
+										<div style="padding: 5px;"></div>
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-control " style="padding-bottom: 50px;">
+													<label id="LblNota" style="color: violet;">Nota</label>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-sm-12" style="padding-top: 5px;" id="Frame2">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h3 class="panel-title">Abono Anticipado</h3>
+									</div>
+									<div class="panel-body">
+
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<label for="DCCliente">Cliente</label>
+													<select class="form-select form-select-sm" id="DCClientes" name="DCCliente"
+														style="width: 100%;">
+														<option value="">Seleccione</option>
+													</select>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<label for="TxtConcepto">Observación</label>
+													<textarea class="form-control" id="TxtConcepto" rows="3"></textarea>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<label for="DCBanco">Cuenta Contable del Ingreso</label>
+													<select class="form-select form-select-sm" id="DCBanco" name="DCBanco"
+														style="width: 100%;">
+														<option value="">Banco</option>
+													</select>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<label for="DCCtaAnt">Cuenta Contable de Anticipo</label>
+													<select class="form-select form-select-sm" id="DCCtaAnt" name="DCCtaAnt"
+														style="width: 100%;">
+														<option value="">Banco</option>
+													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-6">
+							</div>
+
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="TextCajaMN" class="col-sm-5 control-label">Caja MN.</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control" id="TextCajaMN" placeholder="00000000" value="0.00">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="LabelPend" class="col-sm-5 control-label" id="Label10">Saldo Actual</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control" id="LabelPend" placeholder="00000000" value="0.00">
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="col-sm-2">
+						<button class="btn btn-default btn-block" id="btn_g" onclick="Command1_Click()">
+							<img src="../../img/png/grabar.png"><br>&nbsp;Guardar&nbsp;
+						</button>
+						<button class="btn btn-default btn-block" data-dismiss="modal">
+							<img src="../../img/png/bloqueo.png"><br>Cancelar
+						</button>
+					<scrv>
+				</div>
 			</div>
 			<div class="modal-footer"> </div>
 		</div>

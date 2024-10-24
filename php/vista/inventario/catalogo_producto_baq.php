@@ -134,7 +134,11 @@
 	      data:{nivel,nivel,cod:cod},
         dataType:'json',
         beforeSend: function () {
-            $('#hijos_'+che).html("<img src='../../img/gif/loader4.1.gif' style='width:20%' />");
+			if(nl){
+            	$('#hijos_'+che).html("<img src='../../img/gif/loader4.1.gif' style='width:20%' />");
+			}else{
+				$('#tree1').html("<img src='../../img/gif/loader4.1.gif' style='width:80%' />");
+			}
         },
 	      success: function(data)
 	      {

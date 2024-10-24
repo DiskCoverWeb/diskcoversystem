@@ -157,7 +157,7 @@ function DCTipo(faFactura) {
 }
 
 function DCClientes(grupo) {
-    let strGrupo = grupo!=null ? `&grupo=${grupo}` : '';
+    /*let strGrupo = grupo!=null ? `&grupo=${grupo}` : '';
     $.ajax({
         type: "POST",
         url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCClientes=true' + strGrupo,
@@ -180,6 +180,27 @@ function DCClientes(grupo) {
                     select.appendChild(option);
                 }
             }
+        }
+    });*/
+
+    $('#DCClientes').select2({
+        placeholder: 'Seleccione',
+        ajax: {
+            url: '../controlador/contabilidad/FAbonosAnticipadoC.php?DCClientes=true',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    q: params.term,
+                    grupo:  grupo!=null ? grupo : ''
+                }
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            },
+            cache: true
         }
     });
 }

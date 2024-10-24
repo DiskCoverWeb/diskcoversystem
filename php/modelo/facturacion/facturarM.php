@@ -74,7 +74,7 @@ class facturarM
     if ($tabla) {
       $altoTabla = $altoTabla == 0 ? 100 : $altoTabla;
       $botones[0] = array('boton' => 'Eliminar linea', 'icono' => '<i class="fa fa-trash"></i>', 'tipo' => 'danger', 'id' => 'A_No,CODIGO');
-      $datos = grilla_generica_new($sql, 'Asiento_F', '', $titulo = false, $botones, $check = false, $imagen = false, 1, 1, 1, $altoTabla);
+      $datos = grilla_generica_new($sql, 'Asiento_F', '', $titulo = false, $botones, $check = false, $imagen = false, 1, 1, 1,$altoTabla,2,false,false,1,'text-center',G_NINGUNO,1);
     } else {
       $datos = $this->db->datos($sql);
     }
@@ -162,13 +162,17 @@ class facturarM
 
   }
 
-  function DCMarca()
+  function DCMarca($query="")
   {
     $sql = "SELECT * 
       FROM Catalogo_Marcas 
       WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
-      AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
-      ORDER BY Marca ";
+      AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' ";
+
+    if($query){
+      $sql .= "AND Marca LIKE '%" . $query . "%' ";
+    }
+      $sql .= "ORDER BY Marca ";
     return $this->db->datos($sql);
   }
   function CDesc1()

@@ -26,7 +26,11 @@ if (isset($_GET['DCBodega'])) {
 }
 if (isset($_GET['DCMarca'])) {
    //$parametros = $_POST['parametros'];
-   echo json_encode($controlador->DCMarca());
+   $query = '';
+   if (isset($_GET['q'])) {
+      $query = $_GET['q'];
+   }
+   echo json_encode($controlador->DCMarca($query));
 }
 if (isset($_GET['DCMedico'])) {
    //$parametros = $_POST['parametros'];
@@ -387,12 +391,12 @@ class facturarC
       }
       return $lis;
    }
-   function DCMarca()
+   function DCMarca($q)
    {
-      $datos = $this->modelo->DCMarca();
+      $datos = $this->modelo->DCMarca($q);
       $lis = array();
       foreach ($datos as $key => $value) {
-         $lis[] = array('codigo' => $value['CodMar'], 'nombre' => $value['Marca']);
+         $lis[] = array('id' => $value['CodMar'], 'text' => $value['Marca']);
       }
       return $lis;
    }

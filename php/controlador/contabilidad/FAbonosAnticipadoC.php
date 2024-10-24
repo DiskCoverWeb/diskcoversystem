@@ -7,11 +7,17 @@ $controlador = new FAbonoAnticipadoC();
 
 if (isset($_GET['DCClientes'])) {
     $grupo = G_NINGUNO;
+    $query = '';
+
     //if (isset($_GET['grupo']) != '') {
     if (isset($_GET['grupo']) && $_GET['grupo'] != '') {
         $grupo = $_GET['grupo'];
     }
-    echo json_encode($controlador->DCCliente($grupo));
+
+    if (isset($_GET['q'])) {
+       $query = $_GET['q'];
+    }
+    echo json_encode($controlador->DCCliente($grupo, $query));
 }
 
 if (isset($_GET['DCBanco'])) {
@@ -84,19 +90,21 @@ class FAbonoAnticipadoC
     Conexión del controlador con el modelo para la consulta del select con id "DCCliente"
     -Se implemento la variable "status" cuando no hay datos para el manejo en la vista
     */
-    function DCCliente($grupo)
+    function DCCliente($grupo, $query)
     {
-        $datos = $this->modelo->SelectDB_Combo_DCClientes($grupo);
+        $datos = $this->modelo->SelectDB_Combo_DCClientes($grupo, $query);
+        //print_r($datos); die();
         $list = array();
         if (count($datos) > 0) { //Caso cuando encuentre datos, se añadio el "status" para manejar los datos en la vista
             foreach ($datos as $key => $value) {
-                $list[] = array(
+                $datosCliente = array(
                     'Codigo' => $value['Codigo'],
                     'Grupo' => $value['Grupo'],
                     'Cliente' => $value['Cliente'],
                     'Email' => $value['Email'],
                     'Email2' => $value['Email2']
                 );
+                $list[] = array('id' => $value['Codigo'], 'text' => $value['Cliente'], 'datos' => $datosCliente);
             }
             return $list;
         }

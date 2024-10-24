@@ -6025,7 +6025,7 @@ function costo_venta($codigo_inv)  // optimizado
     return $resultado[0];
   }
 
-function grilla_generica_new($sql,$tabla,$id_tabla=false,$titulo=false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$tamaño_tabla=300,$num_decimales=2,$num_reg=false,$paginacion_view= false,$estilo=1, $class_titulo='text-center', $med_b=G_NINGUNO)
+function grilla_generica_new($sql,$tabla,$id_tabla=false,$titulo=false,$botones=false,$check=false,$imagen=false,$border=1,$sombreado=1,$head_fijo=1,$tamaño_tabla=300,$num_decimales=2,$num_reg=false,$paginacion_view= false,$estilo=1, $class_titulo='text-center', $med_b=G_NINGUNO, $es_responsivo=0)
 {  
   $conn = new db();
 
@@ -6159,6 +6159,76 @@ if ($pos === false) {
   #'.$id_tabla.' thead { width: calc( 100% - 1.2em )/* scrollbar is average 1em/16px width, remove it from thead width */}
   /*thead tr {    display:table;  width:98.5%;  table-layout:fixed;  }*/ ';
  } 
+
+ if($es_responsivo){
+  $tbl.='@media screen and (max-width: 600px) {
+      .table-responsive > div{
+        width: 100% !important;
+        padding-right: 0 !important;
+      }
+      #'.$id_tabla.'{
+        border: 0px;
+        width: inherit !important;
+      }
+      #'.$id_tabla.' caption {
+        font-size: 14px;
+      }
+      #'.$id_tabla.' thead{
+        display: none;
+        width: inherit;
+      }
+      #'.$id_tabla.' tbody{
+        height: 260px;
+        width: inherit;
+        padding: 6px;
+        background-color: #ecf0f5;
+      }
+      #'.$id_tabla.' tr{
+        margin-bottom: 8px;
+        border: 1px solid #e1e1e1;
+        border-bottom: 4px solid #ddd;
+        display: block;
+      }
+      #'.$id_tabla.' th, #'.$id_tabla.' td{
+        font-size: 12px;
+      }
+      #'.$id_tabla.' td{
+        display: block;
+        border:none;
+        border-bottom: 1px solid #ddd;
+        text-align: right;
+        width: 100% !important;
+        padding: 5px 7px;
+      }
+      #'.$id_tabla.' td:last-child{
+        border-bottom: 0px;
+      }
+      #'.$id_tabla.' td::before{
+        content: attr(data-label);
+        font-weight: bold;
+        text-transform: uppercase;
+        float: left;
+      }
+      #'.$id_tabla.' tbody tr:nth-child(even){
+        background-color:#ffffff;
+      }
+      #'.$id_tabla.' .tbl_col_btns{
+        text-align: center;
+        display: flex;
+        gap: 5px;
+      }
+      #'.$id_tabla.' .tbl_col_btns button{
+        font-size: 12pt;
+        flex-grow: 1;
+      }
+      #'.$id_tabla.' .tbl_col_btns::before{
+        content:"";
+      }
+      
+
+
+		}';
+ }
 
  $tbl.="</style>";
 
@@ -6407,6 +6477,8 @@ if($titulo)
   if(count($datos)>0)
   {
   foreach ($datos as $key => $value) {
+      $nombre_tabla = $es_responsivo ? ' data-label="'.$key.'"' : '';
+      $col_botones = $es_responsivo ? ' class="tbl_col_btns"' : '';
      $tbl.='<tr>';
      //crea botones
        if($botones)
@@ -6414,7 +6486,7 @@ if($titulo)
           if($med_b==G_NINGUNO){
             $med_b = count($botones)*42;
           }
-          $tbl.='<td style="width:'.$med_b.'px">';
+          $tbl.='<td'.$col_botones.' style="width:'.$med_b.'px">';
           foreach ($botones as $key3 => $value3) {
             $valor = '';
             $tipo = 'default';
@@ -6461,7 +6533,7 @@ if($titulo)
             {
               $med_ch = dimenciones_tabl(strlen($check[0]['boton']));
             }
-          $tbl.='<td width="'.$med_ch.'" class="text-center">';
+          $tbl.='<td'.$nombre_tabla.' width="'.$med_ch.'" class="text-center">';
           foreach ($check as $key3 => $value3) {
             $valor = '';
             $k = explode(',', $value3['id']);
@@ -6485,24 +6557,25 @@ if($titulo)
         // print_r($medida_body);die();
         // print_r($value);die();
      foreach ($value as $key1 => $value1) { 
+            $nombre_tabla1 = $es_responsivo ? ' data-label="'.$key1.'"' : '';
              $medida = $medida_body[$colum]; 
              $alineado = $alinea_body[$colum]; 
              if(is_object($value1))
              {
-               $tbl.='<td style="width:'.$medida.'">'.$value1->format('Y-m-d').'</td>';              
+               $tbl.='<td'.$nombre_tabla1.' style="width:'.$medida.'">'.$value1->format('Y-m-d').'</td>';              
              }
              else
              {
               if($alineado=='text-left')
               {                
-                  $tbl.='<td style="width:'.$medida.'" class="'.$alineado.'">'.$value1.'</td>';  
+                  $tbl.='<td'.$nombre_tabla1.' style="width:'.$medida.'" class="'.$alineado.'">'.$value1.'</td>';  
                   // $tbl.='<td style="width:'.$medida.'" class="'.$alineado.'">'.$value1.'</td>';  
               }else
               {
                 if(is_int($value1))
                 {
 
-                 $tbl.='<td style="width:'.$medida.'" class="'.$alineado.'">'.$value1.'</td>';
+                 $tbl.='<td'.$nombre_tabla1.' style="width:'.$medida.'" class="'.$alineado.'">'.$value1.'</td>';
                 }else
                 {  
                     $color = 'black';                
@@ -6510,7 +6583,7 @@ if($titulo)
                   {
                     $color = 'red';
                   }
-                 $tbl.='<td style="width:'.$medida.'; color:'.$color.'" class="'.$alineado.'">'.number_format(floatval($value1),$num_decimales,'.','').'</td>'; 
+                 $tbl.='<td'.$nombre_tabla1.' style="width:'.$medida.'; color:'.$color.'" class="'.$alineado.'">'.number_format(floatval($value1),$num_decimales,'.','').'</td>'; 
                 }
               }    
              }

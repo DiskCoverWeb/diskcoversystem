@@ -7,7 +7,7 @@
 
             <div class="form-inline col-sm-12">
                 <div class="checkbox col-sm-4">
-                    <input type="checkbox" id="CheqRecibo">
+                    <input type="checkbox" id="CheqRecibo" checked>
                     <label for="CheqRecibo">RECIBO CAJA No.</label>
                 </div>
                 <div class="form-group col-sm-4">

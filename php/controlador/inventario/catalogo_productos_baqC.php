@@ -90,15 +90,15 @@ class catalogo_productos_baqC
 				$hijo = $this->exite_hijo($value['Codigo_Inv']);
 				 if(count($hijo)>0)
 				 {
-				 		$h.='<li  title="Presione Suprimir para eliminar">
-							    <label id="label_'.str_replace('.','_',$value['Codigo_Inv']).'" for="'.$value['Codigo_Inv'].'">'.$value['Codigo_Inv'].' '.$value['Producto'].'</label>
+				 		$h.='<li  title="Presione Suprimir para eliminar" style="padding:5px 0;">
+							    <label id="label_'.str_replace('.','_',$value['Codigo_Inv']).'" for="'.$value['Codigo_Inv'].'" style="height:fit-content;">'.$value['Codigo_Inv'].' '.$value['Producto'].'</label>
 							    <input type="checkbox" id="'.$value['Codigo_Inv'].'" onclick="TVcatalogo('.$nnl.',\''.$value['Codigo_Inv'].'\')" />
 							   <ol id="hijos_'.str_replace('.','_',$value['Codigo_Inv']).'"></ol></li>';
 				 }else
 				 {
 
-				 	$h.='<li  title="Presione Suprimir para eliminar">
-							    <label id="label_'.str_replace('.','_',$value['Codigo_Inv']).'" for="'.$value['Codigo_Inv'].'">'.$value['Codigo_Inv'].' '.$value['Producto'].'</label>
+				 	$h.='<li  title="Presione Suprimir para eliminar" style="padding:5px 0;">
+							    <label id="label_'.str_replace('.','_',$value['Codigo_Inv']).'" for="'.$value['Codigo_Inv'].'" style="height:fit-content;">'.$value['Codigo_Inv'].' '.$value['Producto'].'</label>
 							    <input type="checkbox" id="'.$value['Codigo_Inv'].'" onclick="TVcatalogo('.$nnl.',\''.$value['Codigo_Inv'].'\')" />
 							   <ol id="hijos_'.str_replace('.','_',$value['Codigo_Inv']).'"></ol></li>';
 
@@ -126,8 +126,8 @@ class catalogo_productos_baqC
 				$hijo = $this->exite_hijo($value['Codigo_Inv']);
 				 if(count($hijo)>0)
 				 {
-				 		$h.='<li title="Presione Suprimir para eliminar" >
-							    <label id="label_'.str_replace('.','_',$value['Codigo_Inv']).'" for="'.str_replace('.','_',$value['Codigo_Inv']).'">'.$value['Codigo_Inv'].' '.$value['Producto'].'</label>
+				 		$h.='<li title="Presione Suprimir para eliminar" style="padding:5px 0;">
+							    <label id="label_'.str_replace('.','_',$value['Codigo_Inv']).'" for="'.str_replace('.','_',$value['Codigo_Inv']).'" style="height:fit-content;">'.$value['Codigo_Inv'].' '.$value['Producto'].'</label>
 							    <input type="checkbox" id="'.str_replace('.','_',$value['Codigo_Inv']).'" onclick="TVcatalogo('.$nnl.',\''.$value['Codigo_Inv'].'\')" />
 							   <ol id="hijos_'.str_replace('.','_',$value['Codigo_Inv']).'"></ol></li>';
 				 }else
@@ -135,12 +135,12 @@ class catalogo_productos_baqC
 				 	 if($value['TC']=='I')
 				 	 {
 				 	 	$h.='<li>
-							    <label id="label_'.str_replace('.','_',$value['Codigo_Inv']).'" for="'.str_replace('.','_',$value['Codigo_Inv']).'">'.$value['Codigo_Inv'].' '.$value['Producto'].'</label>
+							    <label id="label_'.str_replace('.','_',$value['Codigo_Inv']).'" for="'.str_replace('.','_',$value['Codigo_Inv']).'" style="height:fit-content;">'.$value['Codigo_Inv'].' '.$value['Producto'].'</label>
 							    <input type="checkbox" id="'.str_replace('.','_',$value['Codigo_Inv']).'" onclick="TVcatalogo('.$nnl.',\''.$value['Codigo_Inv'].'\')" />
 							   <ol id="hijos_'.str_replace('.','_',$value['Codigo_Inv']).'"></ol></li>';
 
 				 	 }else{
-				 	 $h.='<li class="file" id="label_'.str_replace('.','_',$value['Codigo_Inv']).'" title="Presione Suprimir para eliminar" ><a href="#" onclick="detalle('.$nnl.',\''.$value['Codigo_Inv'].'\')">'.$value['Codigo_Inv'].' '.$value['Producto'].'</a></li>';
+				 	 $h.='<li class="file" id="label_'.str_replace('.','_',$value['Codigo_Inv']).'" title="Presione Suprimir para eliminar" style="padding:5px 0;"><a href="#" onclick="detalle('.$nnl.',\''.$value['Codigo_Inv'].'\')">'.$value['Codigo_Inv'].' '.$value['Producto'].'</a></li>';
 				 	}
 				 }
 				}
