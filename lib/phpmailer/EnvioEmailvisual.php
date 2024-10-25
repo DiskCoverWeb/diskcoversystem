@@ -47,9 +47,10 @@ class EnviarVisual
     	$to_correo = trim($parametros['to']);
     	$to_correo = str_replace(';',',',$to_correo);
     	$to = explode(',', $to_correo);
+
+    	$list_delete = array();
     	foreach ($to as $key => $value) 
     	{
-    		$list_delete = array();
      		if ($value != '.' && $value != '') 
      		{
 	        	$mail = new PHPMailer(true);
@@ -110,15 +111,13 @@ class EnviarVisual
 		          // print_r($e);
 		          // die();
 		          return -1;
-		        }finally {
-
-		        	foreach ($list_delete as $key => $value) {
-		        		if (file_exists($value)) {
-				        	unlink($value);
-				    	}
-		        	}
 		        }
 	     	}
+    	}
+    	foreach ($list_delete as $key => $value) {
+    		if (file_exists($value)) {
+	        	unlink($value);
+	    	}
     	}
 
     	return $res;
