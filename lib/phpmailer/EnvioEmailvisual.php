@@ -138,6 +138,11 @@ class EnviarVisual
 		$temp_file = 'ftp_folder_visual/';
 		$remote_path = '/';
 
+		if(!file_exists($temp_file))
+		{
+			mkdir($temp_file, 0777);
+		}
+
 		$ftp_conn = ftp_connect($ftp_host, $ftp_port) or die("No se pudo conectar al servidor FTP.");
 		$login = ftp_login($ftp_conn, $ftp_user, $ftp_pass);
 
