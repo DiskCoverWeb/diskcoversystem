@@ -5,12 +5,12 @@
 	 		var h = (screen.height)-478;
     $('#tabla').css('height',h);
 
-	 $('#txt_codigo').keyup(function(e){ 
+	 /*$('#txt_codigo').keyup(function(e){ 
 			if(e.keyCode != 46 && e.keyCode !=8)
 			{
 				validar_cuenta_inv(this);
 			}
-		 })
+		 })*/
 
 	 $('#cta_inventario').keyup(function(e){ 
 			if(e.keyCode != 46 && e.keyCode !=8)
@@ -92,6 +92,7 @@
 			  					TVcatalogo(padre_nl,padre);
 			  				}else
 			  				{
+			  					//TVcatalogo(parseInt(padre_nl), padre);
 			  					TVcatalogo();
 			  				}
 				  	});
@@ -131,7 +132,7 @@
         $.ajax({
 	      type: "POST",
 	      url: '../controlador/facturacion/catalogo_productosC.php?TVcatalogo_Bodega=true',
-	      data:{nivel,nivel,cod:cod},
+	      data:{nivel:nivel,cod:cod},
         dataType:'json',
         beforeSend: function () {
             $('#hijos_'+che).html("<img src='../../img/gif/loader4.1.gif' style='width:20%' />");
@@ -208,6 +209,7 @@
 	      	data = data[0];
 	      	console.log(data);
 	      	$('#txt_concepto').val(data.Producto);
+	      	$('#txt_nomenclatura').val(data.Nomenclatura);
 	      	$('#txt_codigo').val(data.CodBod);
 	      	$('#pvp').val(data.PVP);
 	      	$('#pvp2').val(data.PVP_2);
@@ -323,22 +325,38 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-sm-8">
+	<div class="col-sm-6">
 		<div class="box">
-      <div class="box" id="tabla" style="overflow-y:auto">
-        <ol class="tree" id="tree1">
-        </ol>	
-      </div>		
+			<div class="box" id="tabla" style="overflow-y:auto">
+				<ol class="tree" id="tree1">
+				</ol>	
+			</div>		
 		</div>
 	</div>
-    <div class="col-sm-4">
-    	
+    <div class="col-sm-6">
+		<form id="form_datos" name="form_datos">
+			<div class="col-sm-3">
+				<b>Codigo del producto</b>
+				<input type="hidden" name="txt_padre" id="txt_padre">
+				<input type="hidden" name="txt_padre" id="txt_padre_nl">
+				<input type="hidden" name="txt_anterior" id="txt_anterior">
+				<input type="text" name="txt_codigo" id="txt_codigo" class="form-control input-xs" placeholder="<?php echo "CCC.CCC.CCC.CCC.CCC";/*$_SESSION['INGRESO']['Formato_Inventario'];*/ ?>" >
+			</div>
+			<div class="col-sm-3">
+				<b>Nomenclatura</b>
+				<input type="text" name="txt_nomenclatura" id="txt_nomenclatura" class="form-control input-xs" >
+			</div>
+			<div class="col-sm-6">
+				<b>Concepto o detalle del producto</b>
+				<input type="text" name="txt_concepto" id="txt_concepto" class="form-control input-xs">
+			</div>
+		</form>
     	<!-- <button class="btn btn-default"  data-toggle="tooltip" title="Imprimir Grupo" onclick="codigo_barras_grupo();"><img src="../../img/png/impresora.png"></button><br> -->
     	<!-- <button class="btn btn-default"  data-toggle="tooltip" title="Imprimir" onclick="cantidad_codigo_barras();">  <img src="../../img/png/barcode.png"></button><br> -->
     	 
     </div>
 </div>
-<form id="form_datos" name="form_datos">
+<!--<form id="form_datos" name="form_datos">
 <div class="row">
 	<div class="col-sm-2">
 		<b>Codigo del producto</b>
@@ -351,7 +369,7 @@
 		<b>Concepto o detalle del producto</b>
 		<input type="text" name="txt_concepto" id="txt_concepto" class="form-control input-xs">
 	</div>
-</div>
+</div>-->
 
 <!-- <div class="row">
 	<div class="col-sm-3">
@@ -562,5 +580,5 @@
         </div>
 	</div>
 </div> -->
-</div>
-</form>
+<!--</div>
+</form>-->

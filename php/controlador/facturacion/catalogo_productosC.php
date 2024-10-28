@@ -153,7 +153,7 @@ class catalogo_productosC
 	function TVcatalogo_Bodega($nl='',$codigo=false)
 	{
 		if($nl==''){$nl=1;}
-		$cuenta  = $_SESSION['INGRESO']['Formato_Inventario'];
+		$cuenta  = "CCC.CCC.CCC.CCC.CCC"; //$_SESSION['INGRESO']['Formato_Inventario'];
 		$partes = explode('.',$cuenta);
 		$len = strlen($partes[0]);
 		$productos = $this->modelo->TVCatalogo_Bodega(false,'N',$len);

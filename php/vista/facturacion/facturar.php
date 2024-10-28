@@ -588,6 +588,15 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 				// $('#DCArticulos').focus();
 				// $('#cambiar_nombre').modal('show');
 
+				let inputArticulos = document.getElementById('DCArticulos').getBoundingClientRect();
+				let ia_top = inputArticulos.top + 28;
+				let ia_left = inputArticulos.left;
+
+				let ia_width = document.querySelector('#DCArticulos + span').getBoundingClientRect().width;
+
+				document.querySelector('#cambiar_nombre div').style = "margin-top:"+ia_top+"px; margin-left:"+ia_left+"px;";
+				document.querySelector('#cambiar_nombre div div').style.width = ia_width+"px";
+
 				$('#cambiar_nombre').on('shown.bs.modal', function () {
 					$('#TxtDetalle').focus();
 				})
