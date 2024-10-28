@@ -260,33 +260,53 @@ class lista_comprasM
 		}
 		if($parametros['mes']==0)
 		{
-			$sql="INSERT INTO Asiento_SC(Codigo ,Beneficiario,Factura ,Prima,DH,Valor,Valor_ME
-           ,Detalle_SubCta,FECHA_V,TC,Cta,TM,T_No,SC_No
-           ,Fecha_D ,Fecha_H,Bloquear,Item,CodigoU)
-			VALUES
-           ('".$cod."'
-           ,'".$parametros['sub2']."'
-           ,'".$fact2."'
-           ,0
-           ,'".$parametros['tic']."'
-           ,".$parametros['valorn']."
-           ,0
-           ,'".$parametros['Trans']."'
-           ,'".$fecha_actual."'
-           ,'".$parametros['t']."'
-           ,'".$parametros['co']."'
-           ,".$parametros['moneda']."
-           ,".$parametros['T_N']."
-           ,".$SC_No."
-           ,null
-           ,null
-           ,0
-           ,'".$_SESSION['INGRESO']['item']."'
-           ,'".$_SESSION['INGRESO']['CodigoU']."')";
 
-           // print_r($sql);die();
+			SetAdoAddNew("Asiento_SC");
+	        SetAdoFields("Codigo",$cod);
+	        SetAdoFields("Beneficiario",$parametros['sub2']);
+	        SetAdoFields("Factura",$fact2);
+	        SetAdoFields("Prima",'0');
+	        SetAdoFields("DH",$parametros['tic']);
+	        SetAdoFields("Valor",$parametros['valorn']);
+	        SetAdoFields("Valor_ME",0);
+	        SetAdoFields("Detalle_SubCta",$parametros['Trans']);
+	        SetAdoFields("FECHA_V",$fecha_actual);
+	        SetAdoFields("TC",$parametros['t']);
+	        SetAdoFields("Cta",$parametros['co']);
+	        SetAdoFields("TM",$parametros['moneda']);
+	        SetAdoFields("T_No",$parametros['T_N']);
+	        SetAdoFields("SC_No",$SC_No);
+	        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+	        SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+			SetAdoUpdate();
 
-           $this->conn->String_Sql($sql);
+		// 	$sql="INSERT INTO Asiento_SC(Codigo ,Beneficiario,Factura ,Prima,DH,Valor,Valor_ME
+           // ,Detalle_SubCta,FECHA_V,TC,Cta,TM,T_No,SC_No
+           // ,Fecha_D ,Fecha_H,Bloquear,Item,CodigoU)
+		// 	VALUES
+           // ('".$cod."'
+           // ,'".$parametros['sub2']."'
+           // ,'".$fact2."'
+           // ,0
+           // ,'".$parametros['tic']."'
+           // ,".$parametros['valorn']."
+           // ,0
+           // ,'".$parametros['Trans']."'
+           // ,'".$fecha_actual."'
+           // ,'".$parametros['t']."'
+           // ,'".$parametros['co']."'
+           // ,".$parametros['moneda']."
+           // ,".$parametros['T_N']."
+           // ,".$SC_No."
+           // ,null
+           // ,null
+           // ,0
+           // ,'".$_SESSION['INGRESO']['item']."'
+           // ,'".$_SESSION['INGRESO']['CodigoU']."')";
+
+           // // print_r($sql);die();
+
+           // $this->conn->String_Sql($sql);
 		 
 		}
 		else

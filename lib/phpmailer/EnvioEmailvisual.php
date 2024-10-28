@@ -171,5 +171,34 @@ class EnviarVisual
 
 
 	}
+
+
+
+
+// 	function enviaremail()   funcion para enviarlo por javascript
+  // { 
+
+
+  //         const xhr = new XMLHttpRequest();
+  //         const url =  'https://erp.diskcoversystem.com/~diskcover/lib/phpmailer/EnvioEmailvisual.php?EnviarVisual';
+
+  //         xhr.open('POST', url, true);
+  //         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+  //         xhr.onreadystatechange = function () {
+  //           if (xhr.readyState === 4 && xhr.status === 200) {
+  //             console.log('Respuesta:', xhr.responseText);
+  //           }
+  //         };
+
+  //         const params = `from=CORREO DESDE 192.168.20.3 RELAYHOST IMAP <admin@imap.diskcoversystem.com>
+  //                         &to=javier.farinango92@gmail.com;diskcoversystem@msn.com;jean.asencio@epn.edu.ec
+  //                         &body=juan@ejemplo.com
+  //                         &subject=hola email como estas
+  //                         &HTML=1
+  //                         &Archivo=archivo.xml;archivo.pdf;archivo.jpg`;
+
+  //         xhr.send(params);
+  // }
 }
 ?>
