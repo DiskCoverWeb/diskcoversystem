@@ -64,7 +64,7 @@ class EnviarVisual
 
 	        try {
 		          //Server settings
-		          // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                 //Enable verbose debug output
+		          $mail->SMTPDebug = SMTP::DEBUG_SERVER;                 //Enable verbose debug output
 		            $mail->isSMTP(); //Send using SMTP
 		            // $mail->Helo = 'smtp.diskcoversystem.com';    
 				    $mail->Host = 'imap.diskcoversystem.com';
@@ -78,8 +78,8 @@ class EnviarVisual
 	         
 			        $from = $parametros['from']; 
 			        $mail->addAddress($value);  
-			        $mail->setFrom($from, 'DiskCover System');
-			        $mail->addReplyTo($from, 'Informacion');
+			        $mail->setFrom("correo_remitenten@imap.diskcoversystem.com",$from);
+			        $mail->addReplyTo("correo_remitenten@imap.diskcoversystem.com", 'Informacion');
 			          //$mail->addCC('cc@example.com');
 			          //$mail->addBCC('bcc@example.com');
 
