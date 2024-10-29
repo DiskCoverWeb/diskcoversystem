@@ -369,9 +369,11 @@ class solicitud_materialC
 		        SetAdoFields("Fecha",$parametros['fecha']);
 		        SetAdoFields("Fecha_Ent",$parametros['fechaEnt']);
 		        SetAdoFields("Producto",$articulo['Producto']);
-		        SetAdoFields("Cantidad",$parametros['cantidad']);
+		        SetAdoFields("Cantidad",$parametros['cantidad']-$parametros['stock']);
+		        SetAdoFields("Cantidad_Total",$parametros['cantidad']);
 		        SetAdoFields("Precio",$parametros['costo']);
-		        SetAdoFields("TC",'P');
+		        SetAdoFields("TC",'P');		        
+		        SetAdoFields("Total",($parametros['cantidad']-$parametros['stock'])*$parametros['costo']);
 		        SetAdoFields("Total",$parametros['total']);
 		        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
 		        SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
@@ -411,10 +413,10 @@ class solicitud_materialC
 					<td>'.($key+1).'</td>
 					<td>'.$value['Codigo_Inv'].'</td>
 					<td>'.$value['Producto'].'</td>
-					<td>'.$value['Cantidad'].'</td>
+					<td>'.$value['Cantidad_Total'].'</td>
 					<td>'.$value['Unidad'].'</td>
 					<td>'.$value['Precio'].'</td>
-					<td>'.$value['Total'].'</td>
+					<td>'.($value['Precio']*$value['Cantidad_Total']).'</td>
 					<td>'.$value['Marca'].'</td>
 					<td>'.$value['Fecha']->format('Y-m-d').'</td>
 					<td>'.$value['Fecha_Ent']->format('Y-m-d').'</td>
@@ -633,14 +635,21 @@ class solicitud_materialC
 	{
 		// print_r($parametros);die();
 		$datos = $this->modelo->lineas_pedido_solicitados($parametros['orden']);
+
 		$tr = '';
 		foreach ($datos as $key => $value) {
+			$producto_inv = Leer_Codigo_Inv($value['Codigo_Inv'],"");
+			$Stock = 0;
+			if($producto_inv['respueta']==1)
+			{
+				$Stock = $producto_inv['datos']['Stock'];
+			}
 			$tr.='<tr>
 					<td>'.($key+1).'</td>
 					<td>'.$value['Codigo_Inv'].'</td>
 					<td>'.$value['Producto'].'</td>
-					<td>100</td>
-					<td>2 </td>
+					<td>'.$value['Cantidad_Total'].'</td>
+					<td>'.$Stock.'</td>
 					<td width="20px">
 					<input type="text" id="txt_cant_'.$value['ID'].'" name="txt_cant_'.$value['ID'].'" value="'.$value['Cantidad'].'" class="form-control input-sm"></td>
 

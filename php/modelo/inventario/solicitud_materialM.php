@@ -119,7 +119,7 @@ class solicitud_materialM
 	{
 		$sql = "SELECT TP.Periodo, TP.Fecha, TP.Codigo_Inv, Hora, TP.Producto, TP.Cantidad, Precio, Total, Total_IVA, No_Hab, Cta_Venta, 
 TP.Item, CodigoU, Orden_No, Cta_Venta_0, TP.TC, TP.Factura, Autorizacion, Serie, TP.Codigo_Sup, CodigoC, Opc1, Opc2, Opc3, 
-TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unidad 
+TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unidad,Cantidad_Total 
 
 		FROM Trans_Pedidos TP
 		inner join Catalogo_Marcas CM on TP.CodMarca = CM.CodMar
@@ -192,7 +192,7 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
 	{
 		$sql = "SELECT TP.Periodo, TP.Fecha, TP.Codigo_Inv, Hora, TP.Producto, TP.Cantidad, Precio, Total, Total_IVA, No_Hab, Cta_Venta, 
 TP.Item, CodigoU, Orden_No, Cta_Venta_0, TP.TC, TP.Factura, Autorizacion, Serie, TP.Codigo_Sup, CodigoC, Opc1, Opc2, Opc3, 
-TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unidad 
+TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unidad,Cantidad_Total 
 
 		FROM Trans_Pedidos TP
 		inner join Catalogo_Marcas CM on TP.CodMarca = CM.CodMar
