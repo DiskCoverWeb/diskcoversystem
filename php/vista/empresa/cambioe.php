@@ -1075,8 +1075,8 @@ async function datos_empresa()
 			var ant = $('#txt_anterior').val();
 			var che = cod.split('.').join('_');	
 			if(ant==''){	$('#txt_anterior').val(che); }else{	$('#label_'+ant).css('border','0px');}
-			$('#label_'+che).css('border','1px solid');
-			$('#txt_anterior').val(che); 
+			$('#label_'+che+auto+serie+fact).css('border','1px solid');
+			$('#txt_anterior').val(che+auto+serie+fact); 
 		}
 		  	//fin de pinta el seleccionado
 		if(cod)
@@ -1107,7 +1107,7 @@ async function datos_empresa()
 			data:{parametros:parametros},
 			dataType:'json',
 			beforeSend: function () {
-				$('#hijos_'+che+serie+fact).html("<img src='../../img/gif/loader4.1.gif' style='width:20%' />");
+				$('#hijos_'+che+auto+serie+fact).html("<img src='../../img/gif/loader4.1.gif' style='width:20%' />");
 			},
 			success: function(data)
 			{
@@ -1120,7 +1120,7 @@ async function datos_empresa()
 					// cod = cod.replace(//g,'_');
 					console.log(cod);
 					console.log(data);
-					$('#hijos_'+cod+serie+fact).html(data);
+					$('#hijos_'+cod+auto+serie+fact).html(data);
 					// if('hijos_01_01'=='hijos_'+cod)
 					// {
 					//   $('#hijos_'+cod).html('<li>hola</li>');
@@ -1248,8 +1248,8 @@ async function datos_empresa()
 		 	var ant = $('#txt_anterior').val();
 		 	var che = cod.split('.').join('_');	
 		 	if(ant==''){	$('#txt_anterior').val(che); }else{	$('#label_'+ant).css('border','0px');}
-		 	$('#label_'+che).css('border','1px solid');
-		 	$('#txt_anterior').val(che); 
+		 	$('#label_'+che+'_'+id).css('border','1px solid');
+		 	$('#txt_anterior').val(che+'_'+id); 
 	  }
 
 	 	 $.ajax({
