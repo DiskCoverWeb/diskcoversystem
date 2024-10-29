@@ -309,34 +309,7 @@
   }
 
 
-  function enviar()
-  {
-       var xhr = new XMLHttpRequest();
-            var formData = new FormData();
-
-           formData.append('from','diskcover@imap.diskcoversystem.com')
-           formData.append('to','javier.farinango92@gmail.com')
-           formData.append('body','hola nuevo email')
-           formData.append('subject',"prueba correo")
-           formData.append('HTML',1)
-           formData.append('Archivo','C:\\xampp_8.2\\htdocs\\diskcoversystem\\php\\comprobantes\\entidades\\entidad_000\\CE998\\Autorizados\\0602202401070216417900110010030000014511234567813.xml')
-  
-
-
-           // xhr.open('POST', 'https://erp.diskcoversystem.com/~diskcover/lib/phpmailer/EnvioEmailvisual.php?EnviarVisual', true); // Cambia 'tu_archivo.php' por la ruta de tu archivo PHP
-            xhr.open('POST', '../../lib/phpmailer/EnvioEmailvisual.php?EnviarVisual', true); // Cambia 'tu_archivo.php' por la ruta de tu archivo PHP
-
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    console.log('Respuesta del servidor:', xhr.responseText);
-                } else {
-                    console.error('Error al enviar los datos');
-                }
-            };
-
-            xhr.send(formData); // Enviar los datos
-  }
-
+ 
 </script>
 <section class="content">
   <div class="row">
@@ -361,7 +334,6 @@
               <img src="../../img/png/grabar.png" >
             </button>
           </div>
-          <button onclick="enviar()">enviar</button>
       </div>
   </div>
   <br>
