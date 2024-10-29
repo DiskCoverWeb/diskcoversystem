@@ -374,7 +374,7 @@ if(isset($_GET['orden']))
   </div>
   <div class="row">
     <form id="form_lineas">
-    <div class="col-sm-12">      
+    <div class="col-sm-12" style="overflow-x: scroll;">      
       <input type="hidden" name="txt_linea_Select" id="txt_linea_Select" value="">
         <table class="table">
           <thead>
