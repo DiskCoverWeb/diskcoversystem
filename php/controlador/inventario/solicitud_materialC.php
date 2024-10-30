@@ -369,11 +369,17 @@ class solicitud_materialC
 		        SetAdoFields("Fecha",$parametros['fecha']);
 		        SetAdoFields("Fecha_Ent",$parametros['fechaEnt']);
 		        SetAdoFields("Producto",$articulo['Producto']);
-		        SetAdoFields("Cantidad",$parametros['cantidad']-$parametros['stock']);
+		        if($parametros['stock']>=$parametros['cantidad'])
+		        {
+		        	SetAdoFields("Cantidad",$parametros['cantidad']);
+		        }else
+		        {		        	
+		        	SetAdoFields("Cantidad",$parametros['stock']-$parametros['cantidad']);
+		        }
 		        SetAdoFields("Cantidad_Total",$parametros['cantidad']);
 		        SetAdoFields("Precio",$parametros['costo']);
 		        SetAdoFields("TC",'P');		        
-		        SetAdoFields("Total",($parametros['cantidad']-$parametros['stock'])*$parametros['costo']);
+		        SetAdoFields("Total_",($parametros['cantidad']-$parametros['stock'])*$parametros['costo']);
 		        SetAdoFields("Total",$parametros['total']);
 		        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
 		        SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
@@ -650,18 +656,9 @@ class solicitud_materialC
 					<td>'.$value['Producto'].'</td>
 					<td>'.$value['Cantidad_Total'].'</td>
 					<td>'.$Stock.'</td>
-					<td width="20px">';
-					if($Stock>=$value['Cantidad'])
-					{
-					 $tr.='<input type="text" id="txt_cant_'.$value['ID'].'" name="txt_cant_'.$value['ID'].'" value="'.$value['Cantidad_Total'].'" class="form-control input-sm"></td>';
-					}else
-					{
-						$can = $value['Cantidad_Total']-$Stock;
-						if($can<0){$can=0;}
-						$tr.='<input type="text" id="txt_cant_'.$value['ID'].'" name="txt_cant_'.$value['ID'].'" value="'.$can.'" class="form-control input-sm"></td>';
-					}
-
-					$tr.='<td>'.$value['Unidad'].'</td>
+					<td width="20px">
+					<input type="text" id="txt_cant_'.$value['ID'].'" name="txt_cant_'.$value['ID'].'" value="'.$value['Cantidad'].'" class="form-control input-sm"></td>
+					<td>'.$value['Unidad'].'</td>
 					<td>'.$value['Precio'].'</td>				
 					<td>'.$value['Total'].'</td>				
 					<td>'.$value['Fecha']->format('Y-m-d').'</td>

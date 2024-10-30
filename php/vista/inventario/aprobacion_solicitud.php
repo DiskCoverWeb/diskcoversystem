@@ -139,6 +139,12 @@ if(isset($_GET['orden']))
 
               
     var orden = '<?php echo $orden; ?>';
+    can = $('#txt_cant_'+id).val();
+    if(parseFloat(can)<0)
+    {
+      Swal.fire("","La cantidad invalida","error");
+      return false;
+    }
     var parametros = 
     {
       'id_linea':id,
