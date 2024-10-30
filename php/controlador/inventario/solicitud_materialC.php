@@ -650,10 +650,18 @@ class solicitud_materialC
 					<td>'.$value['Producto'].'</td>
 					<td>'.$value['Cantidad_Total'].'</td>
 					<td>'.$Stock.'</td>
-					<td width="20px">
-					<input type="text" id="txt_cant_'.$value['ID'].'" name="txt_cant_'.$value['ID'].'" value="'.$value['Cantidad'].'" class="form-control input-sm"></td>
+					<td width="20px">';
+					if($Stock>=$value['Cantidad'])
+					{
+					 $tr.='<input type="text" id="txt_cant_'.$value['ID'].'" name="txt_cant_'.$value['ID'].'" value="'.$value['Cantidad'].'" class="form-control input-sm"></td>';
+					}else
+					{
+						$can = $Stock-$value['Cantidad'];
+						if($can<0){$can=0;}
+						$tr.='<input type="text" id="txt_cant_'.$value['ID'].'" name="txt_cant_'.$value['ID'].'" value="'.$can.'" class="form-control input-sm"></td>';
+					}
 
-					<td>'.$value['Unidad'].'</td>
+					$tr.='<td>'.$value['Unidad'].'</td>
 					<td>'.$value['Precio'].'</td>				
 					<td>'.$value['Total'].'</td>				
 					<td>'.$value['Fecha']->format('Y-m-d').'</td>

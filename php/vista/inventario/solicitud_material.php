@@ -127,10 +127,21 @@
             {
                Swal.fire("Agregado","","success");
                linea_pedido();
+               limpiar();
             }
           
           }
       });
+  }
+
+  function limpiar()
+  {
+    $('#txt_cantidad').val(0);
+    $('#txt_costo').val(0);
+    $('#txt_stock').val(0);
+    $('#txt_uni').val(0);
+    $('#txt_total').val(0);    
+    $('#ddl_productos').empty();
   }
 
   function linea_pedido()
