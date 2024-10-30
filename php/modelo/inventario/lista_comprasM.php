@@ -101,7 +101,7 @@ class lista_comprasM
 
 	function lineas_compras_solicitados_proveedores($orden=false,$id=false,$codigoC=false)
 	{
-		$sql = "SELECT CodigoC,Cliente,SUM(Total) as Total
+		$sql = "SELECT CodigoC,Cliente,SUM(Total_Original) as Total
 		FROM Trans_Pedidos TP
 		inner join Clientes C on TP.CodigoC = C.Codigo
 		WHERE TP.Periodo =  '".$_SESSION['INGRESO']['periodo']."'
@@ -201,6 +201,11 @@ class lista_comprasM
 	function generar_asientos_SC($parametros)
 	{
 		// $cid = $this->conn;
+		$serie = '001001';
+		if(isset($parametros['serie']))
+		{
+			$serie = $parametros['serie'];
+		}
 		if($parametros['t']=='P' OR $parametros['t']=='C')
 		{
 			$sql=" SELECT codigo FROM clientes WHERE CI_RUC='".$parametros['sub']."' ";
@@ -265,6 +270,7 @@ class lista_comprasM
 	        SetAdoFields("Codigo",$cod);
 	        SetAdoFields("Beneficiario",$parametros['sub2']);
 	        SetAdoFields("Factura",$fact2);
+	        SetAdoFields("Serie",$serie);
 	        SetAdoFields("Prima",'0');
 	        SetAdoFields("DH",$parametros['tic']);
 	        SetAdoFields("Valor",$parametros['valorn']);

@@ -356,15 +356,16 @@ class lista_comprasC
 		                    'tip'=>$cta[0]['SubCta'],//tipo de cuenta(CE,CD,..--) biene de catalogo subcuentas TC
 		                    'tic'=> 2, //debito o credito (1 o 2);
 		                    'sub'=> $value['CodigoC'], //Codigo se trae catalogo subcuenta
-		                    'sub2'=>$cta[0]['Cuenta'],//nombre del beneficiario
+		                    'sub2'=>$value['Cliente'],//nombre del beneficiario
 		                    'fecha_sc'=> date('Y-m-d'), //fecha 
 		                    'fac2'=>0,
 		                    'mes'=> 0,
 		                    'valorn'=> round($value['Total'],2),//valor de sub cuenta 
 		                    'moneda'=> 1, /// moneda 1
-		                    'Trans'=>$value['Cliente'],//detalle que se trae del asiento
+		                    'Trans'=>$cta[0]['Cuenta'].' Orden '.$parametros['orden'], //detalle que se trae del asiento
 		                    'T_N'=> '99',
-		                    't'=> $sub[0]['TC'],                        
+		                    't'=> $sub[0]['TC'],       
+		                    'serie'=> '999999',                      
 		                  );
 						// print_r($parametros_SC);die();
 		             $this->modelo->generar_asientos_SC($parametros_SC);
@@ -381,7 +382,7 @@ class lista_comprasC
 						$cuenta = $this->modelo->catalogo_cuentas($cta[0]['Codigo']);		
 							$parametros_debe = array(
 							  "va" =>round($value2['total'],2),//valor que se trae del otal sumado
-			                  "dconcepto1" =>$cuenta[0]['Cuenta'],
+			                  "dconcepto1" =>$cuenta[0]['Cuenta'].' Orden '.$parametros['orden'],
 			                  "codigo" => $cuenta[0]['Codigo'], // cuenta de codigo de 
 			                  "cuenta" => $cuenta[0]['Cuenta'], // detalle de cuenta;
 			                  "efectivo_as" =>$value2['fecha']->format('Y-m-d'), // observacion si TC de catalogo de cuenta
@@ -391,9 +392,13 @@ class lista_comprasC
 			                  "cotizacion" => 0,
 			                  "con" => 0,// depende de moneda
 			                  "t_no" => '99',
+			                  "codigoc"=>$value['CodigoC'],
+			                  "beneficiario"=>$nombre
 						);
 						 ingresar_asientos($parametros_debe);
 					}
+
+
 
 	        // asiento para el debe
 					$asiento_haber  = $this->modelo->datos_asiento_haber_trans($parametros['orden'],$value['CodigoC']);
@@ -414,12 +419,15 @@ class lista_comprasC
 			                  "cotizacion" => 0,
 			                  "con" => 0,// depende de moneda
 			                  "t_no" => '99',
+			                  "codigoc"=>$value['CodigoC'],
+			                  "beneficiario"=>$nombre
 			                );
 
 			                // print_r($parametros_haber);die();
 			             ingresar_asientos($parametros_haber);
 					}
 
+					// print_r('exist');die();
 				// Ingreso de comprobante
 					// print_r($fecha);die();
 						$num_comprobante = numero_comprobante1('Diario',true,true,$fecha);
@@ -547,10 +555,10 @@ class lista_comprasC
 			    SetAdoFields('Contra_Cta',$cta[0]['Codigo']); 
 			    SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']); 
 			    SetAdoFields('Entrada',$value['Cantidad']); 
-			    SetAdoFields('Valor_Unitario',number_format($value['Precio'],$_SESSION['INGRESO']['Dec_PVP'],'.','')); 
-			    SetAdoFields('Valor_Total',number_format($value['Total'],2)); 
-			    SetAdoFields('Costo',number_format($value['Precio'],2)); 
-			    SetAdoFields('Total',number_format($value['Total'],2));
+			    SetAdoFields('Valor_Unitario',number_format($value['Costo_Original'],$_SESSION['INGRESO']['Dec_PVP'],'.','')); 
+			    SetAdoFields('Valor_Total',number_format($value['Total_Original'],2)); 
+			    SetAdoFields('Costo',number_format($value['Costo_Original'],2)); 
+			    SetAdoFields('Total',number_format($value['Total_Original'],2));
 			    if($stock>0)
 			    {
 			    	SetAdoFields('Existencia',number_format($stock,2)+floatval($value['Cantidad']));
