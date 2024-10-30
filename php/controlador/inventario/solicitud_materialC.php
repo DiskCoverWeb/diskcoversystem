@@ -1506,8 +1506,10 @@ class solicitud_materialC
 			return -2;
 		}
 
-		// print_r($lineas);die();
+		// reindexa
+		$lineas = array_values($lineas);
 
+		// print_r($lineas);die();
 		$linea_org = $this->modelo->lineas_pedido_aprobacion_solicitados_proveedor(false,false,$parametros['txt_id_linea']);
 
 		// print_r($linea_org);die();
