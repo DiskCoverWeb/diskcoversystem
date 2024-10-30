@@ -501,7 +501,7 @@ class lista_comprasM
 	function datos_asiento_debe_trans($orden,$codigo)
 	{
       	// 'LISTA DE CODIGO DE ANEXOS
-	     $sql = "SELECT SUM(Total) as 'total','' as 'cuenta',CodigoC as 'SUBCTA',Fecha as 'fecha',TC 
+	     $sql = "SELECT SUM(Total_Original) as 'total','' as 'cuenta',CodigoC as 'SUBCTA',Fecha as 'fecha',TC 
 	     FROM Trans_Pedidos  
 	     WHERE Item = '".$_SESSION['INGRESO']['item']."' 
 	     AND Orden_No = '".$orden."' 
@@ -514,7 +514,7 @@ class lista_comprasM
 	function datos_asiento_haber_trans($orden,$codigo)
 	{
     // 'LISTA DE CODIGO DE ANEXOS
-     $sql = "SELECT SUM(Total) as 'total',Cta_Venta_0 as 'cuenta',Fecha as 'fecha',TC 
+     $sql = "SELECT SUM(Total_Original) as 'total',Cta_Venta_0 as 'cuenta',Fecha as 'fecha',TC 
              FROM Trans_Pedidos  
              WHERE Item = '".$_SESSION['INGRESO']['item']."' 
              AND Orden_No = '".$orden."'
