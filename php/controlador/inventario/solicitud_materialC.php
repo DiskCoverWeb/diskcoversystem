@@ -369,17 +369,10 @@ class solicitud_materialC
 		        SetAdoFields("Fecha",$parametros['fecha']);
 		        SetAdoFields("Fecha_Ent",$parametros['fechaEnt']);
 		        SetAdoFields("Producto",$articulo['Producto']);
-		        if($parametros['stock']>=$parametros['cantidad'])
-		        {
-		        	SetAdoFields("Cantidad",$parametros['cantidad']);
-		        }else
-		        {		        	
-		        	SetAdoFields("Cantidad",$parametros['stock']-$parametros['cantidad']);
-		        }
+		        SetAdoFields("Cantidad",$parametros['cantidad']);        	
 		        SetAdoFields("Cantidad_Total",$parametros['cantidad']);
 		        SetAdoFields("Precio",$parametros['costo']);
 		        SetAdoFields("TC",'P');		        
-		        SetAdoFields("Total_",($parametros['cantidad']-$parametros['stock'])*$parametros['costo']);
 		        SetAdoFields("Total",$parametros['total']);
 		        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
 		        SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
