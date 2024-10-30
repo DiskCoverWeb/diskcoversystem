@@ -1594,10 +1594,12 @@ class solicitud_materialC
 	function enviar_email($proveedor)
 	{
 		$cliente = Leer_Datos_Clientes($proveedor,true,false,false);
-		$this->email->enviar_email_generico(false, 
-			$cliente[0]['Email'].';'.$_SESSION['INGRESO']['Email'], 
+		// print_r($cliente);die();
+		$res = $this->email->enviar_email_generico(false, 
+			$cliente['Email'].';'.$_SESSION['INGRESO']['Email'], 
 			$cuerpo_correo = "Solicitud de Compra", 
 			$titulo_correo = "Solicitud de compra", $HTML = false);
+		// print_r($res);die();
 	}
 	
 
