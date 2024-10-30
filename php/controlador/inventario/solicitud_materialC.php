@@ -1,6 +1,7 @@
 <?php
 require_once(dirname(__DIR__,2).'/modelo/inventario/solicitud_materialM.php');
 require_once(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
+require_once(dirname(__DIR__,3).'/lib/phpmailer/enviar_emails.php');
 
 $controlador = new solicitud_materialC();
 
@@ -262,10 +263,12 @@ if(isset($_GET['AddProveedorExta']))
 class solicitud_materialC
 {
     private $modelo;
+    private $email;
 
     function __construct()
     {
         $this->modelo = new solicitud_materialM();
+        $this->email = new enviar_emails();
     }
 
     function autocomplet_producto($fami,$query)
@@ -1576,13 +1579,22 @@ class solicitud_materialC
 				SetAdoAddNew("Trans_Pedidos");         
 		    	SetAdoFields("TC",'B');  //BUY compra en ingles    
 		    	SetAdoFieldsWhere('ID',$value2['ID'] );
+		    	SetAdoUpdateGeneric();
+		    	enviar_email($value2['CodigoC']);	   
 
-		    	SetAdoUpdateGeneric();	   
+
 	    	}   
 		}
 
 		return 1;
 
+	}
+
+
+	function enviar_email($proveedor)
+	{
+		$cliente = Leer_Datos_Clientes($proveedor,true,false,false);
+		$this->email->enviar_email_generico($archivos = false, $cliente[0]['Email'], $cuerpo_correo = "Solicitud de Compra", $titulo_correo = "Solicitud de compra", $HTML = false);
 	}
 	
 
