@@ -653,10 +653,10 @@ class solicitud_materialC
 					<td width="20px">';
 					if($Stock>=$value['Cantidad'])
 					{
-					 $tr.='<input type="text" id="txt_cant_'.$value['ID'].'" name="txt_cant_'.$value['ID'].'" value="'.$value['Cantidad'].'" class="form-control input-sm"></td>';
+					 $tr.='<input type="text" id="txt_cant_'.$value['ID'].'" name="txt_cant_'.$value['ID'].'" value="'.$value['Cantidad_Total'].'" class="form-control input-sm"></td>';
 					}else
 					{
-						$can = $Stock-$value['Cantidad'];
+						$can = $value['Cantidad_Total']-$Stock;
 						if($can<0){$can=0;}
 						$tr.='<input type="text" id="txt_cant_'.$value['ID'].'" name="txt_cant_'.$value['ID'].'" value="'.$can.'" class="form-control input-sm"></td>';
 					}
