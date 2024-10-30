@@ -1580,7 +1580,7 @@ class solicitud_materialC
 		    	SetAdoFields("TC",'B');  //BUY compra en ingles    
 		    	SetAdoFieldsWhere('ID',$value2['ID'] );
 		    	SetAdoUpdateGeneric();
-		    	enviar_email($value2['CodigoC']);	   
+		    	$this->enviar_email($value2['CodigoC']);	   
 
 
 	    	}   
@@ -1595,7 +1595,7 @@ class solicitud_materialC
 	{
 		$cliente = Leer_Datos_Clientes($proveedor,true,false,false);
 		$this->email->enviar_email_generico(false, 
-			$cliente[0]['Email'].';'.$_SESSION['INGRESO']['Email_Procesos'], 
+			$cliente[0]['Email'].';'.$_SESSION['INGRESO']['Email'], 
 			$cuerpo_correo = "Solicitud de Compra", 
 			$titulo_correo = "Solicitud de compra", $HTML = false);
 	}
