@@ -93,7 +93,7 @@
        Swal.fire("Seleccione un producto",'','info');
        return false;      
      }
-      if(cant==0 || cant =='')
+      if(cant<=0 || cant =='')
      {
        Swal.fire("Cantidad no valida",'','info');
        return false;
