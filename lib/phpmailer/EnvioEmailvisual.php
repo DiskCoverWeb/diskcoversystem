@@ -37,9 +37,10 @@ class EnviarVisual
 
 	function EnvioEmailVisual($parametros)
 	{
+		// print_r($parametros);die();
 
 		$temp_file = 'ftp_folder_visual/';
-		if($parametros['Archivo']!='')
+		if(trim($parametros['Archivo'])!='')
 		{
 			$this->descargar_archivos_ftp($parametros['Archivo']);
 		}
@@ -64,10 +65,10 @@ class EnviarVisual
 
 	        try {
 		          //Server settings
-	        	if(isset($parametros['debug']))
+	        	$mail->isSMTP(); //Send using SMTP
+	        	if(isset($parametros['debug']) && $parametros['debug']==1)
 	        	{
-		          // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                 //Enable verbose debug output
-		            $mail->isSMTP(); //Send using SMTP
+		          $mail->SMTPDebug = SMTP::DEBUG_SERVER;                 //Enable verbose debug output  
 		            // $mail->Helo = 'smtp.diskcoversystem.com';  
 		        }  
 				    $mail->Host = 'imap.diskcoversystem.com';
@@ -82,7 +83,7 @@ class EnviarVisual
 			        $from = $parametros['from'];
 			        $fromName = $parametros['fromName']; 
 			        $reply = $from;
-			        if(isset($parametros['reply']))
+			        if(isset($parametros['reply']) && trim($parametros['reply'])!='')
 			        {
 			        	$reply = $parametros['reply']; 
 			        }
@@ -94,7 +95,7 @@ class EnviarVisual
 			          //$mail->addBCC('bcc@example.com');
 
 			          // Attachments
-			          if ($parametros['Archivo']!='') {
+			          if (trim($parametros['Archivo'])!='') {
 
 			          	  $archivos = explode(';',$parametros['Archivo']);
 			              foreach ($archivos as $key => $value) {
@@ -137,6 +138,7 @@ class EnviarVisual
 	function descargar_archivos_ftp($archivos)
 	{
 
+		// print_r($archivos);die();
 		//proceso para envio de archivo por ftp 
 		$ftp_host = "erp.diskcoversystem.com";
 		$ftp_user = "ftpuser";
@@ -201,15 +203,16 @@ class EnviarVisual
   //           }
   //         };
 
-  //         const params = `from=admin@imap.diskcoversystem.com
-          								// &fromName=CORREO DESDE 192.168.20.3 RELAYHOST IMAP <admin@imap.diskcoversystem.com>
-                          // &to=javier.farinango92@gmail.com;diskcoversystem@msn.com;jean.asencio@epn.edu.ec
-                          // &body=juan@ejemplo.com
-                          // &subject=hola email como estas
-                          // &HTML=1
-                          // &Archivo=archivo.xml;archivo.pdf;archivo.jpg
-                          // &reply=admin@imap.diskcoversystem.com
-                          // &replyName=`;
+  // //          const params = `from=admin@imap.diskcoversystem.com
+  //         								&fromName=CORREO DESDE 192.168.20.3 RELAYHOST IMAP <admin@imap.diskcoversystem.com>
+  //                         &to=javier.farinango92@gmail.com;diskcoversystem@msn.com
+  //                         &body=juan@ejemplo.com
+  //                         &subject=hola email como estas
+  //                         &HTML=1
+  //                         &Archivo=
+  //                         &reply=
+  //                         &replyName=
+  //                         &debug=0`;
 
   //         xhr.send(params);
   // }
