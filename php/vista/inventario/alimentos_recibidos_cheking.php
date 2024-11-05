@@ -59,9 +59,9 @@
             	$('#pnl_factura').css('display','none');
             }
 
-          setInterval(function() {         	
-   		 		cargar_pedido();
-          }, 5000); 
+          // setInterval(function() {         	
+   		 		// cargar_pedido();
+          // }, 5000); 
 
    		});
 
@@ -795,7 +795,7 @@ function autocoplet_ingreso()
                	</div>							
                	<div class="col-sm-6">
                   	<input type="hidden" class="form-control input-xs" id="txt_codigo_p" name="txt_codigo_p" readonly>
-                   <select class="form-control input-xs" id="txt_codigo" name="txt_codigo">
+                   <select class="form-control input-xs" id="txt_codigo" name="txt_codigo" onchange="cargar_pedido()">
                    	<option>Seleccione</option>
                    </select>
                 </div>

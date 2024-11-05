@@ -254,7 +254,11 @@ if(isset($_GET['AddProveedorExta']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->AddProveedorExta($parametros));
 }
-
+if(isset($_GET['eliminar_prove']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->eliminar_prove($parametros));
+}
 
 
 
@@ -1232,7 +1236,8 @@ class solicitud_materialC
 							if(count($prov)>0)
 							{
 							// print_r($prov);die();
-								$tr.='<label> Proveedor :<br>'.$prov[0]['Cliente'].' Asignado </label>';
+								$tr.='<label> Proveedor:<br>'.$prov[0]['Cliente'].' Asignado </label>
+								<br><button class="btn-xs btn-danger" type="button" onclick="eliminar_seleccion('.$value['ID'].')"><i class="fa fa-trash"></i> Eliminar Seleccionar</button>';
 							}else
 							{
 								$datos = Leer_Datos_Clientes($value['CodigoC'],$Por_Codigo=true,false,false);
@@ -1248,6 +1253,14 @@ class solicitud_materialC
 				// print_r($tr);die();
 		}
 		return $tr;
+	}
+
+	function eliminar_prove($id)
+	{
+		SetAdoAddNew("Trans_Pedidos");               
+    	SetAdoFields("CodigoC",'.');
+    	SetAdoFieldsWhere('ID',$id);
+    	return SetAdoUpdateGeneric();
 	}
 
 	function imprimir_pdf_proveedor($orden)
