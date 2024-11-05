@@ -220,8 +220,11 @@ if(isset($_GET['orden']))
           data: {parametros:parametros},
           dataType: 'json',
           success:  function (response) {
-            $('#ddl_proveedores_list').html(response.option);
-            $('#txt_costoAnt').val(response.CostoTotal);
+           // $('#ddl_proveedores_list').empty();
+
+            $('#tbl_body_prov').html(response.option);
+            $('#txt_id_prove').val(response.idProve);
+          //  $('#txt_costoAnt').val(response.CostoTotal);
            
           
           },
@@ -235,32 +238,41 @@ if(isset($_GET['orden']))
 
   function guardar_seleccion_proveedor(codigo,orden)
   {
-    costo = $('#txt_costoAct').val()
-    if(costo=='')
-    {
+    // costo = $('#txt_costoAct').val()
+    var ord = '<?php echo $orden; ?>';
+    // if(costo=='')
+    // {
 
-        Swal.fire("El costo no puede estar vacio","","info")
-      return false;
-    }
-    parametros = 
-    {
-      'idProducto':$('#txt_id_linea').val(),
-      'CodigoC':$('#ddl_proveedores_list').val(),
-      'costo':$('#txt_costoAct').val(),
-    }
+    //     Swal.fire("El costo no puede estar vacio","","info")
+    //   return false;
+    // }
+    var total = $('#lbl_total_linea').text();
+    data = $('#form_proveedor_seleccionado').serialize();
+    data = data+'&total='+total;
+
+
+   
      $.ajax({
           url:   '../controlador/inventario/solicitud_materialC.php?guardar_seleccion_proveedor=true',
           type:  'post',
-          data: {parametros:parametros},
+          data: data,
           dataType: 'json',
           success:  function (response) {
               if(response==1)
               {
                 Swal.fire("Proveedor Asignado","","success")
-                $('#myModal_provedor').modal('hide');
-                $('#txt_costoAct').val('')
-                $('#txt_costoAnt').val('')
+                $('#myModal_provedor').modal('hide');               
+                lineas_pedido_aprobacion_solicitados_proveedor(ord)
               }
+              if(response==-2)
+              {
+                Swal.fire("La cantidad no concide con el total","","info");
+              }
+               if(response==-3)
+              {
+                Swal.fire("El costo no debe ser cero o vacio","","info");
+              }
+
           },
           error: function (error) {
             $('#myModal_espera').modal('hide');
@@ -268,6 +280,47 @@ if(isset($_GET['orden']))
             // Puedes manejar el error aquí si es necesario
           },
       });
+  }
+
+  function lineaSolProv(linea)
+  {
+    $('#txt_linea_Select').val(linea);
+  }
+
+  function usar_cliente(nombre, ruc, codigocliente, email, T,grupo)
+  {
+    linea = $('#txt_linea_Select').val();
+    parametros = 
+    {
+      'linea':linea,
+      'proveedor':codigocliente,
+    }
+     $.ajax({
+          url:   '../controlador/inventario/solicitud_materialC.php?AddProveedorExta=true',
+          type:  'post',
+          data: {parametros:parametros},
+          dataType: 'json',
+          success:  function (response) {
+            if(response==1)
+            {
+              Swal.fire("Proveedor asignado","","success");
+               $('#ddl_selector_'+linea).append($('<option>',{value:  codigocliente, text: nombre,selected: true }));
+              $('#myModal').modal('hide');
+            }else
+            {              
+              Swal.fire("el proveedor ya esta asignado a este producto","","info");
+            }
+          
+          
+          },
+          error: function (error) {
+            $('#myModal_espera').modal('hide');
+            console.error('Error en numero_comprobante:', error);
+            // Puedes manejar el error aquí si es necesario
+          },
+      });
+
+   
   }
 
 
@@ -321,7 +374,8 @@ if(isset($_GET['orden']))
   </div>
   <div class="row">
     <form id="form_lineas">
-    <div class="col-sm-12">
+    <div class="col-sm-12" style="overflow-x: scroll;">      
+      <input type="hidden" name="txt_linea_Select" id="txt_linea_Select" value="">
         <table class="table">
           <thead>
             <thead>
@@ -329,10 +383,11 @@ if(isset($_GET['orden']))
               <th>Codigo</th>
               <th>Producto</th>
               <th>Cantidad</th>
-              <th>Precio</th>
+              <th>Unidad</th>
+              <th>Precio ref</th>
+              <th>Total ref</th>
               <th>Fecha Solicitud</th>
               <th>Fecha Entrega</th>
-              <th>Total</th>
               <th>Observacion</th>
               <th width="28%">Proveedores proforma</th>
               <th>Proveedor Seleccionado</th>
@@ -358,31 +413,32 @@ if(isset($_GET['orden']))
 </section>
 
 <div id="myModal_provedor" class="modal fade myModal_provedor" role="dialog">
-    <div class="modal-dialog modal-sm">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-primary">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Seleccionar proveedor</h4>
             </div>
             <div class="modal-body" style="background: antiquewhite;">
+              <form id="form_proveedor_seleccionado">
               <input type="hidden" name="txt_id_linea" id="txt_id_linea">
+              <input type="hidden" name="txt_id_prove" id="txt_id_prove">
               <div class="row">
                 <div class="col-sm-12">
-                  <b>Seleccione proveedor</b>
-                  <select class="form-control input-sm" id="ddl_proveedores_list">
-                    <option>Seleccionar</option>
-                  </select>
-                </div>
-                 <div class="col-sm-12">
-                  <b>Costo Anterior</b>
-                 <input type="text" class="form-control input-sm" name="txt_costoAnt" id="txt_costoAnt" readonly>
-                </div>
-                 <div class="col-sm-12">
-                  <b>Costo de proveedor</b>
-                  <input type="text" class="form-control input-sm" name="txt_costoAct" id="txt_costoAct">
-                </div>
+                  <table class="table text-sm">
+                    <thead>
+                      <th>Proveedor</th>
+                      <th>Cantidad</th>
+                      <th>Costo Ref</th>
+                      <th>Costo Real</th>
+                    </thead>
+                    <tbody id="tbl_body_prov">
+                      
+                    </tbody>
+                  </table>
+                </div>               
               </div>
-               
+              </form>
             </div>
              <div class="modal-footer">
                 <button type="button" class="btn btn-primary" onclick="guardar_seleccion_proveedor()">Guardar</button>

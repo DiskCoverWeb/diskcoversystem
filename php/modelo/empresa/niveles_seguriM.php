@@ -107,13 +107,14 @@ class niveles_seguriM
 	}
 	function empresas_datos($entidad,$Item)
 	{
-		$sql="SELECT  ID,Empresa,Item,IP_VPN_RUTA,Base_Datos,Usuario_DB,Contrasena_DB,Tipo_Base,Puerto   FROM lista_empresas WHERE ID_Empresa=".$entidad." AND Item = '".$Item."' AND Item <> '".G_NINGUNO."' ORDER BY Empresa";
+		$sql="SELECT  ID,Empresa,Item,IP_VPN_RUTA,Base_Datos,Usuario_DB,Contrasena_DB,Tipo_Base,Puerto,RUC_CI_NIC   FROM lista_empresas WHERE ID_Empresa=".$entidad." AND Item = '".$Item."' AND Item <> '".G_NINGUNO."' ORDER BY Empresa";
+		// print_r($sql);die();
 		$resp = $this->db->datos($sql,'MY SQL');
 		// print_r($sql);die();
 		  $datos=[];
 		foreach ($resp as $key => $value) {
 		
-					$datos[]=['id'=>$value['ID'],'text'=>$value['Empresa'],'host'=>$value['IP_VPN_RUTA'],'usu'=>$value['Usuario_DB'],'pass'=>$value['Contrasena_DB'],'base'=>$value['Base_Datos'],'Puerto'=>$value['Puerto'],'Item'=>$value['Item']];				
+					$datos[]=['id'=>$value['ID'],'text'=>$value['Empresa'],'host'=>$value['IP_VPN_RUTA'],'usu'=>$value['Usuario_DB'],'pass'=>$value['Contrasena_DB'],'base'=>$value['Base_Datos'],'Puerto'=>$value['Puerto'],'Item'=>$value['Item'],'RUC'=>$value['RUC_CI_NIC']];				
 		 }
 
 	      return $datos;
@@ -133,7 +134,7 @@ class niveles_seguriM
 		 $resp = $this->db->datos($sql,'MY SQL');
 		foreach ($resp as $key => $value) {
 		
-			$datos[]=array('id'=>$value['CI_NIC'],'text'=>$value['Nombre_Usuario'],'CI'=>$value['CI_NIC'],'usuario'=>$value['Usuario'],'clave'=>$value['Clave'],$value['Email']);					
+			$datos[]=array('id'=>$value['CI_NIC'],'text'=>$value['Nombre_Usuario'],'CI'=>$value['CI_NIC'],'usuario'=>$value['Usuario'],'clave'=>$value['Clave'],$value['Email'],'data'=>$value);					
 		 }
 
 	      return $datos;
@@ -189,6 +190,11 @@ class niveles_seguriM
 
 	function actualizar_correo($correo,$ci_nic){
 		$sql = "UPDATE acceso_usuarios set Email = '".$correo ."' WHERE CI_NIC = '".$ci_nic."'";
+		$resp = $this->db->String_Sql($sql,'MY SQL');
+	}
+
+	function actualizar_datos_basicos($id,$parametros){
+		$sql = "UPDATE acceso_usuarios SET  Usuario = '".$parametros['usu']."',Clave = '".$parametros['cla']."',Email='".$parametros['ema']."',Nombre_Usuario='".$parametros['nom']."',CI_NIC = '".$parametros['ced']."' WHERE ID = '".$id."';";
 		$resp = $this->db->String_Sql($sql,'MY SQL');
 	}
 
@@ -866,6 +872,30 @@ class niveles_seguriM
 	   }else{ return $resp; }
 	}
 
+	function usuario_existente_datos($id=false,$usuario=false,$clave=false,$entidad=false)
+	{
+	   $sql = "SELECT * FROM acceso_usuarios WHERE 1=1 ";
+	   if($usuario)
+	   	{
+	   		$sql.=" AND Usuario = '".$usuario."' ";
+	   	}
+	   	if($clave)
+	   	{
+	   		$sql.=" AND Clave = '".$clave."' ";
+	   	}
+	   	if($entidad)
+	   	{
+	   		$sql.=" AND ID_Empresa = '".$entidad."'";
+	   	}
+	   	if($id)
+	   	{
+	   		$sql.=" AND ID = '".$id."'";
+	   	}
+	   $resp = $this->db->datos($sql,'MY SQL');
+	   return $resp; 
+	}
+
+
 
 	function buscar_ruc($ruc)
 	{
@@ -989,6 +1019,41 @@ class niveles_seguriM
 	function comprobar_conexion($host,$usu,$pass,$base,$Puerto)
 	{
 		return $this->db->modulos_sql_server($host,$usu,$pass,$base,$Puerto);
+	}
+
+	function ejecutar_sql_terceros($sql,$entidad,$empresas)
+	{
+		$conn_sql = $this->empresas_datos($entidad,$empresas);
+		// print_r($conn_sql);die();
+  		if(count($conn_sql)>0)
+  		{
+  			$conn = $this->db->modulos_sql_server($conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+  			if($conn!=-1)
+  			{  				
+  				// print_r($sql2);die();
+  				$re = $this->db->ejecutar_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+  				return $re;
+  				// print_r($re);die();
+  			}
+  			
+  		}
+	}
+	function ejecutar_datos_terceros($sql,$entidad,$empresas)
+	{
+		$conn_sql = $this->empresas_datos($entidad,$empresas);
+		// print_r($conn_sql);die();
+  		if(count($conn_sql)>0)
+  		{
+  			$conn = $this->db->modulos_sql_server($conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+  			if($conn!=-1)
+  			{  				
+  				// print_r($sql2);die();
+  				$re = $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+  				return $re;
+  				// print_r($re);die();
+  			}
+  			
+  		}
 	}
 
 	

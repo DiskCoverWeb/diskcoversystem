@@ -4524,6 +4524,7 @@ function dimenciones_tabl($len)
       }
 
       // print_r($_SESSION['INGRESO']);die();
+      // print_r($MesComp);die();
 
       if($_SESSION['INGRESO']['Num_Meses_CD'] and $query=='Diario')
       {
@@ -5136,6 +5137,10 @@ function ingresar_asientos($parametros) //revision parece repetida
     $dconcepto1 = $parametros['dconcepto1'];
     $codigo = $parametros['codigo'];
     $cuenta = $parametros['cuenta'];
+    $codigoC = '.';
+    $beneficiario = '.';
+    if(isset($parametros['codigoc'])){$codigoC = $parametros['codigoc'];}
+    if(isset($parametros['beneficiario'])){$beneficiario = $parametros['beneficiario'];}
     $tc ='';
     if(isset($parametros['tc']))
     {
@@ -5288,10 +5293,10 @@ function ingresar_asientos($parametros) //revision parece repetida
       // print_r($va);print_r($haber);print_r($debe);die();
         $sql="INSERT INTO Asiento
         (CODIGO,CUENTA,PARCIAL_ME,DEBE,HABER,CHEQ_DEP,DETALLE,EFECTIVIZAR,CODIGO_C,CODIGO_CC
-        ,ME,T_No,Item,CodigoU,A_No,TC)
+        ,ME,T_No,Item,CodigoU,A_No,TC,Beneficiario)
         VALUES
         ('".$codigo."','".$cuenta."',".$parcial.",".$debe.",".$haber.",'".$chq_as."','".$dconcepto1."',
-        '".$efectivo_as."','.','.',0,".$t_no.",'".$_SESSION['INGRESO']['item']."','".$_SESSION['INGRESO']['CodigoU']."',".$A_No.",'".$tc."')";
+        '".$efectivo_as."','".$codigoC."','.',0,".$t_no.",'".$_SESSION['INGRESO']['item']."','".$_SESSION['INGRESO']['CodigoU']."',".$A_No.",'".$tc."','".$beneficiario."')";
        $stmt = sqlsrv_query( $cid, $sql);
       if( $stmt === false)  
       {  

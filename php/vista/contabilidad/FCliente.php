@@ -65,6 +65,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
           $('#grupo').val(response[0].grupo); // save selected id to input
           $('#naciona').val(response[0].nacionalidad); // save selected id to input
           $('#prov').val(response[0].provincia); // save selected id to input
+          console.log(response[0])
           if (response[0].provincia == '' || response[0].provincia == '.') {
             $('#prov').append('<option value=".">Seleccione</option>'); // save selected id to input                  
           }
@@ -756,7 +757,7 @@ switch ($_SESSION['INGRESO']['modulo_']) {
         <div class="col-xs-6">
           <label for="prov" class="control-label">Provincia</label>
           <select class="form-control input-sm" id="prov" name="prov">
-            <option>Seleccione una provincia</option>
+            <option value="." >Seleccione una provincia</option>
           </select>
         </div>
         <div class="col-xs-6">
