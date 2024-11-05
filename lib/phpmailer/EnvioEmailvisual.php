@@ -76,10 +76,17 @@ class EnviarVisual
 				    $mail->SMTPSecure = 'tls';
 				    $mail->Port = 587;
 	         
-			        $from = $parametros['from']; 
+			        $from = $parametros['from'];
+			        $fromName = $parametros['fromName']; 
+			        $reply = $from;
+			        if(isset($parametros['reply']))
+			        {
+			        	$reply = $parametros['reply']; 
+			        }
+			        $replyName = $parametros['replyName']; 
 			        $mail->addAddress($value);  
-			        $mail->setFrom("correo_remitenten@imap.diskcoversystem.com",$from);
-			        $mail->addReplyTo("correo_remitenten@imap.diskcoversystem.com", 'Informacion');
+			        $mail->setFrom($from,$fromName );
+			        $mail->addReplyTo($reply, $replyName);
 			          //$mail->addCC('cc@example.com');
 			          //$mail->addBCC('bcc@example.com');
 
@@ -191,12 +198,15 @@ class EnviarVisual
   //           }
   //         };
 
-  //         const params = `from=CORREO DESDE 192.168.20.3 RELAYHOST IMAP <admin@imap.diskcoversystem.com>
-  //                         &to=javier.farinango92@gmail.com;diskcoversystem@msn.com;jean.asencio@epn.edu.ec
-  //                         &body=juan@ejemplo.com
-  //                         &subject=hola email como estas
-  //                         &HTML=1
-  //                         &Archivo=archivo.xml;archivo.pdf;archivo.jpg`;
+  //         const params = `from=admin@imap.diskcoversystem.com
+          								// &fromName=CORREO DESDE 192.168.20.3 RELAYHOST IMAP <admin@imap.diskcoversystem.com>
+                          // &to=javier.farinango92@gmail.com;diskcoversystem@msn.com;jean.asencio@epn.edu.ec
+                          // &body=juan@ejemplo.com
+                          // &subject=hola email como estas
+                          // &HTML=1
+                          // &Archivo=archivo.xml;archivo.pdf;archivo.jpg
+                          // &reply=admin@imap.diskcoversystem.com
+                          // &replyName=`;
 
   //         xhr.send(params);
   // }
