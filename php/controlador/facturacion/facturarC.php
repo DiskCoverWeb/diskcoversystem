@@ -12,6 +12,10 @@ if (isset($_GET['DCMod'])) {
    //$parametros = $_POST['parametros'];
    echo json_encode($controlador->DCMod());
 }
+if (isset($_GET['Sesion'])) {
+   //$parametros = $_POST['parametros'];
+   echo json_encode($_SESSION);
+}
 if (isset($_GET['DCLineas'])) {
    $parametros = $_POST['parametros'];
    echo json_encode($controlador->DCLinea($parametros));
@@ -1147,6 +1151,7 @@ class facturarC
       $TA['Factura'] = $FA['Factura'];
       $TA['Autorizacion'] = $FA['Autorizacion'];
       $TA['CodigoC'] = $FA['CodigoC'];
+      $TA['Fecha'] = $FA['Fecha'];
       //Actualiza_Estado_Factura($TA);
       sp_Actualizar_Saldos_Facturas($TA['TP'], $TA['Serie'], $TA['Factura']);
 
@@ -1156,18 +1161,23 @@ class facturarC
       if ($FA['TC'] <> "OP") {
          // 'MsgBox FA.Autorizacion & vbCrLf & FA.Autorizacion_GR
          if (strlen($FA['Autorizacion']) >= 13) {
-            if ($Grafico_PV) {
+            //print_r($FA['Autorizacion']);
+            if (/*$Grafico_PV*/$_SESSION['INGRESO']['Impresora_Rodillo'] == 1) {
+               //print_r("con rodillo");
                $info = Imprimir_Punto_Venta_Grafico_datos($FA);
                $info['CLAVE'] = '1';
                $info['PorcIva'] = $parametros['PorcIva'];
                $this->pdf->Imprimir_Punto_Venta_Grafico($info);
                $imp = $FA['Serie'] . '-' . generaCeros($FA['Factura'], 7);
             } else {
+               //print_r("sin rodillo");
                $info = Imprimir_Punto_Venta_datos($FA);
                $info['CLAVE'] = '1';
                $info['PorcIva'] = $parametros['PorcIva'];
-               $this->pdf->Imprimir_Punto_Venta($info);
+               //$this->pdf->Imprimir_Punto_Venta($info);
                $imp = $FA['Serie'] . '-' . generaCeros($FA['Factura'], 7);
+               $clave = $this->sri->Clave_acceso($TA['Fecha'], '01', $TA['Serie'], $FA['Factura']);
+               $this->modelo->pdf_factura_elec($FA['Factura'], $FA['Serie'], $FA['CodigoC'], $imp, $clave, $periodo = false, 0, 1);
             }
          } else {
             //Se va a retornar esta variable para manejar en la vista si se imprime multiple o no.

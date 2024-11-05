@@ -1,14 +1,18 @@
 <?php
 require_once(dirname(__DIR__, 2) . "/db/db1.php");
 require_once(dirname(__DIR__, 2) . "/funciones/funciones.php");
+require_once(dirname(__DIR__, 3) . "/lib/fpdf/reporte_de.php");
+require_once(dirname(__DIR__, 3) . "/lib/phpmailer/enviar_emails.php");
 
 class facturarM
 {
   private $db;
+  private $email;
 
   public function __construct()
   {
     $this->db = new db();
+    $this->email = new enviar_emails();
   }
 
   function case_lote($lote_no)
@@ -105,14 +109,48 @@ class facturarM
     return $this->db->datos($sql);
   }
 
-  function DCTipoPago()
+  function DCTipoPago($cod = false)
   {
     $sql = "SELECT (Codigo+' '+ Descripcion) As CTipoPago,Codigo 
        FROM Tabla_Referenciales_SRI 
-       WHERE Tipo_Referencia = 'FORMA DE PAGO' 
-       AND Codigo IN ('01','16','17','18','19','20','21') 
-       ORDER BY Codigo ";
+       WHERE Tipo_Referencia = 'FORMA DE PAGO' ";
+    if ($cod) {
+      $sql .= "AND Codigo = '" . $cod . "'";
+    }else{
+      $sql .= "AND Codigo IN ('01','16','17','18','19','20','21') ";
+    }
+      $sql .= "ORDER BY Codigo ";
     return $this->db->datos($sql);
+  }
+
+  function Cliente($cod, $grupo = false, $query = false, $clave = false, $ci = false)
+  {
+    $sql = "SELECT * from Clientes WHERE T='N' ";
+    if ($cod) {
+      $sql .= " and Codigo= '" . $cod . "'";
+    }
+    if ($grupo) {
+      $sql .= " and Grupo= '" . $grupo . "'";
+    }
+    if ($query) {
+      $sql .= " and Cliente +' '+ CI_RUC like '%" . $query . "%'";
+    }
+    if ($clave) {
+      $sql .= " and Clave= '" . $clave . "'";
+    }
+    if ($ci) {
+      $sql .= " and CI_RUC= '" . $ci . "'";
+    }
+
+    $sql .= " ORDER BY ID OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY;";
+
+    // print_r($sql);die();
+
+    $result = $this->db->datos($sql);
+
+    // $result =  encode($result);
+    // print_r($result);die();
+    return $result;
   }
 
   function DCGrupo_No($query = false)
@@ -160,6 +198,91 @@ class facturarM
       ORDER BY Bodega ";
     return $this->db->datos($sql);
 
+  }
+
+  function pdf_factura_elec($cod, $ser, $ci, $nombre, $clave_acceso, $periodo = false, $aprobado = false, $descargar = false)
+  {
+    $res = 1;
+    $sql = "SELECT * 
+    FROM Facturas 
+    WHERE Serie='" . $ser . "' 
+    AND Factura='" . $cod . "' 
+    AND CodigoC='" . $ci . "' 
+    AND Item = '" . $_SESSION['INGRESO']['item'] . "' ";
+    if ($periodo == false || $periodo == '.') {
+      $sql .= " AND Periodo =  '" . $_SESSION['INGRESO']['periodo'] . "' ";
+    } else {
+      $sql .= " AND Periodo BETWEEN '01/01/" . $periodo . "' AND '31/12" . $periodo . "'";
+    }
+
+    $datos_fac = $this->db->datos($sql);
+
+    $datos_fac[0] = $TFA = Leer_Datos_FA_NV($datos_fac[0]);
+    $sSQL = "SELECT DF.*, CP.Reg_Sanitario, CP.Marca, CP.Desc_Item, CP.Codigo_Barra As Cod_Barras
+         FROM Detalle_Factura DF, Catalogo_Productos CP 
+         WHERE DF.Item = '" . $_SESSION['INGRESO']['item'] . "' 
+         AND DF.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' 
+         AND DF.TC = '" . $TFA['TC'] . "' 
+         AND DF.Serie = '" . $TFA['Serie'] . "' 
+         AND DF.Autorizacion = '" . $TFA['Autorizacion'] . "' 
+         AND DF.Factura = " . $TFA['Factura'] . " 
+         AND DF.Item = CP.Item 
+         AND DF.Periodo = CP.Periodo 
+         AND DF.Codigo = CP.Codigo_Inv 
+         ORDER BY DF.ID, DF.Codigo";
+    $detalle_fac = $this->db->datos($sSQL);
+
+    $sSQL = "SELECT * " .
+      "FROM Trans_Abonos " .
+      "WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' " .
+      "AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' " .
+      "AND TP = '" . $TFA['TC'] . "' " .
+      "AND Serie = '" . $TFA['Serie'] . "' " .
+      "AND Autorizacion = '" . $TFA['Autorizacion'] . "' " .
+      "AND Factura = " . $TFA['Factura'] . " " .
+      "ORDER BY Fecha,ID";
+    $detalle_abonos = $this->db->datos($sSQL);
+
+    $tipo_con = Tipo_Contribuyente_SP_MYSQL($_SESSION['INGRESO']['RUC']);
+    if (count($datos_fac) > 0 && count($tipo_con) > 0) {
+      $datos_fac['Tipo_contribuyente'] = $tipo_con;
+    }
+    // array_push($datos_fac, $tipo_con);
+    $datos_cli_edu = $this->Cliente($ci);
+    $archivos = array('0' => $nombre . '.pdf', '1' => $clave_acceso . '.xml');
+    $to_correo = '';
+    if (count($datos_cli_edu) > 0) {
+      if ($datos_cli_edu[0]['Email'] != '.' && $datos_cli_edu[0]['Email'] != '') {
+        $to_correo .= $datos_cli_edu[0]['Email'] . ',';
+      }
+      if ($datos_cli_edu[0]['Email2'] != '.' && $datos_cli_edu[0]['Email2'] != '') {
+        $to_correo .= $datos_cli_edu[0]['Email2'] . ',';
+      }
+      if ($datos_cli_edu[0]['EmailR'] != '.' && $datos_cli_edu[0]['EmailR'] != '') {
+        $to_correo .= $datos_cli_edu[0]['EmailR'] . ',';
+      }
+      // $to_correo = substr($to_correo, 0,-1);
+    }
+    $sucursal = $this->catalogo_lineas_('FA', $ser);
+    $forma_pago = $this->DCTipoPago($datos_fac[0]['Tipo_Pago']);
+
+    if (count($forma_pago) > 0) {
+      $datos_fac[0]['Tipo_Pago'] = $forma_pago[0]['CTipoPago'];
+    }
+
+    imprimirDocEle_fac($datos_fac, $detalle_fac, $datos_cli_edu, $nombre, null, 'factura', null, null, $imp = $descargar, $detalle_abonos, $sucursal);
+    if ($to_correo != '') {
+      $titulo_correo = 'comprobantes electronicos';
+      $cuerpo_correo = 'comprobantes electronico';
+      if ($aprobado) {
+        $r = $this->email->enviar_email($archivos, $to_correo, $cuerpo_correo, $titulo_correo, $HTML = false);
+
+        // print_r($r);die();
+        return $r;
+      }
+      // print_r($r);
+    }
+    return $res;
   }
 
   function DCMarca($query="")
@@ -455,6 +578,22 @@ class facturarM
     $sql .= "ORDER BY Cliente OFFSET 0 ROWS FETCH NEXT 30 ROWS ONLY;";
     $respuest = $this->db->datos($sql);
     return $respuest;
+
+  }
+
+  function catalogo_lineas_($TC, $SerieFactura)
+  {
+    $sql = "SELECT *
+         FROM Catalogo_Lineas
+         WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+         AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+         AND Fact = '" . $TC . "'
+         AND Serie = '" . $SerieFactura . "'
+         AND Autorizacion = '" . $_SESSION['INGRESO']['RUC'] . "'
+         AND TL <> 0
+         ORDER BY Codigo ";
+    // print_r($sql);die();
+    return $this->db->datos($sql);
 
   }
 

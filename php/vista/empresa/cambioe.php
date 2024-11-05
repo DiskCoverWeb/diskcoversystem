@@ -1330,6 +1330,9 @@ async function datos_empresa()
             <button type="button" class="btn btn-default" title="Guardar" onclick="cambiarEmpresa();"><img src="../../img/png/grabar.png"></button>
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
+			<button type="button" id="btnLineasGrabar" class="btn btn-default" title="Grabar Lineas CxC" onclick="confirmar()" disabled><img src="../../img/png/grabar_lineascxc.png"></button>
+        </div>
+        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
             <button type="button" class="btn btn-default" title="Guardar Masivo: Fechas de renovaciones" onclick='cambiarEmpresaMa();'><img src="../../img/png/guardarmasivo.png"></button>
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
@@ -2036,22 +2039,16 @@ async function datos_empresa()
 										</div>
 									</div>
 								</div>
-								<div class="row">
+								<!--<div class="row">
 									<div class="col-sm-12">
 										<button type="button" id="btnLineasGrabar" class="btn btn-default" title="Grabar factura" onclick="confirmar()" disabled>
 											<img src="../../img/png/grabar.png"><br>
 											&nbsp; &nbsp;&nbsp;  Grabar&nbsp; &nbsp; &nbsp; 
 											<br>
 										</button>
-										<!--<br>-->
-										<button type="button" class="btn btn-default" title="Grabar factura" onclick="boton1()" disabled>
-											<img src="../../img/png/grabar.png"><br>
-											Vencimiento <br> de Facturas
-										</button>
-										<!--<br>-->
 										
 									</div>
-								</div>
+								</div>-->
 							</div>
 							<div class="col-sm-8">
 								<form id="form_datos">

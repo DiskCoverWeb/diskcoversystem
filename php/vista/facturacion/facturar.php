@@ -18,6 +18,16 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 	$(document).ready(function () {
 		var tipo = "<?php echo $_GET['tipo']; ?>";
 
+		$.ajax({
+			type: "GET",
+			url: '../controlador/facturacion/facturarC.php?Sesion=true',
+			//data: {parametros: parametros},
+			dataType: 'json',
+			success: function (data) {
+				console.log(data);
+			}
+		});
+
 		//let lienzoElem = ;
 		$('#interfaz_facturacion').parent().css('min-height', 'inherit');
 		//$('#interfaz_facturacion').parent().css('background-color', 'yellow');
