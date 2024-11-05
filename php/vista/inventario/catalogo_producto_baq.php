@@ -87,13 +87,14 @@
 				  	Swal.fire('Eliminado','','success').then(function(){ 
 				  		var cod = $('#txt_codigo').val();
 			  				var cod = cod.split('.');
-			  				if(padre!=cod[0] && cod.length==2)
+			  				/*if(padre!=cod[0] && cod.length==2)
 			  				{
 			  					TVcatalogo(padre_nl,padre);
-			  				}else
-			  				{
-			  					TVcatalogo();
-			  				}
+							}else
+							{
+								TVcatalogo();
+							}*/
+							TVcatalogo(padre_nl,padre);
 				  	});
 			    }else
 			    {
@@ -273,13 +274,14 @@
 			  				console.log(padre);
 			  				var cod = $('#txt_codigo').val();
 			  				var cod = cod.split('.');
-			  				if(padre==cod[0])
+			  				/*if(padre==cod[0])
 			  				{
 			  					TVcatalogo(padre_nl,padre);
 			  				}else
 			  				{
 			  					TVcatalogo();
-			  				}
+			  				}*/
+							  TVcatalogo(padre_nl,padre);
 			  			});
 			  	}
 			  	console.log(data);

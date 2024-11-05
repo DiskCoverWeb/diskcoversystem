@@ -53,6 +53,22 @@
 		}
 	 })
 
+	 function generarQR(){
+		var codigo = $('#txt_codigo').val();
+
+		$.ajax({
+			type: "POST",
+			url: '../controlador/facturacion/catalogo_productosC.php?generarQR=true',
+			data: {codigo}, 
+			dataType:'json',
+			success: function(data){
+				if(data.res == 1){
+					$('#codigo_qr').attr('src', data.qr);
+				}
+			}
+		});
+	 }
+
 	 function eliminar()
 	 {
 	 	 Swal.fire({
@@ -73,28 +89,35 @@
 	 function delete_cuenta()
 	 {
 	 	var codigo = $('#txt_codigo').val();
+	 	var qr = $('#codigo_qr').attr('src');
   		$.ajax({
 			  type: "POST",
 			  url: '../controlador/facturacion/catalogo_productosC.php?eliminarINVBod=true',
-			  data: {codigo,codigo}, 
+			  data: {codigo,codigo,qr}, 
 			  dataType:'json',
 			  success: function(data)
 			  {
 			  	if(data==1)
 			  	{
+
 				  	var padre_nl = $('#txt_padre_nl').val();
 				  	var padre = $('#txt_padre').val();
 				  	Swal.fire('Eliminado','','success').then(function(){ 
 				  		var cod = $('#txt_codigo').val();
-			  				var cod = cod.split('.');
-			  				if(padre!=cod[0] && cod.length==2)
-			  				{
-			  					TVcatalogo(padre_nl,padre);
-			  				}else
-			  				{
-			  					//TVcatalogo(parseInt(padre_nl), padre);
-			  					TVcatalogo();
-			  				}
+						var cod = cod.split('.');
+						/*if(padre!=cod[0] && cod.length==2)
+						{
+							TVcatalogo(padre_nl,padre);
+						}else
+						{
+							//TVcatalogo(parseInt(padre_nl), padre);
+							TVcatalogo(padre_nl,padre);
+						}*/
+						TVcatalogo(padre_nl,padre);
+						$('#codigo_qr').attr('src', '');
+						$('#txt_codigo').val('');
+						$('#txt_nomenclatura').val('');
+						$('#txt_concepto').val('');
 				  	});
 			    }else
 			    {
@@ -206,19 +229,22 @@
         dataType:'json',
 	      success: function(data)
 	      {
-	      	data = data[0];
-	      	console.log(data);
-	      	$('#txt_concepto').val(data.Producto);
-	      	$('#txt_nomenclatura').val(data.Nomenclatura);
-	      	$('#txt_codigo').val(data.CodBod);
-	      	$('#pvp').val(data.PVP);
-	      	$('#pvp2').val(data.PVP_2);
-	      	$('#pvp3').val(data.PVP_3);
-	      	$('#maximo').val(data.Maximo);
-	      	$('#minimo').val(data.Minimo);
-	      	if(data.TC=='P'){ $('#cbx_final').prop('checked',true);}else{$('#cbx_inv').prop('checked',true);}
+			let qr = data['qr'];
+	      	let detalle = data['detalle'][0];
+	      	console.log(detalle);
+			console.log(qr);
+	      	$('#txt_concepto').val(detalle.Producto);
+	      	$('#txt_nomenclatura').val(detalle.Nomenclatura);
+	      	$('#txt_codigo').val(detalle.CodBod);
+	      	$('#pvp').val(detalle.PVP);
+	      	$('#pvp2').val(detalle.PVP_2);
+	      	$('#pvp3').val(detalle.PVP_3);
+	      	$('#maximo').val(detalle.Maximo);
+	      	$('#minimo').val(detalle.Minimo);
+			$('#codigo_qr').attr('src', qr);
+	      	if(detalle.TC=='P'){ $('#cbx_final').prop('checked',true);}else{$('#cbx_inv').prop('checked',true);}
 	      	// if(data.IVA==1){ $('#rbl_iva').prop('checked',true);}else{$('#rbl_iva').prop('checked',false);}
-	      	if(data.INV==1){ $('#rbl_inv').prop('checked',true);}else{$('#rbl_inv').prop('checked',false);}
+	      	if(detalle.INV==1){ $('#rbl_inv').prop('checked',true);}else{$('#rbl_inv').prop('checked',false);}
 	      	/*if(data.Agrupacion==1){ $('#rbl_agrupacion').prop('checked',true);}else{$('#rbl_agrupacion').prop('checked',false);}
 	      	if(data.Por_Reservas==1){ $('#rbl_reserva').prop('checked',true);}else{$('#rbl_reserva').prop('checked',false);}
 	      	if(data.Div==1){ $('#cbx_dividir').prop('checked',true);}else{$('#cbx_multiplicar').prop('checked',true);}
@@ -271,18 +297,43 @@
 			  				console.log(padre);
 			  				var cod = $('#txt_codigo').val();
 			  				var cod = cod.split('.');
-			  				if(padre==cod[0])
+			  				/*if(padre==cod[0])
 			  				{
 			  					TVcatalogo(padre_nl,padre);
-			  				}else
-			  				{
-			  					TVcatalogo();
-			  				}
+							}else
+							{
+								TVcatalogo();
+							}*/
+							TVcatalogo(padre_nl,padre);
 			  			});
 			  	}
 			  	console.log(data);
 			  }
 			})
+  }
+
+  function imprimirEtiqueta(){
+	  let codigo = $('#txt_codigo').val();
+	  let nomenclatura = $('#txt_nomenclatura').val();
+	  let producto = $('#txt_concepto').val();
+	  let qr = $('#codigo_qr').attr('src');
+	
+	  if(!(codigo && nomenclatura && producto && qr)){
+		Swal.fire('Seleccione una bodega para poder imprimir.', '', 'info');
+		return;
+	  }
+	
+	$.ajax({
+		type: "POST",
+		url: '../controlador/facturacion/catalogo_productosC.php?imprimirEtiqueta=true',
+		data: {codigo, nomenclatura, producto, qr}, 
+		dataType:'json',
+		success: function(data)
+		{
+			var url = '../../TEMP/' + data.pdf + '.pdf';
+			window.open(url, '_blank');
+		}
+	})
   }
 
   function codigo_barras(cant=1)
@@ -321,7 +372,10 @@
 		<a  href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0].'#');?>" title="Salir de modulo" class="btn btn-default">
           <img src="../../img/png/salire.png">
        </a>
-		<button class="btn btn-default"  data-toggle="tooltip" title="Grabar" onclick="guardarINV()">  <img src="../../img/png/grabar.png"></button><br>
+	   <button class="btn btn-default"  data-toggle="tooltip" title="Grabar" onclick="guardarINV()">  <img src="../../img/png/grabar.png"></button>
+	   <a title="IMPRIMIR ETIQUETA DE PRODUCTO" id="imprimir_etiqueta" class="btn btn-default" onclick="imprimirEtiqueta()">
+			<img src="../../img/png/paper.png" height="32px">
+		</a>
 	</div>
 </div>
 <div class="row">
@@ -335,20 +389,34 @@
 	</div>
     <div class="col-sm-6">
 		<form id="form_datos" name="form_datos">
-			<div class="col-sm-3">
-				<b>Codigo del producto</b>
-				<input type="hidden" name="txt_padre" id="txt_padre">
-				<input type="hidden" name="txt_padre" id="txt_padre_nl">
-				<input type="hidden" name="txt_anterior" id="txt_anterior">
-				<input type="text" name="txt_codigo" id="txt_codigo" class="form-control input-xs" placeholder="<?php echo "CCC.CCC.CCC.CCC.CCC";/*$_SESSION['INGRESO']['Formato_Inventario'];*/ ?>" >
+			<div class="row" style="margin-bottom:5px;">
+				<div class="col-sm-7">
+					<b>Codigo del producto</b>
+					<input type="hidden" name="txt_padre" id="txt_padre">
+					<input type="hidden" name="txt_padre" id="txt_padre_nl">
+					<input type="hidden" name="txt_anterior" id="txt_anterior">
+					<input type="text" name="txt_codigo" id="txt_codigo" class="form-control input-xs" placeholder="<?php echo "CCC.CCC.CCC.CCC.CCC";/*$_SESSION['INGRESO']['Formato_Inventario'];*/ ?>" onblur="generarQR()">
+				</div>
+				<div class="col-sm-5">
+					<b>Nomenclatura</b>
+					<input type="text" name="txt_nomenclatura" id="txt_nomenclatura" class="form-control input-xs" >
+				</div>
 			</div>
-			<div class="col-sm-3">
-				<b>Nomenclatura</b>
-				<input type="text" name="txt_nomenclatura" id="txt_nomenclatura" class="form-control input-xs" >
+			<div class="row" style="margin-bottom:5px;">
+				<div class="col-sm-12">
+					<b>Concepto o detalle del producto</b>
+					<input type="text" name="txt_concepto" id="txt_concepto" class="form-control input-xs">
+				</div>
 			</div>
-			<div class="col-sm-6">
-				<b>Concepto o detalle del producto</b>
-				<input type="text" name="txt_concepto" id="txt_concepto" class="form-control input-xs">
+			<div class="row">
+				<div class="col-sm-12">
+					<b>Código QR</b>
+					<div style="background-color: #a0a0a0;border-radius: 5px;">
+						<div style="display:flex;justify-content:center;padding:5px;">
+							<img id="codigo_qr" src="" style="min-width:200px;min-height:200px;max-height:200px;max-width:200px;object-fit:cover;"/>
+						</div>
+					</div>
+				</div>
 			</div>
 		</form>
     	<!-- <button class="btn btn-default"  data-toggle="tooltip" title="Imprimir Grupo" onclick="codigo_barras_grupo();"><img src="../../img/png/impresora.png"></button><br> -->
