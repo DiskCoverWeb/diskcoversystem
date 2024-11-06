@@ -318,9 +318,47 @@ if(isset($_GET['orden']))
             console.error('Error en numero_comprobante:', error);
             // Puedes manejar el error aquí si es necesario
           },
-      });
+      });   
+  }
 
-   
+  function eliminar_seleccion(id)
+  {
+    Swal.fire({
+        title: 'Esta seguro?',
+        text: "Esta usted seguro de que quiere eliminar el proveedor!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si!'
+     }).then((result) => {
+          if (result.value==true) {
+              eliminar_prove(id);
+          }
+    })
+  }
+
+  function eliminar_prove(id)
+  {
+     var orden = '<?php echo $orden; ?>';
+    var parametros = 
+      {
+        'id': id,
+      }
+      $.ajax({
+          url:   '../controlador/inventario/solicitud_materialC.php?eliminar_prove=true',
+          type:  'post',
+          data: {parametros:parametros},
+          dataType: 'json',
+          success:  function (response) {
+            if(response==1)
+            {
+               Swal.fire("Proveedor eliminado","","success");
+               lineas_pedido_aprobacion_solicitados_proveedor(orden)
+            }
+          
+          }
+      });
   }
 
 
@@ -390,7 +428,7 @@ if(isset($_GET['orden']))
               <th>Fecha Entrega</th>
               <th>Observacion</th>
               <th width="28%">Proveedores proforma</th>
-              <th>Proveedor Seleccionado</th>
+              <th width="28%">Proveedor Seleccionado</th>
               <!-- <th></th> -->
             </thead>
             <tbody id="tbl_body">

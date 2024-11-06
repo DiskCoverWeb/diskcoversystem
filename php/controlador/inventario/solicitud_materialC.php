@@ -1255,11 +1255,11 @@ class solicitud_materialC
 		return $tr;
 	}
 
-	function eliminar_prove($id)
+	function eliminar_prove($parametros)
 	{
 		SetAdoAddNew("Trans_Pedidos");               
     	SetAdoFields("CodigoC",'.');
-    	SetAdoFieldsWhere('ID',$id);
+    	SetAdoFieldsWhere('ID',$parametros['id']);
     	return SetAdoUpdateGeneric();
 	}
 
