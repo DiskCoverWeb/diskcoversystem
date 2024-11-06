@@ -176,7 +176,7 @@
    function pedidos(){
   $('#txt_codigo').select2({
     placeholder: 'Seleccione una beneficiario',
-    // width:'90%',
+    width:'100%',
     ajax: {
       url:   '../controlador/inventario/alimentos_recibidosC.php?search=true',          
       dataType: 'json',

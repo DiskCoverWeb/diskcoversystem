@@ -16,7 +16,7 @@ class asignacion_pickingM
 
     function tipoBeneficiario($codigo = '')
     {
-        $sql = "SELECT DISTINCT No_Hab,C.Codigo, C.CodigoA,CP5.Proceso AS 'Estado', C.Cliente, C.CI_RUC, CD.Fecha_Registro, CD.Envio_No,CP3.Proceso as 'Frecuencia',CD.CodigoA as CodigoACD,CP4.Proceso as'TipoEntega' ,CD.Beneficiario, CD.No_Soc, CD.Area, CD.Acreditacion,CP1.Proceso as 'AccionSocial', CD.Tipo, CD.Cod_Fam,CP2.Proceso as 'TipoAtencion', CD.Salario, CD.Descuento, CD.Evidencias, CD.Item,C.Actividad,CP.Proceso as 'TipoBene',CP.Color,CP.Picture,CD.Hora_Ent as 'Hora',CD.Tipo_Dato as 'CodVulnera',CP6.Proceso AS 'vulnerabilidad',CD.Observaciones,CD.Hora_Ent,CD.Dia_Ent,CP7.Proceso as 'Tipo Asignacion' 
+        $sql = "SELECT DISTINCT No_Hab,C.Codigo, C.CodigoA,CP5.Proceso AS 'Estado', C.Cliente, C.CI_RUC, CD.Fecha_Registro, CD.Envio_No,CP3.Proceso as 'Frecuencia',CD.CodigoA as CodigoACD,CP4.Proceso as'TipoEntega' ,CD.Beneficiario, CD.No_Soc, CD.Area, CD.Acreditacion,CP1.Proceso as 'AccionSocial', CD.Tipo, CD.Cod_Fam,CP2.Proceso as 'TipoAtencion', CD.Salario, CD.Descuento, CD.Evidencias, CD.Item,C.Actividad,CP.Proceso as 'TipoBene',CP.Color,CP.Picture,CD.Hora_Ent as 'Hora',CD.Tipo_Dato as 'CodVulnera',CP6.Proceso AS 'vulnerabilidad',CD.Observaciones,CD.Hora_Ent,CD.Dia_Ent,CP7.Proceso as 'Tipo Asignacion',Orden_No 
         	FROM Detalle_Factura DF
 			INNER JOIN Clientes C on DF.CodigoC = C.Codigo
 			INNER JOIN Clientes_Datos_Extras as CD ON C.Codigo = CD.Codigo 
@@ -161,10 +161,42 @@ class asignacion_pickingM
             FROM trans_kardex TK
             INNER JOIN Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv 
             WHERE TK.Codigo_Barra = '".$codBarras."'";
-               // print_r($sql);die();
+               // print_r($sql);
 
         return $this->db->datos($sql);   
     }
+
+     function lista_stock_ubicado($bodega=false,$cod_barras  =false,$grupo=false)
+    {
+        $sql="select TK.*,Producto
+            FROM Trans_Kardex TK
+            INNER JOIN Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv
+            where TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+            AND TK.Item = '".$_SESSION['INGRESO']['item']."'
+            AND TK.Item = CP.Item
+            AND TK.Orden_No <> '0'
+            AND TK.Orden_No <> '.'
+            AND TK.Orden_No <> '0.'
+            AND TK.CodBodega <> '-1'
+            AND TK.T = 'E'";
+            if($bodega)
+            {
+                $sql.=" AND CodBodega = '".$bodega."'";
+            }
+            if($cod_barras)
+            {
+                $sql.=" AND  TK.Codigo_Barra like '%".$cod_barras."%'";
+            }
+            if($grupo)
+            {
+                $sql.=" AND CP.Codigo_Inv = '".$grupo."' ";
+
+            }
+
+            // print_r($sql);die();
+        return $this->db->datos($sql);
+    }
+
 
 
 

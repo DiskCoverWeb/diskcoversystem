@@ -122,6 +122,11 @@ if(isset($_GET['savepag']))
 	$parametros=$_POST['parametros'];
 	echo json_encode($controlador->savepag($parametros));
 }
+if(isset($_GET['buscarPuntoVenta']))
+{
+	$parametros=$_POST['parametros'];
+	echo json_encode($controlador->buscarPuntoVenta($parametros));
+}
 
 
 
@@ -718,26 +723,33 @@ class niveles_seguriC
 		$parametros['n6'] = 0;
 		$parametros['n7'] = 0;
 		$parametros['super'] = 0;
-		$parametros['email'] = '.';
-		$existe = $this->modelo->usuario_existente($parametros['usu'],$parametros['cla'],$parametros['ent']);
-		// print_r($existe);die();
-		if($existe == 1)
+		// $parametros['email'] = '.';
+
+		if($parametros['id']!='')
 		{
-			return -2;
-		}else
-		{
-			$op = $this->modelo->nuevo_usuario($parametros);
-			if($op==1)
+			return $this->editar_insertar_catalogo_lineas($parametros);			
+
+		}else{
+
+			$existe = $this->modelo->usuario_existente($parametros['usu'],$parametros['cla'],$parametros['ent']);
+			if($existe == 1)
 			{
-				return 1;
-			}else if($op == -3)
+				return -2;
+			}else
 			{
-				return -3;
+				$op = $this->modelo->nuevo_usuario($parametros);
+				if($op==1)
+				{
+					return 1;
+				}else if($op == -3)
+				{
+					return -3;
+				}
+				else
+				{
+					return -1;
+				}			
 			}
-			else
-			{
-				return -1;
-			}			
 		}
 		// $rest = $this->modelo->nuevo_usuario();
 		// return $rest;
@@ -754,6 +766,59 @@ class niveles_seguriC
 		}else
 		{
 			return -1;
+		}
+
+	}
+
+	function editar_insertar_catalogo_lineas($parametros)
+	{
+		// print_r($parametros);die();
+		$Vencimiento=date('Y-m-d', strtotime('+1 year'));
+		$serie = $parametros['estab'].$parametros['emision'];
+
+			// $this->modelo->actualizar_datos_basicos($id,$parametros);
+		$empresa = $this->modelo->empresas_datos($parametros['ent'],$parametros['emp']);
+		if(isset($parametros['idCL']))
+		{
+			if($parametros['idCL']=='')
+			{
+			$sql="INSERT INTO Catalogo_Lineas (
+						Codigo,Concepto,Fecha,
+						Vencimiento,Fact,Serie,
+				        Secuencial,Autorizacion,CxC,
+				        CxC_Anterior,Logo_Factura,Largo,
+				        Ancho,Nombre_Establecimiento,Direccion_Establecimiento,
+				        Email_Establecimiento,Telefono_Estab,Logo_Tipo_Estab,
+				        RUC_Establecimiento,TL,Individual,
+				        Periodo,Item
+			    	) values ( 
+	          			'S".$serie."','CXC ELECTRONICOS ".$serie."','".date('Y-m-d')."','"
+	          			.$Vencimiento."', 'FA','".$serie."',
+	          			1,'".$empresa[0]['RUC']."','1.1.03.01', 
+	          			'1.1.03.01', 'FactMult',9.3,
+	          			10,'".$parametros['nom']."','".$parametros['direc']."','".
+	          			$parametros['email2']."','".$parametros['tel']."','".$parametros['logo']."','".
+	          			$parametros['ced']."001',1,0,
+	          			'.','".$parametros['emp']."') ";
+	         }else
+	         {
+	         	$sql="UPDATE  Catalogo_Lineas SET
+						Codigo = 'S".$serie."',
+						Concepto = 'CXC ELECTRONICOS ".$serie."',
+						Serie = '".$serie."',
+				        Nombre_Establecimiento = '".$parametros['nom']."',
+				        Direccion_Establecimiento = '".$parametros['direc']."',
+				        Email_Establecimiento = '".$parametros['email2']."',
+				        Telefono_Estab = '".$parametros['tel']."',
+				        Logo_Tipo_Estab = '".$parametros['logo']."',
+				        RUC_Establecimiento = '".$parametros['ced']."001'
+	          			WHERE ID = '".$parametros['idCL']."'
+	          			";
+	         }
+
+	         // print_r($sql);die();
+			$resp = $this->modelo->ejecutar_sql_terceros($sql,$parametros['ent'],$parametros['emp']);
+			return $resp;
 		}
 
 	}
@@ -1365,5 +1430,25 @@ Emails: recepcion@diskcoversystem.com o prisma_net@hotmail.es
     	}
     	print_r($parametros);die();
     }
+
+
+    function buscarPuntoVenta($parametros)
+    {  	
+		$sql = "SELECT * FROM Catalogo_Lineas where RUC_Establecimiento = '".$parametros['ci']."001' ";
+		// print_r($parametros);die();
+		$datos = $this->modelo->ejecutar_datos_terceros($sql,$parametros['entidad'],$parametros['item']);
+		$datoPuntoVenta = array();
+		if(count($datos)>0)
+		{
+			$estab = substr($datos[0]['Serie'],0,3) ;
+			$punto = substr($datos[0]['Serie'],3,6) ;
+
+			$datoPuntoVenta = array('estab'=>$estab,
+				'punto'=>$punto,
+				'correo'=>$datos[0]['Email_Establecimiento'],
+				'direccion'=>$datos[0]['Direccion_Establecimiento'],'telefono'=>$datos[0]['Telefono_Estab'],'logo'=>$datos[0]['Logo_Tipo_Estab'],'id'=>$datos[0]['ID']);
+		}
+		return $datoPuntoVenta;
+	}
 }
 ?>

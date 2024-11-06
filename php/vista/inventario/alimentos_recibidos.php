@@ -301,7 +301,7 @@ function autocoplet_ingreso2(){
 function autocoplet_ingreso_donante(){
   $('#txt_donante').select2({
     placeholder: 'Seleccione',
-    // width:'100%',
+    width:'100%',
     ajax: {
      url:   '../controlador/inventario/alimentos_recibidosC.php?detalle_ingreso2=true',
       dataType: 'json',
@@ -898,29 +898,24 @@ function autocoplet_ingreso_donante(){
 			<div class="box-body" style="background:antiquewhite;">					
 				<div class="row">
 					<div class="col-sm-12 col-md-8">
-						<b>Detalle de ingreso</b>
 							<div class="row">
 								<div class="col-sm-8">
-									<div class="input-group">
+									<div class="col-xs-2 col-sm-2 col-md-4  col-lg-2">
 											<span class="input-group-btn" style="padding-right: 10px;">
 													<button type="button" class="btn btn-default btn-sm btn btn-flat" onclick="show_proveedor()"><img src="../../img/png/donacion2.png" style="width: 60px;height: 60px;"></button>
-											</span>
-											<b>PROVEEDOR / DONANTE</b>	
-											<!-- <div class="form-group"> -->
-												<!-- <div class="col-sm-12">	 -->
-												<div class="input-group" style="display:flex;">
-					                	<select class=" form-control input-xs form-select" id="txt_donante" name="txt_donante" onchange="option_select2()">
-									           		<option value="">Seleccione</option>
-									           </select>   	
-														<span class="input-group-btn">
-															<button type="button" class="btn btn-default btn-xs btn-flat" onclick="limpiar_donante()"><i class="fa fa-close"></i></button>
-														</span>
-												 </div>											 
-													<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>
-												<!-- </div> -->
-												
-											<!-- </div> -->
-
+											</span>										
+									</div>
+									<div class="col-xs-10 col-sm-10 col-md-8 col-lg-10">
+											<b>Detalle de ingreso</b>								
+										<div class="input-group input-group-sm">		
+											<select class=" form-control input-xs form-select" id="txt_donante" name="txt_donante" onchange="option_select2()">
+									     		<option value="">Seleccione</option>
+									    </select>   	
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-default btn-xs btn-flat" onclick="limpiar_donante()"><i class="fa fa-close"></i></button>
+										</span>
+									</div>									
+										<input type="" class="form-control input-xs" id="txt_tipo" name="txt_tipo" readonly>										
 									</div>
 								</div>
 								<div class="col-sm-4">
@@ -992,9 +987,9 @@ function autocoplet_ingreso_donante(){
 											<div class="row">
 												<b>Llegaron en gavetas?</b><br>
 												<label class="label-success btn-sm btn">
-												<input type="radio" id="" value="SI" name="rbx_gaveta" onclick="show_gaveta()">SI</label>
+												<input type="radio" id="rbx_gaveta" value="SI" name="rbx_gaveta" onclick="show_gaveta()">SI</label>
 												<label class="label-danger btn-sm btn">
-												<input type="radio" id="" value="NO" name="rbx_gaveta" onclick="show_gaveta()" checked>NO</label>												
+												<input type="radio" id="rbx_gaveta_no" value="NO" name="rbx_gaveta" onclick="show_gaveta()" checked>NO</label>												
 											</div>
 												
 
@@ -1007,7 +1002,7 @@ function autocoplet_ingreso_donante(){
 								</div>												
 							</div>			
 					</div>
-					<div class="col-sm-12 col-md-4" style="padding:0px">
+					<div class="col-sm-12 col-md-4">
 						<div class="col-sm-6 col-md-12">
 							<div class="form-group">
 									<label class="col-sm-6 control-label">Fecha de Ingreso</label>

@@ -15,9 +15,9 @@ class asignacion_osM
 
     }
 
-    public function tipoBeneficiario($query = '',$estado = '1')
+    public function tipoBeneficiario($query = '',$estado = '1',$dia=false)
     {
-        $sql = "SELECT DISTINCT TOP 100 C.Codigo, C.CodigoA,CP5.Proceso AS 'Estado', C.Cliente, C.CI_RUC, CD.Fecha_Registro, CD.Envio_No,CP3.Proceso as 'Frecuencia',CD.CodigoA as CodigoACD,CP4.Proceso as'TipoEntega' ,CD.Beneficiario, CD.No_Soc, CD.Area, CD.Acreditacion,CP1.Proceso as 'AccionSocial', CD.Tipo, CD.Cod_Fam,CP2.Proceso as 'TipoAtencion', CD.Salario, CD.Descuento, CD.Evidencias, CD.Item,C.Actividad,CP.Proceso as 'TipoBene',CP.Color,CP.Picture,CD.Hora_Ent as 'Hora',CD.Tipo_Dato as 'CodVulnera',CP6.Proceso AS 'vulnerabilidad',CD.Hora_Ent,CD.Dia_Ent,C.Estado as 'ClienteEstado' 
+        $sql = "SELECT DISTINCT TOP 100 C.Codigo, C.CodigoA,CP5.Proceso AS 'Estado', C.Cliente, C.CI_RUC, CD.Fecha_Registro, CD.Envio_No,CP3.Proceso as 'Frecuencia',CD.CodigoA as CodigoACD,CP4.Proceso as'TipoEntega' ,CD.Beneficiario, CD.No_Soc, CD.Area, CD.Acreditacion,CP1.Proceso as 'AccionSocial', CD.Tipo, CD.Cod_Fam,CP2.Proceso as 'TipoAtencion', CD.Salario, CD.Descuento, CD.Evidencias, CD.Item,C.Actividad,CP.Proceso as 'TipoBene',CP.Color,CP.Picture,CD.Hora_Ent as 'Hora',CD.Tipo_Dato as 'CodVulnera',CP6.Proceso AS 'vulnerabilidad',CD.Hora_Ent,C.Dia_Ent,C.Estado as 'ClienteEstado' 
             FROM Clientes as C 
             INNER JOIN Clientes_Datos_Extras as CD ON C.Codigo = CD.Codigo 
             LEFT JOIN Catalogo_Proceso CP ON C.Actividad = CP.Cmds 
@@ -42,13 +42,21 @@ class asignacion_osM
             }
         }
 
+        if($dia)
+        {
+            $sql.=" AND  ( C.Dia_Ent = '".$dia."'";
+        }
+
         if($estado==1)
         {
-            $sql.=" AND Estado = ".$estado;
+            $sql.=" OR Estado = ".$estado." )";
         }else
         {
             $sql.=" AND Estado = ".$estado;
         }
+
+
+        
 
         $sql .= " ORDER BY C.Cliente";
 
@@ -134,7 +142,8 @@ class asignacion_osM
     {
         $sql = "SELECT ".Full_Fields('Catalogo_Proceso')." 
                 FROM Catalogo_Proceso 
-                WHERE TP = 'TIPOASIG'";
+                WHERE TP = 'TIPOASIG' 
+                AND Item='".$_SESSION['INGRESO']['item']."' ";
         return $this->db->datos($sql);    
     }
 
@@ -144,8 +153,10 @@ class asignacion_osM
                 FROM Detalle_Factura 
                 WHERE CodigoC = '".$beneficiario."'
                 AND T= 'K'
+                AND Fecha = '".date('Y-m-d')."'
                 AND Item='".$_SESSION['INGRESO']['item']."'
                 AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+                // print_r($sql);die();
         return $this->db->datos($sql);    
     }
 
@@ -160,8 +171,9 @@ class asignacion_osM
                 AND CP.Periodo = TK.Periodo";
                 if($query)
                 {
-                    $sql = " AND CP.Producto like '%".$query."%'";
+                    $sql.= " AND CP.Producto like '%".$query."%'";
                 }
+                // print_r($sql);die();
          return $this->db->datos($sql);    
     }
 
@@ -170,14 +182,44 @@ class asignacion_osM
         $sql = "UPDATE Clientes SET Estado = 1 WHERE Codigo = '".$codigo."'";
         return $this->db->String_Sql($sql);
     }
-      function cambiar_estado_eliminado($codigo)
+    function cambiar_estado_all()
+    {
+        $sql = "UPDATE Clientes SET Estado = 0 WHERE 1 = 1";
+        return $this->db->String_Sql($sql);
+    }
+    function cambiar_estado_eliminado($codigo)
     {
         $sql = "UPDATE Clientes SET Estado = 0 WHERE Codigo = '".$codigo."'";
         return $this->db->String_Sql($sql);
     }
 
+    function registrsoAnt($proveedo,$fecha)
+    {
+        $sql ="select * 
+               FROM Detalle_Factura 
+               where TC = 'OP' 
+               AND Item = '".$_SESSION['INGRESO']['item']."' 
+               AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+               AND T = '.'
+               AND CodigoC ='".$proveedo."' 
+               AND Fecha < '".$fecha."'";
+               // print_r($sql) ;die();
+        return $this->db->datos($sql);
+    }
 
+    function eliminarPedidsoAnteriores($proveedo,$fecha)
+    {
+         $sql ="DELETE
+               FROM Detalle_Factura 
+               where TC = 'OP' 
+               AND Item = '".$_SESSION['INGRESO']['item']."' 
+               AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+               AND T = '.'
+               AND CodigoC ='".$proveedo."' 
+               AND Fecha < '".$fecha."'";
+               // print_r($sql) ;die();
 
+        return $this->db->String_Sql($sql);
 
-
+    }
 }

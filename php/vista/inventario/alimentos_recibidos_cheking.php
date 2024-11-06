@@ -39,6 +39,7 @@
 		      $('#txt_responsable').val(data.Responsable)
 
 		      $('#btn_estado_trasporte').css('display','block');
+		      $('#btn_estado_gavetas').css('display','block');
 		      if(data.Cod_R=='0')
 		      {
 		      	$('#img_estado').attr('src','../../img/png/bloqueo.png');
@@ -58,9 +59,9 @@
             	$('#pnl_factura').css('display','none');
             }
 
-          setInterval(function() {         	
-   		 		cargar_pedido();
-          }, 5000); 
+          // setInterval(function() {         	
+   		 		// cargar_pedido();
+          // }, 5000); 
 
    		});
 
@@ -495,6 +496,43 @@ function autocoplet_ingreso()
 
  }
 
+ function ver_detalle_gavetas()
+ {
+ 	 codigo = $('#txt_codigo option:selected').text();
+ 	 var parametros = {
+        'pedido':codigo,
+		    }
+		     $.ajax({
+		      data:  {parametros,parametros},
+		      url:   '../controlador/inventario/alimentos_recibidosC.php?estado_gaveta=true',
+		      type:  'post',
+		      dataType: 'json',
+		      success:  function (response) { 
+		      	test = '';
+		      	console.log(response);
+
+		      		response.forEach(function(item,i){
+
+		      		test+='<li class="list-group-item">'+
+											'<a href="#" style="padding:0px">'+
+													'<label>'+item.Producto+'</label>'+
+											 		'<div class="btn-group pull-right">'+
+											 				'<span class="label-success btn-sm btn">'+item.Entrada+'</span>'											 		
+											 		test+='</div>'+
+										 	'</a>'+
+										'</li>';
+		      	})
+
+		      	$('#lista_gavetas').html(test);
+
+		      	$('#modal_estado_gavetas').modal('show');
+
+		      }
+		    });
+
+
+ }
+
  function ver_detalle_trasorte()
  {
  	 codigo = $('#txt_codigo option:selected').text();
@@ -757,7 +795,7 @@ function autocoplet_ingreso()
                	</div>							
                	<div class="col-sm-6">
                   	<input type="hidden" class="form-control input-xs" id="txt_codigo_p" name="txt_codigo_p" readonly>
-                   <select class="form-control input-xs" id="txt_codigo" name="txt_codigo">
+                   <select class="form-control input-xs" id="txt_codigo" name="txt_codigo" onchange="cargar_pedido()">
                    	<option>Seleccione</option>
                    </select>
                 </div>
@@ -863,6 +901,14 @@ function autocoplet_ingreso()
 							</div>
 							<div class="col-sm-6 text-center" >
 								<button type="button" style="display: none;" id="btn_estado_trasporte" class="btn btn-primary btn-xs btn-block" onclick="ver_detalle_trasorte()"> Ver detalle <i class="fa fa-eye"></i></button>
+							</div>
+						</div>
+						<div class="row" id="panel_serie"  style="padding-top: 5px;">
+							<div class="col-sm-6 text-right">
+								<b>Gavetas</b>
+							</div>
+							<div class="col-sm-6 text-center" >
+								<button type="button" style="display: none;" id="btn_estado_gavetas" class="btn btn-primary btn-xs btn-block" onclick="ver_detalle_gavetas()"> Ver detalle <i class="fa fa-eye"></i></button>
 							</div>
 						</div>
 					
@@ -1284,6 +1330,34 @@ function eliminar_lin(num)
           			<div class="col-sm-12">
           				<div class="direct-chat-messages">	
 											<ul class="list-group list-group-flush" id="lista_preguntas">
+												
+											</ul>											
+										</div>
+          			</div>
+          		</form>
+          	</div>
+          					
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div id="modal_estado_gavetas" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Estado de trasporte</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+          	<div class="row">
+          		<form id="form_estado_transporte">
+          			<div class="col-sm-12">
+          				<div class="direct-chat-messages">	
+											<ul class="list-group list-group-flush" id="lista_gavetas">
 												
 											</ul>											
 										</div>

@@ -31,6 +31,46 @@ function imprimir_excel(orden)
 	window.open('../controlador/inventario/solicitud_materialC.php?imprimir_excel=true&orden_pdf='+orden,'_blank');
 }
 
+function eliminar_solicitud(orden)
+{
+	  Swal.fire({
+       title: 'Esta seguro?',
+       text: "Esta usted seguro de eliminar el pedido!",
+       type: 'warning',
+       showCancelButton: true,
+       confirmButtonColor: '#3085d6',
+       cancelButtonColor: '#d33',
+       confirmButtonText: 'Si!'
+     }).then((result) => {
+       if (result.value==true) {
+        EliminarSolicitud(orden);
+       }
+     })
+}
+
+function EliminarSolicitud(orden)
+{
+	var parametros = 
+  {
+    'orden': orden,
+  }
+  $.ajax({
+      url:   '../controlador/inventario/solicitud_materialC.php?EliminarSolicitud=true',
+      type:  'post',
+      data: {parametros:parametros},
+      dataType: 'json',
+      success:  function (response) {       
+      if(response==1)
+      {
+      	 Swal.fire("Solicitud eliminada","Solicitud eliminada","success").then(function(){
+      	 	location.reload();
+      	 })
+      }                   
+      }
+  });
+
+}
+
 </script>
 <section class="content">
 	<div class="row">		
@@ -61,11 +101,11 @@ function imprimir_excel(orden)
 		<div class="col-sm-12">		
 			<table class="table table-hover">
 				<thead>
+					<th></th>
 					<th>Item</th>
 					<th>Contratista</th>
 					<th>Orden</th>
 					<th>Fecha Solicitud</th>
-					<th>Fecha Entrega</th>
 					<th>Presupuesto</th>
 					<th></th>
 				</thead>
