@@ -105,6 +105,7 @@ class asignacion_pickingC
             // {
             //     //buscamos si el usuario ya genero en este dia pedidos para facturar
                 $datos1 = $this->modelo->cargar_asignacion($value['Codigo'],$value['No_Hab'],'F',date('Y-m-d'));
+                // print_r($datos1);die();
                 if(count($datos1)==0)
                 {
             	   $lista[] = array('id'=>$value['Codigo'].'-'.$value['No_Hab'],'text'=>$value['Cliente'].' ('.$value['Tipo Asignacion'].')','data'=>$value); 
@@ -300,6 +301,7 @@ class asignacion_pickingC
         foreach ($datos as $key => $value) {
             $producto = $this->modelo->lineasKArdex($value['CodBodega']);           
             // print_r($producto);die();
+            if(count($producto)>0){
             $tbl.='<tr>
                     <td><button class="btn btn-sm btn-danger" onclick="eliminarlinea('.$value['ID'].')"><i class="fa fa-trash"></i></button></td>
                     <td>'.$value['Fecha']->format('Y-m-d').'</td>
@@ -311,6 +313,7 @@ class asignacion_pickingC
 
                 </tr>';
                   $total  =   $total +$value['Total'];
+              }
         }
         return array('tabla'=>$tbl,'total'=>$total);
     }

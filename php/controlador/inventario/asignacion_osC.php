@@ -309,8 +309,15 @@ class asignacion_osC
 
     function addAsignacion($parametros)
     {
+        $registrsoAnt = $this->modelo->registrsoAnt($parametros['beneficiarioCodigo'],$parametros['FechaAte']);
+        if(count($registrsoAnt))
+        {
+            $this->modelo->eliminarPedidsoAnteriores($parametros['beneficiarioCodigo'],$parametros['FechaAte']);
+        }
 
+        // print_r($registrsoAnt);die();
         $producto = Leer_Codigo_Inv($parametros['Codigo'],$parametros['FechaAte']);
+        $orden = date('Ymd').'-'.str_replace('.','-',$parametros['asignacion']);
 
         // print_r($parametros);die();
         SetAdoAddNew("Detalle_Factura");
@@ -327,6 +334,7 @@ class asignacion_osC
         SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
         SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
         SetAdoFields("No_Hab",$parametros['asignacion']);
+        SetAdoFields("Orden_No",$orden);
         
         return SetAdoUpdate();
     }

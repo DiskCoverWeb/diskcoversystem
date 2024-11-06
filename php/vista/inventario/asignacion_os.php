@@ -1130,7 +1130,7 @@ function llenarDatos(datos) {
       <div class="modal-content">
           <div class="modal-header bg-primary">
               <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h4 class="modal-title">Tipo empaque</h4>
+              <h4 class="modal-title">Tipo Asignacion</h4>
           </div>
           <div class="modal-body" style="background: antiquewhite;">
             <div class="row text-center" id="pnl_tipo_empaque">

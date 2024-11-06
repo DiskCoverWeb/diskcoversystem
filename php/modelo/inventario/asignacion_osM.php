@@ -171,8 +171,9 @@ class asignacion_osM
                 AND CP.Periodo = TK.Periodo";
                 if($query)
                 {
-                    $sql = " AND CP.Producto like '%".$query."%'";
+                    $sql.= " AND CP.Producto like '%".$query."%'";
                 }
+                // print_r($sql);die();
          return $this->db->datos($sql);    
     }
 
@@ -192,8 +193,33 @@ class asignacion_osM
         return $this->db->String_Sql($sql);
     }
 
+    function registrsoAnt($proveedo,$fecha)
+    {
+        $sql ="select * 
+               FROM Detalle_Factura 
+               where TC = 'OP' 
+               AND Item = '".$_SESSION['INGRESO']['item']."' 
+               AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+               AND T = '.'
+               AND CodigoC ='".$proveedo."' 
+               AND Fecha < '".$fecha."'";
+               // print_r($sql) ;die();
+        return $this->db->datos($sql);
+    }
 
+    function eliminarPedidsoAnteriores($proveedo,$fecha)
+    {
+         $sql ="DELETE
+               FROM Detalle_Factura 
+               where TC = 'OP' 
+               AND Item = '".$_SESSION['INGRESO']['item']."' 
+               AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+               AND T = '.'
+               AND CodigoC ='".$proveedo."' 
+               AND Fecha < '".$fecha."'";
+               // print_r($sql) ;die();
 
+        return $this->db->String_Sql($sql);
 
-
+    }
 }
