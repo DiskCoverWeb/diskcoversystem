@@ -49,7 +49,7 @@
 							Documento.</label>
 					</div>
 					<div class="col-sm-5 col-xs-4">
-						<select class="form-control input-xs" id="DCTipo" name="DCTipo" style="padding: 0;" onblur="DCSerie()">
+						<select class="form-control input-xs" id="DCTipo" name="DCTipo" style="padding: 0;" onblur="buscarDCSerie()">
 							<option value="FA">FA</option>
 						</select>
 					</div>
@@ -264,8 +264,7 @@
 						</div>
 						<div class="col-sm-3 col-xs-4">
 							<label for="TextBanco">NOMBRE DE BANCO</label>
-							<input type="text" name="TextBanco" id="TextBanco" class="form-control input-xs"
-								placeholder="00000000">
+							<input type="text" name="TextBanco" id="TextBanco" class="form-control input-xs">
 						</div>
 						<div class="col-sm-3">
 							<div class="row">
@@ -307,7 +306,7 @@
 							<label for="TextInteres" style="font-size: 11.5px;">INTERES TARJETA</label>
 							<input type="text" name="TextInteres" id="TextInteres"
 								class="form-control input-xs text-right" placeholder="00000000" value="0"
-								onblur="TextInteres();TextRecibido();">
+								onblur="calcTextInteres()">
 						</div>
 						<div class="col-sm-3">
 							<div class="row">

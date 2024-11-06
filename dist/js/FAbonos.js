@@ -148,13 +148,13 @@ function DCTipo() {
 		dataType: 'json',
 		success: function (data) {
 			llenarComboList(data, 'DCTipo');
-			DCSerie();
+			buscarDCSerie();
 		}
 	});
 
 }
 
-function DCSerie() {
+function buscarDCSerie() {
 	var parametros =
 	{
 		'tipo': $('#DCTipo').val(),
@@ -298,11 +298,12 @@ function Calculo_Saldo() {
 
 	var TotalAbonos = parseFloat(TotalCajaMN) + parseFloat(TotalCajaME) + parseFloat(Total_Bancos) + parseFloat(Total_Tarjeta) + parseFloat(Total_IVA) + parseFloat(Total_Ret) + parseFloat(Total_RetIVAB) + parseFloat(Total_RetIVAS);
 	var SaldoDisp = parseFloat(Saldo) - parseFloat(TotalAbonos);
+	var TotalRecibido = TotalAbonos + parseFloat($('#TextInteres').val());
 	$('#LabelPend').val(SaldoDisp.toFixed(2));
-	$('#TextRecibido').val(TotalAbonos.toFixed(2));
+	$('#TextRecibido').val(TotalRecibido.toFixed(2));
 }
 
-function TextInteres() {
+function calcTextInteres() {
 	var TextInteres = $('#TextInteres').val();
 	if (TextInteres.substring(TextInteres.length, 1) == "%") {
 		var Valor = TextInteres.substring(0, TextInteres.length - 1);
@@ -312,6 +313,7 @@ function TextInteres() {
 	} else {
 		console.log(TextInteres);
 	}
+	TextRecibido();
 }
 
 function TextRecibido() {

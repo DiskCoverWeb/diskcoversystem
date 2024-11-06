@@ -73,8 +73,25 @@ class cambioeM
 	function editar_datos_empresaMYSQL($parametros)
 	{
 		$img = '.';
-		
-		$sql = "UPDATE lista_empresas set 
+
+		$sql = "UPDATE lista_empresas SET";
+		if(isset($parametros['Estado']))	{$sql .= " Estado='".$parametros['Estado']."',";}
+		if(isset($parametros['Mensaje']))	{$sql .= " Mensaje='".$parametros['Mensaje']."',";}
+		if(isset($parametros['FechaCE']))	{$sql .= " Fecha_CE='".$parametros['FechaCE']."',";}
+		if(isset($parametros['Servidor']))	{$sql .= " IP_VPN_RUTA='".$parametros['Servidor']."',";}
+		if(isset($parametros['Base']))		{$sql .= " Base_Datos='".$parametros['Base']."',";}
+		if(isset($parametros['Usuario']))	{$sql .= " Usuario_DB='".$parametros['Usuario']."',";}
+		if(isset($parametros['Clave']))		{$sql .= " contrasena_DB='".$parametros['Clave']."',";}
+		if(isset($parametros['Motor']))		{$sql .= " Tipo_Base='".$parametros['Motor']."',";}
+		if(isset($parametros['Puerto']))	{$sql .= " Puerto='".$parametros['Puerto']."',";}
+		if(isset($parametros['FechaR']))	{$sql .= " Fecha='".$parametros['FechaR']."',";}
+		if(isset($parametros['FechaDB']))	{$sql .= " Fecha_DB='".$parametros['FechaDB']."',";}
+		if(isset($parametros['FechaP12']))	{$sql .= " Fecha_P12='".$parametros['FechaP12']."',";}
+		if(isset($parametros['Plan']))		{$sql .= " Tipo_Plan='".$parametros['Plan']."',";}
+
+		$sql = substr($sql, 0, -1);
+
+		/*$sql = "UPDATE lista_empresas set 
 		Estado='".$parametros['Estado']."',
 		Mensaje='".$parametros['Mensaje']."',
 		Fecha_CE='".$parametros['FechaCE']."' ,
@@ -87,7 +104,7 @@ class cambioeM
 	    Fecha='".$parametros['FechaR']."',
 	    Fecha_DB='".$parametros['FechaDB']."',
 	    Fecha_P12='".$parametros['FechaP12']."', 
-	    Tipo_Plan='".$parametros['Plan']."' ";
+	    Tipo_Plan='".$parametros['Plan']."' ";*/
 	    if(isset($parametros['ddl_img']) && $parametros['ddl_img']!='')
 	    { 
 	    	$logo = explode('.',$parametros['ddl_img']); $img = $logo[0];
@@ -317,12 +334,27 @@ class cambioeM
 	}
 	function guardar_masivo($parametros)
 	{
-		$sql = "UPDATE lista_empresas set Fecha='".$parametros['FechaR']."' , Fecha_VPN='".$parametros['FechaV']."' , Fecha_CE='".$parametros['Fecha']."'  
-		WHERE ID_Empresa='".$parametros['entidad']."'";
+		$sql = "UPDATE lista_empresas SET";
+		if(isset($parametros['FechaR'])){
+			$sql .= " Fecha='".$parametros['FechaR']."',";
+		}
+		if(isset($parametros['FechaV'])){
+			$sql .= " Fecha_VPN='".$parametros['FechaV']."',";
+		}
+		if(isset($parametros['Fecha'])){
+			$sql .= " Fecha_CE='".$parametros['Fecha']."',";
+		}
+
+		$sql = substr($sql, 0, -1);
+
+		$sql .= " WHERE ID_Empresa='".$parametros['entidad']."'";
+
+		/*$sql = "UPDATE lista_empresas set Fecha='".$parametros['FechaR']."' , Fecha_VPN='".$parametros['FechaV']."' , Fecha_CE='".$parametros['Fecha']."'  
+		WHERE ID_Empresa='".$parametros['entidad']."'";*/
 
 		$em = $this->entidad($query=false,$parametros['entidad'],$ciudad=false);
 		// print_r($em);die();
-		if(count($em)>0)
+		if(count($em)>0 && isset($parametros['Fecha']))
 		{
 			foreach ($em as $key => $value) {
 				if($value['IP_VPN_RUTA']!='.' && $value['IP_VPN_RUTA']!='')

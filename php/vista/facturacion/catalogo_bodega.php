@@ -56,6 +56,11 @@
 	 function generarQR(){
 		var codigo = $('#txt_codigo').val();
 
+		if(!codigo.trim()){
+			Swal.fire('No se puede generar el QR sin el codigo','','info');
+			return;
+		}
+
 		$.ajax({
 			type: "POST",
 			url: '../controlador/facturacion/catalogo_productosC.php?generarQR=true',
@@ -395,7 +400,7 @@
 					<input type="hidden" name="txt_padre" id="txt_padre">
 					<input type="hidden" name="txt_padre" id="txt_padre_nl">
 					<input type="hidden" name="txt_anterior" id="txt_anterior">
-					<input type="text" name="txt_codigo" id="txt_codigo" class="form-control input-xs" placeholder="<?php echo "CCC.CCC.CCC.CCC.CCC";/*$_SESSION['INGRESO']['Formato_Inventario'];*/ ?>" onblur="generarQR()">
+					<input type="text" name="txt_codigo" id="txt_codigo" class="form-control input-xs" placeholder="<?php echo "CCC.CCC.CCCC.CCCCC.CCCC";/*$_SESSION['INGRESO']['Formato_Inventario'];*/ ?>" onblur="generarQR()">
 				</div>
 				<div class="col-sm-5">
 					<b>Nomenclatura</b>
