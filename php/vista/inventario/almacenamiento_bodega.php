@@ -223,7 +223,7 @@ function asignar_bodega()
 		Swal.fire('Seleccione un pedido','','info');
 		return false;
 	}
-	$('#myModal_espera').modal('show');
+	// $('#myModal_espera').modal('show');
 
 	var parametros = {
 		'id':id,
@@ -238,6 +238,7 @@ function asignar_bodega()
 	    {
 
 				$('#myModal_espera').modal('hide');
+				Swal.fire('Asignado a bodega','','success');
 	    	lineas_pedidos()   	
 	    	contenido_bodega();
 	    	productos_asignados();
@@ -585,7 +586,7 @@ async function buscar_ruta()
 
 
 
-<div id="myModal_arbol_bodegas" class="modal fade myModalNuevoCliente" role="dialog">
+<div id="myModal_arbol_bodegas" class="modal fade myModalNuevoCliente" role="dialog"  data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary">
