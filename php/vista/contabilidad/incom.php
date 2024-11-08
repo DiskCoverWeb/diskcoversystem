@@ -167,8 +167,31 @@ function Form_Activate()
       });
   }
 
+  function BloquearOpciones(){
+    let opcion = '<?php echo $_GET["TP"]; ?>';
+    let listaopciones = ['CD', 'CI', 'CE', 'ND', 'NC'];
+
+    for(let lopc of listaopciones){
+      $(`#${lopc}`).attr('disabled', true);
+
+      if($(`#${lopc}`).hasClass('active')){
+        $(`#${lopc}`).removeClass('active')
+      }
+    }
+
+    $(`#${opcion}`).removeAttr('disabled');
+    $(`#${opcion}`).addClass('active');
+
+    if(opcion == 'CI' || opcion == 'CE'){
+      $('#ineg').show();
+      mostrar_efectivo();
+      mostrar_banco();
+    }
+  }
+
   
   $(document).ready(function () {
+    BloquearOpciones();
     Form_Activate();
     cargar_cuenta();
     var modificar = '<?php echo $variables_mod; ?>';
@@ -370,17 +393,17 @@ function FormActivate() {
     {
       if($('#efec').prop('checked'))
       {
-        $('#rbl_efec').css("background-color",'#286090');
+        /*$('#rbl_efec').css("background-color",'#286090');
         $('#rbl_efec').css("color",'#FFFFFF');
         $('#rbl_efec').css("border-radius",'5px');
-        $('#rbl_efec').css("padding",'3px');
+        $('#rbl_efec').css("padding",'3px');*/
         $('#ineg1').css('display','block');
       }else
       {
-        $('#rbl_efec').css("background-color",'');
+        /*$('#rbl_efec').css("background-color",'');
         $('#rbl_efec').css("color",'black');
         $('#rbl_efec').css("border-radius",'');
-        $('#rbl_efec').css("padding",'');
+        $('#rbl_efec').css("padding",'');*/
         $('#ineg1').css('display','none');
       }
     }
@@ -389,18 +412,18 @@ function FormActivate() {
     {
       if($('#ban').prop('checked'))
       {
-        $('#rbl_banco').css("background-color",'#286090');
+        /*$('#rbl_banco').css("background-color",'#286090');
         $('#rbl_banco').css("color",'#FFFFFF');
         $('#rbl_banco').css("border-radius",'5px');
-        $('#rbl_banco').css("padding",'3px');
+        $('#rbl_banco').css("padding",'3px');*/
         $('#ineg2').css('display','block');
         $('#ineg3').css('display','block');
       }else
       {
-        $('#rbl_banco').css("background-color",'');
+        /*$('#rbl_banco').css("background-color",'');
         $('#rbl_banco').css("color",'black');
         $('#rbl_banco').css("border-radius",'');
-        $('#rbl_banco').css("padding",'');
+        $('#rbl_banco').css("padding",'');*/
         $('#ineg2').css('display','none');
         $('#ineg3').css('display','none');
       }
@@ -1907,7 +1930,7 @@ function FormActivate() {
                           </div>
                         </div> -->
                       </div>
-                      <div id='ineg' class="row" style="display: none;"> <br>
+                      <div id='ineg' class="row" style="display: none;"><div class="col-sm-12"> <br>
                         <div class="row">
                           <div class="col-sm-1" style="padding-right: 0px;">
                             <label class="label-inline" id="rbl_efec"><input type="checkbox" id='efec' name='efec'onclick="mostrar_efectivo()" /> Efectivo</label>
@@ -1937,7 +1960,7 @@ function FormActivate() {
                         </div>
                         <div class="row">
                           <div class="col-sm-1" style="padding-right: 0px;">
-                            <label class="label-inline" id="rbl_banco" style="background:rgb(40, 96, 144) ;color: #FFFFFF;padding:5px;border-radius: 5px;"><input type="checkbox" id='ban' name='ban'onclick="mostrar_banco()" checked="" /> Banco</label>
+                            <label class="label-inline" id="rbl_banco" ><input type="checkbox" id='ban' name='ban'onclick="mostrar_banco()" /> Banco</label>
                           </div>
                           <div class="col-sm-10" id='ineg2'>
                             <div class="row">
@@ -2002,7 +2025,7 @@ function FormActivate() {
                               </div>
                           </div>                          
                         </div>                      
-                      </div>
+                      </div></div>
 
                       <div class="row " style="padding-bottom: 5px;"><br> 
                         <div class="col-md-12 col-sm-12 col-xs-12">

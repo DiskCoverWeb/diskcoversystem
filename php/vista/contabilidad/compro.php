@@ -54,19 +54,19 @@
 		<br>
 		<?php echo $_SESSION['INGRESO']['item']; ?> 
 		<div class="btn-group btn-group-toggle" data-toggle="buttons">
-		  <label class="btn btn-primary btn-sm active">
+		  <label class="btn btn-default btn-sm active">
 		    <input type="radio" name="options" id="CD" value="CD" autocomplete="off" checked onchange="comprobante();"> Diario
 		  </label>
-		  <label class="btn btn-primary btn-sm">
+		  <label class="btn btn-default btn-sm">
 		    <input type="radio" name="options" id="CI" value="CI" autocomplete="off" onchange="comprobante();"> Ingresos
 		  </label>
-		  <label class="btn btn-primary btn-sm">
+		  <label class="btn btn-default btn-sm">
 		    <input type="radio" name="options" id="CE" value="CE" autocomplete="off" onchange="comprobante();"> Egresos
 		  </label>
-		   <label class="btn btn-primary btn-sm">
+		   <label class="btn btn-default btn-sm">
 		    <input type="radio" name="options" id="ND" value="ND" autocomplete="off" onchange="comprobante();"> N/D
 		  </label>
-		   <label class="btn btn-primary btn-sm">
+		   <label class="btn btn-default btn-sm">
 		    <input type="radio" name="options" id="NC" value="NC" autocomplete="off" onchange="comprobante();"> N/C
 		  </label>
 	 		<input id="tipoc" name="tipoc" type="hidden" value="CD">					
@@ -519,6 +519,7 @@
        }).then((result) => {
          if (result.value==true) {
          	// location.href='../vista/contabilidad.php?mod='+mod+'&acc=incom&acc1=Ingresar%20Comprobantes&b=1&modificar=1&variables='+va+'#';
+			//let tipoc = $('#tipoc').val();
          	location.href='../vista/contabilidad.php?mod='+mod+'&acc=incom&acc1=Ingresar%20Comprobantes&b=1&modificar=1&TP='+ti+'&com='+co+'&num_load=1';
          }
        })
