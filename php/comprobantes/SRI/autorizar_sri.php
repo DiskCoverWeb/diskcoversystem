@@ -320,6 +320,7 @@ class autorizacion_sri
 			   		 		$this->linkSriRecepcion);
 			   		 	if($enviar_sri==1)
 			   		 	{
+			   		 		sleep(10);
 			   		 		//una vez enviado comprobamos el estado de la factura
 			   		 		$resp =  $this->comprobar_xml_sri($cabecera['ClaveAcceso'],$this->linkSriAutorizacion);
 			   		 		if($resp==1)
@@ -626,6 +627,7 @@ class autorizacion_sri
 		   		 	{
 		   		 		//una vez enviado comprobamos el estado de la factura
 		   		 		// sleep(3);
+		   		 		sleep(10);
 		   		 		$resp =  $this->comprobar_xml_sri($aut,$this->linkSriAutorizacion);
 		   		 		if($resp==1)
 		   		 		{
@@ -800,6 +802,7 @@ class autorizacion_sri
 			   		 	if($enviar_sri==1)
 			   		 	{
 			   		 		//una vez enviado comprobamos el estado de la factura
+			   		 		sleep(10);
 			   		 		$resp =  $this->comprobar_xml_sri($TFA['ClaveAcceso_GR'],$this->linkSriAutorizacion);
 			   		 		if($resp==1)
 			   		 		{
@@ -989,6 +992,7 @@ class autorizacion_sri
 			   		 	if($enviar_sri==1)
 			   		 	{
 			   		 		//una vez enviado comprobamos el estado de la factura
+			   		 		sleep(10);
 			   		 		$resp =  $this->comprobar_xml_sri($TFA['ClaveAcceso'],$this->linkSriAutorizacion);
 			   		 		if($resp==1)
 			   		 		{
@@ -1161,6 +1165,7 @@ class autorizacion_sri
 			   		 	if($enviar_sri==1)
 			   		 	{
 			   		 		//una vez enviado comprobamos el estado de la factura
+			   		 		sleep(10);
 			   		 		$resp =  $this->comprobar_xml_sri($TFA['ClaveAcceso_GR'],$this->linkSriAutorizacion);
 			   		 		if($resp==1)
 			   		 		{
@@ -2617,6 +2622,7 @@ function Autorizar_retencion($parametros)
 			   		 	if($enviar_sri==1)
 			   		 	{
 			   		 		//una vez enviado comprobamos el estado de la factura
+			   		 		sleep(10);
 			   		 		$resp =  $this->comprobar_xml_sri($aut,$this->linkSriAutorizacion);
 			   		 		if($resp==1)
 			   		 		{
