@@ -33,7 +33,7 @@ class autoriza_sri
 		$this->iv = base64_decode("C9fBxl1EWtYTL1/M8jfstw==");
 		// $this->conn = new Conectar();
 		$this->db = new db();
-		$this->rutaJava8  = '' //escapeshellarg("C:\\Program Files\\Java\\jdk-1.8\\bin\\");
+		$this->rutaJava8  = ""; //escapeshellarg("C:\\Program Files\\Java\\jdk-1.8\\bin\\");
 	}
 
 
@@ -42,23 +42,26 @@ class autoriza_sri
 	function AutorizarXMLOnline($parametros)
 	{
 		// print_r($parametros);die();
+		$respuesta = 1;
 		$temp_file = 'ftp_folder_xmls/';
 		if(trim($parametros['XML'])!='')
 		{
 			$msj = $this->descargar_archivos_ftp($parametros['XML']);
 		}
-		$xml = substr($parametros['XML'],0,-4);
-
+		$xml = $parametros['XML'];
 		// print_r($xml);die();
 		 if (trim($xml)!='') {
           	  $archivos = explode(';',$xml);
+          	  // print_r($archivos);die();
               foreach ($archivos as $key => $value) {
-              	$ambiente = substr(substr($value,0,24),0,-1);
-              	$this->link_ambientes(1);
+              	$xml = substr($value,0,-4);
+              	$ambiente = substr(substr($xml,0,24),-1,1);
+              	// print_r($ambiente);die();
+              	$this->link_ambientes($ambiente);
 
               	// print_r($this->linkSriRecepcion);die();
               	// print_r($ambiente);die();
-              	$xml = $value;
+              	// print_r($xml);die();
               	$validar_autorizado = $this->comprobar_xml_sri($xml,$this->linkSriAutorizacion);
 		   	 	// print_r($validar_autorizado);die();
 		   	 	if($validar_autorizado == -1)
@@ -166,8 +169,8 @@ class autoriza_sri
 	 	   $this->linkSriRecepcion = 'https://celcer.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl';
 		}else
 		{
-			 $this->linkSriAutorizacion = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl	https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl'; 
- 	   		$this->linkSriRecepcion = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl	https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl';
+			 $this->linkSriAutorizacion = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/AutorizacionComprobantesOffline?wsdl'; 
+ 	   		$this->linkSriRecepcion = 'https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl';
 		}
 
 	}
@@ -311,6 +314,30 @@ class autoriza_sri
    			return $f;
    		}
     }
+
+
+ // function enviaremail()   //funcion para enviarlo por javascript
+ //  { 
+
+
+ //          const xhr = new XMLHttpRequest();
+ //          // const url =  'https://erp.diskcoversystem.com/~diskcover/lib/phpmailer/EnvioEmailvisual.php?EnviarVisual';
+ //            const url =  '../../php/comprobantes/SRI/autorizar_sri_visual.php?AutorizarXMLOnline=true';
+
+
+ //          xhr.open('POST', url, true);
+ //          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+ //          xhr.onreadystatechange = function () {
+ //            if (xhr.readyState === 4 && xhr.status === 200) {
+ //              console.log('Respuesta:', xhr.responseText);
+ //            }
+ //          };
+
+ //           const params = `XML=1211202401139172194300120010030000278171234567814.xml`;
+
+ //          xhr.send(params);
+ //  }
 
 
 
