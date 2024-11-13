@@ -1,4 +1,8 @@
 <?php 
+header("Access-Control-Allow-Origin: *"); // Permite todas las orígenes, puedes restringir a uno específico
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS"); // Métodos permitidos
+header("Access-Control-Allow-Headers: Content-Type"); // Encabezados permitidos
+
 require_once(dirname(__DIR__,2)."/db/db1.php");
 
 date_default_timezone_set('America/Guayaquil');
