@@ -85,7 +85,7 @@ class autoriza_sri
 			   		 		if($resp==1)
 			   		 		{
 			   		 			$this->deleteFolder($temp_file);
-			   		 			return  $resp;
+			   		 			return  "Aurizado";
 			   		 		}else
 			   		 		{
 			   		 			return $resp;
@@ -101,8 +101,10 @@ class autoriza_sri
 			   			if($validar_autorizado==1)
 			   			{
 			   				$this->deleteFolder($temp_file);
-			   			}   		 
-			   			return $validar_autorizado;
+			   				return "Autorizado";
+			   			}else{   		 
+			   				return $validar_autorizado;
+			   			}
 			   		}
             }
           }
