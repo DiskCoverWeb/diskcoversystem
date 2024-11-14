@@ -274,6 +274,7 @@ class almacenamiento_bodegaC
 
 	function asignar_bodega($parametros)
 	{
+		// print_r($parametros);die();
 		$id = substr($parametros['id'],0,-1);
 		$id = explode(',',$id);
 		foreach ($id as $key => $value) {

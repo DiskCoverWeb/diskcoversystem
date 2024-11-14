@@ -255,6 +255,8 @@ function li2Array($html,$elemento="li"){
 	{		
 
 		 $cli = $this->modelo->buscar_cliente($ci=false,false,$parametro['txt_id']);	
+
+		 // print_r($parametro);die();
 		 
 		 SetAdoAddNew("Clientes");
 	    SetAdoFields("T", G_NORMAL);
@@ -298,6 +300,7 @@ function li2Array($html,$elemento="li"){
 					//entra aqui cuando solo se edita otras partes que no sea el nombre
 					SetAdoFieldsWhere("ID", $parametro['txt_id']);
    				$re = SetAdoUpdateGeneric();  
+
 				}else
 				{
 					// en el caso de que el nombre exista pero no es del registro ya establecido sino otros 
@@ -308,6 +311,7 @@ function li2Array($html,$elemento="li"){
 			}			
 		}else
 		{			
+			// print_r('nuevo');die();
 			 $re = SetAdoUpdate();	
 		}
 

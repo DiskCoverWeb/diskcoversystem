@@ -76,7 +76,7 @@ if(isset($_GET['orden']))
 
                  $('.select2_prove').select2({
                       placeholder: 'Seleccione',
-                      width:'100%',
+                      // width:'100%',
                       ajax: {
                           url:   '../controlador/inventario/solicitud_materialC.php?lista_proveedores=true',
                           dataType: 'json',
@@ -193,6 +193,18 @@ if(isset($_GET['orden']))
      window.open('../controlador/inventario/solicitud_materialC.php?imprimir_excel_envio=true&orden_pdf='+orden,'_blank');
   }
 
+  function lineaSolProv(linea)
+  {
+    $('#txt_linea_Select').val(linea);
+  }
+
+  function usar_cliente(nombre, ruc, codigocliente, email, T,grupo)
+  {
+    linea = $('#txt_linea_Select').val();
+    $('#ddl_selector_'+linea).append($('<option>',{value:  codigocliente, text: nombre,selected: true }));
+    $('#myModal').modal('hide');
+  }
+
 </script>
 <section class="content">
   <div class="row">
@@ -243,17 +255,19 @@ if(isset($_GET['orden']))
   <div class="row">
     <form id="form_lineas">
     <div class="col-sm-12">
+      <input type="hidden" name="txt_linea_Select" id="txt_linea_Select" value="">
         <table class="table">
           <thead>
             <thead>
               <th>item</th>
               <th>Codigo</th>
               <th>Producto</th>
-              <th>Cantidad</th>
-              <th>Costo</th>
+              <th>Cant</th>
+              <th>Unidad</th>
+              <th>Costo ref</th>
+              <th>Total ref</th>
               <th>Fecha solicitud</th>
               <th>Fecha Entrega</th>
-              <th>Total</th>
               <th>Observacion</th>
               <th>Proveedores</th>
             </thead>

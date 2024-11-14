@@ -286,6 +286,11 @@ if(isset($_GET['estado_trasporte']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->estado_trasporte($parametros));
 }
+if(isset($_GET['estado_gaveta']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->estado_gaveta($parametros));
+}
 
 if(isset($_GET['gavetas']))
 {
@@ -363,11 +368,21 @@ class alimentos_recibidosC
 					$tipo_ve = 'liviano';
 					break;
 			}
+
+			// print_r($placa);die();
+			// print_r($transporte);die();
 			foreach ($transporte as $key => $value) {
-				$Cmds = explode('_', $key);
+				// print_r($value);die();
+				$Cmds = '.';
+				$pos = strpos($key, '_ESTTRANS');
+				if ($pos !== false) {
+				   
+					$Cmds = str_replace('_ESTTRANS','', $key);
+					$Cmds = str_replace('_','.', $Cmds);
+				} 
 				SetAdoAddNew('Trans_Fletes');
-			    SetAdoFields('TP',$Cmds[0]);
-			    SetAdoFields('Referencia',$Cmds[1]);
+			    SetAdoFields('TP',$Cmds);
+			    SetAdoFields('Referencia','ESTTRANS');
 			    SetAdoFields('Cumple',$value);
 			    SetAdoFields('CodigoC',$placa);	
 			    SetAdoFields('Carga',$tipo_ve);	
@@ -1056,7 +1071,20 @@ class alimentos_recibidosC
 					<td>'.number_format($value['TOTAL'],2,'.','').'</td>
 					<td>'.$value['Porc_C'].'</td>
 					<td>'.$proceso.'</td>
-					<td><button type="button" class="btn-sm btn-primary btn" onclick="editar_pedido(\''.$value['ID'].'\')"><i class="fa fa-pencil"></i></button></td>
+					<td><button type="button" class="btn-sm btn-primary btn" onclick="editar_pedido(\''.$value['ID'].'\')"><i class="fa fa-pencil"></i></button>';
+					if($value['Motivo_Edicion']!='' &&  $value['Motivo_Edicion']!='.')
+					{
+						$tr.='<div class="btn-group pull-right">
+								<button type="button" class="btn-success btn btn-sm" data-toggle="dropdown" aria-expanded="false">
+									<i class="fa fa-commenting"></i>
+								</button>
+								<ul class="dropdown-menu">
+											<li><a href="#">'.$value['Motivo_Edicion'].'</a></li>
+									</ul>
+							</div>';
+					}
+
+					$tr.='</td>
 
 				  </tr>';
 		}
@@ -1135,6 +1163,7 @@ class alimentos_recibidosC
 		SetAdoFields('Cod_C',$parametros['ddl_tipo_alimento_edi']);
 		SetAdoFields('Porc_C',$parametros['txt_temperatura_edi']);
 		SetAdoFields('TOTAL',$parametros['txt_cant_edi']);
+		SetAdoFields('Motivo_Edicion',$parametros['txt_motivo_edit']);
 
 		SetAdoFields('Envio_No',$new_cod);
 		SetAdoFieldsWhere('ID',$parametros['txt_id_edi']);
@@ -1487,7 +1516,34 @@ class alimentos_recibidosC
 	function estado_trasporte($parametros)
 	{
 		$codigo = $parametros['pedido'];
-		return $this->modelo->estado_trasporte($codigo);
+		$estado =  $this->modelo->estado_trasporte($codigo);
+		$estado[0]['placa'] = '.';
+		if($estado[0]['CodigoC']!='.')
+		{
+			$placa = $this->modelo->placar_search($codigo);			
+			$estado[0]['placa'] = $placa[0]['Proceso'];
+		}
+		
+
+		// print_r($estado);die();
+		return $estado;
+
+
+	}
+
+
+
+	function estado_gaveta($parametros)
+	{
+		$codigo = $parametros['pedido'];
+		$gavetas =  $this->modelo->estado_gaveta($codigo);
+		if(count($gavetas)==0)
+		{
+			$gavetas[0] = array('Entrada'=>'','Producto'=>'No hay gavetas');
+		}
+		return $gavetas;
+
+
 	}
 
 	function editar_comentarios_trans_correos($pedido,$asunto,$texto)

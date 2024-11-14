@@ -343,7 +343,7 @@ function Guardar_bodega(id)
 
 
 
-<div id="myModal_arbol_bodegas" class="modal fade myModalNuevoCliente" role="dialog">
+<div id="myModal_arbol_bodegas" class="modal fade myModalNuevoCliente" role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary">
@@ -361,7 +361,7 @@ function Guardar_bodega(id)
     </div>
   </div>
 
-  <div id="myModal_arbol_bodegas2" class="modal fade myModalNuevoCliente" role="dialog">
+  <div id="myModal_arbol_bodegas2" class="modal fade myModalNuevoCliente" role="dialog"  data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary">

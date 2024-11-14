@@ -139,6 +139,12 @@ if(isset($_GET['orden']))
 
               
     var orden = '<?php echo $orden; ?>';
+    can = $('#txt_cant_'+id).val();
+    if(parseFloat(can)<0)
+    {
+      Swal.fire("","La cantidad invalida","error");
+      return false;
+    }
     var parametros = 
     {
       'id_linea':id,
@@ -229,12 +235,15 @@ function imprimir_excel()
             <thead>
               <th>item</th>
               <th>Codigo</th>
-              <th>Producto</th>
-              <th>Cantidad</th>              
-              <th>Costo</th>
+              <th>Producto</th>              
+              <th>Cantidad Solicitada</th>             
+              <th>Stock</th> 
+              <th>Cantidad</th>  
+              <th>Unidad</th>              
+              <th>Costo ref</th>
+              <th>Total ref</th>
               <th>Fecha Solicitud</th>
               <th>Fecha Entrega</th>
-              <th>Total</th>
               <th>Observacion</th>
               <th>Aprobado</th>
               <th></th>

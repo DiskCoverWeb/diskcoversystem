@@ -114,7 +114,7 @@ class alimentos_recibidosM
 
 	function buscar_transCorreos_procesados_all($cod=false,$fecha=false,$fechah=false,$id=false)
 	{
-		$sql = "select DISTINCT TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No,C.Actividad,TC.Llamadas    
+		$sql = "select DISTINCT TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No,C.Actividad,TC.Llamadas,TC.Motivo_Edicion    
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
@@ -551,15 +551,41 @@ class alimentos_recibidosM
 	function estado_trasporte($pedido)
 	{
 
-		$sql = "SELECT TF.ID,CP.Proceso,Cumple,Carga,CodigoC,CP2.Proceso as 'placa',Conductor,Codigo_Inv
+		$sql = "SELECT TF.ID,CP.Proceso,Cumple,Carga,CodigoC,Conductor,Codigo_Inv
 				FROM Trans_Fletes TF 
-				inner join Catalogo_Proceso CP on CP.Cmds = TF.TP 
-				left join Catalogo_Proceso CP2 on CP2.Cmds = TF.CodigoC 
+				INNER join Catalogo_Proceso CP on CP.Cmds = TF.TP 
+				WHERE  TF.Item = '".$_SESSION['INGRESO']['item']."' 
+				AND TF.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				and TF.Item = CP.Item
+				AND Codigo_Inv= '".$pedido."'";
+				// print_r($sql);die();
+		return $this->db->datos($sql);
+	}
+
+	function estado_gaveta($pedido)
+	{
+
+		$sql = "select Entrada,Producto from Trans_Kardex TK
+				inner join Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv				
+				WHERE  TK.Item = '".$_SESSION['INGRESO']['item']."' 
+				AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				AND Orden_No = '".$pedido."' 
+				AND TK.Codigo_Inv like 'GA.%'";
+				// print_r($sql);die();
+		return $this->db->datos($sql);
+	}
+
+	function placar_search($pedido)
+	{
+		$sql = "SELECT TF.ID,CP.Proceso,Cumple,Carga,CodigoC,Conductor,Codigo_Inv
+				FROM Trans_Fletes TF 
+				right join Catalogo_Proceso CP on CP.Cmds = TF.CodigoC 
 				WHERE  TF.Item = '".$_SESSION['INGRESO']['item']."' 
 				AND TF.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 				AND Codigo_Inv= '".$pedido."'";
 				// print_r($sql);die();
-		return $this->db->datos($sql);
+			return $this->db->datos($sql);
+
 	}
 	
 	function cargar_motivo_lista($query=false,$id=false,$orden=false)

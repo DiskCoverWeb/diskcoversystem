@@ -13,6 +13,12 @@ if(isset($_GET['autorizar']))
      echo json_encode($controlador->Autorizar($parametros));
 }
 
+if(isset($_GET['AutorizarXMLOnline']))
+{
+	$parametros = $_POST;
+     echo json_encode($controlador->AutorizarXMLOnline($parametros));
+}
+
 /**
  * 
  */
@@ -320,6 +326,7 @@ class autorizacion_sri
 			   		 		$this->linkSriRecepcion);
 			   		 	if($enviar_sri==1)
 			   		 	{
+			   		 		sleep(10);
 			   		 		//una vez enviado comprobamos el estado de la factura
 			   		 		$resp =  $this->comprobar_xml_sri($cabecera['ClaveAcceso'],$this->linkSriAutorizacion);
 			   		 		if($resp==1)
@@ -626,6 +633,7 @@ class autorizacion_sri
 		   		 	{
 		   		 		//una vez enviado comprobamos el estado de la factura
 		   		 		// sleep(3);
+		   		 		sleep(10);
 		   		 		$resp =  $this->comprobar_xml_sri($aut,$this->linkSriAutorizacion);
 		   		 		if($resp==1)
 		   		 		{
@@ -800,6 +808,7 @@ class autorizacion_sri
 			   		 	if($enviar_sri==1)
 			   		 	{
 			   		 		//una vez enviado comprobamos el estado de la factura
+			   		 		sleep(10);
 			   		 		$resp =  $this->comprobar_xml_sri($TFA['ClaveAcceso_GR'],$this->linkSriAutorizacion);
 			   		 		if($resp==1)
 			   		 		{
@@ -989,6 +998,7 @@ class autorizacion_sri
 			   		 	if($enviar_sri==1)
 			   		 	{
 			   		 		//una vez enviado comprobamos el estado de la factura
+			   		 		sleep(10);
 			   		 		$resp =  $this->comprobar_xml_sri($TFA['ClaveAcceso'],$this->linkSriAutorizacion);
 			   		 		if($resp==1)
 			   		 		{
@@ -1161,6 +1171,7 @@ class autorizacion_sri
 			   		 	if($enviar_sri==1)
 			   		 	{
 			   		 		//una vez enviado comprobamos el estado de la factura
+			   		 		sleep(10);
 			   		 		$resp =  $this->comprobar_xml_sri($TFA['ClaveAcceso_GR'],$this->linkSriAutorizacion);
 			   		 		if($resp==1)
 			   		 		{
@@ -2617,6 +2628,7 @@ function Autorizar_retencion($parametros)
 			   		 	if($enviar_sri==1)
 			   		 	{
 			   		 		//una vez enviado comprobamos el estado de la factura
+			   		 		sleep(10);
 			   		 		$resp =  $this->comprobar_xml_sri($aut,$this->linkSriAutorizacion);
 			   		 		if($resp==1)
 			   		 		{
@@ -4159,6 +4171,111 @@ function error_sri($clave)
 	           	return array('respuesta'=>$xml,'Clave'=>$cabecera['ClaveAcceso']);
 	            
 	       }
+
+
+//esta funcion entra aun ftp donde se encontrara el archivo xml firmado de antemano
+	function AutorizarXMLOnline($parametros)
+	{
+		// print_r($parametros);die();
+		$temp_file = 'ftp_folder_xmls/';
+		if(trim($parametros['XML'])!='')
+		{
+			$msj = $this->descargar_archivos_ftp($parametros['XML']);
+		}
+		$xml = $parametros['XML'];
+		 if (trim($xml)!='') {
+          	  $archivos = explode(';',$xml);
+              foreach ($archivos as $key => $value) {
+              	$xml = $value.'.xml';
+              	$validar_autorizado = $this->comprobar_xml_sri($xml,$this->linkSriAutorizacion);
+		   	 	print_r($validar_autorizado);die();
+		   	 	if($validar_autorizado == -1)
+		   	 		{
+				   	 	$enviar_sri = $this->enviar_xml_sri($aut,$this->linkSriRecepcion);
+				   		if($enviar_sri==1)
+				   		{
+				   		 	//una vez enviado comprobamos el estado de la factura
+			   		 		sleep(10);
+			   		 		$resp =  $this->comprobar_xml_sri($xml,$this->linkSriAutorizacion);
+			   		 		if($resp==1)
+			   		 		{
+			   		 			return  $resp;
+			   		 		}else
+			   		 		{
+			   		 			return $resp;
+			   		 		}
+				   		 		// print_r($resp);die();
+				   		}else
+				   		{
+				   			return $enviar_sri;
+				   		}
+
+			   		}else 
+			   		{
+			   		 	// $resp = $this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion']);
+			   		 	// RETORNA SI YA ESTA AUTORIZADO O SI FALL LA REVISIO EN EL SRI
+			   			return $validar_autorizado;
+			   		}
+            }
+          }
+
+				
+
+	}
+
+	function descargar_archivos_ftp($archivos)
+	{
+
+		// print_r($archivos);die();
+		//proceso para envio de archivo por ftp 
+		$ftp_host = "erp.diskcoversystem.com";
+		$ftp_user = "ftpuser";
+		$ftp_pass = "ftp2023User";
+		$ftp_port = 21; // Cambia al puerto que necesites
+
+		$remote_file = '/files/ComprobantesElectronicos/';
+		$temp_file = 'ftp_folder_xmls/';
+		$remote_path = '/';
+
+		if(!file_exists($temp_file))
+		{
+			mkdir($temp_file, 0777);
+		}
+
+		$ftp_conn = ftp_connect($ftp_host, $ftp_port) or die("No se pudo conectar al servidor FTP.");
+		$login = ftp_login($ftp_conn, $ftp_user, $ftp_pass);
+
+		// $archivos = ftp_nlist($ftp_conn, $remote_path);
+
+		// if (ftp_chdir($ftp_conn, "files")) {
+		//     echo "\nCambiado al directorio: $directorio\n";
+
+		//     // Listar archivos en el nuevo directorio
+		//     $archivos = ftp_nlist($ftp_conn, '.');
+		//     if ($archivos) {
+		//         foreach ($archivos as $archivo) {
+		//             echo $archivo . "\n";
+		//         }
+		//     } else {
+		//         echo "El directorio está vacío o no se pudo listar los archivos.\n";
+		//     }
+		// } 
+		// print_r($archivos);die();
+
+		$archi  = explode(';',$archivos);
+		$msj = '';
+		foreach ($archi as $key => $value) {
+			// @ quita el warning
+			if(!@ftp_get($ftp_conn, $temp_file.$value, $remote_file.$value, FTP_BINARY))
+			{
+				$msj.='no existe en ftp: '.$value.'\n';
+			}			
+			
+		}
+		ftp_close($ftp_conn);
+		return $msj;
+
+	}
 
 } 
 ?>

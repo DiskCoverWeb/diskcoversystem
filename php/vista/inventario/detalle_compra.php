@@ -73,6 +73,57 @@ function imprimir_excel()
   window.open('../controlador/inventario/lista_comprasC.php?imprimir_excel=true&orden_pdf='+orden,'_blank');
 }
 
+function grabar_kardex()
+{
+  var orden = '<?php echo $orden; ?>';
+  var parametros = 
+      {
+        'orden':orden,
+      }
+    //  $('#myModal_espera').modal('show');
+      $.ajax({
+          url:   '../controlador/inventario/lista_comprasC.php?grabar_kardex=true',
+          type:  'post',
+          data: {parametros:parametros},
+          dataType: 'json',
+          success:  function (response) {   
+            $('#myModal_espera').modal('hide');
+            if(response.resp==1)
+            {
+              Swal.fire(response.com,"","success").then(function(){
+                location.href = 'inicio.php?mod=03&acc=lista_compras';
+              })
+            }  
+                              
+          }
+      });
+}
+
+function comprobante_individual(orden,proveedor)
+{
+    var parametros = 
+      {
+        'orden':orden,
+        'proveedor':proveedor,
+      }
+     $.ajax({
+          url:   '../controlador/inventario/lista_comprasC.php?grabar_kardex_indi=true',
+          type:  'post',
+          data: {parametros:parametros},
+          dataType: 'json',
+          success:  function (response) {   
+            $('#myModal_espera').modal('hide');
+            if(response.resp==1)
+            {
+              Swal.fire(response.com,"","success").then(function(){
+                location.href = 'inicio.php?mod=03&acc=lista_compras';
+              })
+            }  
+                              
+          }
+      });
+}
+
 
 
 </script>
@@ -95,7 +146,7 @@ function imprimir_excel()
             </button>
           </div>  
           <div class="col-xs-2 col-md-2 col-sm-2">
-            <button title="Guardar"  class="btn btn-default" onclick="grabar_solicitud_proveedor()">
+            <button title="Generar comrpobante"  class="btn btn-default" onclick="grabar_kardex()">
               <img src="../../img/png/grabar.png" >
             </button>
           </div>
@@ -124,34 +175,8 @@ function imprimir_excel()
   </div>
   <div class="row">
     <form id="form_aprobacion">
-    <div class="col-sm-12">
-        <table class="table">
-          <thead>
-            <thead>
-              <th>item</th>
-              <th>Codigo</th>
-              <th>Producto</th>
-              <th>Cantidad</th>              
-              <th>Costo</th>
-              <th>Fecha Solicitud</th>
-              <th>Fecha Entrega</th>
-              <th>Total</th>
-              <th>Proveedor</th>
-            </thead>
-            <tbody id="tbl_body">
-             <!--  <tr>
-                <td>1</td>
-                <td>ss</td>
-                <td>producto</td>
-                <td>3</td>
-                <td>2024-05-06</td>
-                <td>
-                  <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
-                </td>
-              </tr> -->
-            </tbody>
-          </thead>
-        </table>
+    <div class="col-sm-12" id="tbl_body">
+       
     </div> 
     </form>   
   </div>  

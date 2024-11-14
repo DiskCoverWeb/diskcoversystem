@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<factura id="comprobante" version="1.1.0">
+  <infoTributaria>
+    <ambiente>1</ambiente>
+    <tipoEmision>1</tipoEmision>
+    <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
+    <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
+    <ruc>0702164179001</ruc>
+    <claveAcceso>1908202401070216417900110010030000016811234567811</claveAcceso>
+    <codDoc>01</codDoc>
+    <estab>001</estab>
+    <ptoEmi>003</ptoEmi>
+    <secuencial>000001681</secuencial>
+    <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
+    <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
+  </infoTributaria>
+  <infoFactura>
+    <fechaEmision>19/08/2024</fechaEmision>
+    <dirEstablecimiento>direccion de empresa xyz</dirEstablecimiento>
+    <obligadoContabilidad>NO</obligadoContabilidad>
+    <tipoIdentificacionComprador>04</tipoIdentificacionComprador>
+    <razonSocialComprador>PRISMANET PROFESIONAL SA</razonSocialComprador>
+    <identificacionComprador>1792164710001</identificacionComprador>
+    <totalSinImpuestos>870.00</totalSinImpuestos>
+    <totalDescuento>0.00</totalDescuento>
+    <totalConImpuestos>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>0</codigoPorcentaje>
+        <descuentoAdicional>0.00</descuentoAdicional>
+        <baseImponible>0.00</baseImponible>
+        <valor>0.00</valor>
+      </totalImpuesto>
+      <totalImpuesto>
+        <codigo>2</codigo>
+        <codigoPorcentaje>4</codigoPorcentaje>
+        <descuentoAdicional>0.00</descuentoAdicional>
+        <baseImponible>870.00</baseImponible>
+        <tarifa>15</tarifa>
+        <valor>130.50</valor>
+      </totalImpuesto>
+    </totalConImpuestos>
+    <propina>87.00</propina>
+    <importeTotal>1087.50</importeTotal>
+    <moneda>DOLAR</moneda>
+    <pagos>
+      <pago>
+        <formaPago>01</formaPago>
+        <total>1087.50</total>
+      </pago>
+    </pagos>
+  </infoFactura>
+  <detalles>
+    <detalle>
+      <codigoPrincipal>98.01</codigoPrincipal>
+      <descripcion>Socios Promotores y Esposa, .: Agosto </descripcion>
+      <unidadMedida>DOLAR</unidadMedida>
+      <cantidad>1.000000</cantidad>
+      <precioUnitario>870.000000</precioUnitario>
+      <descuento>0.00</descuento>
+      <precioTotalSinImpuesto>870.00</precioTotalSinImpuesto>
+      <impuestos>
+        <impuesto>
+          <codigo>2</codigo>
+          <codigoPorcentaje>4</codigoPorcentaje>
+          <tarifa>15</tarifa>
+          <baseImponible>870.00</baseImponible>
+          <valor>130.50</valor>
+        </impuesto>
+      </impuestos>
+    </detalle>
+  </detalles>
+  <infoAdicional>
+    <campoAdicional nombre="Direccion">SD</campoAdicional>
+    <campoAdicional nombre="Telefono">000000000</campoAdicional>
+    <campoAdicional nombre="Email">diskcoversystem@msncom</campoAdicional>
+    <campoAdicional nombre="seriePuntoEmision">001003</campoAdicional>
+    <campoAdicional nombre="socioRazonSocial">Empresa xyz</campoAdicional>
+    <campoAdicional nombre="socioDireccion">direccion de empresa xyz</campoAdicional>
+    <campoAdicional nombre="PlacaVehiculo">.</campoAdicional>
+    <campoAdicional nombre="CtaEstablecimiento">.</campoAdicional>
+  </infoAdicional>
+</factura>

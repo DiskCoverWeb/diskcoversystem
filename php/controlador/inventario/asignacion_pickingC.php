@@ -22,6 +22,12 @@ if(isset($_GET['cargarOrden'])){
     $parametros = $_POST['param'];
     echo json_encode($controlador->cargarOrden($parametros));
 }
+
+if(isset($_GET['cargarProductosGrupo'])){
+    $parametros = $_GET;
+    echo json_encode($controlador->cargarProductosGrupo($parametros));
+}
+
 if(isset($_GET['buscar_producto']))
 {
     $parametros = $_POST['parametros'];
@@ -81,6 +87,8 @@ class asignacion_pickingC
     {
 
     	$datos = $this->modelo->tipoBeneficiario($query);
+
+        // print_r($datos);die();
     	$lista = array();
         $diaActual =  BuscardiasSemana(date('w'));
         $diaActual = $diaActual[1]+1;
@@ -97,6 +105,7 @@ class asignacion_pickingC
             // {
             //     //buscamos si el usuario ya genero en este dia pedidos para facturar
                 $datos1 = $this->modelo->cargar_asignacion($value['Codigo'],$value['No_Hab'],'F',date('Y-m-d'));
+                // print_r($datos1);die();
                 if(count($datos1)==0)
                 {
             	   $lista[] = array('id'=>$value['Codigo'].'-'.$value['No_Hab'],'text'=>$value['Cliente'].' ('.$value['Tipo Asignacion'].')','data'=>$value); 
@@ -169,6 +178,24 @@ class asignacion_pickingC
         $res = array('detalle'=>$detalle,'ddl'=>$ddlGrupoPro,'total'=>$total);
 
         return $res;
+    }
+
+    function cargarProductosGrupo($parametros)
+    {
+        // print_r($parametros);die(); 
+        $codigo = false;
+        if(isset($parametros['query']))
+        {
+            $codigo = $parametros['query'];
+        }
+        $datos = $this->modelo->lista_stock_ubicado(false,$codigo,$parametros['grupo']);
+        $tr = array();
+        foreach ($datos as $key => $value) {
+           $tr[] = array('id'=>$value['Codigo_Barra'],'text'=>$value['Codigo_Barra']);
+        }
+        return $tr;
+        // print_r($datos);die();
+    
     }
 
     function buscar_producto($parametros)
@@ -274,6 +301,7 @@ class asignacion_pickingC
         foreach ($datos as $key => $value) {
             $producto = $this->modelo->lineasKArdex($value['CodBodega']);           
             // print_r($producto);die();
+            if(count($producto)>0){
             $tbl.='<tr>
                     <td><button class="btn btn-sm btn-danger" onclick="eliminarlinea('.$value['ID'].')"><i class="fa fa-trash"></i></button></td>
                     <td>'.$value['Fecha']->format('Y-m-d').'</td>
@@ -285,6 +313,7 @@ class asignacion_pickingC
 
                 </tr>';
                   $total  =   $total +$value['Total'];
+              }
         }
         return array('tabla'=>$tbl,'total'=>$total);
     }
