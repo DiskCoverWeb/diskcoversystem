@@ -38,7 +38,7 @@ class autoriza_sri
 		$this->iv = base64_decode("C9fBxl1EWtYTL1/M8jfstw==");
 		// $this->conn = new Conectar();
 		$this->db = new db();
-		$this->rutaJava8  = ""; //escapeshellarg("C:\\Program Files\\Java\\jdk-1.8\\bin\\");
+		$this->rutaJava8  = escapeshellarg("C:\\Program Files\\Java\\jdk-1.8\\bin\\");
 	}
 
 
@@ -52,6 +52,11 @@ class autoriza_sri
 		if(trim($parametros['XML'])!='')
 		{
 			$msj = $this->descargar_archivos_ftp($parametros['XML']);
+			if($msj!="")
+			{
+				$this->deleteFolder($temp_file);
+				return $msj;
+			}
 		}
 		$xml = $parametros['XML'];
 		// print_r($xml);die();
@@ -79,6 +84,7 @@ class autoriza_sri
 			   		 		$resp =  $this->comprobar_xml_sri($xml,$this->linkSriAutorizacion);
 			   		 		if($resp==1)
 			   		 		{
+			   		 			$this->deleteFolder($temp_file);
 			   		 			return  $resp;
 			   		 		}else
 			   		 		{
@@ -91,7 +97,11 @@ class autoriza_sri
 				   		}
 
 			   		}else 
-			   		{			   		 
+			   		{			
+			   			if($validar_autorizado==1)
+			   			{
+			   				$this->deleteFolder($temp_file);
+			   			}   		 
 			   			return $validar_autorizado;
 			   		}
             }
@@ -152,7 +162,7 @@ class autoriza_sri
 		$msj = '';
 		foreach ($archi as $key => $value) {
 			// @ quita el warning
-			if(!ftp_get($ftp_conn, $temp_fileF.$value, $remote_file.$value, FTP_BINARY))
+			if(!@ftp_get($ftp_conn, $temp_fileF.$value, $remote_file.$value, FTP_BINARY))
 			{
 				$msj.='no existe en ftp: '.$value.'\n';
 			}			
@@ -162,6 +172,35 @@ class autoriza_sri
 		return $msj;
 
 	}
+
+	function deleteFolder($folderPath) {
+    // Verifica si el folder existe
+    if (!is_dir($folderPath)) {
+        return false;
+    }
+
+    // Itera sobre cada elemento dentro del folder
+    $files = scandir($folderPath);
+    foreach ($files as $file) {
+        if ($file === '.' || $file === '..') {
+            continue;
+        }
+
+        $filePath = $folderPath . DIRECTORY_SEPARATOR . $file;
+
+        // Si es una carpeta, llama a la función de nuevo de forma recursiva
+        if (is_dir($filePath)) {
+            $this->deleteFolder($filePath);
+        } else {
+            // Si es un archivo, lo elimina
+            unlink($filePath);
+        }
+    }
+
+    // Finalmente elimina el folder principal una vez vacío
+    return rmdir($folderPath);
+}
+
 
 
 	function link_ambientes($ambiente)
