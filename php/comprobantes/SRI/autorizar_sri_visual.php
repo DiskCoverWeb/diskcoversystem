@@ -162,7 +162,7 @@ class autoriza_sri
 		$msj = '';
 		foreach ($archi as $key => $value) {
 			// @ quita el warning
-			if(!@ftp_get($ftp_conn, $temp_fileF.$value, $remote_file.$value, FTP_BINARY))
+			if(!ftp_get($ftp_conn, $temp_fileF.$value, $remote_file.$value, FTP_BINARY))
 			{
 				$msj.='no existe en ftp: '.$value.'\n';
 			}			
