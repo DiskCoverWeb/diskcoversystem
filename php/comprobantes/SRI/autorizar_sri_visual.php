@@ -2,6 +2,7 @@
 header("Access-Control-Allow-Origin: *"); // Permite todas las orígenes, puedes restringir a uno específico
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS"); // Métodos permitidos
 header("Access-Control-Allow-Headers: Content-Type"); // Encabezados permitidos
+header('Content-Type: application/json');
 
 require_once(dirname(__DIR__,2)."/db/db1.php");
 
