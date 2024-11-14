@@ -75,7 +75,7 @@ class autoriza_sri
 				   		if($enviar_sri==1)
 				   		{
 				   		 	//una vez enviado comprobamos el estado de la factura
-			   		 		sleep(10);
+			   		 		sleep(6);
 			   		 		$resp =  $this->comprobar_xml_sri($xml,$this->linkSriAutorizacion);
 			   		 		if($resp==1)
 			   		 		{
@@ -264,14 +264,14 @@ class autoriza_sri
 	   		 {
 	   		 	// print_r($resp[1].'<br>');
 
-	   		 	return $f;
+	   		 	return -1;
 	   		 }else if(isset($resp[1]) && $resp[1]=='FACTURA AUTORIZADO' || isset($resp[1]) && $resp[1]=='LIQUIDACION DE COMPRAS AUTORIZADO' || $resp[1] == 'COMPROBANTE DE RETENCION AUTORIZADO' || isset($resp[1]) && $resp[1]=='GUIA DE REMISION AUTORIZADO' || isset($resp[1]) && $resp[1]=='NOTA DE CREDITO AUTORIZADO')
 	   		 {
 	   		 	// print_r('as');
 	   		 	return 1;
 	   		 }else
 	   		 {
-	   			return 'ERROR COMPROBACION -'.$f[0];
+	   			return 'ERROR COMPROBACION -'.$f;
 	   		 }
 	   	}else
 	   	{
