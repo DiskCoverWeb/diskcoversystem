@@ -414,6 +414,7 @@ async function buscar_ruta()
 		    {
 		    	$('#txt_bodega_title').text('Ruta:'+data);
 		    	$('#txt_cod_bodega').val(codigo);
+		    	$('#txt_cod_lugar').val(codigo);
 		    	productos_asignados();
 		    }
 		});
