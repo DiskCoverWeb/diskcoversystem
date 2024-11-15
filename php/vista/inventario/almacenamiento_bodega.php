@@ -89,6 +89,7 @@
   	$('#txt_bodega_title').text();
   	$('#txt_bodega_title').text(nombre);
   	$('#txt_cod_bodega').val(cod);
+  	$('#txt_cod_lugar').val(cod);
   	if(cod!='.')
   	{
   		contenido_bodega();
