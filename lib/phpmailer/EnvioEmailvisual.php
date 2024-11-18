@@ -68,9 +68,9 @@ class EnviarVisual
 	        	$mail->isSMTP(); //Send using SMTP
 	        	if(isset($parametros['debug']) && $parametros['debug']==1)
 	        	{
-		          $mail->SMTPDebug = SMTP::DEBUG_SERVER;                 //Enable verbose debug output  
-		            // $mail->Helo = 'smtp.diskcoversystem.com';  
+		          $mail->SMTPDebug = SMTP::DEBUG_SERVER;     
 		        }  
+		        $mail->Helo = 'imap.diskcoversystem.com';
 				    $mail->Host = 'imap.diskcoversystem.com';
 				    $mail->SMTPAuth = true;
 				    $mail->Username = 'admin';
