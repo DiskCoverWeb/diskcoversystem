@@ -85,6 +85,29 @@ class facturarM
     return $datos;
   }
 
+  function DCFactura($TC,$Serie,$factura=false)
+  {
+      $sql = "SELECT F.TC,F.Factura,F.Autorizacion,F.Serie,F.CodigoC,F.Fecha,F.Fecha_V,
+      F.Total_MN,F.Total_ME,F.Saldo_MN,F.Saldo_ME,F.Cta_CxP,F.Cod_CxC,F.Nota,F.Observacion,F.Cotizacion,
+      C.Cliente,C.Direccion,C.CI_RUC,C.Telefono,C.Grupo 
+      FROM Facturas As F 
+      INNER JOIN Clientes As C
+      ON F.CodigoC = C.Codigo 
+      WHERE F.T = '".G_PENDIENTE."' 
+      AND F.Item = '".$_SESSION['INGRESO']['item']."' 
+      AND F.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+      AND F.Serie = '".$Serie."' 
+      AND F.TC = '".$TC."' 
+      AND F.Saldo_MN > 0 ";
+      if($factura)
+      {
+          $sql.=" AND F.Factura ='".$factura."' ";
+      }
+      $sql.=" ORDER BY F.TC,F.Factura";
+      // print_r($sql);die();
+      return $this->db->datos($sql);
+  }
+
   function DCMod()
   {
     $sql = "SELECT Detalle, Codigo, TC 
@@ -271,6 +294,105 @@ class facturarM
     }
 
     imprimirDocEle_fac($datos_fac, $detalle_fac, $datos_cli_edu, $nombre, null, 'factura', null, null, $imp = $descargar, $detalle_abonos, $sucursal);
+    if ($to_correo != '') {
+      $titulo_correo = 'comprobantes electronicos';
+      $cuerpo_correo = 'comprobantes electronico';
+      if ($aprobado) {
+        $r = $this->email->enviar_email($archivos, $to_correo, $cuerpo_correo, $titulo_correo, $HTML = false);
+
+        // print_r($r);die();
+        return $r;
+      }
+      // print_r($r);
+    }
+    return $res;
+  }
+
+  function pdf_guia_remision_elec($TFA, $nombre_archivo, $periodo = false, $aprobado = false, $descargar = false)
+  {
+    $res = 1;
+    $sql = "SELECT DF.*,CP.Reg_Sanitario,CP.Marca
+        FROM Detalle_Factura As DF, Catalogo_Productos As CP
+        WHERE DF.Item = '" . $_SESSION['INGRESO']['item'] . "'
+        AND DF.Periodo =  '" . $_SESSION['INGRESO']['periodo'] . "'
+        AND DF.TC = '" . $TFA['TC'] . "'
+        AND DF.Serie = '" . $TFA['Serie'] . "'
+        AND DF.Autorizacion = '" . $TFA['Autorizacion'] . "'
+        AND DF.Factura = " . $TFA['Factura'] . "
+        AND LEN(DF.Autorizacion) >= 13
+        AND DF.T <> 'A'
+        AND DF.Item = CP.Item
+        AND DF.Periodo = CP.Periodo
+        AND DF.Codigo = CP.Codigo_Inv
+        ORDER BY DF.ID,DF.Codigo ";
+    // print_r($sql);die();
+    $AdoDBDet = $this->db->datos($sql);
+
+    // 'Encabezado de la Guia de Remision
+    $sql2 = "SELECT F.*,GR.Remision,GR.Comercial,GR.CIRUC_Comercial,GR.Entrega,GR.CIRUC_Entrega,GR.CiudadGRI,GR.CiudadGRF,
+        GR.Placa_Vehiculo,GR.FechaGRE,GR.FechaGRI,GR.FechaGRF,GR.Pedido,GR.Zona,GR.Serie_GR,GR.Autorizacion_GR,
+        GR.Clave_Acceso_GR,GR.Hora_Aut_GR,GR.Estado_SRI_GR,GR.Error_FA_SRI,GR.Fecha_Aut_GR,GR.Lugar_Entrega 
+        FROM Facturas As F, Facturas_Auxiliares As GR 
+        WHERE F.Item = '" . $_SESSION['INGRESO']['item'] . "'
+        AND F.Periodo =  '" . $_SESSION['INGRESO']['periodo'] . "'
+        AND F.TC = '" . $TFA['TC'] . "' 
+        AND F.Serie = '" . $TFA['Serie'] . "' 
+        AND F.Autorizacion = '" . $TFA['Autorizacion'] . "' 
+        AND F.Factura = " . $TFA['Factura'] . " 
+        AND LEN(GR.Autorizacion_GR) >= 13 
+        AND GR.Remision > 0 
+        AND F.T <> 'A' 
+        AND F.Item = GR.Item 
+        AND F.Periodo = GR.Periodo 
+        AND F.Serie = GR.Serie 
+        AND F.Factura = GR.Factura ";
+    // print_r($sql2);die();
+    $AdoDBFA = $this->db->datos($sql2);
+    // print_r($AdoDBFA);die();
+
+    $tipo_con = Tipo_Contribuyente_SP_MYSQL($_SESSION['INGRESO']['RUC']);
+
+    $datos_cli_edu = array();
+    $datos_trans = array();
+    if (count($AdoDBFA) > 0 && count($tipo_con) > 0) {
+      $AdoDBFA['Tipo_contribuyente'] = $tipo_con;
+    
+      // array_push($datos_fac, $tipo_con);
+      // print_r($TFA);
+      $datos_cli_edu = $this->Cliente($TFA['CodigoC']);
+      $datos_trans = $this->Cliente(false, false, false, false, $AdoDBFA[0]['CIRUC_Comercial']);
+    }
+
+    // print_r($datos_trans);die();
+    $datos_cli_edu[0]['Direccion_tras'] = '.';
+    $datos_cli_edu[0]['Email_tras'] = '.';
+    if (count($datos_trans) > 0) {
+      // print_r($datos_trans);die();
+      $datos_cli_edu[0]['Direccion_tras'] = $datos_trans[0]['Direccion'];
+      $datos_cli_edu[0]['Email_tras'] = $datos_trans[0]['Email'];
+    }
+    $archivos = array('0' => $nombre_archivo . '.pdf', '1' => $TFA['Autorizacion_GR'] . '.xml');
+    $to_correo = '';
+    if (count($datos_cli_edu) > 0) {
+      if ($datos_cli_edu[0]['Email'] != '.' && $datos_cli_edu[0]['Email'] != '') {
+        $to_correo .= $datos_cli_edu[0]['Email'] . ',';
+      }
+      if ($datos_cli_edu[0]['Email2'] != '.' && $datos_cli_edu[0]['Email2'] != '') {
+        $to_correo .= $datos_cli_edu[0]['Email2'] . ',';
+      }
+      if ($datos_cli_edu[0]['EmailR'] != '.' && $datos_cli_edu[0]['EmailR'] != '') {
+        $to_correo .= $datos_cli_edu[0]['EmailR'] . ',';
+      }
+      // $to_correo = substr($to_correo, 0,-1);
+    }
+    $sucursal = $this->catalogo_lineas_('GR', $TFA['Serie']);
+    $forma_pago = $this->DCTipoPago($AdoDBFA[0]['Tipo_Pago']);
+
+    if (count($forma_pago) > 0) {
+      $AdoDBFA[0]['Tipo_Pago'] = $forma_pago[0]['CTipoPago'];
+    }
+
+    imprimirDocEle_guia($AdoDBFA, $AdoDBDet, $datos_cli_edu, $nombre_archivo, null, 'factura', null, null, $imp = $descargar, $sucursal);
     if ($to_correo != '') {
       $titulo_correo = 'comprobantes electronicos';
       $cuerpo_correo = 'comprobantes electronico';
@@ -652,17 +774,18 @@ class facturarM
   function actualizar_Facturas_Auxiliares($FA)
   {
     $sql = "UPDATE Facturas_Auxiliares
-      SET Fecha_Aut_GR = '" . BuscarFecha($FA['Fecha_Aut_GR']) . "'
-      Autorizacion_GR = '" . $FA['Autorizacion_GR'] . "'
-      Clave_Acceso_GR = '" . $FA['ClaveAcceso_GR'] . "'
-      Estado_SRI_GR = '" . $FA['Estado_SRI_GR'] . "'
-      Hora_Aut_GR = '" . $FA['Hora_GR'] . "'
+      SET Fecha_Aut_GR = '" . BuscarFecha($FA['Fecha_Aut_GR']) . "', 
+      Autorizacion_GR = '" . $FA['Autorizacion_GR'] . "', 
+      Clave_Acceso_GR = '" . $FA['ClaveAcceso_GR'] . "', 
+      Estado_SRI_GR = '" . $FA['Estado_SRI_GR'] . "', 
+      Hora_Aut_GR = '" . $FA['Hora_GR'] . "' 
       WHERE Factura = " . $FA['Factura'] . "
       AND TC = '" . $FA['TC'] . "'
       AND Serie = '" . $FA['Serie'] . "'
       AND Autorizacion = '" . $FA['Autorizacion'] . "'
       AND Item = '" . $_SESSION['INGRESO']['item'] . "'
       AND Periodo ='" . $_SESSION['INGRESO']['periodo'] . "'";
+      //print_r($sql);die();
     $respuest = $this->db->String_Sql($sql);
     return $respuest;
   }
