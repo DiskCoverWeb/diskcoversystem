@@ -216,9 +216,9 @@ if (isset($_GET['numFactura'])) {
    echo json_encode($controlador->numFactura($parametros));
 }
 if (isset($_GET['Grabar_Factura_Actual'])) {
-   //$FA = $_GET;
+   $FA = $_GET;
    $parametros = $_POST['parametros'];
-   echo json_encode($controlador->Grabar_Factura_Actual($parametros));
+   echo json_encode($controlador->Grabar_Factura_Actual($parametros, $FA));
 }
 if (isset($_GET['Autorizar_Factura_Actual'])) {
    //$FA = $_GET;
@@ -981,16 +981,18 @@ class facturarC
       $this->pdf->generarDetalle($parametros);
    }
 
-   function Grabar_Factura_Actual($parametros)
+   function Grabar_Factura_Actual($parametros, $params_get)
    {
-      $fechaVencimiento = new DateTime($parametros['FA']['Vencimiento']['date'], new DateTimeZone('America/Guayaquil'));
-      $parametros['FA']['Vencimiento'] = $fechaVencimiento->format('Y-m-d');
-      $fechaAut = new DateTime($parametros['FA']['Fecha_Aut']['date'], new DateTimeZone('America/Guayaquil'));
-      $parametros['FA']['Fecha_Aut'] = $fechaAut->format('Y-m-d');
+      $fechaVencimiento = new DateTime($params_get['Vencimiento'], new DateTimeZone('America/Guayaquil'));
+      $params_get['Vencimiento'] = $fechaVencimiento->format('Y-m-d');
+      $fechaAut = new DateTime($params_get['Fecha_Aut'], new DateTimeZone('America/Guayaquil'));
+      $params_get['Fecha_Aut'] = $fechaAut->format('Y-m-d');
       $FA = array();
-      foreach ($parametros['FA'] as $key => $value) {
+      foreach ($params_get as $key => $value) {
          $FA[$key] = $value;
       }
+      $campos_faltantes = array_diff_key($parametros['FA'], $FA);
+      $FA = array_merge($FA, $campos_faltantes);
       $asientoF = $this->modelo->lineas_factura();
 
       if (count($asientoF) > 0) {
@@ -1131,6 +1133,11 @@ class facturarC
       // 'Autorizamos la factura y/o Guia de Remision
       if (strlen($FA['Autorizacion']) == 13) {
          $respuesta = $this->sri->Autorizar_factura_o_liquidacion($FA);
+         if($respuesta == 1){
+            $clave = $this->sri->Clave_acceso($FA['Fecha'], '01', $FA['Serie'], $FA['Factura']);
+            $FA['Autorizacion'] = $clave;
+            $FA['Clave_Acceso'] = $clave;
+         }
       }
 
       if (strlen($FA['Autorizacion_GR']) == 13) {
@@ -1139,7 +1146,13 @@ class facturarC
          $FAA['num_fac'] = $FA['Factura'];
          $FAA['tc'] = $FA['TC'];
          $FAA['cod_doc'] = '01';
-         $respuesta2 = $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision($FAA);
+         $respuesta2 = $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision($FA);
+         if($respuesta2 == 1){
+            if(is_object($FA['FechaGRE'])){ $FA['FechaGRE'] = $FA['FechaGRE']->format('Y-m-d');}
+            $clave_GR = $this->sri->Clave_acceso($FA['FechaGRE'],'06',$FA['Serie_GR'],$FA['Remision']);
+            $FA['ClaveAcceso_GR'] = $clave_GR;
+            $FA['Autorizacion_GR'] = $clave_GR;
+         }
          // SRI_Crear_Clave_Acceso_Guia_Remision FA, False, True
          if (strlen($FA['Autorizacion_GR']) > 13) {
             $this->modelo->actualizar_Facturas_Auxiliares($FA);
@@ -1152,6 +1165,7 @@ class facturarC
       $TA['Autorizacion'] = $FA['Autorizacion'];
       $TA['CodigoC'] = $FA['CodigoC'];
       $TA['Fecha'] = $FA['Fecha'];
+      //print_r($FA);die();
       //Actualiza_Estado_Factura($TA);
       sp_Actualizar_Saldos_Facturas($TA['TP'], $TA['Serie'], $TA['Factura']);
 
@@ -1188,19 +1202,30 @@ class facturarC
          $this->modelo->Facturas_Impresas($FA); 
       }
 
+      $clave_guia = '';
+      $imp_guia = '';
+
       if ($FA['TC'] <> "OP") {
          if ($FA['Remision'] > 0) {
             if (strlen($FA['Autorizacion']) < 13) {
-               //Imprimir_Guia_Remision
+               $AdoFactura = $this->modelo->DCFactura($FA['TC'], $FA['Serie'], $FA['Factura']);
+               $AdoAsientoF = $this->modelo->lineas_factura();
+               //Imprimir_Guia_Remision($AdoFactura, $AdoAsientoF, $FA);
+               //$this->modelo->pdf_guia_remision_elec($FA, $FA['Autorizacion_GR'], $periodo=false, 0, 1);
                $data = '';
             } else if (strlen($FA['Autorizacion']) >= 13) {
+               //$rep1 = $this->sri->SRI_Crear_Clave_Acceso_Guia_Remision($FA);
+               $this->modelo->pdf_guia_remision_elec($FA, $FA['Autorizacion_GR'], $periodo=false, 0, 1);
+               $clave_guia = $this->sri->Clave_acceso($FA['FechaGRE'], '06', $FA['Serie_GR'], $FA['Remision']);
+					$imp_guia = $FA['Serie_GR'] . '-' . generaCeros($FA['Remision'], 7);
+               $GR = ReadSetDataNum("GR_SERIE_" . $FA['Serie_GR'], True, True);
                //SRI_Generar_PDF_GR($FA, True)
                $data = '';
             }
          }
       }
       //SRI_Generar_PDF_FA($FA, True)
-      return array('AU' => $respuesta, 'GR' => $respuesta2, 'pdf' => $imp, 'multiple' => $preguntaMultiple, 'data' => $FA);
+      return array('AU' => $respuesta, 'GR' => $respuesta2, 'pdf_guia'=>$imp_guia, 'clave_guia' => $clave_guia, 'pdf' => $imp, 'multiple' => $preguntaMultiple, 'data' => $FA);
    }
 
 

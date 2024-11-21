@@ -1,8 +1,8 @@
 <!-- INICIO MODULO PRE-FACTURA -->
 <?php
-  if(!isset($facturar)){
+  /*if(!isset($facturar)){
     $facturar = new facturar_pensionC();
-  }
+  }*/
 
   if(!isset($mostrar_medidor)){
     $mostrar_medidor = false;

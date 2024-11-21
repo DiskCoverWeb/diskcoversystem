@@ -351,11 +351,13 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			$('#label2').text(data.Autorizacion + " ORDEN No. " + data.Serie + "-");
 			$('#label3').text("I.V.A. 0.00%");
 			$('#TextFacturaNo').val(data.NoFactura);
+			$('#TextFact').val(data.NoFactura);
 		} else {
 			// Facturas.Caption = "INGRESAR FACTURA"
 			$('#label2').text(data.Autorizacion + " FACTURA No. " + data.Serie + "-");
 			//$('#label3').text("I.V.A. " + (parseFloat(data.Porc_IVA) * 100).toFixed(2) + "%")
 			$('#TextFacturaNo').val(data.NoFactura);
+			$('#TextFact').val(data.NoFactura);
 		}
 		// 'Facturas.Caption = Facturas.Caption & " (" & FA.TC & ")"
 		//$('#label36').text("Servicio " + (data.Porc_Serv * 100).toFixed(2) + "%")
@@ -881,15 +883,17 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 					window.open(url, '_blank');*/
 					Swal.fire('Factura Creada y Autorizada', '', 'success')
 					.then((result)=>{
-						var url = '../../TEMP/' + data.pdf + '.pdf';
-						window.open(url, '_blank');
+						var url_fa = '../../TEMP/' + data.pdf + '.pdf';
+						window.open(url_fa, '_blank');
+						if(data.GR != '') abrirPDFGuiaDeRemision(data);
 					});
 					Eliminar_linea('', '');
 				} else {
 					Swal.fire('Factura creada pero no autorizada', '' , 'warning')
 					.then((result) => {
-						var url = '../../TEMP/' + data.pdf + '.pdf';
-						window.open(url, '_blank');
+						var url_fa = '../../TEMP/' + data.pdf + '.pdf';
+						window.open(url_fa, '_blank');
+						if(data.GR != '') abrirPDFGuiaDeRemision(data);
 					});
 					/*var url = '../../TEMP/' + data.pdf + '.pdf';
 					window.open(url, '_blank');*/
@@ -897,6 +901,26 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 				}
 			}
 		})
+	}
+
+	function abrirPDFGuiaDeRemision(data){
+		if (data.GR == 1) {
+			/*var url = '../../TEMP/' + data.pdf + '.pdf';
+			window.open(url, '_blank');*/
+			Swal.fire('Guia de Remision Creada y Autorizada', '', 'success')
+			.then((result)=>{
+				var url_guia = '../../TEMP/' + data.pdf_guia + '.pdf';
+				window.open(url_guia, '_blank');
+			});
+		} else {
+			Swal.fire('Guia de Remision creada pero no autorizada', '' , 'warning')
+			.then((result) => {
+				var url_guia = '../../TEMP/' + data.pdf_guia + '.pdf';
+				window.open(url_guia, '_blank');
+			});
+			/*var url = '../../TEMP/' + data.pdf + '.pdf';
+			window.open(url, '_blank');*/
+		}
 	}
 
 
@@ -1306,6 +1330,9 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			dataType: 'json',
 			success: function (data) {
 				if (data.length > 0) {
+					for(let i=0; i < data.length; i++){
+						data[i]['nombre'] = data[i]['codigo'].split('_')[1];
+					}
 					llenarComboList(data, 'DCSerieGR');
 				}
 
@@ -1422,7 +1449,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 		$('#TextSector').val('.');
 		$('#TxtHasta').val('0.00');
 		$('#TextTipo').val('.');
-		$('#TextFact').val('0.00');
+		//$('#TextFact').val('000');
 		$('#TextValor').val('0.00');
 
 		$.ajax({
@@ -1776,6 +1803,12 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 		$('#TextRecibido').val(TextRecibido.toFixed(2));
 	}
 
+	function formatearValor(elemento){
+		console.log(elemento);
+		let valor = elemento.value;
+		elemento.value = parseInt(valor).toFixed(2);
+	}
+
 	function guardar_abonos() {
 
 		const fechaInput = new Date($('#form_abonos #MBFecha').val());
@@ -1816,6 +1849,10 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 			success: function (data) {
 				$('#myModal_espera').modal('hide');
 				Swal.fire('Abono Guardado', '', 'success').then(function () {
+					if(data.TJ != ''){
+						var url_compro = '../../TEMP/' + data.TJ + '.pdf';
+						window.open(url_compro, '_blank');
+					}
 					cerrar_modal();
 				})
 			}
@@ -1823,7 +1860,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 
 	}
 
-	function cerrar_modal() {
+function cerrar_modal() {
 		parent.cerrarModal();
 	}
 
@@ -3067,7 +3104,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 										<div class="col-sm-3" style="padding: 1px;">
 											<b>Comp. Venta</b>
 											<input type="text" name="TextFact" id="TextFact"
-												class="form-control input-xs" value="0.00">
+												class="form-control input-xs" value="0">
 										</div>
 										<div class="col-sm-3" style="padding-left: 1px;  padding-top: 1px;">
 											<b>Valor suscr</b>
@@ -3241,7 +3278,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 					</div>
 					<div class="col-sm-4">
 						<b>Noches</b>
-						<input type="text" name="cantNoches" id="cantNoches" class="form-control input-xs" value="0">
+						<input type="text" name="cantNoches" id="cantNoches" class="form-control input-xs" value="1">
 					</div>
 				</div>
 				<div class="row" style="padding-top:5px">
@@ -3563,7 +3600,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 												<div class="col-sm-5">
 													<input type="text" name="TextRetIVAB" id="TextRetIVAB"
 														class="form-control input-xs text-right" placeholder="0.00" value="0.00"
-														onblur="Calculo_Saldo()">
+														onblur="formatearValor(this);Calculo_Saldo()">
 												</div>
 											</div>
 										</div>
@@ -3603,7 +3640,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 												<div class="col-sm-5">
 													<input type="text" name="TextRetIVAS" id="TextRetIVAS"
 														class="form-control input-xs text-right" placeholder="0.00"
-														onblur="Calculo_Saldo()" value="0.00">
+														onblur="formatearValor(this);Calculo_Saldo()" value="0.00">
 												</div>
 											</div>
 										</div>
@@ -3641,7 +3678,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 												<div class="col-sm-5">
 													<input type="text" name="TextRet" id="TextRet"
 														class="form-control input-xs text-right" placeholder="00000000"
-														onblur="Calculo_Saldo()" value="0.00">
+														onblur="formatearValor(this);Calculo_Saldo()" value="0.00">
 												</div>
 											</div>
 										</div>
@@ -3680,7 +3717,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 												<div class="col-sm-6">
 													<input type="text" name="TextCheque" id="TextCheque"
 														class="form-control input-xs text-right" placeholder="0.00"
-														onblur="Calculo_Saldo()" value="0.00">
+														onblur="formatearValor(this);Calculo_Saldo()" value="0.00">
 												</div>
 											</div>
 										</div>
@@ -3722,7 +3759,7 @@ $servicio = $_SESSION['INGRESO']['Servicio'];
 												<div class="col-sm-6">
 													<input type="text" name="TextTotalBaucher" id="TextTotalBaucher"
 														class="form-control input-xs text-right" placeholder="00000000"
-														onblur="Calculo_Saldo()" value="0.00">
+														onblur="formatearValor(this);Calculo_Saldo()" value="0.00">
 												</div>
 											</div>
 										</div>

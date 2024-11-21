@@ -496,8 +496,7 @@ class cambioeM
 	   $sql="SELECT * 
         	FROM Catalogo_Lineas 
         	WHERE Item = '".$item."' 
-        	AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-        	AND TL <> 0 ";
+        	AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
         	if($id)
         	{
         		$sql.=" AND ID = '".$id."'"; 
@@ -512,8 +511,7 @@ class cambioeM
 		$conn_sql = $this->empresas_datos($entidad,$item);
 		$sql= "SELECT DISTINCT Autorizacion FROM Catalogo_Lineas
 			WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-			AND  Item = '$item' 
-			AND TL <> 0";
+			AND  Item = '$item'";
 		//print_r($sql);die();
        	//return $this->db->datos($sql);
 		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
@@ -526,8 +524,7 @@ class cambioeM
 		$sql= "SELECT DISTINCT Serie FROM Catalogo_Lineas
 		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 		AND Item = '".$item."' 
-		AND Autorizacion = '".$autorizacion."'
-		AND TL <> 0";
+		AND Autorizacion = '".$autorizacion."'";
        	//return $this->db->datos($sql);
 		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
 	}
@@ -539,8 +536,7 @@ class cambioeM
 			WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 			AND Item = '".$item."' 
 			AND Autorizacion = '".$autorizacion."'
-			AND Serie = '".$serie."'
-			AND TL <> 0";
+			AND Serie = '".$serie."'";
        	//return $this->db->datos($sql);
 		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
 	}
@@ -553,7 +549,6 @@ class cambioeM
 			AND Item = '".$item."' 
 			AND Autorizacion = '".$autorizacion."'
 			AND Serie = '".$serie."'
-			AND TL <> 0
 			AND Fact = '".$fact."'";
        	//return $this->db->datos($sql);
 		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
@@ -566,8 +561,7 @@ class cambioeM
       		FROM Catalogo_Lineas
       		WHERE Codigo = '".$codigo."'
       		AND Item = '".$item."' 
-      		AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-      		AND TL <> 0 ";      		
+      		AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";      		
        	//return $this->db->datos($sql);
 		//print_r($sql."\n");
 		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
@@ -580,8 +574,7 @@ class cambioeM
               FROM Catalogo_Lineas 
               WHERE Codigo = '".$Codigo."' 
               AND Item = '".$item."' 
-              AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-              AND TL <> 0";
+              AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
         //return $this->db->String_Sql($sql);
 		//print_r($sql."\n");
 		return $this->db->ejecutar_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);

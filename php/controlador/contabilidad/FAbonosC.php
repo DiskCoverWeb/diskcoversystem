@@ -378,7 +378,7 @@ class FAbonosC
 		$TA['Factura'] = $parametro['DCFactura'];
 		$TA['Abono'] = $parametro['TextInteres'];
 		// print_r($TA);die();
-		Grabar_Abonos($TA);
+		$TJ = Grabar_Abonos($TA);
 
 
 		// 'Abono de Factura Rete. IVA Bienes
@@ -442,7 +442,11 @@ class FAbonosC
 		//print_r(array('TA' => $TA, 'T' => $T, 'SaldoDisp' => $SaldoDisp));die();
 		$this->modelo->Actualizar_factura($SaldoDisp, $T, $TA);
 		// print_r($parametro);die();
-		return Imprimir_Comprobante_Caja($TA);
+		$pdf_compro = '';
+		if($TJ == 1){
+			$pdf_compro = 'COMP_TRANS_'.$_SESSION['INGRESO']['Entidad_No'].$_SESSION['INGRESO']['item']."_".$TA['Serie'].$TA['Factura'];
+		}
+		return array('res'=>Imprimir_Comprobante_Caja($TA), 'TJ' => $pdf_compro);
 	}
 
 

@@ -1190,7 +1190,7 @@ async function datos_empresa()
 			'MBoxCta': $('#MBoxCta').val(),
 			'MBoxCta_Anio_Anterior': $('#MBoxCta_Anio_Anterior').val(),
 			'MBoxCta_Venta': $('#MBoxCta_Venta').val(),
-			'CheqPuntoEmision': $('#CheqPuntoEmision').val(),
+			'CheqPuntoEmision': $('#CheqPuntoEmision').prop('checked'),
 			'CTipo': $('#CTipo').val(),
 			'TxtNumFact': $('#TxtNumFact').val(),
 			'TxtItems': $('#TxtItems').val(),
@@ -1315,7 +1315,7 @@ async function datos_empresa()
 	       	$('#TxtTelefonoEstab').val(data.Telefono_Estab)
 	       	$('#TxtLogoTipoEstab').val(data.Logo_Tipo_Estab)
 			
-			$('#CheqPuntoEmision').attr('checked', data.TL);
+			$('#CheqPuntoEmision').prop('checked', data.TL);
 	      }
 	    })
 
@@ -2142,7 +2142,7 @@ async function datos_empresa()
 														</div>
 														<div class="row">
 															<div class="col-sm-12">
-																<label><input type="checkbox" name="CheqPuntoEmision" id="CheqPuntoEmision"> Bloquear/Desbloquear Punto de Emisión</label>
+																<label><input type="checkbox" name="CheqPuntoEmision" id="CheqPuntoEmision"> Activar/Desactivar Punto de Emisión</label>
 															</div>
 														</div>
 														<div class="row">

@@ -370,6 +370,8 @@ function Grabar_abonos() {
 		dataType: 'json',
 		success: function (data) {
 			Swal.fire('Abono Guardado', '', 'success').then(function () {
+				var url_compro = '../../TEMP/' + data.TJ + '.pdf';
+				window.open(url_compro, '_blank');
 				cerrar_modal();
 			})
 		}
