@@ -315,16 +315,16 @@ class lista_comprasC
 		$msj = '';
 		if(count($cta)==0)
 		{
-			SetAdoAddNew("Catalogo_Cuentas");
+				SetAdoAddNew("Catalogo_Cuentas");
 		    SetAdoFields("TC","P");
 		    SetAdoFields("Cta","2.1.05.01.12");
 		    SetAdoFields("Cuenta","PROVISION COMPRAS INVENTARIO");
 		    SetAdoFields("Item",$_SESSION['INGRESO']['item']);
 		    SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
-			SetAdoUpdate();
-			$cta[0]['Codigo'] = "2.1.05.01.12";
-			$cta[0]['Cuenta'] = "PROVISION COMPRAS INVENTARIO";
-			$cta[0]['SubCta'] = "P";
+				SetAdoUpdate();
+				$cta[0]['Codigo'] = "2.1.05.01.12";
+				$cta[0]['Cuenta'] = "PROVISION COMPRAS INVENTARIO";
+				$cta[0]['SubCta'] = "P";
 		}
 
 		$prove = false;
@@ -338,6 +338,14 @@ class lista_comprasC
 
 		$orden = $parametros['orden'];
 		$provedor = $this->modelo->lineas_compras_solicitados_proveedores($parametros['orden'],false,$prove);
+		$fecha = date('Y-m-d');
+		$numOrde = $this->modelo->numeroFactura($fecha);
+		$numeroSubCta =date('Ymd').'01';
+		if(count($numOrde)>0 && $numOrde[0]['num']!=0)
+		{
+			 $numeroSubCta = date('Ymd').generaCeros($numOrde[0]['num']+1,2);
+		}
+
 		// print_r($provedor);die();
 		foreach ($provedor as $key => $value) 
 		{
@@ -358,7 +366,7 @@ class lista_comprasC
 		                    'sub'=> $value['CodigoC'], //Codigo se trae catalogo subcuenta
 		                    'sub2'=>$value['Cliente'],//nombre del beneficiario
 		                    'fecha_sc'=> date('Y-m-d'), //fecha 
-		                    'fac2'=>0,
+		                    'fac2'=>intval($numeroSubCta),
 		                    'mes'=> 0,
 		                    'valorn'=> round($value['Total'],2),//valor de sub cuenta 
 		                    'moneda'=> 1, /// moneda 1
