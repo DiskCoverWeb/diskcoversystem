@@ -622,6 +622,7 @@ class cambioeC
         $TxtPosFact  =  TextoValido($parametros['TxtPosFact']);
 		$Item = $parametros['item'];
 		$Entidad = $parametros['entidad'];
+		$TL = $parametros['CheqPuntoEmision'] == 'true' ? 1 : 0;
         if($parametros['CTipo']== ""){$parametros['CTipo'] = "FA";} 
 
         $datos = $this->modelo->validar_codigo($Codigo, $Item, $Entidad);
@@ -640,7 +641,7 @@ class cambioeC
 			$campos['Codigo'] = "'".$parametros['TextCodigo']."'";
 			$campos['Item'] = "'".intval($Item)."'";
 			$campos['Periodo'] = "'".$_SESSION['INGRESO']['periodo']."'";
-			$campos['TL'] = 1;
+			//$campos['TL'] = 1;
 
             /*SetAdoFields("Codigo", $parametros['TextCodigo']);
             SetAdoFields("Item", intval($Item));
@@ -661,7 +662,7 @@ class cambioeC
 			$campos['Codigo'] = "'".$parametros['TextCodigo']."'";
 			$campos['Item'] = "'".$Item."'";
 			$campos['Periodo'] = "'".$_SESSION['INGRESO']['periodo']."'";
-			$campos['TL'] = 1;
+			//$campos['TL'] = 1;
 
             /*SetAdoFields("Codigo", $parametros['TextCodigo']);
             SetAdoFields("Item", $Item);
@@ -682,6 +683,7 @@ class cambioeC
 		$campos['Fact_Pag'] = $parametros['TxtNumFact'];
 		$campos['ItemsxFA'] = $parametros['TxtItems'];
 		$campos['Fact'] = "'".$parametros['TxtLogoFact']."'";
+		$campos['TL'] = $TL;
 		// 'SRI'
 		$campos['Fecha'] = "'".$parametros['MBFechaIni']."'";
 		$campos['Vencimiento'] = "'".$parametros['MBFechaVenc']."'";
