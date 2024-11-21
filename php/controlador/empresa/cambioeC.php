@@ -118,6 +118,11 @@ if(isset($_GET['detalle']))
   echo json_encode($controlador->detalle_linea($id, $item, $entidad));
 }
 
+if(isset($_GET['enviar_email']))
+{
+  	echo json_encode($controlador->enviar_email($_FILES,$_POST));
+}
+
 class cambioeC 
 {
 	private $modelo;
@@ -845,6 +850,12 @@ class cambioeC
 
         return 1;
 
+	}
+
+	function enviar_email($file,$parametros)
+	{
+		print_r($file);
+		print_r($parametros);die();
 	}
 
 }
