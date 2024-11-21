@@ -117,6 +117,20 @@ if(isset($_GET['guardarLineas']))
   echo json_encode($controlador->guardarLineas());
 }
 
+if(isset($_GET['CatalogoCuentas']))
+{
+  echo json_encode($controlador->getCatalogoCuentas());
+}
+
+if(isset($_GET['Anticipos']))
+{
+  echo json_encode($controlador->getAnticipos());
+}
+if(isset($_GET['NotasCredito']))
+{
+  echo json_encode($controlador->getNotasCredito());
+}
+
 if(isset($_GET['CatalogoProductosByPeriodo']))
 {
     //se definen los parametros que deseamos obtener

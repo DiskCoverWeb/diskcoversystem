@@ -1,6 +1,6 @@
 <?php
-  include "../controlador/facturacion/facturar_pensionC.php";
-  $facturar = new facturar_pensionC();
+  //require_once("../controlador/facturacion/facturar_pensionC.php");
+  //$facturar = new facturar_pensionC();
 
   $mostrar_medidor = false;
   switch ($_SESSION['INGRESO']['modulo_']) {
@@ -42,9 +42,12 @@
     autocomplete_cliente();
     catalogoLineas();
     totalRegistros();
-    verificarTJ();
+    //verificarTJ();
     cargarBancos();
     DCGrupo_No();
+    selectCatalogoCuentas();
+    selectAnticipos();
+    selectNotasCredito();
 
     DCPorcenIva('fechaEmision', 'DCPorcenIVA');
 
@@ -195,6 +198,70 @@
     cambiarlabel()
 
   });
+
+  function selectCatalogoCuentas(){
+    $.ajax({
+      type: "GET",                 
+      url: '../controlador/facturacion/facturar_pensionC.php?CatalogoCuentas=true',
+      dataType:'json', 
+      success: function(data)
+      {
+        console.log(data);
+        if (data.length>0) {
+          let selectHtml = "";
+          for(let d of data){
+            selectHtml += `<option value='${d['codigo']}'>${d['nombre']}</option>`;
+          }
+          $('#cuentaBanco').html(selectHtml);
+          verificarTJ();
+        }else{
+          Swal.fire('Hubo un error', '', 'error');
+        }
+      }
+    });
+  }
+
+  function selectAnticipos(){
+    $.ajax({
+      type: "GET",                 
+      url: '../controlador/facturacion/facturar_pensionC.php?Anticipos=true',
+      dataType:'json', 
+      success: function(data)
+      {
+        console.log(data);
+        if (data.length>0) {
+          let selectHtml = "";
+          for(let d of data){
+            selectHtml += `<option value='${d['codigo']}'>${d['nombre']}</option>`;
+          }
+          $('#DCAnticipo').html(selectHtml);
+        }else{
+          Swal.fire('Hubo un error', '', 'error');
+        }
+      }
+    });
+  }
+
+  function selectNotasCredito(){
+    $.ajax({
+      type: "GET",                 
+      url: '../controlador/facturacion/facturar_pensionC.php?NotasCredito=true',
+      dataType:'json', 
+      success: function(data)
+      {
+        console.log(data);
+        if (data.length>0) {
+          let selectHtml = "";
+          for(let d of data){
+            selectHtml += `<option value='${d['codigo']}'>${d['nombre']}</option>`;
+          }
+          $('#cuentaNC').html(selectHtml);
+        }else{
+          Swal.fire('Hubo un error', '', 'error');
+        }
+      }
+    });
+  }
 
   function usar_cliente(nombre, ruc, codigocliente, email, T, grupo) {
     $('#PFcodigoCliente').val(codigocliente);
@@ -1336,7 +1403,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
         </a>
       </div>
 
-      <?php include("prefactura.php") ?>
+      <?php include_once("prefactura.php") ?>
       
       <div class="col">
         <a href="#" title="Insertar nuevo Beneficiario/Cliente"  class="btn btn-default" onclick="addCliente(1)">
@@ -1672,10 +1739,10 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
           <div class="col-sm-4 padding-all">
             <select class="form-control input-xs" name="cuentaBanco" id="cuentaBanco" tabindex="29" onchange="verificarTJ();" onblur="$('#chequeNo').focus()">
               <?php
-                $cuentas = $facturar->getCatalogoCuentas();
+                /*$cuentas = $facturar->getCatalogoCuentas();
                 foreach ($cuentas as $cuenta) {
                   echo "<option value='".$cuenta['codigo']."'>".$cuenta['nombre']."</option>";
-                }
+                }*/
               ?>
             </select>
           </div>
@@ -1701,10 +1768,10 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
           <div class="col-sm-8 padding-all">
             <select class="form-control input-xs" name="DCAnticipo" id="DCAnticipo" tabindex="32">
               <?php
-                $cuentas = $facturar->getAnticipos();
+                /*$cuentas = $facturar->getAnticipos();
                 foreach ($cuentas as $cuenta) {
                   echo "<option value='".$cuenta['codigo']."'>".$cuenta['nombre']."</option>";
-                }
+                }*/
               ?>
             </select>
           </div>
@@ -1722,10 +1789,10 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
           <div class="col-sm-8 padding-all">
             <select class="form-control input-xs" name="cuentaNC" id="cuentaNC" tabindex="34">
               <?php
-                $cuentas = $facturar->getNotasCredito();
+                /*$cuentas = $facturar->getNotasCredito();
                 foreach ($cuentas as $cuenta) {
                   echo "<option value='".$cuenta['codigo']."'>".$cuenta['nombre']."</option>";
-                }
+                }*/
               ?>
             </select>
           </div>
