@@ -1,4 +1,5 @@
 <?php date_default_timezone_set('America/Guayaquil'); ?> 
+<script src="../../dist/js/qrCode.min.js"></script>
 <script type="text/javascript">
 	!function(e){var t=function(t,n){this.$element=e(t),this.type=this.$element.data("uploadtype")||(this.$element.find(".thumbnail").length>0?"image":"file"),this.$input=this.$element.find(":file");if(this.$input.length===0)return;this.name=this.$input.attr("name")||n.name,this.$hidden=this.$element.find('input[type=hidden][name="'+this.name+'"]'),this.$hidden.length===0&&(this.$hidden=e('<input type="hidden" />'),this.$element.prepend(this.$hidden)),this.$preview=this.$element.find(".fileupload-preview");var r=this.$preview.css("height");this.$preview.css("display")!="inline"&&r!="0px"&&r!="none"&&this.$preview.css("line-height",r),this.original={exists:this.$element.hasClass("fileupload-exists"),preview:this.$preview.html(),hiddenVal:this.$hidden.val()},this.$remove=this.$element.find('[data-dismiss="fileupload"]'),this.$element.find('[data-trigger="fileupload"]').on("click.fileupload",e.proxy(this.trigger,this)),this.listen()};t.prototype={listen:function(){this.$input.on("change.fileupload",e.proxy(this.change,this)),e(this.$input[0].form).on("reset.fileupload",e.proxy(this.reset,this)),this.$remove&&this.$remove.on("click.fileupload",e.proxy(this.clear,this))},change:function(e,t){if(t==="clear")return;var n=e.target.files!==undefined?e.target.files[0]:e.target.value?{name:e.target.value.replace(/^.+\\/,"")}:null;if(!n){this.clear();return}this.$hidden.val(""),this.$hidden.attr("name",""),this.$input.attr("name",this.name);if(this.type==="image"&&this.$preview.length>0&&(typeof n.type!="undefined"?n.type.match("image.*"):n.name.match(/\.(gif|png|jpe?g)$/i))&&typeof FileReader!="undefined"){var r=new FileReader,i=this.$preview,s=this.$element;r.onload=function(e){i.html('<img src="'+e.target.result+'" '+(i.css("max-height")!="none"?'style="max-height: '+i.css("max-height")+';"':"")+" />"),s.addClass("fileupload-exists").removeClass("fileupload-new")},r.readAsDataURL(n)}else this.$preview.text(n.name),this.$element.addClass("fileupload-exists").removeClass("fileupload-new")},clear:function(e){this.$hidden.val(""),this.$hidden.attr("name",this.name),this.$input.attr("name","");if(navigator.userAgent.match(/msie/i)){var t=this.$input.clone(!0);this.$input.after(t),this.$input.remove(),this.$input=t}else this.$input.val("");this.$preview.html(""),this.$element.addClass("fileupload-new").removeClass("fileupload-exists"),e&&(this.$input.trigger("change",["clear"]),e.preventDefault())},reset:function(e){this.clear(),this.$hidden.val(this.original.hiddenVal),this.$preview.html(this.original.preview),this.original.exists?this.$element.addClass("fileupload-exists").removeClass("fileupload-new"):this.$element.addClass("fileupload-new").removeClass("fileupload-exists")},trigger:function(e){this.$input.trigger("click"),e.preventDefault()}},e.fn.fileupload=function(n){return this.each(function(){var r=e(this),i=r.data("fileupload");i||r.data("fileupload",i=new t(this,n)),typeof n=="string"&&i[n]()})},e.fn.fileupload.Constructor=t,e(document).on("click.fileupload.data-api",'[data-provides="fileupload"]',function(t){var n=e(this);if(n.data("fileupload"))return;n.fileupload(n.data());var r=e(t.target).closest('[data-dismiss="fileupload"],[data-trigger="fileupload"]');r.length>0&&(r.trigger("click.fileupload"),t.preventDefault())})}(window.jQuery)
 </script>
@@ -30,7 +31,14 @@
 
 </style>
 <script type="text/javascript">
+	var video;
+	var canvasElement;
+	var canvas;
+	var scanning = false;
   $(document).ready(function () {
+	video = document.createElement("video");
+    canvasElement = document.getElementById("qr-canvas");
+    canvas = canvasElement.getContext("2d");
   	validar_ingreso();
   	areas();  
   	motivo_egreso()	
@@ -327,6 +335,10 @@
 		});
 	}
 
+	function productoPorQR(codigo){
+		$('#txt_cod_producto').val(codigo).trigger('blur');
+	}
+
 	function add_egreso()
 	{
 		var stock = $('#txt_stock').val(); 
@@ -478,7 +490,64 @@
 	{
 		lista_egreso_checking();
 		$('#myModal_historial').modal('show');
-	}   
+	}
+
+	function escanear_qr(){
+		//$('#qrescaner_carga').show();
+		$('#modal_qr_escaner').modal('show');
+		navigator.mediaDevices
+		.getUserMedia({ video: { facingMode: "environment" } })
+		.then(function (stream) {
+			$('#qrescaner_carga').hide();
+			scanning = true;
+			//document.getElementById("btn-scan-qr").hidden = true;
+			canvasElement.hidden = false;
+			video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+			video.srcObject = stream;
+			video.play();
+			tick();
+      		scan();
+		});
+	}
+
+	//funciones para levantar las funiones de encendido de la camara
+	function tick() {
+		canvasElement.height = video.videoHeight;
+		canvasElement.width = video.videoWidth;
+		//canvasElement.width = canvasElement.height + (video.videoWidth - video.videoHeight);
+		canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+
+		scanning && requestAnimationFrame(tick);
+	}
+
+	function scan() {
+		try {
+			qrcode.decode();
+		} catch (e) {
+			setTimeout(scan, 300);
+		}
+	}
+
+	const cerrarCamara = () => {
+		video.srcObject.getTracks().forEach((track) => {
+			track.stop();
+		});
+		canvasElement.hidden = true;
+		$('#qrescaner_carga').show();
+		$('#modal_qr_escaner').modal('hide');
+	};
+
+	//callback cuando termina de leer el codigo QR
+	qrcode.callback = (respuesta) => {
+		if (respuesta) {
+			//console.log(respuesta);
+			//Swal.fire(respuesta)
+			productoPorQR(respuesta);
+			//activarSonido();
+			//encenderCamara();    
+			cerrarCamara();    
+		}
+	};
 
 </script>
 
@@ -504,6 +573,11 @@
 				<img src="../../img/png/file_crono.png" style="width:32px;height:32px">
 			</button>
 		</div>
+		<div class="col-xs-2 col-md-2 col-sm-2">
+          <button class="btn btn-default" title="Escanear QR" onclick="escanear_qr()">
+            <img src="../../img/png/escanear_qr.png">
+          </button>
+        </div>
 		<div class="col-xs-2 col-md-2 col-sm-2" style="display:none;" id="pnl_notificacion">
 			<div class="navbar-custom-menu">
 				<ul class="nav navbar-nav">
@@ -687,8 +761,25 @@
   </div>
 </div>
 
-
-
+<div id="modal_qr_escaner" class="modal fade"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" onclick="cerrarCamara()">&times;</button>
+              <h4 class="modal-title">Escanear QR</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+			<div id="qrescaner_carga">
+				<div style="height: 100%;width: 100%;display:flex;justify-content:center;align-items:center;"><img src="../../img/gif/loader4.1.gif" width="20%"></div>
+			</div>
+		  	<canvas hidden="" id="qr-canvas" class="img-fluid" style="height: 100%;width: 100%;"></canvas>
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-danger" onclick="cerrarCamara()">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
 
 <div id="myModal_arbol_bodegas" class="modal fade myModalNuevoCliente" role="dialog">
     <div class="modal-dialog">

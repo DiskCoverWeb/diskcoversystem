@@ -661,7 +661,6 @@ class cambioeC
         }else{
             control_procesos("F", "Modificación de Punto de Venta de ".$parametros['CTipo']."-".$parametros['TxtNumSerieUno'].$parametros['TxtNumSerieDos']);
             $this->modelo->elimina_linea($Codigo, $Item, $Entidad);              
-            $datos1 = $this->modelo->validar_codigo($Codigo, $Item, $Entidad);
             if($parametros['MBFechaVenc'] <> $datos[0]["Vencimiento"]->format('Y-m-d')){ control_procesos("F", "Modifico: Fecha de Vencimiento de ".$parametros['TextCodigo']." ".$parametros['MBFechaVenc']);}
             if($parametros['TxtNumAutor'] <> $datos[0]["Autorizacion"]){ control_procesos("F", "Modifico: Autorización de ".$parametros['TextCodigo']." ".$parametros['TxtNumAutor']);}
             if($parametros['TxtNumSerieUno'].$parametros['TxtNumSerieDos'] <> $datos[0]["Serie"]){ control_procesos("F", "Modifico: Serie de ".$parametros['TextCodigo']." ".$parametros['TxtNumSerieUno'].$parametros['TxtNumSerieDos']);}
@@ -681,7 +680,11 @@ class cambioeC
 		$campos['Concepto'] = "'".$parametros['TextLinea']."'";
 		$campos['CxC'] = "'".substr($parametros['MBoxCta'], 0, -1)."'";
 		$campos['CxC_Anterior'] = "'".substr($parametros['MBoxCta_Anio_Anterior'], 0, -1)."'";
-		$campos['Cta_Venta'] = substr($parametros['MBoxCta_Venta'], 0, -1);
+		if(isset($parametros['MBoxCta_Venta']) && strlen($parametros['MBoxCta_Venta']) > 1){
+			$campos['Cta_Venta'] = substr($parametros['MBoxCta_Venta'], 0, -1);
+		}else{
+			$campos['Cta_Venta'] = "'".$parametros['MBoxCta_Venta']."'";
+		}
 		$campos['Logo_Factura'] = "'".$parametros['TxtLogoFact']."'";
 		$campos['Largo'] = $parametros['TxtLargo'];
 		$campos['Ancho'] = $parametros['TxtAncho'];
@@ -690,7 +693,7 @@ class cambioeC
 		$campos['Pos_Y_Fact'] = $parametros['TxtPosY'];
 		$campos['Fact_Pag'] = $parametros['TxtNumFact'];
 		$campos['ItemsxFA'] = $parametros['TxtItems'];
-		$campos['Fact'] = "'".$parametros['TxtLogoFact']."'";
+		$campos['Fact'] = "'".$parametros['CTipo']."'";
 		$campos['TL'] = $TL;
 		// 'SRI'
 		$campos['Fecha'] = "'".$parametros['MBFechaIni']."'";
@@ -702,6 +705,7 @@ class cambioeC
 		$campos['Direccion_Establecimiento'] = "'".$parametros['TxtDireccionEstab']."'";
 		$campos['Telefono_Estab'] = "'".$parametros['TxtTelefonoEstab']."'";
 		$campos['Logo_Tipo_Estab'] = "'".$parametros['TxtLogoTipoEstab']."'";
+		$campos['Individual'] = 0;
 
         /*SetAdoFields("Concepto", $parametros['TextLinea']);
         SetAdoFields("CxC", substr($parametros['MBoxCta'], 0, -1));
