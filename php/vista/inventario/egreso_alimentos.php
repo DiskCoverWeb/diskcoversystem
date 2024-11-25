@@ -38,7 +38,7 @@
   $(document).ready(function () {
 	video = document.createElement("video");
     canvasElement = document.getElementById("qr-canvas");
-    canvas = canvasElement.getContext("2d");
+    canvas = canvasElement.getContext("2d", { willReadFrequently: true });
   	validar_ingreso();
   	areas();  
   	motivo_egreso()	

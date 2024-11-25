@@ -9,7 +9,7 @@
   $(document).ready(function () {
 	video = document.createElement("video");
 	canvasElement = document.getElementById("qr-canvas");
-	canvas = canvasElement.getContext("2d");
+	canvas = canvasElement.getContext("2d", { willReadFrequently: true });
 
   	 window.addEventListener("message", function(event) {
             if (event.data === "closeModal") {
