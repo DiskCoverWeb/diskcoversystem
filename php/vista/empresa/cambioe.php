@@ -1162,7 +1162,7 @@ async function datos_empresa()
 			'TextLinea': $('#TextLinea').val(),
 			'MBoxCta': $('#MBoxCta').val(),
 			'MBoxCta_Anio_Anterior': $('#MBoxCta_Anio_Anterior').val(),
-			'MBoxCta_Venta': $('#MBoxCta_Venta').val(),
+			'MBoxCta_Venta': $('#MBoxCta_Venta').val() == '' ? '.' : $('#MBoxCta_Venta').val(),
 			'CheqPuntoEmision': $('#CheqPuntoEmision').prop('checked'),
 			'CTipo': $('#CTipo').val(),
 			'TxtNumFact': $('#TxtNumFact').val(),
