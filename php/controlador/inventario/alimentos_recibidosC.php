@@ -129,6 +129,10 @@ if(isset($_GET['guardar_recibido']))
 	$parametros = $_POST;
 	echo json_encode($controlador->guardar_recibido($parametros));
 }
+if (isset($_GET['imprimir_pdf'])) {
+	$parametros = $_GET;
+	$controlador->imprimir_pdf($parametros);
+}
 if(isset($_GET['pedido']))
 {
 	$parametros= $_POST['parametros'];	
@@ -308,11 +312,13 @@ if(isset($_GET['placas_auto']))
 class alimentos_recibidosC
 {
 	private $modelo;
+	//private $pdf;
 	private $barras;
 	private $modales;
 	function __construct()
 	{
 		$this->modelo = new alimentos_recibidosM();
+		//$this->pdf = new cabecera_pdf();
 	}
 
 	function guardar($parametros,$transporte,$gavetas)
@@ -637,6 +643,170 @@ class alimentos_recibidosC
 		   return SetAdoUpdate();
 	}
 
+	function imprimir_pdf($parametros)//cambiar
+	{
+		require(dirname(__DIR__, 3) . '/lib/fpdf/cabecera_pdf.php');
+		$pdf = new cabecera_pdf();
+		// print_r($parametros);die();
+		$tbl = $this->modelo->cargar_pedidos_trans($parametros['num_ped'],false);
+		/*$serie = explode(' ', $parametros['DCLinea']);
+		$serie = (isset($serie[1])) ? $serie[1] : false;
+		$codigo = $parametros['ddl_cliente'];
+		$tbl = $this->modelo->facturas_emitidas_tabla($codigo, $parametros['ddl_periodo'], $parametros['txt_desde'], $parametros['txt_hasta'], $serie);*/
+
+		$num = count($tbl);
+
+		$tr = '';
+		$iva = 0;$subtotal=0;$total=0;
+		$negativos = false;
+		$procedimiento = '';
+		$cabecera = '';
+		$reciclaje = 0;
+        $pie = ' 
+        </tbody>
+		</table>';
+		$d='';
+		$canti = 0;
+		$canti2 = 0;
+		$primeravez = 0;
+		$info = array();
+		foreach ($tbl as $key => $value) 
+		{
+			// print_r($value);die();
+			$sucursal = '.';
+			if($value['Codigo_Dr']!='.')
+			{
+				$dato_sucursal = $this->modelo->sucursales($query = false,$codigo=false,$value['Codigo_Dr']);
+				// print_r($dato_sucursal);die();
+				$sucursal = $dato_sucursal[0]['Direccion']; 
+			} 
+
+			$prod = $this->modelo->catalogo_productos($value['Codigo_Inv']);
+			$art = $prod[0]['TDP'];
+
+      		$canti = $canti+$value['Entrada'];      
+
+			$iva+=number_format($value['Total_IVA'],2);
+			// print_r($value['VALOR_UNIT']);
+			$sub = $value['Valor_Unitario']*$value['Entrada'];
+			$subtotal+=$sub;
+			$procedimiento=$value['Detalle'];
+
+			$total+=$value['Valor_Total'];
+
+			$FechaInventario = $value['Fecha']->format('Y-m-d');
+ 	 		$CodBodega = '01';
+			$costo_existencias =  Leer_Codigo_Inv($value['Codigo_Inv'],$FechaInventario,$CodBodega,$CodMarca='');
+		
+			if($costo_existencias['respueta']!=1){
+				$costo_existencias['datos']['Stock'] = 0;
+				$costo_existencias['datos']['Costo'] = 0;
+			}
+			else{
+				$exis = number_format($costo_existencias['datos']['Stock']-$value['Entrada'],2);
+				if($exis<0)
+				{
+					$nega = $exis;
+					$negativos = true;
+				}
+			}
+			$nega = 0;			
+			
+			$info[] = array(
+				'Item' => ($key+1),
+				'Fecha_Fab' => $value['Fecha_Fab']->format('Y-m-d'),
+				'Fecha_Exp' => $value['Fecha_Exp']->format('Y-m-d'),
+				'Producto' => $value['Producto'],
+				'Cantidad' => number_format($value['Entrada'],2,'.','').' '.$value['Unidad'],
+				'Nombre_Completo' => $value['Nombre_Completo'],
+				'Codigo_Barra' => $value['Codigo_Barra'],
+				'Sucursal' => $sucursal,
+				'QR' => dirname(__DIR__, 3) . "/TEMP/QR_65001_B01G01.png"
+			);
+
+			/*if($d=='')
+			{
+				$d =  dimenciones_tabl(strlen($value['ID']));
+				$d1 =  dimenciones_tabl(strlen($value['Fecha_Exp']->format('Y-m-d')));
+				$d2 =  dimenciones_tabl(strlen($value['Fecha_Fab']->format('Y-m-d')));
+				$d3 =  dimenciones_tabl(strlen($value['Producto']));
+				$d4 =  dimenciones_tabl(strlen($value['Entrada']));
+			}
+			$tr.='<tr>
+  					<td width="'.$d.'">'.($key+1).'</td>
+  					<td width="'.$d1.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
+  					<td width="'.$d2.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
+  					<td width="'.$d3.'">'.$value['Producto'].'</td>
+  					<td width="'.$d4.'">'.number_format($value['Entrada'],2,'.','').' '.$value['Unidad'].'</td>
+  					<td width="'.$d4.'">'.$value['Nombre_Completo'].'</td>
+  					<td width="'.$d4.'">'.$value['Codigo_Barra'].'</td>
+  					<td width="'.$d4.'">'.$sucursal.'</td>
+  					<td>';
+  					if($art!='.')
+  					{
+  						$tr.='<button class="btn btn-xs btn-primary" title="Agregar a '.$value['Producto'].'"  onclick=" show_producto2(\''.$value['ID'].'\')" ><i class=" fa fa-list"></i></button>';
+  						$primeravez = 1;
+  						$canti2 = $canti2+$value['Entrada'];
+  					}
+
+  					$tr.='<button class="btn btn-xs btn-danger" title="Eliminar linea"  onclick="eliminar_lin(\''.$value['ID'].'\',\''.$art.'\')" ><span class="glyphicon glyphicon-trash"></span></button>
+  					</td>
+  				</tr>';*/
+			
+		}
+
+		//print_r($info);die();
+		$titulo = 'L I S T A  D E  A L I M E N T O S';
+		$sizetable = 7;
+		$mostrar = TRUE;
+		// $Fechaini = $parametros['txt_desde'] ;//str_replace('-','',$parametros['Fechaini']);
+		// $Fechafin = $parametros['txt_hasta']; //str_replace('-','',$parametros['Fechafin']);
+		$tablaHTML = array();
+		$pos = 0;
+		$borde = 1;
+		// print_r($datos);die();
+		$pos = 1;
+		$tablaHTML[0]['medidas'] = array(10, 20, 20, 45, 20, 50, 50, 35, 30); //25
+		$tablaHTML[0]['alineado'] = array('L', 'L', 'L', 'L', 'L', 'L', 'L', 'L', 'L');
+		$tablaHTML[0]['datos'] = array('Item', 'Fecha Clasificación', 'Fecha Expiración', 'Descripción', 'Cantidad', 'Código Usuario', 'Código Barras', 'Sucursal', 'QR');
+		$tablaHTML[0]['borde'] = $borde;
+		$tablaHTML[0]['estilo'] = 'b';
+
+		$datos = $info;
+
+		foreach ($datos as $key => $value) {
+
+			$tablaHTML[$pos]['medidas'] = $tablaHTML[0]['medidas'];
+			$tablaHTML[$pos]['alineado'] = $tablaHTML[0]['alineado'];
+			$tablaHTML[$pos]['datos'] = array($value['Item'], $value['Fecha_Fab'], $value['Fecha_Exp'], $value['Producto'], $value['Cantidad'], $value['Nombre_Completo'], $value['Codigo_Barra'], $value['Sucursal'], $value['QR']);
+			$tablaHTML[$pos]['borde'] = $borde;
+			$pos += 1;
+		}
+
+		$pdf->cabecera_reporte_MC($titulo, $tablaHTML, $contenido = false, $image = false, $Fechaini = false, $Fechafin = false, $sizetable, $mostrar, 15, 'H');
+	}
+
+	function generarQR($codigo){
+		require_once(dirname(__DIR__,3)."/lib/phpqrcode/qrlib.php");
+		$archivo = 'QR_'.$_SESSION['INGRESO']['Entidad_No'].$_SESSION['INGRESO']['item'].'_'.str_replace('-', '', $codigo).'.png';
+		$ruta = dirname(__DIR__, 3) . "/TEMP/".$archivo;
+		
+		$qr_correccion = QR_ECLEVEL_L; //Nivel de correccion de errores (L, M, Q, H)
+		$qr_tamano = 7; //Define el tamano del qr. Enteros entre 1 a 10
+		$qr_margenes = 2; //Margenes del qr
+
+		QRcode::png($codigo, $ruta, $qr_correccion, $qr_tamano, $qr_margenes);
+		
+		/*$filename = dirname(__DIR__, 3) . "/TEMP/png/qr_baq.png";
+		$qr_correccion = QR_ECLEVEL_L; //Nivel de correccion de errores (L, M, Q, H)
+		$qr_tamano = 7; //Define el tamano del qr. Enteros entre 1 a 10
+		$qr_margenes = 2; //Margenes del qr
+
+		QRcode::png($content, $filename, $qr_correccion, $qr_tamano, $qr_margenes);*/
+
+		return array('res' => 1, 'qr' => '../../TEMP/'.$archivo);
+	}
+
 	function cargar_productos($parametros)
     {
     	// print_r($parametros);die();
@@ -654,11 +824,11 @@ class alimentos_recibidosC
 		$reciclaje = 0;
         $pie = ' 
         </tbody>
-      </table>';
-      $d='';
-      $canti = 0;
-      $canti2 = 0;
-      $primeravez = 0;
+		</table>';
+		$d='';
+		$canti = 0;
+		$canti2 = 0;
+		$primeravez = 0;
 		foreach ($datos as $key => $value) 
 		{
 			// print_r($value);die();
@@ -687,7 +857,10 @@ class alimentos_recibidosC
  	 		$CodBodega = '01';
 			$costo_existencias =  Leer_Codigo_Inv($value['Codigo_Inv'],$FechaInventario,$CodBodega,$CodMarca='');
 		
-			if($costo_existencias['respueta']!=1){$costo_existencias['datos']['Stock'] = 0; $costo_existencias['datos']['Costo'] = 0;}
+			if($costo_existencias['respueta']!=1){
+				$costo_existencias['datos']['Stock'] = 0;
+				$costo_existencias['datos']['Costo'] = 0;
+			}
 			else{
 				$exis = number_format($costo_existencias['datos']['Stock']-$value['Entrada'],2);
 				if($exis<0)
@@ -698,15 +871,22 @@ class alimentos_recibidosC
 			}
 			$nega = 0;			
 			
+			//Generacion de Codigo QR
+			$nombre_archivo = 'QR_'.$_SESSION['INGRESO']['Entidad_No'].$_SESSION['INGRESO']['item'].'_'.str_replace('-', '', $value['Codigo_Barra']).'.png';
+			$ruta = "/TEMP/".$nombre_archivo;
+			if(!file_exists(dirname(__DIR__, 3) . $ruta)){
+				$this->generarQR($value['Codigo_Barra']);
+			}
+
 
 			if($d=='')
 			{
-			$d =  dimenciones_tabl(strlen($value['ID']));
-			$d1 =  dimenciones_tabl(strlen($value['Fecha_Exp']->format('Y-m-d')));
-			$d2 =  dimenciones_tabl(strlen($value['Fecha_Fab']->format('Y-m-d')));
-			$d3 =  dimenciones_tabl(strlen($value['Producto']));
-			$d4 =  dimenciones_tabl(strlen($value['Entrada']));
-		  }
+				$d =  dimenciones_tabl(strlen($value['ID']));
+				$d1 =  dimenciones_tabl(strlen($value['Fecha_Exp']->format('Y-m-d')));
+				$d2 =  dimenciones_tabl(strlen($value['Fecha_Fab']->format('Y-m-d')));
+				$d3 =  dimenciones_tabl(strlen($value['Producto']));
+				$d4 =  dimenciones_tabl(strlen($value['Entrada']));
+			}
 			$tr.='<tr>
   					<td width="'.$d.'">'.($key+1).'</td>
   					<td width="'.$d1.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
@@ -716,6 +896,7 @@ class alimentos_recibidosC
   					<td width="'.$d4.'">'.$value['Nombre_Completo'].'</td>
   					<td width="'.$d4.'">'.$value['Codigo_Barra'].'</td>
   					<td width="'.$d4.'">'.$sucursal.'</td>
+  					<td style="width:fit-content;"><img src="../..'.$ruta.'" width="80px" height="80px"></td>
   					<td>';
   					if($art!='.')
   					{

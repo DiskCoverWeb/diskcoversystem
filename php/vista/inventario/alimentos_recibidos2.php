@@ -1,7 +1,15 @@
 <?php date_default_timezone_set('America/Guayaquil'); ?>
   <link rel="stylesheet" href="../../dist/css/style_calendar.css">
+  <script src="../../dist/js/qrCode.min.js"></script>
 <script type="text/javascript">
+  var video;
+	var canvasElement;
+	var canvas;
+	var scanning = false;
   $(document).ready(function () {
+    video = document.createElement("video");
+    canvasElement = document.getElementById("qr-canvas");
+    canvas = canvasElement.getContext("2d");
     notificaciones();
     cargar_paquetes();
      setInterval(function() {
@@ -115,9 +123,15 @@
     });
 
     $('#txt_codigo').on('select2:select', function (e) {
-    	limpiar();
-    	limpiar_reciclaje();
       var data = e.params.data.data;
+    	setearCamposPedidos(data);
+    });
+
+  })
+
+  function setearCamposPedidos(data){
+    limpiar();
+    	limpiar_reciclaje();
 
       console.log(data);
 
@@ -169,9 +183,7 @@
          cargar_pedido2();
          cargar_pedido();
           }, 5000); 
-    });
-
-  })
+  }
 
    function pedidos(){
   $('#txt_codigo').select2({
@@ -191,6 +203,31 @@
     }
   });
 }
+
+function pedidosPorQR(codigo){
+		$.ajax({
+			url:   '../controlador/inventario/alimentos_recibidosC.php?search=true&q='+codigo,          
+			method: 'GET',
+			dataType: 'json',
+			success: (data) => {
+				console.log(data);
+        if(data.length > 0){
+          let datos = data[0];
+          // Crear una nueva opción con los 3 parámetros y asignarla al select2
+          const nuevaOpcion = new Option(datos.text.trim(), datos.id, true, true);
+  
+          // Agregar el atributo `data` a la opción
+          //$(nuevaOpcion).data('data', datos.data);
+  
+          // Añadir y seleccionar la nueva opción
+          $('#txt_codigo').append(nuevaOpcion).trigger('change');//'select2:select'
+          setearCamposPedidos(datos.data);
+        }else{
+          Swal.fire('No se encontró información para el codigo: '+codigo, '', 'error');
+        }
+			}
+		});
+	}
 
 
 function cargar_paquetes()
@@ -883,6 +920,74 @@ function autocoplet_ingreso()
   {
     $('#modal_notificar').modal('show');
   }
+
+  function reporte_pdf()
+  {  
+     var num_ped = $('#txt_codigo').val();
+     if(num_ped.trim()==''){
+      Swal.fire('Se necesita numero de pedido', '', 'warning');
+      return;
+     }
+     var url = '../controlador/inventario/alimentos_recibidosC.php?imprimir_pdf=true&num_ped='+num_ped;  
+      window.open(url, '_blank');
+  }
+	 
+
+  function escanear_qr(){
+		$('#modal_qr_escaner').modal('show');
+		navigator.mediaDevices
+		.getUserMedia({ video: { facingMode: "environment" } })
+		.then(function (stream) {
+      $('#qrescaner_carga').hide();
+			scanning = true;
+			//document.getElementById("btn-scan-qr").hidden = true;
+			canvasElement.hidden = false;
+			video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+			video.srcObject = stream;
+			video.play();
+			tick();
+      		scan();
+		});
+	}
+
+	//funciones para levantar las funiones de encendido de la camara
+	function tick() {
+		canvasElement.height = video.videoHeight;
+		canvasElement.width = video.videoWidth;
+		//canvasElement.width = canvasElement.height + (video.videoWidth - video.videoHeight);
+		canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+
+		scanning && requestAnimationFrame(tick);
+	}
+
+	function scan() {
+		try {
+			qrcode.decode();
+		} catch (e) {
+			setTimeout(scan, 300);
+		}
+	}
+
+	const cerrarCamara = () => {
+		video.srcObject.getTracks().forEach((track) => {
+			track.stop();
+		});
+		canvasElement.hidden = true;
+    $('#qrescaner_carga').show();
+		$('#modal_qr_escaner').modal('hide');
+	};
+
+	//callback cuando termina de leer el codigo QR
+	qrcode.callback = (respuesta) => {
+		if (respuesta) {
+			//console.log(respuesta);
+			//Swal.fire(respuesta)
+			pedidosPorQR(respuesta);
+			//activarSonido();
+			//encenderCamara();    
+			cerrarCamara();    
+		}
+	};
 </script>
 
  <div class="row">
@@ -897,6 +1002,14 @@ function autocoplet_ingreso()
     				<img src="../../img/png/grabar.png">
     			</button>
     		</div>
+        <!--<div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
+            <button type="button" class="btn btn-default" title="Generar pdf" onclick="reporte_pdf()"><img src="../../img/png/pdf.png"></button>
+        </div>-->
+        <div class="col-xs-2 col-md-2 col-sm-2">
+          <button class="btn btn-default" title="Escanear QR" onclick="escanear_qr()">
+            <img src="../../img/png/escanear_qr.png">
+          </button>
+        </div>
         <div class="col-xs-2 col-md-2 col-sm-2" style="display:none;" id="pnl_notificacion">
         <div class="navbar-custom-menu">
           <ul class="nav navbar-nav">
@@ -1221,7 +1334,7 @@ function autocoplet_ingreso()
   {
 
   }
-	 
+
 	function cargar_pedido()
   {
     var parametros=
@@ -1639,6 +1752,7 @@ function eliminar_all_pedido(pedido)
 				          <th>CODIGO USUARIO</th>
                   <th>CODIGO DE BARRAS</th>
                   <th>SUCURSAL</th>
+				          <th>QR</th>
 				          <th width="8%"></th>
 				        </thead>
 				        <tbody id="tbl_body"></tbody>
@@ -1809,6 +1923,25 @@ function eliminar_all_pedido(pedido)
   </div>
 </div>
 
+<div id="modal_qr_escaner" class="modal fade"  role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+          <div class="modal-header bg-primary">
+              <button type="button" class="close" onclick="cerrarCamara()">&times;</button>
+              <h4 class="modal-title">Escanear QR</h4>
+          </div>
+          <div class="modal-body" style="background: antiquewhite;">
+            <div id="qrescaner_carga">
+              <div style="height: 100%;width: 100%;display:flex;justify-content:center;align-items:center;"><img src="../../img/gif/loader4.1.gif" width="20%"></div>
+            </div>
+		  	    <canvas hidden="" id="qr-canvas" class="img-fluid" style="height: 100%;width: 100%;"></canvas>
+          </div>
+          <div class="modal-footer" style="background-color:antiquewhite;">
+              <button type="button" class="btn btn-danger" onclick="cerrarCamara()">Cerrar</button>
+          </div>
+      </div>
+  </div>
+</div>
 
 <div id="modal_calendar" class="modal fade myModalNuevoCliente"  role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog">
