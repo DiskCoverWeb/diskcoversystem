@@ -790,8 +790,7 @@ class ingreso_descargosM
 				}
 					
 				
-				$sql="SELECT  Codigo,Beneficiario,Factura,Prima,DH,Valor ,Valor_ME,Detalle_SubCta,FECHA_V ,TC,Cta,TM
-				,T_No,SC_No,Fecha_D,Fecha_H,Bloquear,Item,CodigoU
+				$sql="SELECT  Codigo,Beneficiario,Factura,Prima,DH,Valor ,Valor_ME,Detalle_SubCta,FECHA_V ,TC,Cta,TM,T_No,SC_No,Fecha_D,Fecha_H,Bloquear,Item,CodigoU,Serie
 				FROM Asiento_SC
 				WHERE 
 					Item = '".$_SESSION['INGRESO']['item']."' 
@@ -815,6 +814,7 @@ class ingreso_descargosM
 						$Result[$i]['Factura']=$value['Factura'];
 						$Result[$i]['Prima']=$value['Prima'];
 						$Result[$i]['DH']=$value['DH'];
+						$Result[$i]['Serie']=$value['Serie'];
 						if($Result[$i]['DH']==1)
 						{
 							$Result[$i]['DEBITO']=$value['Valor'];
@@ -851,7 +851,7 @@ class ingreso_descargosM
 							   ,'.'
 							   ,0
 							   ,'.'
-							   ,'.'
+							   ,'".$Result[$i]['Serie']."'
 							   ,'.'
 							   ,0)";
 						//echo $sql.'<br>';
@@ -1029,6 +1029,11 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 	function generar_asientos_SC($parametros)
 	{
 		// $cid = $this->conn;
+		$serie = '001001';
+		if(isset($parametros['serie']))
+		{
+			$serie = $parametros['serie'];
+		}
 		if($parametros['t']=='P' OR $parametros['t']=='C')
 		{
 			$sql=" SELECT codigo FROM clientes WHERE Codigo='".$parametros['sub']."' ";
@@ -1084,31 +1089,51 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 		}
 		if($parametros['mes']==0)
 		{
-			$sql="INSERT INTO Asiento_SC(Codigo ,Beneficiario,Factura ,Prima,DH,Valor,Valor_ME
-           ,Detalle_SubCta,FECHA_V,TC,Cta,TM,T_No,SC_No
-           ,Fecha_D ,Fecha_H,Bloquear,Item,CodigoU)
-			VALUES
-           ('".$cod."'
-           ,'".$parametros['sub2']."'
-           ,'".$fact2."'
-           ,0
-           ,'".$parametros['tic']."'
-           ,".$parametros['valorn']."
-           ,0
-           ,'".$parametros['Trans']."'
-           ,'".$fecha_actual."'
-           ,'".$parametros['t']."'
-           ,'".$parametros['co']."'
-           ,".$parametros['moneda']."
-           ,".$parametros['T_N']."
-           ,".$SC_No."
-           ,null
-           ,null
-           ,0
-           ,'".$_SESSION['INGRESO']['item']."'
-           ,'".$_SESSION['INGRESO']['CodigoU']."')";
+			SetAdoAddNew("Asiento_SC");
+	        SetAdoFields("Codigo",$cod);
+	        SetAdoFields("Beneficiario",$parametros['sub2']);
+	        SetAdoFields("Factura",$fact2);
+	        SetAdoFields("Serie",$serie);
+	        SetAdoFields("Prima",'0');
+	        SetAdoFields("DH",$parametros['tic']);
+	        SetAdoFields("Valor",$parametros['valorn']);
+	        SetAdoFields("Valor_ME",0);
+	        SetAdoFields("Detalle_SubCta",$parametros['Trans']);
+	        SetAdoFields("FECHA_V",$fecha_actual);
+	        SetAdoFields("TC",$parametros['t']);
+	        SetAdoFields("Cta",$parametros['co']);
+	        SetAdoFields("TM",$parametros['moneda']);
+	        SetAdoFields("T_No",$parametros['T_N']);
+	        SetAdoFields("SC_No",$SC_No);
+	        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
+	        SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
+			SetAdoUpdate();
 
-           $this->conn1->String_Sql($sql);
+		// 	$sql="INSERT INTO Asiento_SC(Codigo ,Beneficiario,Factura ,Prima,DH,Valor,Valor_ME
+           // ,Detalle_SubCta,FECHA_V,TC,Cta,TM,T_No,SC_No
+           // ,Fecha_D ,Fecha_H,Bloquear,Item,CodigoU)
+		// 	VALUES
+           // ('".$cod."'
+           // ,'".$parametros['sub2']."'
+           // ,'".$fact2."'
+           // ,0
+           // ,'".$parametros['tic']."'
+           // ,".$parametros['valorn']."
+           // ,0
+           // ,'".$parametros['Trans']."'
+           // ,'".$fecha_actual."'
+           // ,'".$parametros['t']."'
+           // ,'".$parametros['co']."'
+           // ,".$parametros['moneda']."
+           // ,".$parametros['T_N']."
+           // ,".$SC_No."
+           // ,null
+           // ,null
+           // ,0
+           // ,'".$_SESSION['INGRESO']['item']."'
+           // ,'".$_SESSION['INGRESO']['CodigoU']."')";
+
+           // $this->conn1->String_Sql($sql);
 		 
 		}
 		else

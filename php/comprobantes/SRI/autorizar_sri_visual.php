@@ -2,6 +2,7 @@
 header("Access-Control-Allow-Origin: *"); // Permite todas las orígenes, puedes restringir a uno específico
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS"); // Métodos permitidos
 header("Access-Control-Allow-Headers: Content-Type"); // Encabezados permitidos
+header('Content-Type: application/json');
 
 require_once(dirname(__DIR__,2)."/db/db1.php");
 
@@ -51,6 +52,11 @@ class autoriza_sri
 		if(trim($parametros['XML'])!='')
 		{
 			$msj = $this->descargar_archivos_ftp($parametros['XML']);
+			if($msj!="")
+			{
+				$this->deleteFolder($temp_file);
+				return $msj;
+			}
 		}
 		$xml = $parametros['XML'];
 		// print_r($xml);die();
@@ -70,15 +76,16 @@ class autoriza_sri
 		   	 	// print_r($validar_autorizado);die();
 		   	 	if($validar_autorizado == -1)
 		   	 		{
-				   	 	$enviar_sri = $this->enviar_xml_sri($aut,$this->linkSriRecepcion);
+				   	 	$enviar_sri = $this->enviar_xml_sri($xml,$this->linkSriRecepcion);
 				   		if($enviar_sri==1)
 				   		{
 				   		 	//una vez enviado comprobamos el estado de la factura
-			   		 		sleep(10);
+			   		 		sleep(3);
 			   		 		$resp =  $this->comprobar_xml_sri($xml,$this->linkSriAutorizacion);
 			   		 		if($resp==1)
 			   		 		{
-			   		 			return  $resp;
+			   		 			$this->deleteFolder($temp_file);
+			   		 			return  "Autorizado";
 			   		 		}else
 			   		 		{
 			   		 			return $resp;
@@ -90,8 +97,14 @@ class autoriza_sri
 				   		}
 
 			   		}else 
-			   		{			   		 
-			   			return $validar_autorizado;
+			   		{			
+			   			if($validar_autorizado==1)
+			   			{
+			   				$this->deleteFolder($temp_file);
+			   				return "Autorizado";
+			   			}else{   		 
+			   				return $validar_autorizado;
+			   			}
 			   		}
             }
           }
@@ -161,6 +174,35 @@ class autoriza_sri
 		return $msj;
 
 	}
+
+	function deleteFolder($folderPath) {
+    // Verifica si el folder existe
+    if (!is_dir($folderPath)) {
+        return false;
+    }
+
+    // Itera sobre cada elemento dentro del folder
+    $files = scandir($folderPath);
+    foreach ($files as $file) {
+        if ($file === '.' || $file === '..') {
+            continue;
+        }
+
+        $filePath = $folderPath . DIRECTORY_SEPARATOR . $file;
+
+        // Si es una carpeta, llama a la función de nuevo de forma recursiva
+        if (is_dir($filePath)) {
+            $this->deleteFolder($filePath);
+        } else {
+            // Si es un archivo, lo elimina
+            unlink($filePath);
+        }
+    }
+
+    // Finalmente elimina el folder principal una vez vacío
+    return rmdir($folderPath);
+}
+
 
 
 	function link_ambientes($ambiente)
@@ -263,14 +305,14 @@ class autoriza_sri
 	   		 {
 	   		 	// print_r($resp[1].'<br>');
 
-	   		 	return $f;
+	   		 	return -1;
 	   		 }else if(isset($resp[1]) && $resp[1]=='FACTURA AUTORIZADO' || isset($resp[1]) && $resp[1]=='LIQUIDACION DE COMPRAS AUTORIZADO' || $resp[1] == 'COMPROBANTE DE RETENCION AUTORIZADO' || isset($resp[1]) && $resp[1]=='GUIA DE REMISION AUTORIZADO' || isset($resp[1]) && $resp[1]=='NOTA DE CREDITO AUTORIZADO')
 	   		 {
 	   		 	// print_r('as');
 	   		 	return 1;
 	   		 }else
 	   		 {
-	   			return 'ERROR COMPROBACION -'.$f[0];
+	   			return 'ERROR COMPROBACION -'.$f;
 	   		 }
 	   	}else
 	   	{

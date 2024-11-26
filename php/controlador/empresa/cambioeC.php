@@ -1,6 +1,7 @@
 <?php
 require_once(dirname(__DIR__,2)."/modelo/empresa/cambioeM.php"); 
 require_once(dirname(__DIR__,3)."/lib/fpdf/reporte_de.php");
+require_once(dirname(__DIR__,3)."/lib/phpmailer/enviar_emails.php");
 /**
  * 
  */
@@ -118,12 +119,19 @@ if(isset($_GET['detalle']))
   echo json_encode($controlador->detalle_linea($id, $item, $entidad));
 }
 
+if(isset($_GET['enviar_email']))
+{
+  	echo json_encode($controlador->enviar_email($_FILES,$_POST));
+}
+
 class cambioeC 
 {
 	private $modelo;
+	private $email;
 	function __construct()
 	{
 		$this->modelo = new cambioeM();
+		$this->email = new enviar_emails();
 	}
 
 	function ciudad($parametros)
@@ -850,6 +858,38 @@ class cambioeC
         }  
 
         return 1;
+
+	}
+
+	function enviar_email($file,$parametros)
+	{
+
+		// print_r($parametros);die();
+
+		$ruta= dirname(__DIR__,3).'/TEMP/';//ruta carpeta donde queremos copiar las imágenes
+	    if (!file_exists($ruta)) {
+	       mkdir($ruta, 0777, true);
+	    }
+
+		$uploadfile_temporal=$file['file_archivo']['tmp_name'];
+        // $tipo = explode('/', $file['file_img']['type']);
+        $nombre = $file['file_archivo']['full_path'];
+        $name = explode('.',$nombre);
+        $nuevo_nom=$ruta.$nombre;	        
+		move_uploaded_file($uploadfile_temporal,$nuevo_nom);
+
+		$archivos = array($nuevo_nom);
+		$HTML = false;
+		if(isset($parametros['rbl_html']))
+		{
+			$HTML = true;
+		}
+		$to_correo = $parametros['txt_to'];
+		$titulo_correo = $parametros['txt_asunto'];
+		$cuerpo_correo = $parametros['simpleHtml'];		
+		$resp =  $this->email->enviar_email_generico($archivos, $to_correo, $cuerpo_correo, $titulo_correo, $HTML);
+		unlink($nuevo_nom);
+		return $resp;
 
 	}
 

@@ -89,6 +89,7 @@
   	$('#txt_bodega_title').text();
   	$('#txt_bodega_title').text(nombre);
   	$('#txt_cod_bodega').val(cod);
+  	$('#txt_cod_lugar').val(cod);
   	if(cod!='.')
   	{
   		contenido_bodega();
@@ -414,6 +415,7 @@ async function buscar_ruta()
 		    {
 		    	$('#txt_bodega_title').text('Ruta:'+data);
 		    	$('#txt_cod_bodega').val(codigo);
+		    	$('#txt_cod_lugar').val(codigo);
 		    	productos_asignados();
 		    }
 		});

@@ -685,7 +685,8 @@ class articulosC
                     'moneda'=> 1, /// moneda 1
                     'Trans'=>$sub[0]['Cliente'],//detalle que se trae del asiento
                     'T_N'=> '99',
-                    't'=> $cuenta[0]['TC'],                        
+                    't'=> $cuenta[0]['TC'],  
+                    'serie'=> $value['Serie_No'],                        
                   );
                   $this->ing_descargos->generar_asientos_SC($parametros);
 		}

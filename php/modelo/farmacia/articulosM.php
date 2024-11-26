@@ -256,14 +256,14 @@ class articulosM
 	{
      $cid = $this->conn;
     // 'LISTA DE CODIGO DE ANEXOS
-     $sql = "SELECT SUM(VALOR_TOTAL) as 'total',CONTRA_CTA,SUBCTA,Fecha_DUI,TC 
+     $sql = "SELECT SUM(VALOR_TOTAL) as 'total',CONTRA_CTA,SUBCTA,Fecha_DUI,TC,Serie_No 
      FROM Asiento_K  
      WHERE Item = '".$_SESSION['INGRESO']['item']."' 
      AND CodigoU = '".$_SESSION['INGRESO']['Id']."' 
      AND ORDEN = '".$orden."' 
      AND SUBCTA='".$proveedor."' AND 
      DH='1' 
-     GROUP BY CONTRA_CTA,Fecha_DUI,TC,SUBCTA";
+     GROUP BY CONTRA_CTA,Fecha_DUI,TC,SUBCTA,Serie_No";
        
 
 		$datos = $this->conn->datos($sql);

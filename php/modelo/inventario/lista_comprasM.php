@@ -268,7 +268,7 @@ class lista_comprasM
 
 			SetAdoAddNew("Asiento_SC");
 	        SetAdoFields("Codigo",$cod);
-	        SetAdoFields("Beneficiario",$parametros['sub2']);
+	        SetAdoFields("Beneficiario",substr($parametros['sub2'],0,50));
 	        SetAdoFields("Factura",$fact2);
 	        SetAdoFields("Serie",$serie);
 	        SetAdoFields("Prima",'0');
@@ -586,9 +586,19 @@ class lista_comprasM
 	{
 		 $cid=$this->conn;
 		$sql = "DELETE Asiento_SC WHERE Item='".$_SESSION['INGRESO']['item']."' AND CodigoU='".$_SESSION['INGRESO']['CodigoU']."' AND Factura ='".$orden."' ";
-		
-	return $this->conn->String_Sql($sql);
+		return $this->conn->String_Sql($sql);
 
+	}
+
+
+	function numeroFactura($fecha)
+	{
+		$sql = "SELECT count(*) as num
+				FROM Trans_SubCtas
+				WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+				AND Periodo='".$_SESSION['INGRESO']['periodo']."' 
+				AND Fecha = '".$fecha."'";
+		return $this->conn->datos($sql);
 	}
 
 

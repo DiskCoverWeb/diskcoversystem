@@ -440,6 +440,33 @@ function cambiarEmpresa()
 	});
 }
 
+function emasivo()
+{
+	$('#myModalCorreo').modal('show');
+
+	/*
+	var parametros = $('#form_empresa').find(':not(#tab_5 input, #tab_5 select)').serialize();
+	$.ajax({
+		type: "POST",
+		 url: '../controlador/empresa/cambioeC.php?mensaje_masivo=true',
+		data: parametros,
+		dataType:'json',
+		success: function(data)
+		{
+			if(data==1)
+			{
+				Swal.fire('Mensaje modificado en las entidades con exito ','','success');
+			}else
+			{
+				Swal.fire('Intente mas tarde','','error');
+			}
+			
+		}
+	});
+
+	*/
+}
+
 function mmasivo()
 {
 	var parametros = $('#form_empresa').find(':not(#tab_5 input, #tab_5 select)').serialize();
@@ -1316,6 +1343,9 @@ async function datos_empresa()
             <a  href="<?php $ruta = explode('&' ,$_SERVER['REQUEST_URI']); print_r($ruta[0].'#');?>" title="Salir de modulo" class="btn btn-default">
               <img src="../../img/png/salire.png">
             </a>
+        </div>
+        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
+            <button type="button" class="btn btn-default" title="Email masivo todas las empresas" onclick='emasivo();'><img src="../../img/png/email.png"></button>
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
             <button type="button" class="btn btn-default" title="Mensaje masivo todas las empresas" onclick='mmasivo();'><img src="../../img/png/masivo.png"></button>
@@ -2397,3 +2427,87 @@ async function datos_empresa()
 	</div>
 
 </form>	
+
+<div id="myModalCorreo" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Enviar Comunicado</h4>
+              </div>
+              <div class="modal-body">
+              	<form id="form_email">
+              		<div class="row">
+              			<div class="col-sm-12">
+              				<b>Para</b>
+              				<input type="input" class="form-control input-xs" name="txt_to" id="txt_to">
+              			</div> 
+              			<div class="col-sm-9">
+              				<b>Asunto</b>
+              				<input type="input" class="form-control input-xs" name="txt_asunto" id="txt_asunto">
+              			</div> 
+              			<div class="col-sm-3">
+              				<br>
+              				<b>contenido HTML</b>
+              				<input type="checkbox" name="rbl_html" id="rbl_html">
+              			</div>              			
+              			<div class="col-sm-12">
+              				<b>cuerpo de correo</b>
+              				<textarea class="form-control text-left" rows="15" id="simpleHtml" name="simpleHtml"></textarea>
+              			</div>
+              			<div class="col-sm-12">
+              				<b>Archivo</b>
+              				<input type="file" id="file_archivo" name="file_archivo" class="form-control">
+              			</div>
+              			<div class="col-sm-6">	
+              				<button type="button" class="btn btn-primary btn-block" onclick="renderhtml()">Vista Previa</button>
+              			</div>
+              			<div class="col-sm-6">	
+              				<button type="button" class="btn btn-primary btn-block" onclick="enviar_email()">Enviar Correo</button>
+              			</div>
+              			<div class="col-sm-12">
+              				<div class="" id="htmlrender">
+              					
+              				</div>
+              			</div>
+              		</div>
+
+              	</form>
+              </div>
+             <!--  <div class="modal-footer">
+                  <button type="button" class="btn btn-default">Enviar</button>
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+              </div> -->
+          </div>
+
+      </div>
+  </div>
+
+<script type="text/javascript">
+	function renderhtml()
+	{
+		datos = $('#simpleHtml').val();
+		$('#htmlrender').html(datos);
+	}
+
+	function enviar_email()
+	{
+
+		var formData = new FormData(document.getElementById("form_email"));
+		formData.append('entidad',$('#entidad').val())
+		formData.append('empresa',$('#empresas').val())
+
+		 $.ajax({
+			type: "POST",
+			url: '../controlador/empresa/cambioeC.php?enviar_email=true',
+			dataType:'json',
+            data: formData,
+            contentType: false,
+            processData: false,
+			success: function(data)
+			{
+				   
+			}
+	    });
+	}
+</script>
