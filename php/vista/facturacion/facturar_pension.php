@@ -796,7 +796,7 @@
         if (result.value==true) {
             actualizarCliente()            
         }else{
-          update = false;
+          GuardarFactura();
         }
       })
 
@@ -821,15 +821,22 @@
       'Documento':$('#debito_automatica').val(),
       'DCDebito':$('#debito_automatica').val(),
       'TD_Rep':$("#tdCliente").val(),
-    }
+    }    
+      $('#myModal_espera').modal('show');
      $.ajax({
         url: '../controlador/facturacion/facturar_pensionC.php?ActualizarCliente=true',
         type:  'post',
         data: {parametros:parametros},
         dataType: 'json',
         success:  function (response) {
+          $('#myModal_espera').modal('hide');
           GuardarFactura()       
-        }
+        },
+          error: function (jqXHR, exception) {
+            $('#myModal_espera').modal('hide');
+            console.log(exception);
+            alert("Ocurrio un error inesperado, por favor contacte a soporte.");
+          }
       });
   }
 
@@ -855,7 +862,7 @@
   function GenerarFactura()
   {
 
-    // $('#myModal_espera').modal('show');
+    $('#myModal_espera').modal('show');
     DCBanco = $("#cuentaBanco").val();
     DCBanco = DCBanco.split("/");
     DCBanco = DCBanco[0];
@@ -909,6 +916,7 @@
         dataType:'json',  
         success: function(response)
         {
+            $('#myModal_espera').modal('hide');
 
           if(response.respuesta==-1)
           {
