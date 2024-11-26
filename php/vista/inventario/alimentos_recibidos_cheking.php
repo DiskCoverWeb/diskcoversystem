@@ -840,11 +840,11 @@ function autocoplet_ingreso()
 				<img src="../../img/png/check.png">
 			</button>
 		</div>  
-		<div class="col-xs-2 col-md-2 col-sm-2">
+		<!--<div class="col-xs-2 col-md-2 col-sm-2">
 			<button class="btn btn-default" title="Escanear QR" onclick="escanear_qr()">
 				<img src="../../img/png/escanear_qr.png">
 			</button>
-		</div>  
+		</div>  -->
 		<!-- <div class="col-xs-2 col-md-2 col-sm-2">
 			<button class="btn btn-default" title="Guardar" onclick="nuevo_proveedor()">
 				<img src="../../img/png/mostrar.png">
@@ -894,9 +894,17 @@ function autocoplet_ingreso()
                	</div>							
                	<div class="col-sm-6">
                   	<input type="hidden" class="form-control input-xs" id="txt_codigo_p" name="txt_codigo_p" readonly>
-                   <select class="form-control input-xs" id="txt_codigo" name="txt_codigo" onchange="cargar_pedido()">
-                   	<option>Seleccione</option>
-                   </select>
+					<div class="input-group">
+						<select class="form-control input-xs" id="txt_codigo" name="txt_codigo" onchange="cargar_pedido()">
+							<option>Seleccione</option>
+						</select>
+						<span class="input-group-btn">
+							<button type="button" class="btn btn-primary btn-flat btn-xs" title="Escanear QR" onclick="escanear_qr()">
+								<i class="fa fa-qrcode" aria-hidden="true"></i>
+							</button>
+						</span>    
+					</div>
+                   
                 </div>
 						</div>
 						

@@ -1005,11 +1005,11 @@ function autocoplet_ingreso()
         <!--<div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
             <button type="button" class="btn btn-default" title="Generar pdf" onclick="reporte_pdf()"><img src="../../img/png/pdf.png"></button>
         </div>-->
-        <div class="col-xs-2 col-md-2 col-sm-2">
+        <!--<div class="col-xs-2 col-md-2 col-sm-2">
           <button class="btn btn-default" title="Escanear QR" onclick="escanear_qr()">
             <img src="../../img/png/escanear_qr.png">
           </button>
-        </div>
+        </div>-->
         <div class="col-xs-2 col-md-2 col-sm-2" style="display:none;" id="pnl_notificacion">
         <div class="navbar-custom-menu">
           <ul class="nav navbar-nav">
@@ -1055,9 +1055,17 @@ function autocoplet_ingreso()
                	</div>							
                	<div class="col-sm-6">
 	                	<input type="hidden" class="form-control input-xs" id="txt_codigo_p" name="txt_codigo_p" readonly>
-                   <select class="form-control input-xs" id="txt_codigo" name="txt_codigo">
-                   	<option value="">Seleccione</option>
-                   </select>
+                    <div class="input-group">
+                      <select class="form-control input-xs" id="txt_codigo" name="txt_codigo">
+                        <option value="">Seleccione</option>
+                      </select>
+                      <span class="input-group-btn">
+                        <button type="button" class="btn btn-primary btn-flat btn-xs" title="Escanear QR" onclick="escanear_qr()">
+                          <i class="fa fa-qrcode" aria-hidden="true"></i>
+                        </button>
+                      </span>    
+                    </div>
+                   
                 </div>
 						</div>
 						
