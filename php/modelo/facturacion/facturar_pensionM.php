@@ -531,47 +531,11 @@ class facturar_pensionM
   {
     $sSQL = "SELECT Codigo " .
         "FROM Clientes_Matriculas " .
-        "WHERE Codigo = '" . $data['codigoCliente'] . "' " .
+        "WHERE Codigo = '" . $data . "' " .
         "AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' " .
         "AND Item = '" . $_SESSION['INGRESO']['item'] . "' ";
-    $AdoAux = $this->db->datos($sSQL);
-    $MBFecha = (($data['MBFecha']!="")?UltimoDiaMes2("01/".$data['MBFecha'], 'Ymd'):null);
-
-    SetAdoAddNew("Clientes_Matriculas");
-    SetAdoFields("T", G_NORMAL);
-    SetAdoFields("Grupo_No", $data['Grupo_No']);
-    SetAdoFields("Lugar_Trabajo_R", $data['TxtDirS']);
-    SetAdoFields("Email_R", $data['TxtEmail']);
-    SetAdoFields("Representante", $data['TextRepresentante']);
-    SetAdoFields("Cedula_R", $data['TextCI']);
-    SetAdoFields("TD", (isset($data['Label18'])?$data['Label18']:$data['TD_Rep']));
-    SetAdoFields("Telefono_R", $data['TxtTelefono']);
-    SetAdoFields("Cta_Numero", $data['TxtCtaNo']);
-    SetAdoFields("Tipo_Cta", $data['CTipoCta']);
-    SetAdoFields("Caducidad", $MBFecha);
-    SetAdoFields("Por_Deposito", (bool)$data['CheqPorDeposito']);
-    SetAdoFields("Cod_Banco", (isset($data['Documento'])?$data['Documento']:$data['DCDebito']));
-
-    if (count($AdoAux) <= 0) {
-      SetAdoFields("Codigo", $data['codigoCliente']);
-      SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
-      SetAdoFields("Item", $_SESSION['INGRESO']['item']);
-      SetAdoUpdate();
-    } else {
-      SetAdoFieldsWhere("Periodo", $_SESSION['INGRESO']['periodo']);
-      SetAdoFieldsWhere("Item", $_SESSION['INGRESO']['item']);
-      SetAdoFieldsWhere("Codigo", $data['codigoCliente']);
-      SetAdoUpdateGeneric();
+      return $this->db->datos($sSQL);
     }
-
-    $sSQL = "UPDATE Clientes "
-           ."SET Grupo = '" . $data['Grupo_No'] . "', Direccion = '" .$data['TxtDirS'] . "' "
-           ."WHERE Codigo = '" . $data['codigoCliente'] . "' ";
-          Ejecutar_SQL_SP($sSQL);
-
-    Leer_Datos_Clientes2($data['codigoCliente']);
-    return true;
-  }
 
   public function Reporte_Cartera_Clientes_PDF_Data($CodigoCliente)
   {

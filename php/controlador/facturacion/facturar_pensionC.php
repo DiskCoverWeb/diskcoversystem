@@ -108,8 +108,14 @@ if(isset($_GET['saldoPendiente']))
 
 if(isset($_GET['guardarPension']))
 {
-  echo json_encode($controlador->guardarFacturaPension());
-  exit();
+  $parametros = $_POST['parametros'];
+  echo json_encode($controlador->guardarFacturaPension($parametros));
+}
+
+if(isset($_GET['ActualizarCliente']))
+{
+  $parametros = $_POST['parametros'];
+  echo json_encode($controlador->ActualizarCliente($parametros));
 }
 
 if(isset($_GET['guardarLineas']))
@@ -653,125 +659,110 @@ class facturar_pensionC
 		exit();
 	}
 
-	public function guardarFacturaPension(){
-    if(empty(trim($_POST['DCLinea']))){
-      echo json_encode(array('respuesta'=>6, 'text'=>"Se debe indicar una Linea de Catalogo"));
-      exit();
-    }
-    
-    if($_POST['saldoTotal']<0){
-      echo json_encode(array('respuesta'=>6,'text'=>"El total de abonos supera el total de la factura."));
-      exit();
-    }
+  function ActualizarCliente($parametros)
+  {
+    $updateCliF = $this->facturacion->updateClientesFacturacion($parametros['Grupo_No'] ,$parametros['CodigoCliente']);
+    $updateCli = $this->facturacion->updateClientes($parametros['Telefono'],$parametros['DirS'],$parametros['Direccion'],$parametros['Email'],$parametros['Grupo_No'] ,$parametros['CodigoCliente']);
 
-    if($_POST['saldoTotal']>0){//Significa que es un pago parcial
-      $datos = $this->facturacion->getAsiento();
-      if(count($datos)>0){
-        $intersection = array_intersect(array_column($datos, 'CODIGO'), array(JG01, JG02, JG03));
-        if (!empty($intersection)) {
-          echo json_encode(array('respuesta'=>6,'text'=>"Esta operacion no se puede procesar con pago parcial."));
-          exit();
+    $Cliente_Matricula = $this->facturacion->Actualiza_Datos_Cliente($parametros['CodigoCliente']);
+
+    $MBFecha = (($parametros['MBFecha']!="")?UltimoDiaMes2("01/".$parametros['MBFecha'], 'Ymd'):null);
+
+    // print_r($MBFecha);die();
+
+    SetAdoAddNew("Clientes_Matriculas");
+    SetAdoFields("T", G_NORMAL);
+    SetAdoFields("Grupo_No", $parametros['Grupo_No']);
+    SetAdoFields("Lugar_Trabajo_R", $parametros['DirS']);
+    SetAdoFields("Email_R", $parametros['Email']);
+    SetAdoFields("Representante", $parametros['Representante']);
+    SetAdoFields("Cedula_R", $parametros['TextCI']);
+    SetAdoFields("TD", $parametros['TD_Rep']);
+    SetAdoFields("Telefono_R", $parametros['Telefono']);
+    SetAdoFields("Cta_Numero", $parametros['TxtCtaNo']);
+    SetAdoFields("Tipo_Cta", $parametros['CTipoCta']);
+    SetAdoFields("Caducidad", $MBFecha);
+    SetAdoFields("Por_Deposito", (bool)$parametros['CheqPorDeposito']);
+    SetAdoFields("Cod_Banco", (isset($parametros['Documento'])?$parametros['Documento']:$parametros['DCDebito']));
+
+    if (count($Cliente_Matricula) <= 0) {
+      SetAdoFields("Codigo", $parametros['CodigoCliente']);
+      SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
+      SetAdoFields("Item", $_SESSION['INGRESO']['item']);
+      return SetAdoUpdate();
+    } else {
+      SetAdoFieldsWhere("Periodo", $_SESSION['INGRESO']['periodo']);
+      SetAdoFieldsWhere("Item", $_SESSION['INGRESO']['item']);
+      SetAdoFieldsWhere("Codigo", $parametros['CodigoCliente']);
+      return SetAdoUpdateGeneric();
+    }
+  }
+
+	function guardarFacturaPension($parametros){
+
+    if($parametros['SaldoTotal']>0)
+    {
+        //Significa que es un pago parcial
+        $datos = $this->facturacion->getAsiento();
+        if(count($datos)>0)
+        {
+            $intersection = array_intersect(array_column($datos, 'CODIGO'), array(JG01, JG02, JG03));
+            if (!empty($intersection)) {
+              return array('respuesta'=>-1,'text'=>"Esta operacion no se puede procesar con pago parcial.");
+            }
+        }else{
+              return array('respuesta'=>-1,'text'=>"No se encontraron asientos para procesar.");
         }
-      }else{
-        echo json_encode(array('respuesta'=>-1,'text'=>"No se encontraron asientos para procesar."));
-        exit();
-      }
     }
 
-		$TextRepresentante = $_POST['TextRepresentante'];
-		$TxtDireccion = $_POST['TxtDireccion'];
-		$TxtTelefono = $_POST['TxtTelefono'];
-		$TextFacturaNo = $_POST['TextFacturaNo'];
-		$Grupo_No = $_POST['Grupo_No'];
-  	$TextCI = $_POST['TextCI'];
-  	$TD_Rep = $_POST['TD_Rep'];
-  	$TxtEmail = $_POST['TxtEmail'];
-  	$TxtDirS = $_POST['TxtDirS'];
-		$codigoCliente = $_POST['codigoCliente'];
-		$update = $_POST['update'];
-		$CtaPagoMax = "";
-		$ValPagoMax = "";
-  	TextoValido($TextRepresentante,"" , true);
-  	TextoValido($TxtDireccion, "" , True);
-  	TextoValido($TxtTelefono, "" , True);
-  	TextoValido($TxtEmail);
-  	//cuentas
-  	$TextCheque = $_POST['TextCheque'];
-  	$DCBanco = $_POST['DCBanco'];
-  	$TxtEfectivo = $_POST['TxtEfectivo'];
-  	$TxtNC = $_POST['TxtNC'];
-  	$DCNC = $_POST['DCNC'];
-
-    $DCDebito = $_POST['DCDebito'];
-    $CTipoCta = $_POST['CTipoCta'];
-    $TxtCtaNo = $_POST['TxtCtaNo'];
-    $MBFecha = $_POST['MBFecha'];
-    $CheqPorDeposito = @($_POST['CheqPorDeposito']=='on' || $_POST['CheqPorDeposito'] == '1')?true:false;
-  	$Cta_CajaG = 1;
-    $Titulo = "Formulario de Grabacion";
-    $Mensajes = "Esta Seguro que desea grabar: La Factura No. ".$TextFacturaNo;
-    $ValPagoMax = 0;
-    $CtaPagoMax = "1";
-    if ($ValPagoMax <= intval($TextCheque)) {
-     	$ValPagoMax = intval($TextCheque);
-      $CtaPagoMax = SinEspaciosIzq($DCBanco);
-    }
-    if ($ValPagoMax <= intval($TxtEfectivo)) {
-	    $ValPagoMax = intval($TxtEfectivo);
-	    $CtaPagoMax = $Cta_CajaG;
-    }
-    if ($ValPagoMax <= intval($TxtNC)) {
-     	$ValPagoMax = intval($TxtNC);
-      $CtaPagoMax = SinEspaciosIzq($DCNC);
-    }
-    $Cta_Aux = Leer_Cta_Catalogo($CtaPagoMax);
-    if ($Cta_Aux) {
-     	$Tipo_Pago = $Cta_Aux['TipoPago'];
-    }
-
-   	if ($update) {
-   		$updateCliF = $this->facturacion->updateClientesFacturacion($Grupo_No,$codigoCliente);
-   		$updateCli = $this->facturacion->updateClientes($TxtTelefono,$TxtDirS,$TxtDireccion,$TxtEmail,$Grupo_No,$codigoCliente);
-      $this->facturacion->Actualiza_Datos_Cliente($_POST);
-   	}
-
-    $TC = @SinEspaciosIzq($_POST['DCLinea']);
-    $serie = @SinEspaciosDer($_POST['DCLinea']);
+    $DCLinea = explode(" ", $parametros['DCLinea']);
+    $TC =$DCLinea[0];
+    $serie = $DCLinea[1];
+    $parametros['TC'] = $DCLinea[0];
+    $parametros['Serie'] = $DCLinea[1];
+    $parametros['Autorizacion'] = $DCLinea[2];
+    $parametros['Cta_CxP'] = $DCLinea[3];
     //traer secuencial de catalogo lineas
    	$TextFacturaNo = ReadSetDataNum($TC."_SERIE_".$serie, True, False);
-   	return $this->Grabar_FA_Pensiones($_POST,$TextFacturaNo);
+    $parametros['Factura'] = $TextFacturaNo;
+   	return $this->Grabar_FA_Pensiones($parametros,$TextFacturaNo);
 	}
 
 
 	public function Grabar_FA_Pensiones($FA,$TextFacturaNo){
-    $codigoCliente = $FA['codigoCliente'];
+
+    $codigoCliente = $FA['CodigoCliente'];
 		//Seteamos los encabezados para las facturas
 		$Estudiante['cedula'] = $FA['TextCI'];
 		$Estudiante['fonopaga'] = $FA['TxtTelefono'];
   	$Estudiante['pagador'] = $FA['TextRepresentante'];
 		$Estudiante['direcpaga'] = $FA['TxtDireccion'];
-    $resultado = explode(" ", $FA['DCLinea']);
-    $FA['Autorizacion'] = $resultado[2];
-    $FA['Cta_CxP'] = $resultado[3];
-    $FA['Fecha'] = $FA['Fecha'];
+   
 		//Procedemos a grabar la factura
   	$datos = $this->facturacion->getAsiento();
     if(count($datos)<=0){
-      return (array('respuesta'=>-1,'text'=>"No se encontraron asientos para procesar."));
+      return array('respuesta'=>-1,'text'=>"No se encontraron asientos para procesar.");
     }
     $cliente = Leer_Datos_Cliente_FA($codigoCliente);
     $TFA = Calculos_Totales_Factura($codigoCliente);
+
+    // print_r($datos); 
+    // print_r($cliente);
+    // print_r($TFA);     
+    // print_r($FA);die();
     if(isset($cliente['Razon_Social']) && $cliente['Razon_Social']=='CONSUMIDOR FINAL'){
       $Con_IVA_ = number_format($TFA['Con_IVA'], 2,'.','');
       $Sin_IVA_ = number_format($TFA['Sin_IVA'], 2,'.','');
       $SubTotal_ = $Sin_IVA_ + $Con_IVA_ - $TFA['Descuento'] - $TFA['Descuento2'];
       if($SubTotal_>MONTO_MAXIMO_FACTURACION){
-        return (array('respuesta'=>-1,'text'=>"Por Ley no se puede emitir una facturar por mas de ".MONTO_MAXIMO_FACTURACION));
+        return array('respuesta'=>-1,'text'=>"Por Ley no se puede emitir una facturar por mas de ".MONTO_MAXIMO_FACTURACION);
       }
     }
+
     $SaldoPendiente = 0;
-    $Total_Abonos = $FA['TxtEfectivo']+$FA['TextCheque']+$FA['TxtNCVal']+$FA['saldoFavor'];
+    $Total_Abonos = $FA['TxtEfectivo']+$FA['TextCheque']+$FA['TxtNCVal']+$FA['SaldoFavor'];
     $totalIva = 0;
+
     foreach ($datos as $key => $value) {
        $totalIva = $totalIva+$value['Total_IVA'];
        $Valor = $value["TOTAL"];
@@ -800,191 +791,197 @@ class facturar_pensionC
           }
     }
 
-    foreach ($datos as $key => $value) {
+
+    // print_r($datos);die();
       $FA['CodigoC'] = $codigoCliente;
       $FA['Tipo_PRN'] = "FM";
       $FA['FacturaNo'] = $TextFacturaNo;
       $FA['Nuevo_Doc'] = true;
-      $FA['Factura'] = intval($TextFacturaNo);
-      $FA['TC'] = SinEspaciosIzq($FA['DCLinea']);
-      $FA['Serie'] = SinEspaciosDer($FA['DCLinea']);
-      if (Existe_Factura($FA)) {
-        
-      }
-      
-      $DiarioCaja = ReadSetDataNum("Recibo_No", True, True);
-      if ($FA['Nuevo_Doc']) {
-        $FA['Factura'] = ReadSetDataNum($FA['TC']."_SERIE_".$FA['Serie'], True, True);
-      }
-      $SubTotal_NC = $FA['TxtNC'];
-      $Total_Anticipo = $FA['saldoFavor'];
-      $Total_Bancos = $FA['TextCheque'];
-      $Total_Efectivo = $FA['TxtEfectivo'];
-      $TotalCajaMN = $FA['Total'] - $Total_Bancos - $SubTotal_NC;
-      $TextoFormaPago = "CONTADO";
-      $Total_Abonos = $TotalCajaMN + $Total_Bancos + $SubTotal_NC;
-      $FA['Total_Abonos'] = $Total_Abonos;
-      $FA['T'] = G_PENDIENTE;
-      if(isset($FA['saldoTotal']) && $FA['saldoTotal']==0)
+      if (!Existe_Factura($FA)) 
       {
-        $FA['T'] = 'C';        
-      }
-      $FA['Saldo_MN'] = $FA['Total'] - $Total_Abonos;
-      if($totalIva==0)
-      {
-        $FA['Porc_IVA'] = $_SESSION['INGRESO']['porc'];
-      }else
-      {
-        $FA['Porc_IVA'] = floatval($FA['PorcIva']/100); //$_SESSION['INGRESO']['porc'];
-      }
-      $FA['Cliente'] = $FA['TextRepresentante'];
-      $FA['me'] = $value['HABIT'];
-      $TA['me'] = $value['HABIT'];
-      $TA['Recibi_de'] = $FA['Cliente'];
-      $Cta = SinEspaciosIzq($FA['DCBanco']);
-      $Cta1 = SinEspaciosIzq($FA['DCNC']);
-      $Valor = $value["TOTAL"];
-      $Codigo = $value["Codigo_Cliente"];
-      $Codigo1 = $value["CODIGO"];
-      $Codigo2 = $value["Mes"];
-      $Codigo3 = ".";
-      $Anio1 = $value["TICKET"];
-      //Grabamos el numero de factura
-      // print_r($FA);die();
-      Grabar_Factura1($FA);
-
-      //Seteos de Abonos Generales para todos los tipos de abonos
-      $TA['T'] = $FA['T'];
-      $TA['TP'] = $FA['TC'];
-      $TA['Serie'] = $FA['Serie'];
-      $TA['Autorizacion'] = $FA['Autorizacion'];
-      $TA['CodigoC'] = $FA['codigoCliente']; //codigo cliente
-      $TA['Factura'] = $FA['Factura'];
-      $TA['Fecha'] = $FA['Fecha'];
-      $TA['Cta_CxP'] = $FA['Cta_CxP'];
-      $TA['email'] = $FA['TxtEmail'];
-      $TA['Comprobante'] = "";
-      $TA['Codigo_Inv'] = "";
-     
-      //Abono de Factura Banco o Tarjetas
-      $TA['Cta'] = $Cta;
-      if(strlen($FA['TextBanco'])<=1){
-        $TA['Banco'] = strtoupper($FA['DCBanco']);
-      }else{
-        $TA['Banco'] = strtoupper($FA['TextBanco'].' - '.$FA['Grupo_No']);
-      }
-      $TA['Cheque'] = $FA['chequeNo'];
-      $TA['Abono'] = $Total_Bancos;
-
-      // print_r($TA);die();
-      Grabar_Abonos($TA);
-
-      //Abono de Factura
-      $TA['Cta'] = $_SESSION['SETEOS']['Cta_CajaG'];
-      $TA['Banco'] = "EFECTIVO MN";
-      $TA['Cheque'] = strtoupper($FA['Grupo_No']);
-      $TA['Abono'] = $Total_Efectivo;
-      $TA['Comprobante'] = "";
-      $TA['Codigo_Inv'] = "";
-      // print_r($TA);die();
-      Grabar_Abonos($TA);
-
-      //Forma del Abono SubTotal NC
-      if ($SubTotal_NC > 0) {
-        $SubTotal_NC = $SubTotal_NC - $TFA['Total_IVA'];
-        $TA['Cta'] = $Cta1;
-        $TA['Banco'] = "NOTA DE CREDITO";
-        $TA['Cheque'] = "VENTAS";
-        $TA['Serie_NC'] = G_NINGUNO;
-        $TA['Autorizacion_NC'] = G_NINGUNO;
-        $TA['Nota_Credito'] = 0;
-        $TA['Abono'] = $SubTotal_NC;
-        Grabar_Abonos($TA);
-      }
-      
-      //Abonos Anticipados Cta_Ant_Cli
-       $TA['Cta'] = SinEspaciosIzq($FA['DCAnticipo']);
-       if(strlen($FA['TextBanco']) > 1) { $TA['Banco'] = strtoupper($FA['TextBanco']); } else { $TA['Banco'] = "ANTICIPO PENSIONES";};
-       $TA['Cheque'] = strtoupper($FA['Grupo_No']);
-       $TA['Abono'] = $Total_Anticipo;
-       Grabar_Abonos($TA);
-     
-      //Forma del Abono IVA NC
-      if ($TFA['Total_IVA'] > 0) {
-        $TA['Cta'] = $_SESSION['SETEOS']['Cta_IVA'];
-        $TA['Banco'] = "NOTA DE CREDITO";
-        $TA['Cheque'] = "I.V.A.";
-        $TA['Serie_NC'] = G_NINGUNO;
-        $TA['Autorizacion_NC'] = G_NINGUNO;
-        $TA['Nota_Credito'] = 0;
-        $TA['Abono'] = $TFA['Total_IVA'];
-        Grabar_Abonos($TA);
-      }
-     
-      //Abono de Factura
-      $TA['T'] = G_NORMAL;
-      $TA['TP'] = "TJ";
-      $TACta = $Cta;
-      $TA['Cta_CxP'] = $FA['Cta_CxP'];
-      $TA['Banco'] = "INTERES POR TARJETA";
-      $TA['Cheque'] =  $FA['chequeNo'];
-      $TA['Abono'] = intval($FA['TextInteres']);
-      $TA['Recibi_de'] = $FA['Cliente'];
-      Grabar_Abonos($TA);
-       
-      $TA['T'] = $FA['T'];
-      $TA['TP'] = $FA['TC'];
-      $TA['Serie'] = $FA['Serie'];
-      $TA['Factura'] = $FA['Factura'];
-      $TA['Autorizacion'] = $FA['Autorizacion'];
-      $TA['CodigoC'] = $FA['codigoCliente'];
-      $conn = new db();
-        $sql = "UPDATE Facturas
-            SET Saldo_MN = 0 ";
-          if (isset($FA['saldoTotal']) && $FA['saldoTotal'] == 0) {
-            $sql .= ",T = 'C'";
-          } else {
-            $sql .= " ,T = 'P' ";
+          $DiarioCaja = ReadSetDataNum("Recibo_No", True, True);
+          if ($FA['Nuevo_Doc']) 
+          {
+            $FA['Factura'] = ReadSetDataNum($FA['TC']."_SERIE_".$FA['Serie'], True, True);
+          } 
+          $SubTotal_NC = $FA['TxtNC'];
+          $Total_Anticipo = $FA['SaldoFavor'];
+          $Total_Bancos = $FA['TextCheque'];
+          $Total_Efectivo = $FA['TxtEfectivo'];
+          $TotalCajaMN = $FA['Total'] - $Total_Bancos - $SubTotal_NC;
+          $TextoFormaPago = "CONTADO";
+          $Total_Abonos = $TotalCajaMN + $Total_Bancos + $SubTotal_NC;
+          $FA['Total_Abonos'] = $Total_Abonos;
+          $FA['T'] = G_PENDIENTE;
+          if(isset($FA['SaldoTotal']) && $FA['SaldoTotal']==0)
+          {
+              $FA['T'] = 'C';        
           }
-        $sql .= "
-          WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
-          AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
-          AND Factura = " . $TextFacturaNo . "
-          AND TC = '" . $FA['TC'] . "'
-          AND CodigoC = '" . $FA['codigoCliente'] . "'
-          AND Autorizacion = '" . $FA['Autorizacion'] . "'
-          AND Serie = '" . $FA['Serie'] . "' ";
+          $FA['Saldo_MN'] = $FA['Total'] - $Total_Abonos;
+          if($totalIva==0)
+          {
+            $FA['Porc_IVA'] = $_SESSION['INGRESO']['porc'];
+          }else
+          {
+            $FA['Porc_IVA'] = floatval($FA['PorcIva']/100); //$_SESSION['INGRESO']['porc'];
+          }
+          $FA['Cliente'] = $FA['TextRepresentante'];
+          $FA['me'] = $value['HABIT'];
+          $TA['me'] = $value['HABIT'];
+          $TA['Recibi_de'] = $FA['Cliente'];
+          $Cta = SinEspaciosIzq($FA['DCBanco']);
+          $Cta1 = SinEspaciosIzq($FA['DCNC']);
+          $Valor = $value["TOTAL"];
+          $Codigo = $value["Codigo_Cliente"];
+          $Codigo1 = $value["CODIGO"];
+          $Codigo2 = $value["Mes"];
+          $Codigo3 = ".";
+          $Anio1 = $value["TICKET"];
+          //Grabamos el numero de factura
+          // print_r($FA);die();
+          Grabar_Factura1($FA);
 
-        $conn->String_Sql($sql);
+          //Seteos de Abonos Generales para todos los tipos de abonos
+          $TA['T'] = $FA['T'];
+          $TA['TP'] = $FA['TC'];
+          $TA['Serie'] = $FA['Serie'];
+          $TA['Autorizacion'] = $FA['Autorizacion'];
+          $TA['CodigoC'] = $FA['CodigoCliente']; //codigo cliente
+          $TA['Factura'] = $FA['Factura'];
+          $TA['Fecha'] = $FA['Fecha'];
+          $TA['Cta_CxP'] = $FA['Cta_CxP'];
+          $TA['email'] = $FA['TxtEmail'];
+          $TA['Comprobante'] = "";
+          $TA['Codigo_Inv'] = "";
+     
+          //Abono de Factura Banco o Tarjetas
+          $TA['Cta'] = $Cta;
+          if(strlen($FA['TextBanco'])<=1)
+          {
+            $TA['Banco'] = strtoupper($FA['DCBanco']);
+          }else
+          {
+            $TA['Banco'] = strtoupper($FA['TextBanco'].' - '.$FA['Grupo_No']);
+          }
+          $TA['Cheque'] = $FA['chequeNo'];
+          $TA['Abono'] = $Total_Bancos;
+          // print_r($TA);die();
+          Grabar_Abonos($TA);
+
+          //Abono de Factura
+          $TA['Cta'] = $_SESSION['SETEOS']['Cta_CajaG'];
+          $TA['Banco'] = "EFECTIVO MN";
+          $TA['Cheque'] = strtoupper($FA['Grupo_No']);
+          $TA['Abono'] = $Total_Efectivo;
+          $TA['Comprobante'] = "";
+          $TA['Codigo_Inv'] = "";
+          // print_r($TA);die();
+          Grabar_Abonos($TA);
+
+          //Forma del Abono SubTotal NC
+          if ($SubTotal_NC > 0) {
+            $SubTotal_NC = $SubTotal_NC - $TFA['Total_IVA'];
+            $TA['Cta'] = $Cta1;
+            $TA['Banco'] = "NOTA DE CREDITO";
+            $TA['Cheque'] = "VENTAS";
+            $TA['Serie_NC'] = G_NINGUNO;
+            $TA['Autorizacion_NC'] = G_NINGUNO;
+            $TA['Nota_Credito'] = 0;
+            $TA['Abono'] = $SubTotal_NC;
+            Grabar_Abonos($TA);
+          }
+      
+          //Abonos Anticipados Cta_Ant_Cli
+           $TA['Cta'] = SinEspaciosIzq($FA['DCAnticipo']);
+           if(strlen($FA['TextBanco']) > 1) 
+            { 
+              $TA['Banco'] = strtoupper($FA['TextBanco']); 
+            }else 
+            { 
+                $TA['Banco'] = "ANTICIPO PENSIONES";
+            };
+           $TA['Cheque'] = strtoupper($FA['Grupo_No']);
+           $TA['Abono'] = $Total_Anticipo;
+           Grabar_Abonos($TA);
+     
+          //Forma del Abono IVA NC
+          if ($TFA['Total_IVA'] > 0) {
+            $TA['Cta'] = $_SESSION['SETEOS']['Cta_IVA'];
+            $TA['Banco'] = "NOTA DE CREDITO";
+            $TA['Cheque'] = "I.V.A.";
+            $TA['Serie_NC'] = G_NINGUNO;
+            $TA['Autorizacion_NC'] = G_NINGUNO;
+            $TA['Nota_Credito'] = 0;
+            $TA['Abono'] = $TFA['Total_IVA'];
+            Grabar_Abonos($TA);
+          }
+     
+          //Abono de Factura
+          $TA['T'] = G_NORMAL;
+          $TA['TP'] = "TJ";
+          $TACta = $Cta;
+          $TA['Cta_CxP'] = $FA['Cta_CxP'];
+          $TA['Banco'] = "INTERES POR TARJETA";
+          $TA['Cheque'] =  $FA['chequeNo'];
+          $TA['Abono'] = intval($FA['TextInteres']);
+          $TA['Recibi_de'] = $FA['Cliente'];
+          Grabar_Abonos($TA);
+       
+          $TA['T'] = $FA['T'];
+          $TA['TP'] = $FA['TC'];
+          $TA['Serie'] = $FA['Serie'];
+          $TA['Factura'] = $FA['Factura'];
+          $TA['Autorizacion'] = $FA['Autorizacion'];
+          $TA['CodigoC'] = $FA['CodigoCliente'];
+
+          $conn = new db();
+          $sql = "UPDATE Facturas
+              SET Saldo_MN = 0 ";
+            if (isset($FA['SaldoTotal']) && $FA['SaldoTotal'] == 0) 
+              { $sql .= ",T = 'C'"; } else { $sql .= " ,T = 'P' "; }
+          $sql .= "
+            WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+            AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+            AND Factura = " . $TextFacturaNo . "
+            AND TC = '" . $FA['TC'] . "'
+            AND CodigoC = '" . $FA['CodigoCliente'] . "'
+            AND Autorizacion = '" . $FA['Autorizacion'] . "'
+            AND Serie = '" . $FA['Serie'] . "' ";
+
+          $conn->String_Sql($sql);
 
 
-      $TxtEfectivo = "0.00";
-      if (strlen($FA['Autorizacion']) >= 13) 
-      {
-        $FA['Desde'] = $FA['Factura'];
-        $FA['Hasta'] = $FA['Factura'];
+          $TxtEfectivo = "0.00";
+          if (strlen($FA['Autorizacion']) >= 13) 
+          {
+            $FA['Desde'] = $FA['Factura'];
+            $FA['Hasta'] = $FA['Factura'];
+          }
+          $FA['serie'] = $FA['Serie'];
+          $FA['num_fac'] = $FA['Factura'];
+          $FA['tc'] = $FA['TC'];
+          $FA['cod_doc'] = '01';
+
+          if (strlen($FA['Autorizacion']) == 13) 
+          {
+            try {
+              $rep = $resultado = $this->autorizar_sri->Autorizar_factura_o_liquidacion($FA);
+              $dataFac = $this->facturacion->getDataBasicFactura($FA['Serie'], $FA['Factura'], $FA['CodigoC']);
+
+              // print_r($rep);
+              // print_r($dataFac);die();
+              if($rep==1)
+              {
+                $resultado = array('respuesta'=>$rep, 'auto'=>$dataFac['Autorizacion'], 'per' => $dataFac['Periodo'],'Factura'=>$FA['Factura'],'Serie'=>$FA['Serie'],'CodigoCliente'=>$FA['CodigoCliente']);
+              }else{ $resultado = array('respuesta'=>-1,'text'=>((!is_null($rep))?mb_convert_encoding($rep, 'UTF-8'):$rep), 'auto'=>$dataFac['Autorizacion'], 'per' => $dataFac['Periodo']);}
+            } catch (Exception $e) {
+              $resultado = array('respuesta'=>-1,'text'=>$e->getMessage());
+            }
+          }else{ 
+            $resultado = array('respuesta'=>5, 'auto' =>((isset($FA['Autorizacion']))?$FA['Autorizacion']:G_NINGUNO), 'per'=> $_SESSION['INGRESO']['item']);
+          }
       }
-      $FA['serie'] = $FA['Serie'];
-      $FA['num_fac'] = $FA['Factura'];
-      $FA['tc'] = $FA['TC'];
-      $FA['cod_doc'] = '01';
-
-    if (strlen($FA['Autorizacion']) == 13) {
-      try {
-        $rep = $resultado = $this->autorizar_sri->Autorizar_factura_o_liquidacion($FA);
-        $dataFac = $this->facturacion->getDataBasicFactura($FA['Serie'], $FA['Factura'], $FA['CodigoC']);
-        if($rep==1)
-        {
-          $resultado = array('respuesta'=>$rep, 'auto'=>$dataFac['Autorizacion'], 'per' => $dataFac['Periodo']);
-        }else{ $resultado = array('respuesta'=>-1,'text'=>((!is_null($rep))?mb_convert_encoding($rep, 'UTF-8'):$rep), 'auto'=>$dataFac['Autorizacion'], 'per' => $dataFac['Periodo']);}
-      } catch (Exception $e) {
-        $resultado = array('respuesta'=>-1,'text'=>$e->getMessage());
-      }
-    }else{ 
-      $resultado = array('respuesta'=>5, 'auto' =>((isset($FA['Autorizacion']))?$FA['Autorizacion']:G_NINGUNO), 'per'=> $_SESSION['INGRESO']['item']);
-    }
     return $resultado;
-    }
   }
 
   public function guardarLineas(){

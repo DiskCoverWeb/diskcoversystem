@@ -743,28 +743,50 @@
     }
   }
 
-  function guardarPension(){
-    validarDatos = $("#total").val();
+  function guardarPension()
+  {
+
     saldoTotal = $("#saldoTotal").val();
-    // if (saldoTotal > 0 ) {
-    //   Swal.fire({
-    //     type: 'info',
-    //     title: 'Debe pagar la totalidad de la factura',
-    //     text: ''
-    //   });
-    // }else 
-    if (validarDatos <= 0 ) {
-      Swal.fire({
-        type: 'info',
-        title: 'Ingrese los datos necesarios para guardar la factura',
-        text: ''
-      });
-    }else{
+    validarDatos = $("#total").val();
+    if($('#cliente').val()=="")
+      {
+        Swal.fire("","Seleccione cliente o alumno","info")
+        return false;
+      }
+   if($('#persona').val()=='' ||  $('#persona').val()=='.' || $('#TextCI').val()=='' || $('#TextCI').val()=='.' || $('#direccion1').val()=='' || $('#direccion1').val()=='.'  || $('#email').val()=='' || $('#email').val()=='.' || $('#telefono').val()=='' || $('#telefono').val()=='.')
+    {
+      Swal.fire("","Datos para la factura incorrectos","info")
+      return false;
+    }
+   if(validarDatos <= 0 ) 
+    {
+     Swal.fire("","Seleccione una elemento para facturar","info")
+     return false;
+    } 
+
+    if($('#DCLinea').val() == "" ) 
+    {
+     Swal.fire("","Se debe indicar una Linea de Catalogo","info")
+     return false;
+    } 
+
+    saldoTotal  = $("#saldoTotal").val();
+    if(saldoTotal<0)
+    {
+      Swal.fire("","El total de abonos supera el total de la factura.","info")
+      return false;
+    }
+
+    ProcesoFacturacion();
+  }
+
+  function ProcesoFacturacion()
+  {
       var update = false;
       //var update = confirm("¿Desea actualizar los datos del cliente?");
       Swal.fire({
-        title: 'Esta seguro?',
-        text: "¿Desea actualizar los datos del cliente?",
+        title: 'Desea actualizar los datos del cliente?',
+        text: "Los datos del cliente se actualizaran",
         type: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -772,52 +794,49 @@
         confirmButtonText: 'Si!'
       }).then((result) => {
         if (result.value==true) {
-          update = true;
+            actualizarCliente()            
         }else{
           update = false;
         }
-        TextRepresentante = $("#persona").val();
-        DCLinea = $("#DCLinea option:selected").val();
-        Cod_CxC = $("#DCLinea option:selected").text();
-        TxtDireccion = $("#direccion").val();
-        TxtTelefono = $("#telefono").val();
-        TextFacturaNo = $("#factura").val();
-        Grupo_No = $("#DCGrupo_No").val();
-        TextCI = $("#TextCI").val();
-        TD_Rep = $("#tdCliente").val();
-        TxtEmail = $("#email").val().toUpperCase();
-        TxtDirS = $("#direccion1").val().toUpperCase();
-        TextCheque = $("#valorBanco").val();
-        TextBanco = $("#TextBanco").val();
-        DCBanco = $("#cuentaBanco").val();
-        DCBanco = DCBanco.split("/");
-        DCBanco = DCBanco[0];
-        DCAnticipo = $("#DCAnticipo").val();
-        chequeNo = $("#chequeNo").val();
-        TxtEfectivo = $("#efectivo").val();
-        TxtNC = $("#abono").val();
-        DCNC = $("#cuentaNC").val();
-        Fecha = $("#fechaEmision").val();
-        Total = $("#total").val();
-        Descuento = $("#descuento").val();
-        Descuento2 = $("#descuentop").val();
-        codigoCliente = $("#codigoCliente").val();
-        saldoFavor = $('#saldoFavor').val();
-        abono = $('#abono').val();
-        debito_automatica = $('#debito_automatica').val();
-        tipo_debito_automatico = $('#tipo_debito_automatico').val();
-        numero_cuenta_debito_automatico = $('#numero_cuenta_debito_automatico').val();
-        caducidad_debito_automatico = $('#caducidad_debito_automatico').val();
-        TextInteres = $('#interesTarjeta').val();        
-        PorcIVA = $('#DCPorcenIVA').val();
+      })
 
-        let por_deposito_debito_automatico ="0";
-        if($('#por_deposito_debito_automatico').prop('checked')){
-          por_deposito_debito_automatico = "1";
+  }
+
+  function actualizarCliente()
+  {
+    parametros = 
+    {
+      'Grupo_No': $("#DCGrupo_No").val(),
+      'CodigoCliente':$("#codigoCliente").val(),
+      'Telefono': $("#telefono").val(),
+      'DirS':$("#direccion1").val().toUpperCase(),
+      'Direccion':$("#direccion").val(),
+      'Email':$("#email").val().toUpperCase(),
+      'MBFecha':$('#caducidad_debito_automatico').val(),
+      'Representante':$("#persona").val(),
+      'TextCI':$("#TextCI").val(),
+      'TxtCtaNo': $('#numero_cuenta_debito_automatico').val(),
+      'CTipoCta': $("#tipo_debito_automatico").val(),
+      'CheqPorDeposito': $("#por_deposito_debito_automatico").prop('checked'),
+      'Documento':$('#debito_automatica').val(),
+      'DCDebito':$('#debito_automatica').val(),
+      'TD_Rep':$("#tdCliente").val(),
+    }
+     $.ajax({
+        url: '../controlador/facturacion/facturar_pensionC.php?ActualizarCliente=true',
+        type:  'post',
+        data: {parametros:parametros},
+        dataType: 'json',
+        success:  function (response) {
+          GuardarFactura()       
         }
+      });
+  }
 
-        //var confirmar = confirm("Esta seguro que desea guardar \n La factura No."+TextFacturaNo);
-        Swal.fire({
+  function GuardarFactura()
+  {
+     TextFacturaNo = $("#factura").val();
+      Swal.fire({
           title: 'Esta seguro?',
           text: "Esta seguro que desea guardar \n La factura No."+TextFacturaNo,
           type: 'warning',
@@ -827,53 +846,98 @@
           confirmButtonText: 'Si!'
         }).then((result) => {
           if (result.value==true) {
-            $('#myModal_espera').modal('show');
-            $.ajax({
-            type: "POST",
-            url: '../controlador/facturacion/facturar_pensionC.php?guardarPension=true',
-            data: {
-              'update' : update,
-              'DCLinea' : DCLinea,
-              'Cod_CxC' : Cod_CxC,
-              'Total' : Total,
-              'Descuento' : Descuento,
-              'Descuento2' : Descuento2,
-              'TextRepresentante' : TextRepresentante,
-              'TxtDireccion' : TxtDireccion,
-              'TxtTelefono' : TxtTelefono,
-              'TextFacturaNo' : TextFacturaNo,
-              'Grupo_No' : Grupo_No,
-              'chequeNo' : chequeNo,
-              'TextCI' : TextCI,
-              'TD_Rep' : TD_Rep,
-              'TxtEmail' : TxtEmail,
-              'TxtDirS' : TxtDirS,
-              'codigoCliente' : codigoCliente,
-              'TextCheque' : TextCheque,
-              'TextBanco': TextBanco,
-              'DCBanco' : DCBanco,
-              'DCAnticipo' : DCAnticipo,
-              'TxtEfectivo' : TxtEfectivo,
-              'TxtNC' : TxtNC,
-              'Fecha' : Fecha,
-              'DCNC' : DCNC,
-              'saldoTotal':saldoTotal,
-              'saldoFavor':saldoFavor,
-              'TxtNCVal':abono, 
-              'DCDebito':debito_automatica, 
-              'Documento':debito_automatica, 
-              'CTipoCta':tipo_debito_automatico, 
-              'TxtCtaNo':numero_cuenta_debito_automatico, 
-              'MBFecha':caducidad_debito_automatico, 
-              'CheqPorDeposito':por_deposito_debito_automatico, 
-              'TextInteres' : TextInteres,
-              'PorcIva': PorcIVA,
-            },
-            dataType:'json',  
-            success: function(response)
-            {
-              recargarData = true;
-              $('#myModal_espera').modal('hide');
+            GenerarFactura();
+          }
+        })
+
+  }
+
+  function GenerarFactura()
+  {
+
+    // $('#myModal_espera').modal('show');
+    DCBanco = $("#cuentaBanco").val();
+    DCBanco = DCBanco.split("/");
+    DCBanco = DCBanco[0];
+    let por_deposito_debito_automatico ="0";
+      if($('#por_deposito_debito_automatico').prop('checked')){
+        por_deposito_debito_automatico = "1";
+    }
+    parametros = 
+    {
+        'DCLinea':$("#DCLinea option:selected").val(),
+        'Cod_CxC':$("#DCLinea option:selected").text(),
+        'Total':$("#total").val(),
+        'Descuento':$("#descuento").val(),
+        'Descuento2':$("#descuentop").val(),
+        'TextRepresentante':$("#persona").val(),
+        'TxtDireccion' : $("#direccion").val(),
+        'TxtTelefono' : $("#telefono").val(),
+        'TextFacturaNo' :  $("#factura").val(),
+        'Grupo_No' : $("#DCGrupo_No").val(),
+        'chequeNo' : $("#chequeNo").val(),
+        'TextCI' : $("#TextCI").val(),
+        'TD_Rep' : $("#tdCliente").val(),
+        'TxtEmail' : $("#email").val().toUpperCase(),
+        'TxtDirS' : $("#direccion1").val().toUpperCase(),
+        'CodigoCliente' : $("#codigoCliente").val(),
+        'TextCheque' :  $("#valorBanco").val(),
+        'TextBanco': $("#TextBanco").val(),
+        'DCBanco' : DCBanco,
+        'DCAnticipo' : $("#DCAnticipo").val(),
+        'TxtEfectivo' :  $("#efectivo").val(),
+        'TxtNC' :  $("#abono").val(),
+        'Fecha' :  $("#fechaEmision").val(),
+        'DCNC' : $("#cuentaNC").val(),
+        'SaldoTotal': $("#saldoTotal").val(), //no hay
+        'SaldoFavor':$('#saldoFavor').val(),
+        'TxtNCVal':$('#abono').val(), 
+        'DCDebito': $('#debito_automatica').val(), 
+        'Documento': $('#debito_automatica').val(), 
+        'CTipoCta':$('#tipo_debito_automatico').val(), 
+        'TxtCtaNo':$('#numero_cuenta_debito_automatico').val(), 
+        'MBFecha':$('#caducidad_debito_automatico').val(), 
+        'CheqPorDeposito':por_deposito_debito_automatico, 
+        'TextInteres' :  $('#interesTarjeta').val(),
+        'PorcIva': $('#DCPorcenIVA').val(),
+    }
+     
+    $.ajax({
+        type: "POST",
+        url: '../controlador/facturacion/facturar_pensionC.php?guardarPension=true',
+        data: {parametros,parametros},
+        dataType:'json',  
+        success: function(response)
+        {
+
+          if(response.respuesta==-1)
+          {
+            Swal.fire("",response.text,"error");
+
+          }else if(response.respuesta == '3')
+          {
+            Swal.fire('Este documento electronico ya esta autorizado','','error');
+
+          }else if(response.respuesta == 1)
+          {
+            Swal.fire('','Este documento electronico fue autorizado','success').then(function(){
+                var url = '../controlador/facturacion/lista_facturasC.php?ver_fac=true&codigo='+response.Factura+'&ser='+response.Serie+'&ci='+response.CodigoCliente+'&per='+response.per+'&auto='+response.auto;
+                window.open(url,'_blank');
+                location.reload();
+            })            
+          }else if(response.respuesta == '2')
+          {
+             Swal.fire('','XML devuelto','info').then(function(){
+                var url = '../controlador/facturacion/lista_facturasC.php?ver_fac=true&codigo='+response.Factura+'&ser='+response.Serie+'&ci='+response.CodigoCliente+'&per='+response.per+'&auto='+response.auto;
+                window.open(url,'_blank');
+                location.reload();
+            })   
+          }
+
+          ///---------------------------antiua----
+          /*
+            recargarData = true;
+            $('#myModal_espera').modal('hide');
               if (response) {
 
                 response = response;
@@ -954,7 +1018,7 @@
                 if($('#persona').val()!=""){
                   ClientePreseleccion($('#persona').val());
                 }
-              }
+              } */
 
             },
             error: function (jqXHR, exception) {
@@ -963,11 +1027,7 @@
               control_errores('guardarPension',exception);
               alert("Ocurrio un error inesperado, por favor contacte a soporte.");
             }
-            });
-          }
-        })
-      })
-    }
+        });
   }
 
   function clienteMatricula(codigoCliente){
@@ -1469,6 +1529,7 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
                 <div class="col colDCLinea">
                   <br>
                   <select class="form-control input-xs" name="DCLinea" id="DCLinea" tabindex="5" onchange="numeroFactura();">
+                    <option value="">Sin Serie</option>
                   </select>
                 </div>
                   <input type="hidden" id="Autorizacion">
