@@ -33,6 +33,7 @@ class autorizacion_sri
 	// Puedes generar una diferente usando la funcion $getIV()
 	private $linkSriAutorizacion;
 	private $linkSriRecepcion;
+	private $rutaJava8;
 	function __construct()
 	{
 		$this->clave = 'Una cadena, muy, muy larga para mejorar la encriptacion';
@@ -40,6 +41,9 @@ class autorizacion_sri
 		$this->iv = base64_decode("C9fBxl1EWtYTL1/M8jfstw==");
 		// $this->conn = new Conectar();
 		$this->db = new db();
+
+		$this->rutaJava8  = "";
+		// $this->rutaJava8  =  escapeshellarg("C:\\Program Files\\Java\\jdk-1.8\\bin\\");
 
        if(isset($_SESSION['INGRESO']['Web_SRI_Autorizado'])){$this->linkSriAutorizacion = $_SESSION['INGRESO']['Web_SRI_Autorizado'];}
  	   if(isset($_SESSION['INGRESO']['Web_SRI_Recepcion'])){$this->linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion'];}
@@ -3154,7 +3158,7 @@ function generar_xml_retencion($cabecera,$detalle)
  	    $url_No_autorizados =dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/No_autorizados/';
  	   
     	// print_r("java -jar ".$comprobar_sri." ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion);die();
-   		 exec("java -jar ".$comprobar_sri." ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion,$f);   	
+   		 exec($this->rutaJava8."java -jar ".$comprobar_sri." ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion,$f);   	
    		 // print_r($f);
    		 // die();
    		 if(empty($f))
@@ -3211,7 +3215,7 @@ function generar_xml_retencion($cabecera,$detalle)
 	 		return $respuesta;
     	}
     	 // print_r("java -jar ".$enviar_sri." ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion);die();
-   		 exec("java -jar ".$enviar_sri." ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion,$f);
+   		 exec($this->rutaJava8."java -jar ".$enviar_sri." ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion,$f);
    		 // print_r($f);die();
    		 if(count($f)>0)
    		 {

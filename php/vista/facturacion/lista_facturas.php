@@ -985,6 +985,37 @@ function modal_email_fac(factura,serie,codigoc,emails)
 
     }
 
+
+  function enviaremail()   //funcion para enviarlo por javascript
+  { 
+
+
+          const xhr = new XMLHttpRequest();
+          const url =  'https://erp.diskcoversystem.com/~diskcover/php/comprobantes/SRI/autorizar_sri_visual.php?AutorizarXMLOnline=true';
+            // const url =  '../../php/comprobantes/SRI/autorizar_sri_visual.php?AutorizarXMLOnline=true';
+
+
+          xhr.open('POST', url, true);
+          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              try {
+                  const response = JSON.parse(xhr.responseText);
+                  console.log('Respuesta', response);                  
+                } catch (error) {
+                  // Si la respuesta no es JSON, maneja como texto plano
+                  console.log('Respuesta en texto plano:', xhr.responseText);
+                }
+              // console.log('Respuesta:', xhr.responseText);
+            }
+          };
+
+           const params = `XML=1311202401070216417900110010030000025301234567811.xml`;
+
+          xhr.send(params);
+  }
+
   </script>
   <div class="row">
     <div class="col-lg-4 col-sm-10 col-md-6 col-xs-12">
@@ -998,6 +1029,9 @@ function modal_email_fac(factura,serie,codigoc,emails)
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
             <button type="button" class="btn btn-default" title="Generar pdf" onclick="generar_excel()"><img src="../../img/png/table_excel.png"></button>
+        </div>
+         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
+            <button type="button" class="btn btn-default" title="Generar pdf" onclick="enviaremail()"><img src="../../img/png/table_excel.png"></button>
         </div>
  </div>
 </div>

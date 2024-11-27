@@ -191,7 +191,7 @@ function Form_Activate()
 
   
   $(document).ready(function () {
-    BloquearOpciones();
+    // BloquearOpciones();
     Form_Activate();
     cargar_cuenta();
     var modificar = '<?php echo $variables_mod; ?>';
