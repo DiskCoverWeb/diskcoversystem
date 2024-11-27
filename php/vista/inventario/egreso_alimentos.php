@@ -573,11 +573,11 @@
 				<img src="../../img/png/file_crono.png" style="width:32px;height:32px">
 			</button>
 		</div>
-		<div class="col-xs-2 col-md-2 col-sm-2">
+		<!--<div class="col-xs-2 col-md-2 col-sm-2">
           <button class="btn btn-default" title="Escanear QR" onclick="escanear_qr()">
             <img src="../../img/png/escanear_qr.png">
           </button>
-        </div>
+        </div>-->
 		<div class="col-xs-2 col-md-2 col-sm-2" style="display:none;" id="pnl_notificacion">
 			<div class="navbar-custom-menu">
 				<ul class="nav navbar-nav">
@@ -677,7 +677,15 @@
 				<div class="row">
 					<div class="col-sm-3">
 						<b>Codigo productos</b>
-						<input type="" class="form-control input-sm" id="txt_cod_producto" style="font-size: 17px;" name="txt_cod_producto" onblur="buscar_producto()">			
+						<div class="input-group input-group-sm">
+							<input type="" class="form-control input-sm" id="txt_cod_producto" style="font-size: 17px;" name="txt_cod_producto" onblur="buscar_producto()">			
+							<span class="input-group-btn">
+								<button type="button" class="btn btn-primary btn-flat btn-sm" title="Escanear QR" onclick="escanear_qr()">
+									<i class="fa fa-qrcode" aria-hidden="true"></i> Escanear QR
+								</button>
+							</span>    
+						</div>
+						
 						<input type="hidden" id="txt_id" name="">								
 					</div>	
 					<div class="col-sm-3">

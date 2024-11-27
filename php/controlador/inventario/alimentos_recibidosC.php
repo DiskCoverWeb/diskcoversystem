@@ -711,6 +711,12 @@ class alimentos_recibidosC
 				}
 			}
 			$nega = 0;			
+
+			$nombre_archivo = 'QR_'.$_SESSION['INGRESO']['Entidad_No'].$_SESSION['INGRESO']['item'].'_'.str_replace('-', '', $value['Codigo_Barra']).'.png';
+			$ruta = "/TEMP/".$nombre_archivo;
+			if(!file_exists(dirname(__DIR__, 3) . $ruta)){
+				$this->generarQR($value['Codigo_Barra']);
+			}
 			
 			$info[] = array(
 				'Item' => ($key+1),
@@ -721,7 +727,7 @@ class alimentos_recibidosC
 				'Nombre_Completo' => $value['Nombre_Completo'],
 				'Codigo_Barra' => $value['Codigo_Barra'],
 				'Sucursal' => $sucursal,
-				'QR' => dirname(__DIR__, 3) . "/TEMP/QR_65001_B01G01.png"
+				'QR' => dirname(__DIR__, 3) . $ruta
 			);
 
 			/*if($d=='')
@@ -783,7 +789,7 @@ class alimentos_recibidosC
 			$pos += 1;
 		}
 
-		$pdf->cabecera_reporte_MC($titulo, $tablaHTML, $contenido = false, $image = false, $Fechaini = false, $Fechafin = false, $sizetable, $mostrar, 15, 'H');
+		$pdf->cabecera_reporte_productos($titulo, $tablaHTML, $contenido = false, $image = false, $Fechaini = false, $Fechafin = false, $sizetable, $mostrar, 15, 'H');
 	}
 
 	function generarQR($codigo){
