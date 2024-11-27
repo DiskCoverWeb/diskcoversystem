@@ -275,6 +275,191 @@ class cabecera_pdf
 		
 	}
 
+	function cabecera_reporte_productos($titulo,$tablaHTML,$contenido=false,$image=false,$fechaini="",$fechafin="",$sizetable="",$mostrar=false,$sal_hea_body=15,$orientacion='P',$download = true, $repetirCabecera=null, $mostrar_cero=false,$nuevaPagina=false)
+	{	
+
+	    $this->pdftable->fechaini = $fechaini; 
+	    $this->pdftable->fechafin = $fechafin; 
+	    $this->pdftable->titulo = $titulo;
+	    $this->pdftable->salto_header_cuerpo = $sal_hea_body;
+	    $this->pdftable->orientacion = $orientacion;
+	    $estiloRow='';
+		 $this->pdftable->AddPage($orientacion);
+		
+		 if($image)
+		 {
+		  foreach ($image as $key => $value) {
+		  	//print_r($value);		 	
+		 	 	 $this->pdftable->Image($value['url'], $value['x'],$value['y'],$value['width'],$value['height']);
+		 	 	 $this->pdftable->Ln(5);		 	 
+		 }
+		}
+
+
+
+		if($contenido)
+		{
+		 foreach ($contenido as $key => $value) {
+		 	if(!isset($value['estilo'])){$value['estilo'] = '';}
+		 	 if($value['tipo'] == 'texto' && $value['posicion']=='top-tabla')
+		 	 {
+		 	 	$siz = 11;
+		 	 	$separacion = 4;
+		 	 	if(isset($value['tamaño'])){$siz = $value['tamaño'];}
+		 	 	if(isset($value['separacion'])){$separacion = $value['separacion'];}
+		 	 	//print_r($value);
+		 	 	$this->pdftable->SetFont('Arial',$value['estilo'],$siz);
+		 	 	$this->pdftable->MultiCell(0,3,$value['valor']);
+		 	 	$this->pdftable->Ln($separacion);
+
+		 	 }else if($value['tipo'] == 'titulo' && $value['posicion']=='top-tabla')
+		 	 {
+		 	 	$siz = 18;
+		 	 	$separacion = 4;
+		 	 	if(isset($value['tamaño'])){$siz = $value['tamaño'];}
+		 	 	if(isset($value['separacion'])){$separacion = $value['separacion'];}
+		 	 	$this->pdftable->SetFont('Arial','',$siz);
+		 	 	$this->pdftable->Cell(0,3,$value['valor'],0,0,'C');
+		 	 	$this->pdftable->Ln($separacion);
+
+		 	 }
+		 }
+        }
+            $this->pdftable->SetFont('Arial','',$sizetable);
+			$tablaindice = 0;
+		    foreach ($tablaHTML as $key => $value){
+		    	if (isset($value['newpag']) && $value['newpag']==1 && $key!=0) {			    	
+			    	$this->pdftable->AddPage($orientacion);
+				}
+		    	$tama = 7;
+		    	$esti = '';
+
+		    	// if(isset($value['estilo']) && $value['estilo']!='')
+		    	// {
+		    	// 	$this->pdftable->SetFont('Arial',$value['estilo'],$sizetable);
+		    	// 	$estiloRow = $value['estilo'];
+		    	// }else
+		    	// {
+		    	// 	$this->pdftable->SetFont('Arial','',$sizetable);
+		    	// 	$estiloRow ='';
+		    	// }
+		    	// if(isset($value['borde']) && $value['borde']!='0')
+		    	// {
+		    	// 	$borde=$value['borde'];
+		    	// }else
+		    	// {
+		    	// 	$borde =0;
+		    	// }
+
+		    	if(isset($value['estilo']) && $value['estilo']!='')
+		    	{
+		    		$esti = $value['estilo'];
+		    	}
+		    	if(isset($value['size']) && $value['size']!='')
+		    	{
+		    		$tama = $value['size'];
+		    	}
+
+		    	$this->pdftable->SetFont('Arial',$esti,$tama);
+		    	$estiloRow = $esti;
+
+
+
+		    	if(isset($value['borde']) && $value['borde']!='0')
+		    	{
+		    		$borde=$value['borde'];
+		    	}else
+		    	{
+		    		$borde =0;
+		    	}
+
+
+		    //print_r($value['medida']);
+		       $this->pdftable->SetWidths($value['medidas']);
+			   $this->pdftable->SetAligns($value['alineado']);
+			   //print_r($value['datos']);
+			   //$arr= $value['datos'];
+			   $arr= array();
+			   
+			   /*foreach($value['datos'] as $key2 => $value2){
+				// ? $pdf- : $row[0],)
+				if(is_file($value2)) {
+					$this->pdftable->Cell($value['medidas'][$tamanioae], 20, '', 1);
+					$arr[] = $this->pdftable->Image($value2, $this->pdftable->GetX()+$tamanioae, $this->pdftable->GetY(), 15, 15);
+				}else{
+					$arr[] = $value2;
+				}
+				$tamanioae += 1;
+			   }
+			   if(!is_null($repetirCabecera) && is_array($repetirCabecera)){
+			   	$repetirCabecera['row']['medidas'] = $value['medidas'];
+			   	$repetirCabecera['row']['alineado'] = $value['alineado'];
+			   }
+			   $this->pdftable->Row($arr,20,$borde,$estiloRow,null,$mostrar_cero,$repetirCabecera);		    	*/
+			   
+			   	if($tablaindice == 0){
+					$this->pdftable->Row($value['datos'],4,$borde,$estiloRow,null,$mostrar_cero,$repetirCabecera);
+				}else{
+					$tamanioae = 0;
+			   		foreach($value['datos'] as $key2 => $value2){
+					// ? $pdf- : $row[0],)
+					
+						if(!is_file($value2)) {
+							$this->pdftable->Cell($value['medidas'][$tamanioae], 20, $value2, 1);
+							//$arr[] = $value2;
+						}else{
+							$xae = $this->pdftable->GetX();
+							$yae = $this->pdftable->GetY();
+							$this->pdftable->Cell($value['medidas'][$tamanioae], 20, '', 1);
+							$this->pdftable->Image($value2, $xae+$tamanioae, $yae+2, 15, 15);
+							$this->pdftable->Ln();
+							//$arr[] = $this->pdftable->Image();
+						}
+						$tamanioae += 1;
+					}
+				}
+				$tablaindice += 1;
+		}
+		
+
+		  if($contenido)
+		  {
+		 foreach ($contenido as $key => $value) {
+		 	 if($value['tipo'] == 'texto' && $value['posicion']=='button-tabla')
+		 	 {
+		 	 	$siz = 11;
+		 	 	if(isset($value['tamaño'])){$siz = $value['tamaño'];}
+		 	 	$this->pdftable->SetFont('Arial','',$siz);
+		 	 	$this->pdftable->MultiCell(0,3,$value['valor']);
+		 	 	$this->pdftable->Ln(5);
+		 	 }else if($value['tipo'] == 'titulo' && $value['posicion']=='button-tabla')
+		 	 {
+		 	 	$siz = 18;
+		 	 	if(isset($value['tamaño'])){$siz = $value['tamaño'];}
+		 	 	$this->pdftable->SetFont('Arial','',$siz);
+		 	 	$this->pdftable->Cell(0,3,$value['valor'],0,0,'C');
+		 	 	$this->pdftable->Ln(5);
+		 	 }
+		 }
+		}
+		//echo $titulo;
+		//die();
+		if ($download) {	
+		 if($mostrar==true)
+	       {
+		    $this->pdftable->Output('',$titulo.'.pdf');
+
+	       }else
+	       {
+		     $this->pdftable->Output('D',$titulo.'.pdf',false);
+
+	      }
+		}else{
+			$this->pdftable->Output('F',dirname(__DIR__,2).'/TEMP/'.$titulo.'.pdf');
+		}
+		
+	}
+
 	function formatoPDFMatricial($HTML,$parametros,$datos_pre,$datos_empresa,$descagar=false)
 	{	
 		// $orientation='P',$unit='mm', array(45,350)

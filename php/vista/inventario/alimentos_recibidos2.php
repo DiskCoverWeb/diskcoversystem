@@ -925,7 +925,7 @@ function autocoplet_ingreso()
   {  
      var num_ped = $('#txt_codigo').val();
      if(num_ped.trim()==''){
-      Swal.fire('Se necesita numero de pedido', '', 'warning');
+      Swal.fire('Seleccione codigo de Ingreso', '', 'warning');
       return;
      }
      var url = '../controlador/inventario/alimentos_recibidosC.php?imprimir_pdf=true&num_ped='+num_ped;  
@@ -1002,9 +1002,11 @@ function autocoplet_ingreso()
     				<img src="../../img/png/grabar.png">
     			</button>
     		</div>
-        <!--<div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-            <button type="button" class="btn btn-default" title="Generar pdf" onclick="reporte_pdf()"><img src="../../img/png/pdf.png"></button>
-        </div>-->
+        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
+            <button type="button" class="btn btn-default" title="Imprimir" onclick="reporte_pdf()">
+              <img src="../../img/png/paper.png" height="32px">
+            </button>
+        </div>
         <!--<div class="col-xs-2 col-md-2 col-sm-2">
           <button class="btn btn-default" title="Escanear QR" onclick="escanear_qr()">
             <img src="../../img/png/escanear_qr.png">
