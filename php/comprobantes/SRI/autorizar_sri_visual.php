@@ -143,6 +143,9 @@ class autoriza_sri
 		$ftp_conn = ftp_connect($ftp_host, $ftp_port) or die("No se pudo conectar al servidor FTP.");
 		$login = ftp_login($ftp_conn, $ftp_user, $ftp_pass);
 
+		
+		ftp_pasv($ftp_conn, true);
+
 		// $archivos = ftp_nlist($ftp_conn, $remote_path);
 
 		// if (ftp_chdir($ftp_conn, "files")) {
