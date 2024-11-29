@@ -1,4 +1,5 @@
 <?php 
+require_once(dirname(__DIR__,2)."/php/funciones/funciones.php");
 
 header("Access-Control-Allow-Origin: *"); // Permite todas las orígenes, puedes restringir a uno específico
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS"); // Métodos permitidos
@@ -87,6 +88,7 @@ class EnviarVisual
 			        {
 			        	$reply = $parametros['reply']; 
 			        }
+			        $email_to = $value;
 			        $replyName = $parametros['replyName']; 
 			        $mail->addAddress($value);  
 			        $mail->setFrom($from,$fromName );
@@ -98,9 +100,9 @@ class EnviarVisual
 			          if (trim($parametros['Archivo'])!='') {
 
 			          	  $archivos = explode(';',$parametros['Archivo']);
-			              foreach ($archivos as $key => $value) {
-			              	$list_delete[] = $temp_file.$value;
-			                $mail->AddAttachment($temp_file.$value);              
+			              foreach ($archivos as $key2 => $value2) {
+			              	$list_delete[] = $temp_file.$value2;
+			                $mail->AddAttachment($temp_file.$value2);              
 			            }
 			          }
 			          //Content
@@ -113,6 +115,7 @@ class EnviarVisual
 			          {
 			            if ($mail->send()) {
 			              $res = 1;
+			              control_procesos("EM", "Email: ".trim($from)."=>".trim($email_to), "Asunto: ".$parametros['subject']);
 			            }
 			          }
 
@@ -121,6 +124,7 @@ class EnviarVisual
 		          // print_r($mail);
 		          // print_r($e);
 		          // die();
+		          control_procesos("EM", "Email: ".trim($from)." => ".trim($email_to), "Asunto(Error): ".$e);
 		          return -1;
 		        }
 	     	}
