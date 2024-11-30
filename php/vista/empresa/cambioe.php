@@ -1,6 +1,9 @@
 <?php  date_default_timezone_set('America/Guayaquil');  //print_r($_SESSION);die();//print_r($_SESSION['INGRESO']);die();?>
 <link rel="stylesheet" href="../../dist/css/arbol.css">
 <script type="text/javascript">
+	var arrNuevasLineas = [];
+	var lineaValAnteriores = {};
+	var lineaValNuevos = {};
   $(document).ready(function () 
   {
   	ddl_estados();
@@ -713,6 +716,8 @@ async function datos_empresa()
 				$('#tab_3').removeClass('active');
 				$('#li_tab4').css('display','none');
 				$('#tab_4').removeClass('active');
+				$('#li_tab5').css('display','none');
+				$('#tab_5').removeClass('active');
 				return false
 
 			}else
@@ -725,6 +730,8 @@ async function datos_empresa()
 				$('#li_tab3').removeClass('active');	
 				$('#li_tab4').css('display','initial');
 				$('#li_tab4').removeClass('active');	
+				$('#li_tab5').css('display','initial');
+				$('#li_tab5').removeClass('active');	
 			}
 
 
@@ -922,6 +929,9 @@ async function datos_empresa()
 
 			$('#TxtLineasItem').val(empresa.Item);
 			$('#TxtLineasEntidad').val(empresa.ID_Empresa);
+
+			resetearTab5();
+
 			TVcatalogo();
 			$('#btnLineasGrabar').removeAttr('disabled');
 
@@ -931,6 +941,39 @@ async function datos_empresa()
           }
 
 	});
+  }
+
+  function resetearTab5(){
+	$('#TxtIDLinea').val('')
+	$('#TextCodigo').val('.')
+	$('#TextLinea').val('NO PROCESABLE')
+	$('#MBoxCta').val('')
+	//$('#MBoxCta').attr('') //BUSCAR FORMATO_CUENTAS DEPENDIENDO DE LA BD
+	$('#MBoxCta_Anio_Anterior').val('')
+	$('#MBoxCta_Venta').val('')
+	$('#CTipo').html('<option value="FA">FA</option><option value="NV">NV</option><option value="FT">FT</option><option value="NC">NC</option><option value="LC">LC</option><option value="GR">GR</option><option value="CP">CP</option>');
+	$('#TxtNumFact').val('00')
+	$('#TxtItems').val('0.00')
+	$('#TxtLogoFact').val('')
+	$('#TxtPosFact').val('0.00')
+	$('#TxtEspa').val('0.00')
+	$('#TxtPosY').val(0.00)
+	$('#TxtLargo').val('0.00')
+	$('#TxtAncho').val('0.00')
+
+	$('#MBFechaIni').val("<?php echo date('Y-m-d');?>")
+	$('#MBFechaVenc').val("<?php echo date('Y-m-d');?>")
+	$('#TxtNumSerietres1').val('000001')
+	$('#TxtNumAutor').val('0000000001')
+	$('#TxtNumSerieUno').val('001')
+	$('#TxtNumSerieDos').val('001')
+
+	$('#TxtNombreEstab').val('.')
+	$('#TxtDireccionEstab').val('.')
+	$('#TxtTelefonoEstab').val('.')
+	$('#TxtLogoTipoEstab').val('.')
+		
+	$('#CheqPuntoEmision').prop('checked', false);
   }
 
 
@@ -1131,11 +1174,45 @@ async function datos_empresa()
 	    });
 	 }
 
-	 function confirmar()
+	 function confirmar(varEF=false)
 	 {
-	 	 var nom = $('#TextLinea').val();
+		let param_linea_nuevo = parametrizarCampos();
+		if(param_linea_nuevo == null){
+			return;
+		}
+
+		let parametros = [];
+		let listaTxtLineas = [];
+		if($('#TxtIDLinea').val() != '.'){
+			lineaValNuevos[$('#TxtIDLinea').val()] = param_linea_nuevo;
+			console.log(lineaValNuevos);
+		}else{
+			let indiceRepe = arrNuevasLineas.findIndex(rep => rep['TextCodigo'] == $('#TextCodigo').val());
+			if(indiceRepe == -1){
+				arrNuevasLineas.push(param_linea_nuevo);
+				console.log(arrNuevasLineas);
+			}
+		}
+
+		for(let lva of Object.keys(lineaValNuevos)){
+			let valores_nuevos = Object.values(lineaValNuevos[lva]).join('&');
+			let valores_anteriores = lineaValAnteriores[lva] ? Object.values(lineaValAnteriores[lva]).join('&') : '';
+
+			if(valores_anteriores != valores_nuevos){
+				parametros.push(lineaValNuevos[lva]);
+				listaTxtLineas.push(lineaValNuevos[lva]['TextLinea']);
+			}
+		}
+
+		for(let anl of arrNuevasLineas){
+			listaTxtLineas.push(anl['TextLinea']);
+		}
+
+		parametros = parametros.concat(arrNuevasLineas);
+
+	 	 //var nom = $('#TextLinea').val();
 	 	 Swal.fire({
-			title: 'Esta seguro de guardar '+nom,
+			title: 'Esta seguro de guardar las siguientes lineas:</br>'+listaTxtLineas.join(', '),
 			text: "",
 			type: 'warning',
 			showCancelButton: true,
@@ -1144,67 +1221,48 @@ async function datos_empresa()
 			confirmButtonText: 'Si!'
 		}).then((result) => {
 			if (result.value==true) {
-				if($("#CTipo").val()=='')
+				/*if($("#CTipo").val()=='')
 				{
 					$("#CTipo").val('FA');
-				}
-				guardar()
+				}*/
+				guardar(parametros, varEF);
 			}
 		})
 	 }
 
-	 function guardar()
+	 function guardar(parametros, varEF=false)
 	 {
-		$('#myModal_espera').show();
-	   //parametros = $('#form_datos').serialize();
-	   let parametros = {
-			'TextCodigo': $('#TextCodigo').val(),
-			'TextLinea': $('#TextLinea').val(),
-			'MBoxCta': $('#MBoxCta').val(),
-			'MBoxCta_Anio_Anterior': $('#MBoxCta_Anio_Anterior').val(),
-			'MBoxCta_Venta': $('#MBoxCta_Venta').val() == '' ? '.' : $('#MBoxCta_Venta').val(),
-			'CheqPuntoEmision': $('#CheqPuntoEmision').prop('checked'),
-			'CTipo': $('#CTipo').val(),
-			'TxtNumFact': $('#TxtNumFact').val(),
-			'TxtItems': $('#TxtItems').val(),
-			'TxtLogoFact': $('#TxtLogoFact').val(),
-			'TxtPosFact': $('#TxtPosFact').val(),
-			'TxtPosY': $('#TxtPosY').val(),
-			'TxtEspa': $('#TxtEspa').val(),
-			'TxtLargo': $('#TxtLargo').val(),
-			'TxtAncho': $('#TxtAncho').val(),
-			'MBFechaIni': $('#MBFechaIni').val(),
-			'TxtNumSerietres1': $('#TxtNumSerietres1').val(),
-			'MBFechaVenc': $('#MBFechaVenc').val(),
-			'TxtNumAutor': $('#TxtNumAutor').val(),
-			'TxtNumSerieUno': $('#TxtNumSerieUno').val(),
-			'TxtNumSerieDos': $('#TxtNumSerieDos').val(),
-			'TxtNombreEstab': $('#TxtNombreEstab').val(),
-			'TxtDireccionEstab': $('#TxtDireccionEstab').val(),
-			'TxtTelefonoEstab': $('#TxtTelefonoEstab').val(),
-			'TxtLogoTipoEstab': $('#TxtLogoTipoEstab').val(),
-			'item': $('#TxtLineasItem').val(),
-			'entidad': $('#TxtLineasEntidad').val(),
-	   };
+
+		$('#myModal_espera').modal('show');
+
 	   //parametros['item'] = $('#TxtLineasItem').val();
 	   //parametros['entidad'] = $('#TxtLineasEntidad').val();
 	 	 $.ajax({
 	      type: "POST",
 	      url: '../controlador/empresa/cambioeC.php?guardar=true',
-	      data:parametros,
+	      data:{parametros:parametros},
         dataType:'json',       
 	      success: function(data)
 	      {
-			$('#myModal_espera').hide();
+			$('#myModal_espera').modal('hide');
 	       	console.log(data);
 	       	if(data==1)
 	       	{
 	       		TVcatalogo();
-	       		Swal.fire('El proceso de grabar se realizo con exito','','success');
+	       		Swal.fire('El proceso de grabar se realizo con exito','','success')
+				.then(result => {
+					lineaValNuevos = {};
+					lineaValAnteriores = {};
+					arrNuevasLineas = [];
+					resetearTab5();
+					if(varEF){
+						ejecutarFunc(varEF);
+					}
+				});
 	       	}
 	      },
 		  error: (err) => {
-			$('#myModal_espera').hide();
+			$('#myModal_espera').modal('hide');
 			Swal.fire('Ocurrio un error al procesar su solicitud. Error: ' + err, '', 'error');
 		  }
 	    })
@@ -1230,6 +1288,7 @@ async function datos_empresa()
 
 	 function detalle_linea(id,cod)
 	 {
+		document.querySelector('#carga_linea_detalles').style.display = 'flex';
 		let entidad = $('#TxtLineasEntidad').val();
 		let item = $('#TxtLineasItem').val();
 		
@@ -1243,55 +1302,219 @@ async function datos_empresa()
 			return;
 		}
 
-	 	if(cod)
-    {
-		 	var ant = $('#txt_anterior').val();
-		 	var che = cod.split('.').join('_');	
-		 	if(ant==''){	$('#txt_anterior').val(che); }else{	$('#label_'+ant).css('border','0px');}
-		 	$('#label_'+che+'_'+id).css('border','1px solid');
-		 	$('#txt_anterior').val(che+'_'+id); 
-	  }
+		/*if(Object.keys(lineaValAnteriores).length > 0){
+			lineaValNuevos = parametrizarCampos();
+			console.log(lineaValNuevos);
+			if(lineaValNuevos == null){
+				return;
+			}
 
-	 	 $.ajax({
-	      type: "POST",
-	      url: '../controlador/empresa/cambioeC.php?detalle=true',
-	      data:{id,item,entidad},
-        dataType:'json',       
-	      success: function(data)
-	      {
-	      	data = data[0];
-	       	console.log(data);
-
-	       	$('#TextCodigo').val(data.Codigo)
-	       	$('#TextLinea').val(data.Concepto)
-	       	$('#MBoxCta').val(data.CxC)
-	       	$('#MBoxCta_Anio_Anterior').val(data.CxC_Anterior)
-	       	$('#CTipo').val(data.Fact)
-	       	$('#TxtNumFact').val(data.Fact_Pag)
-	       	$('#TxtItems').val(data.ItemsxFA)
-	       	$('#TxtLogoFact').val(data.Logo_Factura)
-	       	$('#TxtPosFact').val(data.Pos_Factura)
-	       	$('#TxtEspa').val(data.Espacios)
-	       	$('#TxtPosY').val(data.Pos_Y_Fact.toFixed(2))
-	       	$('#TxtLargo').val(data.Largo.toFixed(2))
-	       	$('#TxtAncho').val(data.Ancho.toFixed(2))
-
-	       	$('#MBFechaIni').val(formatoDate(data.Fecha.date))
-	       	$('#MBFechaVenc').val(formatoDate(data.Vencimiento.date))
-	       	$('#TxtNumSerietres1').val(generar_ceros(data.Secuencial,9))
-	       	$('#TxtNumAutor').val(data.Autorizacion)
-	       	$('#TxtNumSerieUno').val(data.Serie.substring(0,3))
-	       	$('#TxtNumSerieDos').val(data.Serie.substring(3,6))
-
-	       	$('#TxtNombreEstab').val(data.Nombre_Establecimiento)
-	       	$('#TxtDireccionEstab').val(data.Direccion_Establecimiento)
-	       	$('#TxtTelefonoEstab').val(data.Telefono_Estab)
-	       	$('#TxtLogoTipoEstab').val(data.Logo_Tipo_Estab)
+			let lineaValAnterior = lineaValAnteriores[lineaValNuevos['TxtIDLinea']];
 			
-			$('#CheqPuntoEmision').prop('checked', data.TL);
-	      }
-	    })
+			let valores_nuevos = Object.values(lineaValNuevos).join('&');
+			let valores_anteriores = Object.values(lineaValAnterior).join('&');
 
+			let indiceModificado = arrModificados.findIndex(dato => dato['TxtIDLinea'] == lineaValNuevos.TxtIDLinea);
+			if(valores_anteriores != valores_nuevos){
+				console.log("Indice modificado: " + indiceModificado);
+				if(indiceModificado !== -1){
+					arrModificados[indiceModificado] = lineaValNuevos;
+					console.log("Valor: " + arrModificados[indiceModificado] + " ==> Nuevo valor: " + lineaValNuevos);
+				}else{
+					arrModificados.push(lineaValNuevos);
+				}
+			}else{
+				arrModificados.splice(indiceModificado, 1);
+			}
+
+		}*/
+
+		//Para modificar una linea existente
+		if(Object.keys(lineaValAnteriores).length > 0 && $('#TxtIDLinea').val() != '.'){
+			let param_linea_nuevo = parametrizarCampos();
+			//console.log(lineaValNuevos);
+			if(param_linea_nuevo == null){
+				return;
+			}
+			lineaValNuevos[$('#TxtIDLinea').val()] = param_linea_nuevo;
+
+		}
+		
+		//Para insertar nueva linea
+		if($('#TxtIDLinea').val() == '.'){
+			let param_linea_nuevo = parametrizarCampos();
+			//console.log(lineaValNuevos);
+			if(param_linea_nuevo == null){
+				return;
+			}
+			let indiceRepe = arrNuevasLineas.findIndex(rep => rep['TextCodigo'] == $('#TextCodigo').val());
+			if(indiceRepe == -1){
+				arrNuevasLineas.push(param_linea_nuevo);
+			}
+		}
+
+		//Anade el borde azul a la linea en la lista
+		if(cod)
+		{
+			var ant = $('#txt_anterior').val();
+			var che = cod.split('.').join('_');	
+			if(ant==''){	$('#txt_anterior').val(che); }else{	$('#label_'+ant).css('border','0px');}
+			$('#label_'+che+'_'+id).css('border','1px solid');
+			$('#txt_anterior').val(che+'_'+id); 
+		}
+		
+		//Setea los campos dependiendo si existen modificados o nuevos desde base de datos
+		let datoModificado = lineaValNuevos[id];
+		if(datoModificado){
+			$('#TxtIDLinea').val(datoModificado.TxtIDLinea)
+			$('#TextCodigo').val(datoModificado.TextCodigo)
+			$('#TextLinea').val(datoModificado.TextLinea)
+			$('#MBoxCta').val(datoModificado.MBoxCta)
+			$('#MBoxCta_Anio_Anterior').val(datoModificado.MBoxCta_Anio_Anterior)
+			//$('#MBoxCta_Venta').val(datoModificado.MBoxCta_Venta)
+			$('#CTipo').val(datoModificado.CTipo)
+			$('#TxtNumFact').val(datoModificado.TxtNumFact)
+			$('#TxtItems').val(datoModificado.TxtItems)
+			$('#TxtLogoFact').val(datoModificado.TxtLogoFact)
+			$('#TxtPosFact').val(datoModificado.TxtPosFact)
+			$('#TxtEspa').val(datoModificado.TxtEspa)
+			$('#TxtPosY').val(datoModificado.TxtPosY)
+			$('#TxtLargo').val(datoModificado.TxtLargo)
+			$('#TxtAncho').val(datoModificado.TxtAncho)
+
+			$('#MBFechaIni').val(datoModificado.MBFechaIni)
+			$('#MBFechaVenc').val(datoModificado.MBFechaVenc)
+			$('#TxtNumSerietres1').val(datoModificado.TxtNumSerietres1)
+			$('#TxtNumAutor').val(datoModificado.TxtNumAutor)
+			$('#TxtNumSerieUno').val(datoModificado.TxtNumSerieUno)
+			$('#TxtNumSerieDos').val(datoModificado.TxtNumSerieDos)
+
+			$('#TxtNombreEstab').val(datoModificado.TxtNombreEstab)
+			$('#TxtDireccionEstab').val(datoModificado.TxtDireccionEstab)
+			$('#TxtTelefonoEstab').val(datoModificado.TxtTelefonoEstab)
+			$('#TxtLogoTipoEstab').val(datoModificado.TxtLogoTipoEstab)
+		
+			$('#CheqPuntoEmision').prop('checked', datoModificado.CheqPuntoEmision);
+			document.querySelector('#carga_linea_detalles').style.display = 'none';
+		}else{
+			
+	
+			  $.ajax({
+			  type: "POST",
+			  url: '../controlador/empresa/cambioeC.php?detalle=true',
+			  data:{id,item,entidad},
+			dataType:'json',       
+			  success: function(data)
+			  {
+				  data = data[0];
+				   console.log(data);
+	
+				   $('#TxtIDLinea').val(data.ID)
+				   $('#TextCodigo').val(data.Codigo)
+				   $('#TextLinea').val(data.Concepto)
+				   $('#MBoxCta').val(data.CxC)
+				   $('#MBoxCta_Anio_Anterior').val(data.CxC_Anterior)
+				   $('#CTipo').val(data.Fact)
+				   $('#TxtNumFact').val(data.Fact_Pag)
+				   $('#TxtItems').val(data.ItemsxFA)
+				   $('#TxtLogoFact').val(data.Logo_Factura)
+				   $('#TxtPosFact').val(data.Pos_Factura)
+				   $('#TxtEspa').val(data.Espacios)
+				   $('#TxtPosY').val(data.Pos_Y_Fact.toFixed(2))
+				   $('#TxtLargo').val(data.Largo.toFixed(2))
+				   $('#TxtAncho').val(data.Ancho.toFixed(2))
+	
+				   $('#MBFechaIni').val(formatoDate(data.Fecha.date))
+				   $('#MBFechaVenc').val(formatoDate(data.Vencimiento.date))
+				   $('#TxtNumSerietres1').val(generar_ceros(data.Secuencial,9))
+				   $('#TxtNumAutor').val(data.Autorizacion)
+				   $('#TxtNumSerieUno').val(data.Serie.substring(0,3))
+				   $('#TxtNumSerieDos').val(data.Serie.substring(3,6))
+	
+				   $('#TxtNombreEstab').val(data.Nombre_Establecimiento)
+				   $('#TxtDireccionEstab').val(data.Direccion_Establecimiento)
+				   $('#TxtTelefonoEstab').val(data.Telefono_Estab)
+				   $('#TxtLogoTipoEstab').val(data.Logo_Tipo_Estab)
+				
+				$('#CheqPuntoEmision').prop('checked', data.TL);
+	
+				lineaValAnteriores[data.ID] = parametrizarCampos();
+				document.querySelector('#carga_linea_detalles').style.display = 'none';
+			  }
+			})
+		}
+
+	 }
+
+	 function parametrizarCampos(mostrarAlertas=true){
+		let TextCodigo = [$('#TextCodigo').val(), 'Código'];
+		let TextLinea = [$('#TextLinea').val(), 'Descripción'];
+		let MBoxCta = [$('#MBoxCta').val(), 'CxC Clientes'];
+		let MBoxCta_Anio_Anterior = [$('#MBoxCta_Anio_Anterior').val(), 'CxC Año Anterior'];
+		//let CTipo = [$('#CTipo').val(), 'Tipo de Documento'];
+		let TxtLargo = [$('#TxtLargo').val(), 'Largo'];
+		let TxtAncho = [$('#TxtAncho').val(), 'Ancho'];
+		let MBFechaIni = [$('#MBFechaIni').val(), 'Fecha de Inicio'];
+		let MBFechaVenc = [$('#MBFechaVenc').val(), 'Fecha de Vencimiento'];
+		let TxtNumSerietres1 = [$('#TxtNumSerietres1').val(), 'Secuencial de Inicio'];
+		let TxtNumAutor = [$('#TxtNumAutor').val(), 'Autorización'];
+		let TxtNumSerieUno = [$('#TxtNumSerieUno').val(), 'Serie uno'];
+		let TxtNumSerieDos = [$('#TxtNumSerieDos').val(), 'Serie dos'];
+
+	   	let camposObl = [TextCodigo, TextLinea, MBoxCta, MBoxCta_Anio_Anterior, CTipo, TxtLargo, TxtAncho, MBFechaIni, MBFechaVenc, TxtNumSerietres1, TxtNumAutor, TxtNumSerieUno, TxtNumSerieDos];
+	   	let camposFaltantes = [];
+
+		for(let cobl of camposObl){
+			if(cobl[0] == ''){
+				camposFaltantes.push(cobl[1]);
+			}
+		}
+
+		if(mostrarAlertas){
+			if(camposFaltantes.length > 0){
+				Swal.fire('Por favor llene los siguientes campos: ' + camposFaltantes.join(', '), '', 'info');
+				return null;
+			}else if($('#TxtIDLinea').val() == ''){
+				Swal.fire('Ocurrio un problema, vuelva a consultar la informacion.', '', 'error');
+				return null;
+			}
+		}
+
+		//$('#myModal_espera').show();
+
+	   	let parametros = {
+			'TxtIDLinea': $('#TxtIDLinea').val(),
+			'TextCodigo': TextCodigo[0],
+			'TextLinea': TextLinea[0],
+			'MBoxCta': MBoxCta[0],
+			'MBoxCta_Anio_Anterior': MBoxCta_Anio_Anterior[0],
+			'MBoxCta_Venta': $('#MBoxCta_Venta').val() == '' ? '.' : $('#MBoxCta_Venta').val(),
+			'CheqPuntoEmision': $('#CheqPuntoEmision').prop('checked'),
+			'CTipo': $('#CTipo').val() == '' ? 'FA' : $('#CTipo').val(),
+			'TxtNumFact': $('#TxtNumFact').val() == '' ? '0' : $('#TxtNumFact').val(),
+			'TxtItems': $('#TxtItems').val() == '' ? '0' : $('#TxtItems').val(),
+			'TxtLogoFact': $('#TxtLogoFact').val() == '' ? 'NINGUNO' : $('#TxtLogoFact').val(),
+			'TxtPosFact': $('#TxtPosFact').val() == '0' ? '.' : $('#TxtPosFact').val(),
+			'TxtPosY': $('#TxtPosY').val() == '' ? '0.00' : $('#TxtPosY').val(),
+			'TxtEspa': $('#TxtEspa').val() == '' ? '0' : $('#TxtEspa').val(),
+			'TxtLargo': TxtLargo[0],
+			'TxtAncho': TxtAncho[0],
+			'MBFechaIni': MBFechaIni[0],
+			'TxtNumSerietres1': TxtNumSerietres1[0],
+			'MBFechaVenc': MBFechaVenc[0],
+			'TxtNumAutor': TxtNumAutor[0],
+			'TxtNumSerieUno': TxtNumSerieUno[0],
+			'TxtNumSerieDos': TxtNumSerieDos[0],
+			'TxtNombreEstab': $('#TxtNombreEstab').val() == '' ? '.' : $('#TxtNombreEstab').val(),
+			'TxtDireccionEstab': $('#TxtDireccionEstab').val() == '' ? '.' : $('#TxtDireccionEstab').val(),
+			'TxtTelefonoEstab': $('#TxtTelefonoEstab').val() == '' ? '.' : $('#TxtTelefonoEstab').val(),
+			'TxtLogoTipoEstab': $('#TxtLogoTipoEstab').val() == '' ? '.' : $('#TxtLogoTipoEstab').val(),
+			'item': $('#TxtLineasItem').val(),
+			'entidad': $('#TxtLineasEntidad').val(),
+	   };
+
+	   return parametros;
+	   //arrModificados.push(param_mod)
 	 }
 
 
@@ -1305,6 +1528,145 @@ async function datos_empresa()
 	 	 {
 	 	 	$('#panel_cta_venta').css('display','none');	 	 	
 	 	 }
+	 }
+
+	 function ejecutarFunc(origen){
+		resetearTab5();
+		lineaValNuevos = {};
+		lineaValAnteriores = {};
+		arrNuevasLineas = [];
+		switch(origen){
+			case 'entidad':
+				buscar_ciudad();
+			break;
+			case 'ciudad':
+				buscar_empresas();
+			break;
+			case 'empresas':
+				datos_empresa();
+			break;
+		}
+	 }
+
+	 function confirmarCambioEntidad(input_origen){
+		//Para modificar una linea existente
+		if(Object.keys(lineaValAnteriores).length > 0 && $('#TxtIDLinea').val() != '.'){
+			let param_linea_nuevo = parametrizarCampos(false);
+			//console.log(lineaValNuevos);
+			if(param_linea_nuevo == null){
+				return;
+			}
+			lineaValNuevos[$('#TxtIDLinea').val()] = param_linea_nuevo;
+
+		}
+		
+		//Para insertar nueva linea
+		if($('#TxtIDLinea').val() == '.'){
+			let param_linea_nuevo = parametrizarCampos(false);
+			//console.log(lineaValNuevos);
+			if(param_linea_nuevo == null){
+				return;
+			}
+			let indiceRepe = arrNuevasLineas.findIndex(rep => rep['TextCodigo'] == $('#TextCodigo').val());
+			if(indiceRepe == -1){
+				arrNuevasLineas.push(param_linea_nuevo);
+			}
+		}
+
+
+		if(Object.keys(lineaValNuevos).length > 0 || arrNuevasLineas.length > 0){
+			/*let param_linea_nuevo = parametrizarCampos();
+			if(param_linea_nuevo == null){
+				return;
+			}
+
+			if($('#TxtIDLinea').val() != '.' || $('#TxtIDLinea').val() != ''){
+				lineaValNuevos[$('#TxtIDLinea').val()] = param_linea_nuevo;
+				}else{
+					arrNuevasLineas.push(param_linea_nuevo);
+			}*/
+			//lineaValNuevos[$('#TxtIDLinea').val()] = param_linea_nuevo;
+			
+			let listaTxtLineas = [];
+
+			for(let lva of Object.keys(lineaValNuevos)){
+				let valores_nuevos = Object.values(lineaValNuevos[lva]).join('&');
+				let valores_anteriores = lineaValAnteriores[lva] ? Object.values(lineaValAnteriores[lva]).join('&') : '';
+
+				if(valores_anteriores != valores_nuevos){
+					listaTxtLineas.push(lineaValNuevos[lva]['TextLinea']);
+				}
+			}
+
+			for(let anl of arrNuevasLineas){
+				if(anl['TextLinea']) listaTxtLineas.push(anl['TextLinea']);
+			}
+
+
+			if(listaTxtLineas.length > 0){
+				//Swal.fire('Tiene cambios sin confirmar en las lineas:</br>'+listaTxtLineas.join(', '), '', 'warning');
+				Swal.fire({
+					title: 'Usted va a cambiar de Empresa. Se perderan los cambios realizados en las lineas:</br>'+listaTxtLineas.join(', '),
+					text: "",
+					type: 'warning',
+					showCancelButton: true,
+					confirmButtonText: 'Guardar cambios',
+					confirmButtonColor: '#3085d6',
+					cancelButtonText: 'Cambiar empresa',
+					cancelButtonColor: '#d33',
+					//confirmButtonText: 'Si!'
+				}).then((result) => {
+					if (result.value==true) {
+						/*if($("#CTipo").val()=='')
+						{
+							$("#CTipo").val('FA');
+						}*/
+						confirmar(input_origen);
+					}else{
+						ejecutarFunc(input_origen);
+					}
+				})
+			}else{
+				ejecutarFunc(input_origen);
+			}
+		}else{
+			ejecutarFunc(input_origen);
+		}
+	 }
+
+	 function validar_codigo(){
+		let TextCodigo = $('#TextCodigo').val();
+
+		if(TextCodigo.trim() == '' && TextCodigo.trim() == '.'){
+			return;
+		}
+		let parametros = {
+			'codigo': $('#TextCodigo').val(),
+			'item': $('#TxtLineasItem').val(),
+			'entidad': $('#TxtLineasEntidad').val(),
+		}
+		$('#myModal_espera').modal('show');
+
+		$.ajax({
+			type: "POST",
+			url: '../controlador/empresa/cambioeC.php?validar_codigo=true',
+			data:{parametros:parametros},
+			dataType:'json',       
+			success: function(data)
+			{
+				$('#myModal_espera').modal('hide');
+				if(data.res==1)
+				{
+					$('#TxtIDLinea').val(data.ID);
+				}else{
+					$('#TxtIDLinea').val('.');
+				}
+			},
+			error: (err) => {
+				$('#myModal_espera').hide();
+				Swal.fire('Ocurrio un error al procesar su solicitud. Error: ' + err, '', 'error');
+			}
+	    })
 	 }
 
 
@@ -1386,7 +1748,7 @@ async function datos_empresa()
 		<div class="col-sm-4">
 			<div class="form-group">
 				<label>Entidad: </label><i id="lbl_ruc"></i>-<i id="lbl_enti"></i>
-				<select class="form-control fomr" name="entidad" id='entidad' onChange="buscar_ciudad();">
+				<select class="form-control fomr" name="entidad" id='entidad' onchange="confirmarCambioEntidad('entidad')">
 					<option value=''>Seleccione Entidad</option>
 				</select>
 			</div>			
@@ -1394,7 +1756,7 @@ async function datos_empresa()
 		<div class="col-sm-2">
 			<div class="form-group">
 				<label for="Entidad">Ciudad</label>
-				<select class="form-control input-sm" name="ciudad" id='ciudad' onchange="buscar_empresas()">
+				<select class="form-control input-sm" name="ciudad" id='ciudad' onchange="confirmarCambioEntidad('ciudad')">
 					<option value=''>Seleccione ciudad</option>
 				</select>
 			</div>			
@@ -1402,7 +1764,7 @@ async function datos_empresa()
 		<div class="col-sm-4">
 			<div class="form-group">
 				<label for="Entidad">Empresa</label>
-				<select class="form-control input-xs" name="empresas" id='empresas' onchange="datos_empresa()">
+				<select class="form-control input-xs" name="empresas" id='empresas' onchange="confirmarCambioEntidad('empresas')">
 					<option value=''>Seleccione Empresa</option>
 				</select>
 			</div>			
@@ -2052,12 +2414,15 @@ async function datos_empresa()
 							</div>
 							<div class="col-sm-8">
 								<form id="form_datos">
+									<div class="row" style="display:none;">
+										<input type="hidden" id="TxtIDLinea" name="TxtIDLinea">
+									</div>
 									<div class="row">
 										<div class="col-sm-5">
 											<div class="form-group">
 												<label for="inputEmail3" class="col-sm-2 control-label">CODIGO</label>
 												<div class="col-sm-10">
-													<input type="text" class="form-control input-xs" id="TextCodigo" name="TextCodigo" placeholder="" value=".">
+													<input type="text" class="form-control input-xs" id="TextCodigo" name="TextCodigo" placeholder="" value="." onchange="validar_codigo();">
 												</div>
 											</div>	
 										</div>
@@ -2071,6 +2436,9 @@ async function datos_empresa()
 										</div>
 									</div>
 									<div class="row">
+										<div id="carga_linea_detalles" style="display: none; position: absolute; top: 0px; left: 0px; height: 100%; width: 100%; background-color: rgba(255, 255, 255, 0.5); z-index: 50; justify-content: center; align-items: center;">
+											<img src="../../img/gif/loader4.1.gif" height="20%">
+										</div>
 										<div class="col-sm-12">
 											<div class="box">
 												<div class="box-body">

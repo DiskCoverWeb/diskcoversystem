@@ -509,9 +509,10 @@ class cambioeM
 	function nivel1($entidad, $item)
 	{
 		$conn_sql = $this->empresas_datos($entidad,$item);
-		$sql= "SELECT DISTINCT Autorizacion FROM Catalogo_Lineas
+		$sql= "SELECT Autorizacion FROM Catalogo_Lineas
 			WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-			AND  Item = '$item'";
+			AND  Item = '$item'
+			GROUP BY Autorizacion";
 		//print_r($sql);die();
        	//return $this->db->datos($sql);
 		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
@@ -521,10 +522,11 @@ class cambioeM
 	function nivel2($entidad, $item, $autorizacion)
 	{
 		$conn_sql = $this->empresas_datos($entidad,$item);
-		$sql= "SELECT DISTINCT Serie FROM Catalogo_Lineas
+		$sql= "SELECT Serie FROM Catalogo_Lineas
 		WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 		AND Item = '".$item."' 
-		AND Autorizacion = '".$autorizacion."'";
+		AND Autorizacion = '".$autorizacion."'
+		GROUP BY Serie";
        	//return $this->db->datos($sql);
 		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
 	}
@@ -532,11 +534,12 @@ class cambioeM
 	function nivel3($entidad, $item, $autorizacion,$serie)
 	{
 		$conn_sql = $this->empresas_datos($entidad,$item);
-		$sql="SELECT DISTINCT Fact FROM Catalogo_Lineas
+		$sql="SELECT Fact FROM Catalogo_Lineas
 			WHERE Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 			AND Item = '".$item."' 
 			AND Autorizacion = '".$autorizacion."'
-			AND Serie = '".$serie."'";
+			AND Serie = '".$serie."'
+			GROUP BY Fact";
        	//return $this->db->datos($sql);
 		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
 	}
@@ -690,7 +693,7 @@ class cambioeM
 			$valuesJoin = join(", ", $arrValues);
 			$sql .= "(" . $valuesJoin . ")";
 		}
-		//print_r($sql."\n");
+		//print_r($sql);
 		return $this->db->ejecutar_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
 	}
 
