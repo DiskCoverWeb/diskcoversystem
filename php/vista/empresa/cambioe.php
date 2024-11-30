@@ -1302,33 +1302,6 @@ async function datos_empresa()
 			return;
 		}
 
-		/*if(Object.keys(lineaValAnteriores).length > 0){
-			lineaValNuevos = parametrizarCampos();
-			console.log(lineaValNuevos);
-			if(lineaValNuevos == null){
-				return;
-			}
-
-			let lineaValAnterior = lineaValAnteriores[lineaValNuevos['TxtIDLinea']];
-			
-			let valores_nuevos = Object.values(lineaValNuevos).join('&');
-			let valores_anteriores = Object.values(lineaValAnterior).join('&');
-
-			let indiceModificado = arrModificados.findIndex(dato => dato['TxtIDLinea'] == lineaValNuevos.TxtIDLinea);
-			if(valores_anteriores != valores_nuevos){
-				console.log("Indice modificado: " + indiceModificado);
-				if(indiceModificado !== -1){
-					arrModificados[indiceModificado] = lineaValNuevos;
-					console.log("Valor: " + arrModificados[indiceModificado] + " ==> Nuevo valor: " + lineaValNuevos);
-				}else{
-					arrModificados.push(lineaValNuevos);
-				}
-			}else{
-				arrModificados.splice(indiceModificado, 1);
-			}
-
-		}*/
-
 		//Para modificar una linea existente
 		if(Object.keys(lineaValAnteriores).length > 0 && $('#TxtIDLinea').val() != '.'){
 			let param_linea_nuevo = parametrizarCampos();
@@ -1575,17 +1548,6 @@ async function datos_empresa()
 
 
 		if(Object.keys(lineaValNuevos).length > 0 || arrNuevasLineas.length > 0){
-			/*let param_linea_nuevo = parametrizarCampos();
-			if(param_linea_nuevo == null){
-				return;
-			}
-
-			if($('#TxtIDLinea').val() != '.' || $('#TxtIDLinea').val() != ''){
-				lineaValNuevos[$('#TxtIDLinea').val()] = param_linea_nuevo;
-				}else{
-					arrNuevasLineas.push(param_linea_nuevo);
-			}*/
-			//lineaValNuevos[$('#TxtIDLinea').val()] = param_linea_nuevo;
 			
 			let listaTxtLineas = [];
 
