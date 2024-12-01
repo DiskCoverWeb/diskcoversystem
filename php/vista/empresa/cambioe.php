@@ -58,7 +58,11 @@
   	 // 	  console.log(data);
   	 // })
 
-
+	document.addEventListener('keydown', (event)=>{
+		if(event.key == 'Delete'){
+			confirmar_eliminar();
+		}
+	})
 });
 
   function ddl_estados()
@@ -1117,9 +1121,12 @@ async function datos_empresa()
 	    {
 			var ant = $('#txt_anterior').val();
 			var che = cod.split('.').join('_');	
-			if(ant==''){	$('#txt_anterior').val(che); }else{	$('#label_'+ant).css('border','0px');}
+			if(ant==''){	$('#txt_anterior').val(che); }else{	$('#label_'+ant).css('border','0px');$('#label_'+ant).removeAttr('title');}
 			$('#label_'+che+auto+serie+fact).css('border','1px solid');
+			$('#label_'+che+auto+serie+fact).attr('title', 'Presione Suprimir para eliminar');
+			$('#LblTreeClick').val(auto+'_'+serie+'_'+fact);
 			$('#txt_anterior').val(che+auto+serie+fact); 
+			//$('#txt_anterior').val(che+auto+serie+fact); 
 		}
 		  	//fin de pinta el seleccionado
 		if(cod)
@@ -1286,6 +1293,135 @@ async function datos_empresa()
        })
 	 }
 
+	 function confirmar_eliminar()
+	 {
+	 	 var strasf = $('#LblTreeClick').val();
+		 let strDetalle = strasf.split('_');
+		let strAlerta = (strDetalle[2] ? 'tipo '+strDetalle[2]+' con ':'') +
+			(strDetalle[1] ? 'serie '+strDetalle[1]+' y ':'') +
+			(strDetalle[0] ? 'autorización '+strDetalle[0]:'');
+		
+		if(strDetalle.length == 4){
+			strAlerta = (strDetalle[3] ? 'línea '+strDetalle[3]+' de ':'') + strAlerta;
+		}
+
+		if($('#LblTreeClick').val()=='' || strAlerta == ''){
+			return;
+		}
+
+	 	Swal.fire({
+         title: 'Esta seguro de eliminar: '+strAlerta,
+         text: "",
+         type: 'warning',
+         showCancelButton: true,
+         confirmButtonColor: '#3085d6',
+         cancelButtonColor: '#d33',
+         confirmButtonText: 'Si!'
+       }).then((result) => {
+         if (result.value==true) {
+			eliminar_linea(strDetalle);
+         }
+       })
+	 }
+
+	 function eliminar_linea(strDetalle){
+		 let fact = strDetalle[2];
+		 let serie = strDetalle[1];
+		 let auto = strDetalle[0];
+		 let codigo = '';
+		 
+		 if(strDetalle.length == 4){
+			codigo = strDetalle[3];
+		}
+		
+		let parametros = {
+			'codigo': codigo,
+			'fact': fact,
+			'serie': serie,
+			'auto': auto,
+			'entidad': $('#TxtLineasEntidad').val(),
+			'item': $('#TxtLineasItem').val()
+		};
+
+		$('#myModal_espera').modal('show');
+		$.ajax({
+			type: "POST",
+			url: '../controlador/empresa/cambioeC.php?eliminar_linea=true',
+			data:{parametros},
+			dataType:'json',       
+			success: function(data)
+			{
+				$('#myModal_espera').modal('hide');
+				if(data==1){
+					if($('#TxtIDLinea').val() != ''){
+						let param_linea_nuevo = parametrizarCampos(false);
+						
+						if($('#TxtIDLinea').val() != '.'){
+							lineaValNuevos[$('#TxtIDLinea').val()] = param_linea_nuevo;
+							console.log(lineaValNuevos);
+						}else{
+							let indiceRepe = arrNuevasLineas.findIndex(rep => rep['TextCodigo'] == $('#TextCodigo').val());
+							if(indiceRepe == -1){
+								arrNuevasLineas.push(param_linea_nuevo);
+								console.log(arrNuevasLineas);
+							}
+						}
+					}
+
+					TVcatalogo();
+					Swal.fire('Se elimino con exito','','success')
+					.then(result => {
+						let entradasObj = Object.entries(lineaValNuevos);
+						if(codigo){
+							let entObj = entradasObj.find(obj => obj[1]['TextCodigo'] == codigo && obj[1]['CTipo'] == fact && obj[1]['TxtNumAutor'] == auto && obj[1]['TxtNumSerieUno'] == serie.substring(0,3) && obj[1]['TxtNumSerieDos'] == serie.substring(3,6));
+							console.log(entObj);
+							
+							if(entObj){
+								delete lineaValNuevos[entObj[0]];
+								delete lineaValAnteriores[entObj[0]];
+							}
+							arrNuevasLineas = arrNuevasLineas.filter(anl => anl['TextCodigo'] != codigo && anl['CTipo'] != fact && anl['TxtNumAutor'] != auto && anl['TxtNumSerieUno'] == serie.substring(0,3) && anl['TxtNumSerieDos'] == serie.substring(3,6));
+						}else if(fact){
+							let entObj = entradasObj.find(obj => obj[1]['CTipo'] == fact && obj[1]['TxtNumAutor'] == auto && obj[1]['TxtNumSerieUno'] == serie.substring(0,3) && obj[1]['TxtNumSerieDos'] == serie.substring(3,6));
+							
+							if(entObj){
+								delete lineaValNuevos[entObj[0]];
+								delete lineaValAnteriores[entObj[0]];
+							}
+							arrNuevasLineas = arrNuevasLineas.filter(anl => anl['CTipo'] != fact && anl['TxtNumAutor'] != auto && anl['TxtNumSerieUno'] == serie.substring(0,3) && anl['TxtNumSerieDos'] == serie.substring(3,6));
+						}else if(serie){
+							let entObj = entradasObj.find(obj => obj[1]['TxtNumAutor'] == auto && obj[1]['TxtNumSerieUno'] == serie.substring(0,3) && obj[1]['TxtNumSerieDos'] == serie.substring(3,6));
+							
+							if(entObj){
+								delete lineaValNuevos[entObj[0]];
+								delete lineaValAnteriores[entObj[0]];
+							}
+							arrNuevasLineas = arrNuevasLineas.filter(anl => anl['TxtNumAutor'] != auto && anl['TxtNumSerieUno'] == serie.substring(0,3) && anl['TxtNumSerieDos'] == serie.substring(3,6));
+						}else if(auto){
+							let entObj = entradasObj.find(obj => obj[1]['TxtNumAutor'] == auto);
+							
+							if(entObj){
+								delete lineaValNuevos[entObj[0]];
+								delete lineaValAnteriores[entObj[0]];
+							}
+							arrNuevasLineas = arrNuevasLineas.filter(anl => anl['TxtNumAutor'] != auto);
+						}
+						/*lineaValNuevos = {};
+						lineaValAnteriores = {};
+						arrNuevasLineas = [];*/
+						resetearTab5();
+					});
+				}else{
+					Swal.fire('No se pudo eliminar', '', 'error');
+				}
+			},
+			error: function(err){
+				$('#myModal_espera').modal('hide');
+				Swal.fire('Ocurrio un error al realizar la peticion', '', 'error');
+			}
+		})
+	 }
+
 	 function detalle_linea(id,cod)
 	 {
 		document.querySelector('#carga_linea_detalles').style.display = 'flex';
@@ -1331,8 +1467,9 @@ async function datos_empresa()
 		{
 			var ant = $('#txt_anterior').val();
 			var che = cod.split('.').join('_');	
-			if(ant==''){	$('#txt_anterior').val(che); }else{	$('#label_'+ant).css('border','0px');}
+			if(ant==''){	$('#txt_anterior').val(che); }else{	$('#label_'+ant).css('border','0px');$('#label_'+ant).removeAttr('title');}
 			$('#label_'+che+'_'+id).css('border','1px solid');
+			$('#label_'+che+'_'+id).attr('title', 'Presione Suprimir para eliminar');
 			$('#txt_anterior').val(che+'_'+id); 
 		}
 		
@@ -1369,6 +1506,12 @@ async function datos_empresa()
 		
 			$('#CheqPuntoEmision').prop('checked', datoModificado.CheqPuntoEmision);
 			document.querySelector('#carga_linea_detalles').style.display = 'none';
+
+			let fact = $('#CTipo').val();
+			let auto = $('#TxtNumAutor').val();
+			let serie = $('#TxtNumSerieUno').val()+ $('#TxtNumSerieDos').val();
+			let codigo = $('#TextCodigo').val();
+			$('#LblTreeClick').val(auto+'_'+serie+'_'+fact+'_'+codigo);
 		}else{
 			
 	
@@ -1413,6 +1556,12 @@ async function datos_empresa()
 	
 				lineaValAnteriores[data.ID] = parametrizarCampos();
 				document.querySelector('#carga_linea_detalles').style.display = 'none';
+
+				let fact = $('#CTipo').val();
+				let auto = $('#TxtNumAutor').val();
+				let serie = $('#TxtNumSerieUno').val()+ $('#TxtNumSerieDos').val();
+				let codigo = $('#TextCodigo').val();
+				$('#LblTreeClick').val(auto+'_'+serie+'_'+fact+'_'+codigo);
 			  }
 			})
 		}
@@ -2378,6 +2527,7 @@ async function datos_empresa()
 								<form id="form_datos">
 									<div class="row" style="display:none;">
 										<input type="hidden" id="TxtIDLinea" name="TxtIDLinea">
+										<input type="hidden" id="LblTreeClick" name="LblTreeClick">
 									</div>
 									<div class="row">
 										<div class="col-sm-5">

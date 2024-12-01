@@ -115,6 +115,11 @@ if(isset($_GET['guardar']))
 	$parametros = $_POST['parametros'];
   echo json_encode($controlador->GrabarArticulos($parametros));
 }
+if(isset($_GET['eliminar_linea']))
+{
+	$parametros = $_POST['parametros'];
+  	echo json_encode($controlador->EliminarLinea($parametros));
+}
 if(isset($_GET['detalle']))
 {
   $id = $_POST['id'];
@@ -129,6 +134,18 @@ class cambioeC
 	function __construct()
 	{
 		$this->modelo = new cambioeM();
+	}
+
+	function EliminarLinea($parametros){
+		$Factura = $parametros['fact'];
+		$Autorizacion = $parametros['auto'];
+		$Serie = $parametros['serie'];
+		$Codigo = $parametros['codigo'];
+		$Entidad = $parametros['entidad'];
+		$Item = $parametros['item'];
+
+		$res = $this->modelo->elimina_linea_det($Item, $Entidad, $Factura, $Autorizacion, $Serie, $Codigo);
+		return $res;
 	}
 
 	function ciudad($parametros)
@@ -554,7 +571,7 @@ class cambioeC
       {
         $datos = $this->modelo->nivel1($entidad, $item);
         foreach ($datos as $key => $value) {
-           $h.= '<li  title="Presione Suprimir para eliminar">
+           $h.= '<li >
                   <label id="label_'.str_replace('.','_','A1_'.$key).$value['Autorizacion'].'" for="A1_'.$key.$value['Autorizacion'].'">'.$value['Autorizacion'].'</label>
                   <input type="checkbox" id="A1_'.$key.$value['Autorizacion'].'" onclick="TVcatalogo(2,\'A1_'.$key.'\',\''.$value['Autorizacion'].'\',\'\',\'\')" />
                  <ol id="hijos_'.str_replace('.','_','A1_'.$key).$value['Autorizacion'].'"></ol></li>';
@@ -565,7 +582,7 @@ class cambioeC
       {
         $datos = $this->modelo->nivel2($entidad, $item, $parametros['auto']);
         foreach ($datos as $key => $value) {
-           $h.= '<li  title="Presione Suprimir para eliminar">
+           $h.= '<li >
                   <label id="label_'.str_replace('.','_','A2_'.$key).$parametros['auto'].$value['Serie'].'" for="A2_'.$key.$parametros['auto'].$value['Serie'].'">'.$value['Serie'].'</label>
                   <input type="checkbox" id="A2_'.$key.$parametros['auto'].$value['Serie'].'" onclick="TVcatalogo(3,\'A2_'.$key.'\',\''.$parametros['auto'].'\',\''.$value['Serie'].'\',\'\')" />
                  <ol id="hijos_'.str_replace('.','_','A2_'.$key).$parametros['auto'].$value['Serie'].'"></ol></li>';
@@ -576,7 +593,7 @@ class cambioeC
       {
         $datos = $this->modelo->nivel3($entidad, $item, $parametros['auto'],$parametros['serie']);
         foreach ($datos as $key => $value) {
-           $h.= '<li  title="Presione Suprimir para eliminar">
+           $h.= '<li >
                   <label id="label_'.str_replace('.','_','A3_'.$key).$parametros['auto'].$parametros['serie'].$value['Fact'].'" for="A3_'.$key.$parametros['auto'].$parametros['serie'].$value['Fact'].'">'.$value['Fact'].'</label>
                   <input type="checkbox" id="A3_'.$key.$parametros['auto'].$parametros['serie'].$value['Fact'].'" onclick="TVcatalogo(4,\'A3_'.$key.'\',\''.$parametros['auto'].'\',\''.$parametros['serie'].'\',\''.$value['Fact'].'\')" />
                  <ol id="hijos_'.str_replace('.','_','A3_'.$key).$parametros['auto'].$parametros['serie'].$value['Fact'].'"></ol></li>';
@@ -590,7 +607,7 @@ class cambioeC
           $h.='<li class="file" id="label_'.str_replace('.','_','A4_'.$key).'_'.$value['ID'].'" title=""><a href="#" onclick="detalle_linea(\''.$value['ID'].'\',\'A4_'.$key.'\')">'.$value['Concepto'].'</a></li>';
 
 
-           // $h.= '<li  title="Presione Suprimir para eliminar">
+           // $h.= '<li >
            //        <label id="label_'.str_replace('.','_','A4_'.$key).'" for="A4_'.$key.'">'.$value['Concepto'].'</label>
            //        <input type="checkbox" id="A4_'.$key.'" onclick="detalle_linea(\''.$value['ID'].'\')" />
            //       <ol id="hijos_'.str_replace('.','_','A2_'.$key).'"></ol></li>';
@@ -602,7 +619,7 @@ class cambioeC
 			$codigo = 'A';
 		  $detalle = 'AUTORIZACIONES';
 
-			 $h = '<li  title="Presione Suprimir para eliminar">
+			 $h = '<li >
 							    <label id="label_'.str_replace('.','_','A').'" for="A">AUTORIZACIONES</label>
 							    <input type="checkbox" id="A" onclick="TVcatalogo(1,\'A\',\'\',\'\',\'\')" />
 							   <ol id="hijos_'.str_replace('.','_','A').'"></ol></li>';

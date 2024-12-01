@@ -583,6 +583,29 @@ class cambioeM
 		return $this->db->ejecutar_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
 	}
 
+	function elimina_linea_det($item, $entidad, $Factura, $Autorizacion, $Serie, $Codigo)
+	{
+		$conn_sql = $this->empresas_datos($entidad,$item);
+		$sql= "DELETE 
+              FROM Catalogo_Lineas 
+              WHERE Autorizacion = '".$Autorizacion."'";
+
+		if($Serie){
+			$sql .= " AND Serie = '".$Serie."'";
+		}
+		if($Factura){
+			$sql .= " AND Fact = '".$Factura."'";
+		}
+		if($Codigo){
+			$sql .= " AND Codigo = '".$Codigo."'";
+		}
+		$sql .= " AND Item = '".$item."' 
+			AND Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+        //return $this->db->String_Sql($sql);
+		//print_r($sql);die();
+		return $this->db->ejecutar_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+	}
+
 	function facturas_formato($entidad, $item, $Codigo,$TxtNumSerieUno,$TxtNumSerieDos,$TxtNumAutor)
 	{
 		$conn_sql = $this->empresas_datos($entidad,$item);
