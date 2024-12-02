@@ -1006,11 +1006,14 @@ class punto_ventaC
 		$carpeta_comprobantes = $carpeta_entidad . '/CE' . generaCeros($_SESSION['INGRESO']['item'], 3);
 		$carpeta_no_autori = $carpeta_comprobantes . "/No_autorizados";
 		$carpeta_rechazados = $carpeta_comprobantes . "/Rechazados";
+		$carpeta_enviados = $carpeta_comprobantes . "/Enviados";
 
 
 
 		$ruta1 = $carpeta_no_autori . '/' . $clave;
 		$ruta2 = $carpeta_rechazados . '/' . $clave;
+
+		$ruta3 = $carpeta_enviados . '/' . $clave;
 
 		// print_r($ruta1);print_r($ruta2);die();
 		if (file_exists($ruta1)) {
@@ -1045,6 +1048,12 @@ class punto_ventaC
 			// print_r($mensaje);die();
 			return array('estado' => $estado, 'codigo' => $codigo, 'mensaje' => $mensaje, 'adicional' => $adicional, 'fecha' => $fecha);
 
+		}
+
+		if(!file_exists($ruta3))
+		{
+			// no se pudo enviar por algun motivo
+			return -1;
 		}
 	}
 

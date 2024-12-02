@@ -418,15 +418,23 @@ function fecha_actual()
       dataType:'json', 
       success: function(data)
       {
-        
-         console.log(data);
-        $('#myModal_sri_error').modal('show');
-        $('#sri_estado').text(data.estado[0]);
-        $('#sri_codigo').text(data.codigo[0]);
-        $('#sri_fecha').text(data.fecha[0]);
-        $('#sri_mensaje').text(data.mensaje[0]);
-        $('#sri_adicional').text(data.adicional[0]);
-        // $('#doc_xml').attr('href','')
+
+      	if(data!='-1')
+      	{        
+	         console.log(data);
+	        $('#myModal_sri_error').modal('show');
+	        $('#sri_estado').text(data.estado[0]);
+	        $('#sri_codigo').text(data.codigo[0]);
+	        $('#sri_fecha').text(data.fecha[0]);
+	        $('#sri_mensaje').text(data.mensaje[0]);
+	        $('#sri_adicional').text(data.adicional[0]);
+	        // $('#doc_xml').attr('href','')
+	    }else
+	    {
+	    	Swal.fire("No se pudo enviar el comprobante intente mas tarde","","info").then(function(){
+	    		location.reload();
+	    	});
+	    }
       }
     });
   }

@@ -6,68 +6,67 @@
     <razonSocial>VACA PRIETO WALTER JALIL</razonSocial>
     <nombreComercial>DISKCOVER SYSTEM</nombreComercial>
     <ruc>0702164179001</ruc>
-    <claveAcceso>2611202401070216417900110010030000017441234567812</claveAcceso>
+    <claveAcceso>0212202401070216417900110010030000017491234567810</claveAcceso>
     <codDoc>01</codDoc>
     <estab>001</estab>
     <ptoEmi>003</ptoEmi>
-    <secuencial>000001744</secuencial>
+    <secuencial>000001749</secuencial>
     <dirMatriz>Desarrollo para programacion de DiskCover System</dirMatriz>
     <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
   </infoTributaria>
   <infoFactura>
-    <fechaEmision>26/11/2024</fechaEmision>
+    <fechaEmision>02/12/2024</fechaEmision>
     <dirEstablecimiento>direccion de empresa xyz</dirEstablecimiento>
     <obligadoContabilidad>NO</obligadoContabilidad>
-    <tipoIdentificacionComprador>05</tipoIdentificacionComprador>
-    <razonSocialComprador>javier farinango</razonSocialComprador>
-    <identificacionComprador>1722214507</identificacionComprador>
-    <totalSinImpuestos>15.00</totalSinImpuestos>
+    <tipoIdentificacionComprador>07</tipoIdentificacionComprador>
+    <razonSocialComprador>CONSUMIDOR FINAL</razonSocialComprador>
+    <identificacionComprador>9999999999999</identificacionComprador>
+    <totalSinImpuestos>20.00</totalSinImpuestos>
     <totalDescuento>0.00</totalDescuento>
     <totalConImpuestos>
       <totalImpuesto>
         <codigo>2</codigo>
         <codigoPorcentaje>0</codigoPorcentaje>
         <descuentoAdicional>0.00</descuentoAdicional>
-        <baseImponible>15.00</baseImponible>
+        <baseImponible>20.00</baseImponible>
         <valor>0.00</valor>
       </totalImpuesto>
     </totalConImpuestos>
     <propina>0.00</propina>
-    <importeTotal>15.00</importeTotal>
+    <importeTotal>20.00</importeTotal>
     <moneda>DOLAR</moneda>
     <pagos>
       <pago>
         <formaPago>01</formaPago>
-        <total>15.00</total>
+        <total>20.00</total>
       </pago>
     </pagos>
   </infoFactura>
   <detalles>
     <detalle>
       <codigoPrincipal>98.24</codigoPrincipal>
-      <descripcion>6 LINEAS, 2023: Diciembre </descripcion>
+      <descripcion>6 LINEAS, .: Diciembre </descripcion>
       <unidadMedida>DOLAR</unidadMedida>
       <cantidad>1.000000</cantidad>
-      <precioUnitario>15.000000</precioUnitario>
+      <precioUnitario>20.000000</precioUnitario>
       <descuento>0.00</descuento>
-      <precioTotalSinImpuesto>15.00</precioTotalSinImpuesto>
+      <precioTotalSinImpuesto>20.00</precioTotalSinImpuesto>
       <impuestos>
         <impuesto>
           <codigo>2</codigo>
           <codigoPorcentaje>0</codigoPorcentaje>
           <tarifa>0</tarifa>
-          <baseImponible>15.00</baseImponible>
+          <baseImponible>20.00</baseImponible>
           <valor>0.00</valor>
         </impuesto>
       </impuestos>
     </detalle>
   </detalles>
   <infoAdicional>
-    <campoAdicional nombre="Beneficiario">AALAURA CINCO PRUEBAXX</campoAdicional>
-    <campoAdicional nombre="Ubicacion">1.04.BA</campoAdicional>
-    <campoAdicional nombre="Direccion">AALAURA CINCO PRUEBA2</campoAdicional>
-    <campoAdicional nombre="Telefono">234234324</campoAdicional>
-    <campoAdicional nombre="Email">JAVIERFARINANGO92@GMAILCOM</campoAdicional>
+    <campoAdicional nombre="Direccion">SD</campoAdicional>
+    <campoAdicional nombre="Telefono">000000000</campoAdicional>
+    <campoAdicional nombre="Email">vitalipetec@gmailcom</campoAdicional>
+    <campoAdicional nombre="Email2">vitalipetec@gmailcom</campoAdicional>
     <campoAdicional nombre="seriePuntoEmision">001003</campoAdicional>
     <campoAdicional nombre="socioRazonSocial">Empresa xyz</campoAdicional>
     <campoAdicional nombre="socioDireccion">direccion de empresa xyz</campoAdicional>
