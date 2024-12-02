@@ -718,8 +718,6 @@ async function datos_empresa()
 				$('#tab_2').removeClass('active');	
 				$('#li_tab3').css('display','none');
 				$('#tab_3').removeClass('active');
-				$('#li_tab4').css('display','none');
-				$('#tab_4').removeClass('active');
 				$('#li_tab5').css('display','none');
 				$('#tab_5').removeClass('active');
 				return false
@@ -732,8 +730,6 @@ async function datos_empresa()
 				$('#li_tab2').removeClass('active');	
 				$('#li_tab3').css('display','initial');
 				$('#li_tab3').removeClass('active');	
-				$('#li_tab4').css('display','initial');
-				$('#li_tab4').removeClass('active');	
 				$('#li_tab5').css('display','initial');
 				$('#li_tab5').removeClass('active');	
 			}
@@ -1898,13 +1894,12 @@ async function datos_empresa()
 					<li id="li_tab1" class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Configuracion Principal</a></li>
 					<li id="li_tab2" class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Datos Principales</a></li>
 					<li id="li_tab3" class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Procesos Generales</a></li>
-					<li id="li_tab4" class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Comprobantes Electrónicos</a></li>
 					<li id="li_tab5" class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">Lineas de CxC</a></li>
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="tab_1">
 		        		<div class="row">
-			        		<div class="col-md-4">
+			        		<div class="col-md-3">
 								<div class="form-group">
 								    <label for="Estado">Estado</label>
 								    <select class="form-control input-sm" name="Estado" id="Estado" >
@@ -1914,34 +1909,46 @@ async function datos_empresa()
 									</select>
 								</div>
 							</div>
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="FechaR">Renovación</label>
-								   
-								  <input type="date" class="form-control input-sm" id="FechaR" name="FechaR" placeholder="FechaR" 
-								  value='' onKeyPress="return soloNumeros(event)"  maxlength="10" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
+							<div class="col-md-4">
+								<div class="col-md-4">
+									<div class="form-group">
+									  <label for="FechaR">Renovación</label>
+									   
+									  <input type="date" class="form-control input-sm" id="FechaR" name="FechaR" placeholder="FechaR" 
+									  value='' onKeyPress="return soloNumeros(event)"  maxlength="10" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+									  <label for="Fecha">Comp. Electronico</label>								   
+									  <input type="date" class="form-control input-sm" id="FechaCE" name="FechaCE" placeholder="Fecha" 
+									  value="" onKeyPress="return soloNumeros(event)" maxlength="10" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
+									</div>
+								</div>							
+								<div class="col-md-4">
+									<div class="form-group">
+									  <label for="Fecha_DB">BD</label>
+									  <input type="date" class="form-control input-sm" id="FechaDB" name="FechaDB" value="">
+									</div>
 								</div>
 							</div>
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="Fecha">Comp. Electronico</label>								   
-								  <input type="date" class="form-control input-sm" id="FechaCE" name="FechaCE" placeholder="Fecha" 
-								  value="" onKeyPress="return soloNumeros(event)" maxlength="10" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
+							<div class="col-md-4">
+								<div class="col-md-4">
+									<div class="form-group">
+									  <label for="Fecha_P12">Fecha P12</label>
+									  <input type="date" class="form-control input-sm" id="FechaP12" name="FechaP12" value="">
+									</div>
 								</div>
-							</div>							
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="Fecha_DB">BD</label>
-								  <input type="date" class="form-control input-sm" id="FechaDB" name="FechaDB" value="">
-								</div>
-							</div>
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="Fecha_P12">Fecha P12</label>
-								  <input type="date" class="form-control input-sm" id="FechaP12" name="FechaP12" value="">
+								<div class="col-md-4">
+									<div class="form-group">
+										<label for="Plan">Plan</label>
+										
+										<input type="text" class="form-control input-sm" id="Plan" name="Plan" placeholder="Plan" value="">
+									</div>
 								</div>
 							</div>
-							<div class="col-md-3">
+							
+							<div class="col-md-2">
 								<div class="form-group">
 								  <label for="Servidor">Servidor</label>
 								  <input type="text" class="form-control input-sm" id="Servidor" name="Servidor" placeholder="Servidor" value="">
@@ -1953,39 +1960,35 @@ async function datos_empresa()
 								  <input type="text" class="form-control input-sm" id="Base" name="Base" placeholder="Base" value="">
 								</div>
 							</div>
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="Usuario">Usuario</label>								   
-								  <input type="text" class="form-control input-sm" id="Usuario" name="Usuario" placeholder="Usuario" value="">
+							<div class="col-md-4">
+								<div class="col-md-3">
+									<div class="form-group">
+									  <label for="Usuario">Usuario</label>								   
+									  <input type="text" class="form-control input-sm" id="Usuario" name="Usuario" placeholder="Usuario" value="">
+									</div>
 								</div>
-							</div>
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="Clave">Clave</label>
-								  <input type="text" class="form-control input-sm" id="Clave" name="Clave" placeholder="Clave" value="">
+								<div class="col-md-3">
+									<div class="form-group">
+									  <label for="Clave">Clave</label>
+									  <input type="text" class="form-control input-sm" id="Clave" name="Clave" placeholder="Clave" value="">
+									</div>
 								</div>
+								
+								<div class="col-md-3">
+									<div class="form-group">
+									  <label for="Motor">Motor BD</label>
+									  <input type="text" class="form-control input-sm" id="Motor" name="Motor" placeholder="Motor" value="">
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+									  <label for="Puerto">Puerto</label>
+									   
+									  <input type="text" class="form-control input-sm" id="Puerto" name="Puerto" placeholder="Puerto" value="">
+									</div>
+								</div>				
 							</div>
 							
-							<div class="col-md-3">
-								<div class="form-group">
-								  <label for="Motor">Motor BD</label>
-								  <input type="text" class="form-control input-sm" id="Motor" name="Motor" placeholder="Motor" value="">
-								</div>
-							</div>
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="Puerto">Puerto</label>
-								   
-								  <input type="text" class="form-control input-sm" id="Puerto" name="Puerto" placeholder="Puerto" value="">
-								</div>
-							</div>				
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="Plan">Plan</label>
-								   
-								  <input type="text" class="form-control input-sm" id="Plan" name="Plan" placeholder="Plan" value="">
-								</div>
-							</div>
 						
 							<div class="col-md-12">
 								<div class="form-group">
@@ -1994,6 +1997,83 @@ async function datos_empresa()
 								</div>
 							</div>	        
 		        		</div>
+						<div class="col-sm-12" style="font-size:16pt;font-weight:800;padding-left:0"><b>Comprobantes Electrónicos</b></div>
+						<div class="row">
+							<div class="col-md-12" style="background-color:#c6dcf9;margin:5px;padding:10px">
+								
+								<div class="row">
+									<div class="col-sm-3"><label>WEBSERVICE SRI RECEPCION</label></div>
+								<div class="col-sm-2">                                    
+								<label><input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" onclick="AmbientePrueba()">
+									Ambiente de Prueba</label>
+								</div>
+								<div class="col-sm-3">
+									<label><input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" onclick="AmbienteProduccion()">
+									Ambiente de Producción</label>
+								</div>
+							<div class="col-sm-2">Contribuyente Especial</div>
+							<div class="col-sm-2">
+								<input type="text" name="TxtContriEspecial" id="TxtContriEspecial" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-12">
+								<input type="text" name="TxtWebSRIre" id="TxtWebSRIre" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-12">
+								<label>WEBSERVICE SRI AUTORIZACIÓN</label>
+									<input type="text" name="TxtWebSRIau" id="TxtWebSRIau" class="form-control input-xs" value="">
+							</div>           
+							<div class="col-sm-10">
+								<label>CERTIFICADO FIRMA ELECTRONICA (DEBE SER EN FORMATO DE EXTENSION P12)</label>
+								<div class="input-group">
+
+									<input type="text" name="TxtEXTP12" id="TxtEXTP12" class="form-control input-sm" value="" >
+									<span class="input-group-addon input-xs">
+										<input type="file"  id="file_firma" data-placeholder="Elegir imágen..." name="file_firma" />
+									</span>
+									<!-- <span class="input-group-btn">
+										<button type="button" class="btn btn-info btn-flat btn-sm" onclick="subir_firma()">Subir firma</button>
+									</span> -->
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<label>CONTRASEÑA:</label>
+								<input type="text" name="TxtContraExtP12" id="TxtContraExtP12" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-10">
+								<label>EMAIL PARA PROCESOS GENERALES:</label>
+								<input type="text" name="TxtEmailGE" id="TxtEmailGE" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-2">
+								<label>CONTRASEÑA:</label>
+								<input type="text" name="TxtContraEmailGE" id="TxtContraEmailGE" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-10">
+								<label>EMAIL PARA DOCUMENTOS ELECTRONICOS:</label>
+								<input type="text" name="TxtEmaiElect" id="TxtEmaiElect" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-2">
+								<label>CONTRASEÑA:</label>
+								<input type="text" name="TxtContraEmaiElect" id="TxtContraEmaiElect" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-10">
+							<label><input type="checkbox" id="rbl_copia" name="rbl_copia">Enviar Copia de Email</label>';
+							<input type="text" name="TxtCopiaEmai" id="TxtCopiaEmai" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-2">
+								<label>RUC Operadora</label>
+								<input type="text" name="TxtRUCOpe" id="TxtRUCOpe" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-6">                            
+									<label>LEYENDA AL FINAL DE LOS DOCUMENTOS ELECTRONICOS</label>
+									<textarea name="txtLeyendaDocumen" id="txtLeyendaDocumen"class="form-control" rows="2" resize="none"></textarea>                            
+							</div>
+							<div class="col-sm-6">
+								<label>LEYENDA AL FINAL DE LA IMPRESION EN LA IMPRESORA DE PUNTO DE VENTA DE DOCUMENTOS ELECTRÓNICOS</label><br>                            
+								<textarea name="txtLeyendaImpresora" id="txtLeyendaImpresora"class="form-control" rows="2" resize="none"></textarea>
+							</div>
+							</div>
+							</div>
+						</div>
 		        	</div>
 
 					<div class="tab-pane " id="tab_2">
@@ -2412,80 +2492,6 @@ async function datos_empresa()
 		            </div>                
 		                
 
-					</div>
-
-					<div class="tab-pane" id="tab_4">
-						<div class="row">
-							<div class="col-sm-3"><label>WEBSERVICE SRI RECEPCION</label></div>
-		               <div class="col-sm-2">                                    
-			                   <label><input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" onclick="AmbientePrueba()">
-			                    Ambiente de Prueba</label>
-			                </div>
-			                <div class="col-sm-3">
-			                    <label><input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" onclick="AmbienteProduccion()">
-			                    Ambiente de Producción</label>
-			                </div>
-		            	<div class="col-sm-2">Contribuyente Especial</div>
-		                <div class="col-sm-2">
-		                    <input type="text" name="TxtContriEspecial" id="TxtContriEspecial" class="form-control input-xs" value="">
-		                </div>
-		                 <div class="col-sm-12">
-		                    <input type="text" name="TxtWebSRIre" id="TxtWebSRIre" class="form-control input-xs" value="">
-		                </div>
-		                <div class="col-sm-12">
-		                    <label>WEBSERVICE SRI AUTORIZACIÓN</label>
-		                        <input type="text" name="TxtWebSRIau" id="TxtWebSRIau" class="form-control input-xs" value="">
-		                </div>           
-		                <div class="col-sm-10">
-		                    <label>CERTIFICADO FIRMA ELECTRONICA (DEBE SER EN FORMATO DE EXTENSION P12)</label>
-		                    <div class="input-group">
-
-		                    	<input type="text" name="TxtEXTP12" id="TxtEXTP12" class="form-control input-sm" value="" >
-		                    	<span class="input-group-addon input-xs">
-		                    		<input type="file"  id="file_firma" data-placeholder="Elegir imágen..." name="file_firma" />
-		                    	</span>
-		                    	<!-- <span class="input-group-btn">
-									<button type="button" class="btn btn-info btn-flat btn-sm" onclick="subir_firma()">Subir firma</button>
-								</span> -->
-		                    </div>
-		                </div>
-		                <div class="col-sm-2">
-		                    <label>CONTRASEÑA:</label>
-		                    <input type="text" name="TxtContraExtP12" id="TxtContraExtP12" class="form-control input-xs" value="">
-		                </div>
-		                <div class="col-sm-10">
-		                    <label>EMAIL PARA PROCESOS GENERALES:</label>
-		                    <input type="text" name="TxtEmailGE" id="TxtEmailGE" class="form-control input-xs" value="">
-		                </div>
-		                <div class="col-sm-2">
-		                    <label>CONTRASEÑA:</label>
-		                    <input type="text" name="TxtContraEmailGE" id="TxtContraEmailGE" class="form-control input-xs" value="">
-		                </div>
-		                <div class="col-sm-10">
-		                    <label>EMAIL PARA DOCUMENTOS ELECTRONICOS:</label>
-		                    <input type="text" name="TxtEmaiElect" id="TxtEmaiElect" class="form-control input-xs" value="">
-		                </div>
-		                <div class="col-sm-2">
-		                    <label>CONTRASEÑA:</label>
-		                    <input type="text" name="TxtContraEmaiElect" id="TxtContraEmaiElect" class="form-control input-xs" value="">
-		                </div>
-		                <div class="col-sm-10">
-		                <label><input type="checkbox" id="rbl_copia" name="rbl_copia">Enviar Copia de Email</label>';
-		                <input type="text" name="TxtCopiaEmai" id="TxtCopiaEmai" class="form-control input-xs" value="">
-		                </div>
-		                <div class="col-sm-2">
-		                    <label>RUC Operadora</label>
-		                    <input type="text" name="TxtRUCOpe" id="TxtRUCOpe" class="form-control input-xs" value="">
-		                </div>
-		                <div class="col-sm-12">                            
-		                        <label>LEYENDA AL FINAL DE LOS DOCUMENTOS ELECTRONICOS</label>
-		                        <textarea name="txtLeyendaDocumen" id="txtLeyendaDocumen"class="form-control" rows="2" resize="none"></textarea>                            
-		                </div>
-		                <div class="col-sm-12">
-		                    <label>LEYENDA AL FINAL DE LA IMPRESION EN LA IMPRESORA DE PUNTO DE VENTA DE DOCUMENTOS ELECTRÓNICOS</label><br>                            
-		                    <textarea name="txtLeyendaImpresora" id="txtLeyendaImpresora"class="form-control" rows="2" resize="none"></textarea>
-		                </div>
-						</div>
 					</div>
 
 					<div class="tab-pane" id="tab_5">
