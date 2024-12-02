@@ -38,7 +38,8 @@ class autoriza_sri
 		$this->iv = base64_decode("C9fBxl1EWtYTL1/M8jfstw==");
 		// $this->conn = new Conectar();
 		$this->db = new db();
-		$this->rutaJava8  = ""; //escapeshellarg("C:\\Program Files\\Java\\jdk-1.8\\bin\\");
+		// $this->rutaJava8  = ""; //escapeshellarg("C:\\Program Files\\Java\\jdk-1.8\\bin\\")
+		$this->rutaJava8  = escapeshellarg("C:\\Program Files\\Java\\jdk-1.8\\bin\\");
 	}
 
 
@@ -93,7 +94,9 @@ class autoriza_sri
 				   		 		// print_r($resp);die();
 				   		}else
 				   		{
-				   			return $enviar_sri;
+				   			$mensaje = $this->validar_existencia($xml);
+			   				$this->deleteFolder($temp_file);
+				   			return $mensaje;
 				   		}
 
 			   		}else 
@@ -137,6 +140,8 @@ class autoriza_sri
 		$temp_file = 'ftp_folder_xmls/Rechazados/';
 		if(!file_exists($temp_file)){mkdir($temp_file, 0777);}
 		$temp_file = 'ftp_folder_xmls/No_autorizados/';
+		if(!file_exists($temp_file)){mkdir($temp_file, 0777);}
+		$temp_file = 'ftp_folder_xmls/Enviados/';
 		if(!file_exists($temp_file)){mkdir($temp_file, 0777);}
 
 
@@ -288,7 +293,8 @@ class autoriza_sri
    		 // die();
    		 if(empty($f))
    		 {
-   		 	return "No se obtuvo respuesta";
+   		 	return "false";
+   		 	// "No se obtuvo respuesta";
    		 }
 
 
@@ -363,6 +369,68 @@ class autoriza_sri
    			return $f;
    		}
     }
+
+
+    function validar_existencia($xml)
+    {    
+		$clave = $xml.'.xml';
+
+		$carpeta_comprobantes = dirname(__DIR__).'/SRI/ftp_folder_xmls';
+		$carpeta_no_autori = $carpeta_comprobantes . "/No_autorizados";
+		$carpeta_rechazados = $carpeta_comprobantes . "/Rechazados";
+		$carpeta_enviados = $carpeta_comprobantes . "/Enviados";
+
+
+
+		$ruta1 = $carpeta_no_autori . '/' . $clave;
+		$ruta2 = $carpeta_rechazados . '/' . $clave;
+
+		$ruta3 = $carpeta_enviados . '/' . $clave;
+
+		// print_r($ruta1);print_r($ruta2);die();
+		if (file_exists($ruta1)) {
+
+			// print_r($ruta);die();
+			$xml = simplexml_load_file($ruta1);
+			$codigo = $xml->mensajes->mensaje->mensaje->identificador;
+			$mensaje = $xml->mensajes->mensaje->mensaje->mensaje;
+			$adicional = $xml->mensajes->mensaje->mensaje->informacionAdicional;
+			$estado = $xml->estado;
+			$fecha = $xml->fechaAutorizacion;
+			// print_r($mensaje);die();
+			return strval($adicional);
+			// array('estado' => $estado, 'codigo' => $codigo, 'mensaje' => $mensaje, 'adicional' => $adicional, 'fecha' => $fecha);
+		}
+
+		if (file_exists($ruta2)) {
+			// print_r($ruta2);die();
+			$fp = fopen($ruta2, "r");
+			$linea = '';
+			while (!feof($fp)) {
+				$linea .= fgets($fp);
+			}
+			fclose($fp);
+			$linea = str_replace('ns2:', '', $linea);
+			$xml = simplexml_load_string($linea);
+
+			$codigo = $xml->respuestaSolicitud->comprobantes->comprobante->mensajes->mensaje->identificador;
+			$mensaje = $xml->respuestaSolicitud->comprobantes->comprobante->mensajes->mensaje->mensaje;
+			$adicional = $xml->respuestaSolicitud->comprobantes->comprobante->mensajes->mensaje->informacionAdicional;
+			$estado = $xml->respuestaSolicitud->estado;
+			$fecha = '';
+			// print_r($mensaje);die();
+			return strval($adicional);
+
+			// array('estado' => $estado, 'codigo' => $codigo, 'mensaje' => $mensaje, 'adicional' => $adicional, 'fecha' => $fecha);
+
+		}
+
+		if(!file_exists($ruta3))
+		{
+			// no se pudo enviar por algun motivo
+			return 'false';
+		}
+	}
 
 
  // function enviaremail()   //funcion para enviarlo por javascript
