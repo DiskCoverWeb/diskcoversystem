@@ -431,7 +431,7 @@ function fecha_actual()
 	        // $('#doc_xml').attr('href','')
 	    }else
 	    {
-	    	Swal.fire("No se pudo enviar el comprobante intente mas tarde","","info").then(function(){
+	    	Swal.fire("EN ESTOS MOMENTOS LA PAGINA DE APROBACION DEL SRI ESTA FUERA DE LINEA O CON INTERMITENCIA, POR FAVOR INTENTE MAS TARDE AUTORIZAR EL COMPROBANTE. RECUERDE QUE LEGALMENTE TENEMOS 72 HORAS PARA ENVIAR LA APROBACION DEL DOCUMENTO ELECTRONICO","","info").then(function(){
 	    		location.reload();
 	    	});
 	    }
