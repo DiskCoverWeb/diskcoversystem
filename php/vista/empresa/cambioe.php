@@ -1,6 +1,9 @@
 <?php  date_default_timezone_set('America/Guayaquil');  //print_r($_SESSION);die();//print_r($_SESSION['INGRESO']);die();?>
 <link rel="stylesheet" href="../../dist/css/arbol.css">
 <script type="text/javascript">
+	var arrNuevasLineas = [];
+	var lineaValAnteriores = {};
+	var lineaValNuevos = {};
   $(document).ready(function () 
   {
   	ddl_estados();
@@ -55,7 +58,11 @@
   	 // 	  console.log(data);
   	 // })
 
-
+	document.addEventListener('keydown', (event)=>{
+		if(event.key == 'Delete'){
+			confirmar_eliminar();
+		}
+	})
 });
 
   function ddl_estados()
@@ -738,8 +745,8 @@ async function datos_empresa()
 				$('#tab_2').removeClass('active');	
 				$('#li_tab3').css('display','none');
 				$('#tab_3').removeClass('active');
-				$('#li_tab4').css('display','none');
-				$('#tab_4').removeClass('active');
+				$('#li_tab5').css('display','none');
+				$('#tab_5').removeClass('active');
 				return false
 
 			}else
@@ -750,8 +757,8 @@ async function datos_empresa()
 				$('#li_tab2').removeClass('active');	
 				$('#li_tab3').css('display','initial');
 				$('#li_tab3').removeClass('active');	
-				$('#li_tab4').css('display','initial');
-				$('#li_tab4').removeClass('active');	
+				$('#li_tab5').css('display','initial');
+				$('#li_tab5').removeClass('active');	
 			}
 
 
@@ -949,6 +956,9 @@ async function datos_empresa()
 
 			$('#TxtLineasItem').val(empresa.Item);
 			$('#TxtLineasEntidad').val(empresa.ID_Empresa);
+
+			resetearTab5();
+
 			TVcatalogo();
 			$('#btnLineasGrabar').removeAttr('disabled');
 
@@ -958,6 +968,39 @@ async function datos_empresa()
           }
 
 	});
+  }
+
+  function resetearTab5(){
+	$('#TxtIDLinea').val('')
+	$('#TextCodigo').val('.')
+	$('#TextLinea').val('NO PROCESABLE')
+	$('#MBoxCta').val('')
+	//$('#MBoxCta').attr('') //BUSCAR FORMATO_CUENTAS DEPENDIENDO DE LA BD
+	$('#MBoxCta_Anio_Anterior').val('')
+	$('#MBoxCta_Venta').val('')
+	$('#CTipo').html('<option value="FA">FA</option><option value="NV">NV</option><option value="FT">FT</option><option value="NC">NC</option><option value="LC">LC</option><option value="GR">GR</option><option value="CP">CP</option>');
+	$('#TxtNumFact').val('00')
+	$('#TxtItems').val('0.00')
+	$('#TxtLogoFact').val('')
+	$('#TxtPosFact').val('0.00')
+	$('#TxtEspa').val('0.00')
+	$('#TxtPosY').val(0.00)
+	$('#TxtLargo').val('0.00')
+	$('#TxtAncho').val('0.00')
+
+	$('#MBFechaIni').val("<?php echo date('Y-m-d');?>")
+	$('#MBFechaVenc').val("<?php echo date('Y-m-d');?>")
+	$('#TxtNumSerietres1').val('000001')
+	$('#TxtNumAutor').val('0000000001')
+	$('#TxtNumSerieUno').val('001')
+	$('#TxtNumSerieDos').val('001')
+
+	$('#TxtNombreEstab').val('.')
+	$('#TxtDireccionEstab').val('.')
+	$('#TxtTelefonoEstab').val('.')
+	$('#TxtLogoTipoEstab').val('.')
+		
+	$('#CheqPuntoEmision').prop('checked', false);
   }
 
 
@@ -1101,9 +1144,12 @@ async function datos_empresa()
 	    {
 			var ant = $('#txt_anterior').val();
 			var che = cod.split('.').join('_');	
-			if(ant==''){	$('#txt_anterior').val(che); }else{	$('#label_'+ant).css('border','0px');}
+			if(ant==''){	$('#txt_anterior').val(che); }else{	$('#label_'+ant).css('border','0px');$('#label_'+ant).removeAttr('title');}
 			$('#label_'+che+auto+serie+fact).css('border','1px solid');
+			$('#label_'+che+auto+serie+fact).attr('title', 'Presione Suprimir para eliminar');
+			$('#LblTreeClick').val(auto+'_'+serie+'_'+fact);
 			$('#txt_anterior').val(che+auto+serie+fact); 
+			//$('#txt_anterior').val(che+auto+serie+fact); 
 		}
 		  	//fin de pinta el seleccionado
 		if(cod)
@@ -1158,11 +1204,45 @@ async function datos_empresa()
 	    });
 	 }
 
-	 function confirmar()
+	 function confirmar(varEF=false)
 	 {
-	 	 var nom = $('#TextLinea').val();
+		let param_linea_nuevo = parametrizarCampos();
+		if(param_linea_nuevo == null){
+			return;
+		}
+
+		let parametros = [];
+		let listaTxtLineas = [];
+		if($('#TxtIDLinea').val() != '.'){
+			lineaValNuevos[$('#TxtIDLinea').val()] = param_linea_nuevo;
+			console.log(lineaValNuevos);
+		}else{
+			let indiceRepe = arrNuevasLineas.findIndex(rep => rep['TextCodigo'] == $('#TextCodigo').val());
+			if(indiceRepe == -1){
+				arrNuevasLineas.push(param_linea_nuevo);
+				console.log(arrNuevasLineas);
+			}
+		}
+
+		for(let lva of Object.keys(lineaValNuevos)){
+			let valores_nuevos = Object.values(lineaValNuevos[lva]).join('&');
+			let valores_anteriores = lineaValAnteriores[lva] ? Object.values(lineaValAnteriores[lva]).join('&') : '';
+
+			if(valores_anteriores != valores_nuevos){
+				parametros.push(lineaValNuevos[lva]);
+				listaTxtLineas.push(lineaValNuevos[lva]['TextLinea']);
+			}
+		}
+
+		for(let anl of arrNuevasLineas){
+			listaTxtLineas.push(anl['TextLinea']);
+		}
+
+		parametros = parametros.concat(arrNuevasLineas);
+
+	 	 //var nom = $('#TextLinea').val();
 	 	 Swal.fire({
-			title: 'Esta seguro de guardar '+nom,
+			title: 'Esta seguro de guardar las siguientes lineas:</br>'+listaTxtLineas.join(', '),
 			text: "",
 			type: 'warning',
 			showCancelButton: true,
@@ -1171,67 +1251,48 @@ async function datos_empresa()
 			confirmButtonText: 'Si!'
 		}).then((result) => {
 			if (result.value==true) {
-				if($("#CTipo").val()=='')
+				/*if($("#CTipo").val()=='')
 				{
 					$("#CTipo").val('FA');
-				}
-				guardar()
+				}*/
+				guardar(parametros, varEF);
 			}
 		})
 	 }
 
-	 function guardar()
+	 function guardar(parametros, varEF=false)
 	 {
-		$('#myModal_espera').show();
-	   //parametros = $('#form_datos').serialize();
-	   let parametros = {
-			'TextCodigo': $('#TextCodigo').val(),
-			'TextLinea': $('#TextLinea').val(),
-			'MBoxCta': $('#MBoxCta').val(),
-			'MBoxCta_Anio_Anterior': $('#MBoxCta_Anio_Anterior').val(),
-			'MBoxCta_Venta': $('#MBoxCta_Venta').val() == '' ? '.' : $('#MBoxCta_Venta').val(),
-			'CheqPuntoEmision': $('#CheqPuntoEmision').prop('checked'),
-			'CTipo': $('#CTipo').val(),
-			'TxtNumFact': $('#TxtNumFact').val(),
-			'TxtItems': $('#TxtItems').val(),
-			'TxtLogoFact': $('#TxtLogoFact').val(),
-			'TxtPosFact': $('#TxtPosFact').val(),
-			'TxtPosY': $('#TxtPosY').val(),
-			'TxtEspa': $('#TxtEspa').val(),
-			'TxtLargo': $('#TxtLargo').val(),
-			'TxtAncho': $('#TxtAncho').val(),
-			'MBFechaIni': $('#MBFechaIni').val(),
-			'TxtNumSerietres1': $('#TxtNumSerietres1').val(),
-			'MBFechaVenc': $('#MBFechaVenc').val(),
-			'TxtNumAutor': $('#TxtNumAutor').val(),
-			'TxtNumSerieUno': $('#TxtNumSerieUno').val(),
-			'TxtNumSerieDos': $('#TxtNumSerieDos').val(),
-			'TxtNombreEstab': $('#TxtNombreEstab').val(),
-			'TxtDireccionEstab': $('#TxtDireccionEstab').val(),
-			'TxtTelefonoEstab': $('#TxtTelefonoEstab').val(),
-			'TxtLogoTipoEstab': $('#TxtLogoTipoEstab').val(),
-			'item': $('#TxtLineasItem').val(),
-			'entidad': $('#TxtLineasEntidad').val(),
-	   };
+
+		$('#myModal_espera').modal('show');
+
 	   //parametros['item'] = $('#TxtLineasItem').val();
 	   //parametros['entidad'] = $('#TxtLineasEntidad').val();
 	 	 $.ajax({
 	      type: "POST",
 	      url: '../controlador/empresa/cambioeC.php?guardar=true',
-	      data:parametros,
+	      data:{parametros:parametros},
         dataType:'json',       
 	      success: function(data)
 	      {
-			$('#myModal_espera').hide();
+			$('#myModal_espera').modal('hide');
 	       	console.log(data);
 	       	if(data==1)
 	       	{
 	       		TVcatalogo();
-	       		Swal.fire('El proceso de grabar se realizo con exito','','success');
+	       		Swal.fire('El proceso de grabar se realizo con exito','','success')
+				.then(result => {
+					lineaValNuevos = {};
+					lineaValAnteriores = {};
+					arrNuevasLineas = [];
+					resetearTab5();
+					if(varEF){
+						ejecutarFunc(varEF);
+					}
+				});
 	       	}
 	      },
 		  error: (err) => {
-			$('#myModal_espera').hide();
+			$('#myModal_espera').modal('hide');
 			Swal.fire('Ocurrio un error al procesar su solicitud. Error: ' + err, '', 'error');
 		  }
 	    })
@@ -1255,8 +1316,138 @@ async function datos_empresa()
        })
 	 }
 
+	 function confirmar_eliminar()
+	 {
+	 	 var strasf = $('#LblTreeClick').val();
+		 let strDetalle = strasf.split('_');
+		let strAlerta = (strDetalle[2] ? 'tipo '+strDetalle[2]+' con ':'') +
+			(strDetalle[1] ? 'serie '+strDetalle[1]+' y ':'') +
+			(strDetalle[0] ? 'autorización '+strDetalle[0]:'');
+		
+		if(strDetalle.length == 4){
+			strAlerta = (strDetalle[3] ? 'línea '+strDetalle[3]+' de ':'') + strAlerta;
+		}
+
+		if($('#LblTreeClick').val()=='' || strAlerta == ''){
+			return;
+		}
+
+	 	Swal.fire({
+         title: 'Esta seguro de eliminar: '+strAlerta,
+         text: "",
+         type: 'warning',
+         showCancelButton: true,
+         confirmButtonColor: '#3085d6',
+         cancelButtonColor: '#d33',
+         confirmButtonText: 'Si!'
+       }).then((result) => {
+         if (result.value==true) {
+			eliminar_linea(strDetalle);
+         }
+       })
+	 }
+
+	 function eliminar_linea(strDetalle){
+		 let fact = strDetalle[2];
+		 let serie = strDetalle[1];
+		 let auto = strDetalle[0];
+		 let codigo = '';
+		 
+		 if(strDetalle.length == 4){
+			codigo = strDetalle[3];
+		}
+		
+		let parametros = {
+			'codigo': codigo,
+			'fact': fact,
+			'serie': serie,
+			'auto': auto,
+			'entidad': $('#TxtLineasEntidad').val(),
+			'item': $('#TxtLineasItem').val()
+		};
+
+		$('#myModal_espera').modal('show');
+		$.ajax({
+			type: "POST",
+			url: '../controlador/empresa/cambioeC.php?eliminar_linea=true',
+			data:{parametros},
+			dataType:'json',       
+			success: function(data)
+			{
+				$('#myModal_espera').modal('hide');
+				if(data==1){
+					if($('#TxtIDLinea').val() != ''){
+						let param_linea_nuevo = parametrizarCampos(false);
+						
+						if($('#TxtIDLinea').val() != '.'){
+							lineaValNuevos[$('#TxtIDLinea').val()] = param_linea_nuevo;
+							console.log(lineaValNuevos);
+						}else{
+							let indiceRepe = arrNuevasLineas.findIndex(rep => rep['TextCodigo'] == $('#TextCodigo').val());
+							if(indiceRepe == -1){
+								arrNuevasLineas.push(param_linea_nuevo);
+								console.log(arrNuevasLineas);
+							}
+						}
+					}
+
+					TVcatalogo();
+					Swal.fire('Se elimino con exito','','success')
+					.then(result => {
+						let entradasObj = Object.entries(lineaValNuevos);
+						if(codigo){
+							let entObj = entradasObj.find(obj => obj[1]['TextCodigo'] == codigo && obj[1]['CTipo'] == fact && obj[1]['TxtNumAutor'] == auto && obj[1]['TxtNumSerieUno'] == serie.substring(0,3) && obj[1]['TxtNumSerieDos'] == serie.substring(3,6));
+							console.log(entObj);
+							
+							if(entObj){
+								delete lineaValNuevos[entObj[0]];
+								delete lineaValAnteriores[entObj[0]];
+							}
+							arrNuevasLineas = arrNuevasLineas.filter(anl => anl['TextCodigo'] != codigo && anl['CTipo'] != fact && anl['TxtNumAutor'] != auto && anl['TxtNumSerieUno'] == serie.substring(0,3) && anl['TxtNumSerieDos'] == serie.substring(3,6));
+						}else if(fact){
+							let entObj = entradasObj.find(obj => obj[1]['CTipo'] == fact && obj[1]['TxtNumAutor'] == auto && obj[1]['TxtNumSerieUno'] == serie.substring(0,3) && obj[1]['TxtNumSerieDos'] == serie.substring(3,6));
+							
+							if(entObj){
+								delete lineaValNuevos[entObj[0]];
+								delete lineaValAnteriores[entObj[0]];
+							}
+							arrNuevasLineas = arrNuevasLineas.filter(anl => anl['CTipo'] != fact && anl['TxtNumAutor'] != auto && anl['TxtNumSerieUno'] == serie.substring(0,3) && anl['TxtNumSerieDos'] == serie.substring(3,6));
+						}else if(serie){
+							let entObj = entradasObj.find(obj => obj[1]['TxtNumAutor'] == auto && obj[1]['TxtNumSerieUno'] == serie.substring(0,3) && obj[1]['TxtNumSerieDos'] == serie.substring(3,6));
+							
+							if(entObj){
+								delete lineaValNuevos[entObj[0]];
+								delete lineaValAnteriores[entObj[0]];
+							}
+							arrNuevasLineas = arrNuevasLineas.filter(anl => anl['TxtNumAutor'] != auto && anl['TxtNumSerieUno'] == serie.substring(0,3) && anl['TxtNumSerieDos'] == serie.substring(3,6));
+						}else if(auto){
+							let entObj = entradasObj.find(obj => obj[1]['TxtNumAutor'] == auto);
+							
+							if(entObj){
+								delete lineaValNuevos[entObj[0]];
+								delete lineaValAnteriores[entObj[0]];
+							}
+							arrNuevasLineas = arrNuevasLineas.filter(anl => anl['TxtNumAutor'] != auto);
+						}
+						/*lineaValNuevos = {};
+						lineaValAnteriores = {};
+						arrNuevasLineas = [];*/
+						resetearTab5();
+					});
+				}else{
+					Swal.fire('No se pudo eliminar', '', 'error');
+				}
+			},
+			error: function(err){
+				$('#myModal_espera').modal('hide');
+				Swal.fire('Ocurrio un error al realizar la peticion', '', 'error');
+			}
+		})
+	 }
+
 	 function detalle_linea(id,cod)
 	 {
+		document.querySelector('#carga_linea_detalles').style.display = 'flex';
 		let entidad = $('#TxtLineasEntidad').val();
 		let item = $('#TxtLineasItem').val();
 		
@@ -1270,55 +1461,205 @@ async function datos_empresa()
 			return;
 		}
 
-	 	if(cod)
-    {
-		 	var ant = $('#txt_anterior').val();
-		 	var che = cod.split('.').join('_');	
-		 	if(ant==''){	$('#txt_anterior').val(che); }else{	$('#label_'+ant).css('border','0px');}
-		 	$('#label_'+che+'_'+id).css('border','1px solid');
-		 	$('#txt_anterior').val(che+'_'+id); 
-	  }
+		//Para modificar una linea existente
+		if(Object.keys(lineaValAnteriores).length > 0 && $('#TxtIDLinea').val() != '.'){
+			let param_linea_nuevo = parametrizarCampos();
+			//console.log(lineaValNuevos);
+			if(param_linea_nuevo == null){
+				return;
+			}
+			lineaValNuevos[$('#TxtIDLinea').val()] = param_linea_nuevo;
 
-	 	 $.ajax({
-	      type: "POST",
-	      url: '../controlador/empresa/cambioeC.php?detalle=true',
-	      data:{id,item,entidad},
-        dataType:'json',       
-	      success: function(data)
-	      {
-	      	data = data[0];
-	       	console.log(data);
+		}
+		
+		//Para insertar nueva linea
+		if($('#TxtIDLinea').val() == '.'){
+			let param_linea_nuevo = parametrizarCampos();
+			//console.log(lineaValNuevos);
+			if(param_linea_nuevo == null){
+				return;
+			}
+			let indiceRepe = arrNuevasLineas.findIndex(rep => rep['TextCodigo'] == $('#TextCodigo').val());
+			if(indiceRepe == -1){
+				arrNuevasLineas.push(param_linea_nuevo);
+			}
+		}
 
-	       	$('#TextCodigo').val(data.Codigo)
-	       	$('#TextLinea').val(data.Concepto)
-	       	$('#MBoxCta').val(data.CxC)
-	       	$('#MBoxCta_Anio_Anterior').val(data.CxC_Anterior)
-	       	$('#CTipo').val(data.Fact)
-	       	$('#TxtNumFact').val(data.Fact_Pag)
-	       	$('#TxtItems').val(data.ItemsxFA)
-	       	$('#TxtLogoFact').val(data.Logo_Factura)
-	       	$('#TxtPosFact').val(data.Pos_Factura)
-	       	$('#TxtEspa').val(data.Espacios)
-	       	$('#TxtPosY').val(data.Pos_Y_Fact.toFixed(2))
-	       	$('#TxtLargo').val(data.Largo.toFixed(2))
-	       	$('#TxtAncho').val(data.Ancho.toFixed(2))
+		//Anade el borde azul a la linea en la lista
+		if(cod)
+		{
+			var ant = $('#txt_anterior').val();
+			var che = cod.split('.').join('_');	
+			if(ant==''){	$('#txt_anterior').val(che); }else{	$('#label_'+ant).css('border','0px');$('#label_'+ant).removeAttr('title');}
+			$('#label_'+che+'_'+id).css('border','1px solid');
+			$('#label_'+che+'_'+id).attr('title', 'Presione Suprimir para eliminar');
+			$('#txt_anterior').val(che+'_'+id); 
+		}
+		
+		//Setea los campos dependiendo si existen modificados o nuevos desde base de datos
+		let datoModificado = lineaValNuevos[id];
+		if(datoModificado){
+			$('#TxtIDLinea').val(datoModificado.TxtIDLinea)
+			$('#TextCodigo').val(datoModificado.TextCodigo)
+			$('#TextLinea').val(datoModificado.TextLinea)
+			$('#MBoxCta').val(datoModificado.MBoxCta)
+			$('#MBoxCta_Anio_Anterior').val(datoModificado.MBoxCta_Anio_Anterior)
+			//$('#MBoxCta_Venta').val(datoModificado.MBoxCta_Venta)
+			$('#CTipo').val(datoModificado.CTipo)
+			$('#TxtNumFact').val(datoModificado.TxtNumFact)
+			$('#TxtItems').val(datoModificado.TxtItems)
+			$('#TxtLogoFact').val(datoModificado.TxtLogoFact)
+			$('#TxtPosFact').val(datoModificado.TxtPosFact)
+			$('#TxtEspa').val(datoModificado.TxtEspa)
+			$('#TxtPosY').val(datoModificado.TxtPosY)
+			$('#TxtLargo').val(datoModificado.TxtLargo)
+			$('#TxtAncho').val(datoModificado.TxtAncho)
 
-	       	$('#MBFechaIni').val(formatoDate(data.Fecha.date))
-	       	$('#MBFechaVenc').val(formatoDate(data.Vencimiento.date))
-	       	$('#TxtNumSerietres1').val(generar_ceros(data.Secuencial,9))
-	       	$('#TxtNumAutor').val(data.Autorizacion)
-	       	$('#TxtNumSerieUno').val(data.Serie.substring(0,3))
-	       	$('#TxtNumSerieDos').val(data.Serie.substring(3,6))
+			$('#MBFechaIni').val(datoModificado.MBFechaIni)
+			$('#MBFechaVenc').val(datoModificado.MBFechaVenc)
+			$('#TxtNumSerietres1').val(datoModificado.TxtNumSerietres1)
+			$('#TxtNumAutor').val(datoModificado.TxtNumAutor)
+			$('#TxtNumSerieUno').val(datoModificado.TxtNumSerieUno)
+			$('#TxtNumSerieDos').val(datoModificado.TxtNumSerieDos)
 
-	       	$('#TxtNombreEstab').val(data.Nombre_Establecimiento)
-	       	$('#TxtDireccionEstab').val(data.Direccion_Establecimiento)
-	       	$('#TxtTelefonoEstab').val(data.Telefono_Estab)
-	       	$('#TxtLogoTipoEstab').val(data.Logo_Tipo_Estab)
+			$('#TxtNombreEstab').val(datoModificado.TxtNombreEstab)
+			$('#TxtDireccionEstab').val(datoModificado.TxtDireccionEstab)
+			$('#TxtTelefonoEstab').val(datoModificado.TxtTelefonoEstab)
+			$('#TxtLogoTipoEstab').val(datoModificado.TxtLogoTipoEstab)
+		
+			$('#CheqPuntoEmision').prop('checked', datoModificado.CheqPuntoEmision);
+			document.querySelector('#carga_linea_detalles').style.display = 'none';
+
+			let fact = $('#CTipo').val();
+			let auto = $('#TxtNumAutor').val();
+			let serie = $('#TxtNumSerieUno').val()+ $('#TxtNumSerieDos').val();
+			let codigo = $('#TextCodigo').val();
+			$('#LblTreeClick').val(auto+'_'+serie+'_'+fact+'_'+codigo);
+		}else{
 			
-			$('#CheqPuntoEmision').prop('checked', data.TL);
-	      }
-	    })
+	
+			  $.ajax({
+			  type: "POST",
+			  url: '../controlador/empresa/cambioeC.php?detalle=true',
+			  data:{id,item,entidad},
+			dataType:'json',       
+			  success: function(data)
+			  {
+				  data = data[0];
+				   console.log(data);
+	
+				   $('#TxtIDLinea').val(data.ID)
+				   $('#TextCodigo').val(data.Codigo)
+				   $('#TextLinea').val(data.Concepto)
+				   $('#MBoxCta').val(data.CxC)
+				   $('#MBoxCta_Anio_Anterior').val(data.CxC_Anterior)
+				   $('#CTipo').val(data.Fact)
+				   $('#TxtNumFact').val(data.Fact_Pag)
+				   $('#TxtItems').val(data.ItemsxFA)
+				   $('#TxtLogoFact').val(data.Logo_Factura)
+				   $('#TxtPosFact').val(data.Pos_Factura)
+				   $('#TxtEspa').val(data.Espacios)
+				   $('#TxtPosY').val(data.Pos_Y_Fact.toFixed(2))
+				   $('#TxtLargo').val(data.Largo.toFixed(2))
+				   $('#TxtAncho').val(data.Ancho.toFixed(2))
+	
+				   $('#MBFechaIni').val(formatoDate(data.Fecha.date))
+				   $('#MBFechaVenc').val(formatoDate(data.Vencimiento.date))
+				   $('#TxtNumSerietres1').val(generar_ceros(data.Secuencial,9))
+				   $('#TxtNumAutor').val(data.Autorizacion)
+				   $('#TxtNumSerieUno').val(data.Serie.substring(0,3))
+				   $('#TxtNumSerieDos').val(data.Serie.substring(3,6))
+	
+				   $('#TxtNombreEstab').val(data.Nombre_Establecimiento)
+				   $('#TxtDireccionEstab').val(data.Direccion_Establecimiento)
+				   $('#TxtTelefonoEstab').val(data.Telefono_Estab)
+				   $('#TxtLogoTipoEstab').val(data.Logo_Tipo_Estab)
+				
+				$('#CheqPuntoEmision').prop('checked', data.TL);
+	
+				lineaValAnteriores[data.ID] = parametrizarCampos();
+				document.querySelector('#carga_linea_detalles').style.display = 'none';
 
+				let fact = $('#CTipo').val();
+				let auto = $('#TxtNumAutor').val();
+				let serie = $('#TxtNumSerieUno').val()+ $('#TxtNumSerieDos').val();
+				let codigo = $('#TextCodigo').val();
+				$('#LblTreeClick').val(auto+'_'+serie+'_'+fact+'_'+codigo);
+			  }
+			})
+		}
+
+	 }
+
+	 function parametrizarCampos(mostrarAlertas=true){
+		let TextCodigo = [$('#TextCodigo').val(), 'Código'];
+		let TextLinea = [$('#TextLinea').val(), 'Descripción'];
+		let MBoxCta = [$('#MBoxCta').val(), 'CxC Clientes'];
+		let MBoxCta_Anio_Anterior = [$('#MBoxCta_Anio_Anterior').val(), 'CxC Año Anterior'];
+		//let CTipo = [$('#CTipo').val(), 'Tipo de Documento'];
+		let TxtLargo = [$('#TxtLargo').val(), 'Largo'];
+		let TxtAncho = [$('#TxtAncho').val(), 'Ancho'];
+		let MBFechaIni = [$('#MBFechaIni').val(), 'Fecha de Inicio'];
+		let MBFechaVenc = [$('#MBFechaVenc').val(), 'Fecha de Vencimiento'];
+		let TxtNumSerietres1 = [$('#TxtNumSerietres1').val(), 'Secuencial de Inicio'];
+		let TxtNumAutor = [$('#TxtNumAutor').val(), 'Autorización'];
+		let TxtNumSerieUno = [$('#TxtNumSerieUno').val(), 'Serie uno'];
+		let TxtNumSerieDos = [$('#TxtNumSerieDos').val(), 'Serie dos'];
+
+	   	let camposObl = [TextCodigo, TextLinea, MBoxCta, MBoxCta_Anio_Anterior, CTipo, TxtLargo, TxtAncho, MBFechaIni, MBFechaVenc, TxtNumSerietres1, TxtNumAutor, TxtNumSerieUno, TxtNumSerieDos];
+	   	let camposFaltantes = [];
+
+		for(let cobl of camposObl){
+			if(cobl[0] == ''){
+				camposFaltantes.push(cobl[1]);
+			}
+		}
+
+		if(mostrarAlertas){
+			if(camposFaltantes.length > 0){
+				Swal.fire('Por favor llene los siguientes campos: ' + camposFaltantes.join(', '), '', 'info');
+				return null;
+			}else if($('#TxtIDLinea').val() == ''){
+				Swal.fire('Ocurrio un problema, vuelva a consultar la informacion.', '', 'error');
+				return null;
+			}
+		}
+
+		//$('#myModal_espera').show();
+
+	   	let parametros = {
+			'TxtIDLinea': $('#TxtIDLinea').val(),
+			'TextCodigo': TextCodigo[0],
+			'TextLinea': TextLinea[0],
+			'MBoxCta': MBoxCta[0],
+			'MBoxCta_Anio_Anterior': MBoxCta_Anio_Anterior[0],
+			'MBoxCta_Venta': $('#MBoxCta_Venta').val() == '' ? '.' : $('#MBoxCta_Venta').val(),
+			'CheqPuntoEmision': $('#CheqPuntoEmision').prop('checked'),
+			'CTipo': $('#CTipo').val() == '' ? 'FA' : $('#CTipo').val(),
+			'TxtNumFact': $('#TxtNumFact').val() == '' ? '0' : $('#TxtNumFact').val(),
+			'TxtItems': $('#TxtItems').val() == '' ? '0' : $('#TxtItems').val(),
+			'TxtLogoFact': $('#TxtLogoFact').val() == '' ? 'NINGUNO' : $('#TxtLogoFact').val(),
+			'TxtPosFact': $('#TxtPosFact').val() == '0' ? '.' : $('#TxtPosFact').val(),
+			'TxtPosY': $('#TxtPosY').val() == '' ? '0.00' : $('#TxtPosY').val(),
+			'TxtEspa': $('#TxtEspa').val() == '' ? '0' : $('#TxtEspa').val(),
+			'TxtLargo': TxtLargo[0],
+			'TxtAncho': TxtAncho[0],
+			'MBFechaIni': MBFechaIni[0],
+			'TxtNumSerietres1': TxtNumSerietres1[0],
+			'MBFechaVenc': MBFechaVenc[0],
+			'TxtNumAutor': TxtNumAutor[0],
+			'TxtNumSerieUno': TxtNumSerieUno[0],
+			'TxtNumSerieDos': TxtNumSerieDos[0],
+			'TxtNombreEstab': $('#TxtNombreEstab').val() == '' ? '.' : $('#TxtNombreEstab').val(),
+			'TxtDireccionEstab': $('#TxtDireccionEstab').val() == '' ? '.' : $('#TxtDireccionEstab').val(),
+			'TxtTelefonoEstab': $('#TxtTelefonoEstab').val() == '' ? '.' : $('#TxtTelefonoEstab').val(),
+			'TxtLogoTipoEstab': $('#TxtLogoTipoEstab').val() == '' ? '.' : $('#TxtLogoTipoEstab').val(),
+			'item': $('#TxtLineasItem').val(),
+			'entidad': $('#TxtLineasEntidad').val(),
+	   };
+
+	   return parametros;
+	   //arrModificados.push(param_mod)
 	 }
 
 
@@ -1332,6 +1673,134 @@ async function datos_empresa()
 	 	 {
 	 	 	$('#panel_cta_venta').css('display','none');	 	 	
 	 	 }
+	 }
+
+	 function ejecutarFunc(origen){
+		resetearTab5();
+		lineaValNuevos = {};
+		lineaValAnteriores = {};
+		arrNuevasLineas = [];
+		switch(origen){
+			case 'entidad':
+				buscar_ciudad();
+			break;
+			case 'ciudad':
+				buscar_empresas();
+			break;
+			case 'empresas':
+				datos_empresa();
+			break;
+		}
+	 }
+
+	 function confirmarCambioEntidad(input_origen){
+		//Para modificar una linea existente
+		if(Object.keys(lineaValAnteriores).length > 0 && $('#TxtIDLinea').val() != '.'){
+			let param_linea_nuevo = parametrizarCampos(false);
+			//console.log(lineaValNuevos);
+			if(param_linea_nuevo == null){
+				return;
+			}
+			lineaValNuevos[$('#TxtIDLinea').val()] = param_linea_nuevo;
+
+		}
+		
+		//Para insertar nueva linea
+		if($('#TxtIDLinea').val() == '.'){
+			let param_linea_nuevo = parametrizarCampos(false);
+			//console.log(lineaValNuevos);
+			if(param_linea_nuevo == null){
+				return;
+			}
+			let indiceRepe = arrNuevasLineas.findIndex(rep => rep['TextCodigo'] == $('#TextCodigo').val());
+			if(indiceRepe == -1){
+				arrNuevasLineas.push(param_linea_nuevo);
+			}
+		}
+
+
+		if(Object.keys(lineaValNuevos).length > 0 || arrNuevasLineas.length > 0){
+			
+			let listaTxtLineas = [];
+
+			for(let lva of Object.keys(lineaValNuevos)){
+				let valores_nuevos = Object.values(lineaValNuevos[lva]).join('&');
+				let valores_anteriores = lineaValAnteriores[lva] ? Object.values(lineaValAnteriores[lva]).join('&') : '';
+
+				if(valores_anteriores != valores_nuevos){
+					listaTxtLineas.push(lineaValNuevos[lva]['TextLinea']);
+				}
+			}
+
+			for(let anl of arrNuevasLineas){
+				if(anl['TextLinea']) listaTxtLineas.push(anl['TextLinea']);
+			}
+
+
+			if(listaTxtLineas.length > 0){
+				//Swal.fire('Tiene cambios sin confirmar en las lineas:</br>'+listaTxtLineas.join(', '), '', 'warning');
+				Swal.fire({
+					title: 'Usted va a cambiar de Empresa. Se perderan los cambios realizados en las lineas:</br>'+listaTxtLineas.join(', '),
+					text: "",
+					type: 'warning',
+					showCancelButton: true,
+					confirmButtonText: 'Guardar cambios',
+					confirmButtonColor: '#3085d6',
+					cancelButtonText: 'Cambiar empresa',
+					cancelButtonColor: '#d33',
+					//confirmButtonText: 'Si!'
+				}).then((result) => {
+					if (result.value==true) {
+						/*if($("#CTipo").val()=='')
+						{
+							$("#CTipo").val('FA');
+						}*/
+						confirmar(input_origen);
+					}else{
+						ejecutarFunc(input_origen);
+					}
+				})
+			}else{
+				ejecutarFunc(input_origen);
+			}
+		}else{
+			ejecutarFunc(input_origen);
+		}
+	 }
+
+	 function validar_codigo(){
+		let TextCodigo = $('#TextCodigo').val();
+
+		if(TextCodigo.trim() == '' && TextCodigo.trim() == '.'){
+			return;
+		}
+		let parametros = {
+			'codigo': $('#TextCodigo').val(),
+			'item': $('#TxtLineasItem').val(),
+			'entidad': $('#TxtLineasEntidad').val(),
+		}
+		$('#myModal_espera').modal('show');
+
+		$.ajax({
+			type: "POST",
+			url: '../controlador/empresa/cambioeC.php?validar_codigo=true',
+			data:{parametros:parametros},
+			dataType:'json',       
+			success: function(data)
+			{
+				$('#myModal_espera').modal('hide');
+				if(data.res==1)
+				{
+					$('#TxtIDLinea').val(data.ID);
+				}else{
+					$('#TxtIDLinea').val('.');
+				}
+			},
+			error: (err) => {
+				$('#myModal_espera').hide();
+				Swal.fire('Ocurrio un error al procesar su solicitud. Error: ' + err, '', 'error');
+			}
+	    })
 	 }
 
 
@@ -1416,7 +1885,7 @@ async function datos_empresa()
 		<div class="col-sm-4">
 			<div class="form-group">
 				<label>Entidad: </label><i id="lbl_ruc"></i>-<i id="lbl_enti"></i>
-				<select class="form-control fomr" name="entidad" id='entidad' onChange="buscar_ciudad();">
+				<select class="form-control fomr" name="entidad" id='entidad' onchange="confirmarCambioEntidad('entidad')">
 					<option value=''>Seleccione Entidad</option>
 				</select>
 			</div>			
@@ -1424,7 +1893,7 @@ async function datos_empresa()
 		<div class="col-sm-2">
 			<div class="form-group">
 				<label for="Entidad">Ciudad</label>
-				<select class="form-control input-sm" name="ciudad" id='ciudad' onchange="buscar_empresas()">
+				<select class="form-control input-sm" name="ciudad" id='ciudad' onchange="confirmarCambioEntidad('ciudad')">
 					<option value=''>Seleccione ciudad</option>
 				</select>
 			</div>			
@@ -1432,7 +1901,7 @@ async function datos_empresa()
 		<div class="col-sm-4">
 			<div class="form-group">
 				<label for="Entidad">Empresa</label>
-				<select class="form-control input-xs" name="empresas" id='empresas' onchange="datos_empresa()">
+				<select class="form-control input-xs" name="empresas" id='empresas' onchange="confirmarCambioEntidad('empresas')">
 					<option value=''>Seleccione Empresa</option>
 				</select>
 			</div>			
@@ -1455,13 +1924,12 @@ async function datos_empresa()
 					<li id="li_tab1" class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Configuracion Principal</a></li>
 					<li id="li_tab2" class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Datos Principales</a></li>
 					<li id="li_tab3" class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Procesos Generales</a></li>
-					<li id="li_tab4" class=""><a href="#tab_4" data-toggle="tab" aria-expanded="false">Comprobantes Electrónicos</a></li>
 					<li id="li_tab5" class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">Lineas de CxC</a></li>
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="tab_1">
 		        		<div class="row">
-			        		<div class="col-md-4">
+			        		<div class="col-md-3">
 								<div class="form-group">
 								    <label for="Estado">Estado</label>
 								    <select class="form-control input-sm" name="Estado" id="Estado" >
@@ -1471,34 +1939,46 @@ async function datos_empresa()
 									</select>
 								</div>
 							</div>
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="FechaR">Renovación</label>
-								   
-								  <input type="date" class="form-control input-sm" id="FechaR" name="FechaR" placeholder="FechaR" 
-								  value='' onKeyPress="return soloNumeros(event)"  maxlength="10" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
+							<div class="col-md-4">
+								<div class="col-md-4">
+									<div class="form-group">
+									  <label for="FechaR">Renovación</label>
+									   
+									  <input type="date" class="form-control input-sm" id="FechaR" name="FechaR" placeholder="FechaR" 
+									  value='' onKeyPress="return soloNumeros(event)"  maxlength="10" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+									  <label for="Fecha">Comp. Electronico</label>								   
+									  <input type="date" class="form-control input-sm" id="FechaCE" name="FechaCE" placeholder="Fecha" 
+									  value="" onKeyPress="return soloNumeros(event)" maxlength="10" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
+									</div>
+								</div>							
+								<div class="col-md-4">
+									<div class="form-group">
+									  <label for="Fecha_DB">BD</label>
+									  <input type="date" class="form-control input-sm" id="FechaDB" name="FechaDB" value="">
+									</div>
 								</div>
 							</div>
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="Fecha">Comp. Electronico</label>								   
-								  <input type="date" class="form-control input-sm" id="FechaCE" name="FechaCE" placeholder="Fecha" 
-								  value="" onKeyPress="return soloNumeros(event)" maxlength="10" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
+							<div class="col-md-4">
+								<div class="col-md-4">
+									<div class="form-group">
+									  <label for="Fecha_P12">Fecha P12</label>
+									  <input type="date" class="form-control input-sm" id="FechaP12" name="FechaP12" value="">
+									</div>
 								</div>
-							</div>							
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="Fecha_DB">BD</label>
-								  <input type="date" class="form-control input-sm" id="FechaDB" name="FechaDB" value="">
-								</div>
-							</div>
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="Fecha_P12">Fecha P12</label>
-								  <input type="date" class="form-control input-sm" id="FechaP12" name="FechaP12" value="">
+								<div class="col-md-4">
+									<div class="form-group">
+										<label for="Plan">Plan</label>
+										
+										<input type="text" class="form-control input-sm" id="Plan" name="Plan" placeholder="Plan" value="">
+									</div>
 								</div>
 							</div>
-							<div class="col-md-3">
+							
+							<div class="col-md-2">
 								<div class="form-group">
 								  <label for="Servidor">Servidor</label>
 								  <input type="text" class="form-control input-sm" id="Servidor" name="Servidor" placeholder="Servidor" value="">
@@ -1510,39 +1990,35 @@ async function datos_empresa()
 								  <input type="text" class="form-control input-sm" id="Base" name="Base" placeholder="Base" value="">
 								</div>
 							</div>
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="Usuario">Usuario</label>								   
-								  <input type="text" class="form-control input-sm" id="Usuario" name="Usuario" placeholder="Usuario" value="">
+							<div class="col-md-4">
+								<div class="col-md-3">
+									<div class="form-group">
+									  <label for="Usuario">Usuario</label>								   
+									  <input type="text" class="form-control input-sm" id="Usuario" name="Usuario" placeholder="Usuario" value="">
+									</div>
 								</div>
-							</div>
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="Clave">Clave</label>
-								  <input type="text" class="form-control input-sm" id="Clave" name="Clave" placeholder="Clave" value="">
+								<div class="col-md-3">
+									<div class="form-group">
+									  <label for="Clave">Clave</label>
+									  <input type="text" class="form-control input-sm" id="Clave" name="Clave" placeholder="Clave" value="">
+									</div>
 								</div>
+								
+								<div class="col-md-3">
+									<div class="form-group">
+									  <label for="Motor">Motor BD</label>
+									  <input type="text" class="form-control input-sm" id="Motor" name="Motor" placeholder="Motor" value="">
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+									  <label for="Puerto">Puerto</label>
+									   
+									  <input type="text" class="form-control input-sm" id="Puerto" name="Puerto" placeholder="Puerto" value="">
+									</div>
+								</div>				
 							</div>
 							
-							<div class="col-md-3">
-								<div class="form-group">
-								  <label for="Motor">Motor BD</label>
-								  <input type="text" class="form-control input-sm" id="Motor" name="Motor" placeholder="Motor" value="">
-								</div>
-							</div>
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="Puerto">Puerto</label>
-								   
-								  <input type="text" class="form-control input-sm" id="Puerto" name="Puerto" placeholder="Puerto" value="">
-								</div>
-							</div>				
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="Plan">Plan</label>
-								   
-								  <input type="text" class="form-control input-sm" id="Plan" name="Plan" placeholder="Plan" value="">
-								</div>
-							</div>
 						
 							<div class="col-md-12">
 								<div class="form-group">
@@ -1551,6 +2027,83 @@ async function datos_empresa()
 								</div>
 							</div>	        
 		        		</div>
+						<div class="col-sm-12" style="font-size:16pt;font-weight:800;padding-left:0"><b>Comprobantes Electrónicos</b></div>
+						<div class="row">
+							<div class="col-md-12" style="background-color:#c6dcf9;margin:5px;padding:10px">
+								
+								<div class="row">
+									<div class="col-sm-3"><label>WEBSERVICE SRI RECEPCION</label></div>
+								<div class="col-sm-2">                                    
+								<label><input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" onclick="AmbientePrueba()">
+									Ambiente de Prueba</label>
+								</div>
+								<div class="col-sm-3">
+									<label><input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" onclick="AmbienteProduccion()">
+									Ambiente de Producción</label>
+								</div>
+							<div class="col-sm-2">Contribuyente Especial</div>
+							<div class="col-sm-2">
+								<input type="text" name="TxtContriEspecial" id="TxtContriEspecial" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-12">
+								<input type="text" name="TxtWebSRIre" id="TxtWebSRIre" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-12">
+								<label>WEBSERVICE SRI AUTORIZACIÓN</label>
+									<input type="text" name="TxtWebSRIau" id="TxtWebSRIau" class="form-control input-xs" value="">
+							</div>           
+							<div class="col-sm-10">
+								<label>CERTIFICADO FIRMA ELECTRONICA (DEBE SER EN FORMATO DE EXTENSION P12)</label>
+								<div class="input-group">
+
+									<input type="text" name="TxtEXTP12" id="TxtEXTP12" class="form-control input-sm" value="" >
+									<span class="input-group-addon input-xs">
+										<input type="file"  id="file_firma" data-placeholder="Elegir imágen..." name="file_firma" />
+									</span>
+									<!-- <span class="input-group-btn">
+										<button type="button" class="btn btn-info btn-flat btn-sm" onclick="subir_firma()">Subir firma</button>
+									</span> -->
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<label>CONTRASEÑA:</label>
+								<input type="text" name="TxtContraExtP12" id="TxtContraExtP12" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-10">
+								<label>EMAIL PARA PROCESOS GENERALES:</label>
+								<input type="text" name="TxtEmailGE" id="TxtEmailGE" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-2">
+								<label>CONTRASEÑA:</label>
+								<input type="text" name="TxtContraEmailGE" id="TxtContraEmailGE" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-10">
+								<label>EMAIL PARA DOCUMENTOS ELECTRONICOS:</label>
+								<input type="text" name="TxtEmaiElect" id="TxtEmaiElect" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-2">
+								<label>CONTRASEÑA:</label>
+								<input type="text" name="TxtContraEmaiElect" id="TxtContraEmaiElect" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-10">
+							<label><input type="checkbox" id="rbl_copia" name="rbl_copia">Enviar Copia de Email</label>';
+							<input type="text" name="TxtCopiaEmai" id="TxtCopiaEmai" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-2">
+								<label>RUC Operadora</label>
+								<input type="text" name="TxtRUCOpe" id="TxtRUCOpe" class="form-control input-xs" value="">
+							</div>
+							<div class="col-sm-6">                            
+									<label>LEYENDA AL FINAL DE LOS DOCUMENTOS ELECTRONICOS</label>
+									<textarea name="txtLeyendaDocumen" id="txtLeyendaDocumen"class="form-control" rows="2" resize="none"></textarea>                            
+							</div>
+							<div class="col-sm-6">
+								<label>LEYENDA AL FINAL DE LA IMPRESION EN LA IMPRESORA DE PUNTO DE VENTA DE DOCUMENTOS ELECTRÓNICOS</label><br>                            
+								<textarea name="txtLeyendaImpresora" id="txtLeyendaImpresora"class="form-control" rows="2" resize="none"></textarea>
+							</div>
+							</div>
+							</div>
+						</div>
 		        	</div>
 
 					<div class="tab-pane " id="tab_2">
@@ -1971,80 +2524,6 @@ async function datos_empresa()
 
 					</div>
 
-					<div class="tab-pane" id="tab_4">
-						<div class="row">
-							<div class="col-sm-3"><label>WEBSERVICE SRI RECEPCION</label></div>
-		               <div class="col-sm-2">                                    
-			                   <label><input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" onclick="AmbientePrueba()">
-			                    Ambiente de Prueba</label>
-			                </div>
-			                <div class="col-sm-3">
-			                    <label><input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" onclick="AmbienteProduccion()">
-			                    Ambiente de Producción</label>
-			                </div>
-		            	<div class="col-sm-2">Contribuyente Especial</div>
-		                <div class="col-sm-2">
-		                    <input type="text" name="TxtContriEspecial" id="TxtContriEspecial" class="form-control input-xs" value="">
-		                </div>
-		                 <div class="col-sm-12">
-		                    <input type="text" name="TxtWebSRIre" id="TxtWebSRIre" class="form-control input-xs" value="">
-		                </div>
-		                <div class="col-sm-12">
-		                    <label>WEBSERVICE SRI AUTORIZACIÓN</label>
-		                        <input type="text" name="TxtWebSRIau" id="TxtWebSRIau" class="form-control input-xs" value="">
-		                </div>           
-		                <div class="col-sm-10">
-		                    <label>CERTIFICADO FIRMA ELECTRONICA (DEBE SER EN FORMATO DE EXTENSION P12)</label>
-		                    <div class="input-group">
-
-		                    	<input type="text" name="TxtEXTP12" id="TxtEXTP12" class="form-control input-sm" value="" >
-		                    	<span class="input-group-addon input-xs">
-		                    		<input type="file"  id="file_firma" data-placeholder="Elegir imágen..." name="file_firma" />
-		                    	</span>
-		                    	<!-- <span class="input-group-btn">
-									<button type="button" class="btn btn-info btn-flat btn-sm" onclick="subir_firma()">Subir firma</button>
-								</span> -->
-		                    </div>
-		                </div>
-		                <div class="col-sm-2">
-		                    <label>CONTRASEÑA:</label>
-		                    <input type="text" name="TxtContraExtP12" id="TxtContraExtP12" class="form-control input-xs" value="">
-		                </div>
-		                <div class="col-sm-10">
-		                    <label>EMAIL PARA PROCESOS GENERALES:</label>
-		                    <input type="text" name="TxtEmailGE" id="TxtEmailGE" class="form-control input-xs" value="">
-		                </div>
-		                <div class="col-sm-2">
-		                    <label>CONTRASEÑA:</label>
-		                    <input type="text" name="TxtContraEmailGE" id="TxtContraEmailGE" class="form-control input-xs" value="">
-		                </div>
-		                <div class="col-sm-10">
-		                    <label>EMAIL PARA DOCUMENTOS ELECTRONICOS:</label>
-		                    <input type="text" name="TxtEmaiElect" id="TxtEmaiElect" class="form-control input-xs" value="">
-		                </div>
-		                <div class="col-sm-2">
-		                    <label>CONTRASEÑA:</label>
-		                    <input type="text" name="TxtContraEmaiElect" id="TxtContraEmaiElect" class="form-control input-xs" value="">
-		                </div>
-		                <div class="col-sm-10">
-		                <label><input type="checkbox" id="rbl_copia" name="rbl_copia">Enviar Copia de Email</label>';
-		                <input type="text" name="TxtCopiaEmai" id="TxtCopiaEmai" class="form-control input-xs" value="">
-		                </div>
-		                <div class="col-sm-2">
-		                    <label>RUC Operadora</label>
-		                    <input type="text" name="TxtRUCOpe" id="TxtRUCOpe" class="form-control input-xs" value="">
-		                </div>
-		                <div class="col-sm-12">                            
-		                        <label>LEYENDA AL FINAL DE LOS DOCUMENTOS ELECTRONICOS</label>
-		                        <textarea name="txtLeyendaDocumen" id="txtLeyendaDocumen"class="form-control" rows="2" resize="none"></textarea>                            
-		                </div>
-		                <div class="col-sm-12">
-		                    <label>LEYENDA AL FINAL DE LA IMPRESION EN LA IMPRESORA DE PUNTO DE VENTA DE DOCUMENTOS ELECTRÓNICOS</label><br>                            
-		                    <textarea name="txtLeyendaImpresora" id="txtLeyendaImpresora"class="form-control" rows="2" resize="none"></textarea>
-		                </div>
-						</div>
-					</div>
-
 					<div class="tab-pane" id="tab_5">
 						<div class="row" style="display:none;">
 	 						<input type="text" id="TxtLineasItem" name="TxtLineasItem" value="">
@@ -2082,12 +2561,16 @@ async function datos_empresa()
 							</div>
 							<div class="col-sm-8">
 								<form id="form_datos">
+									<div class="row" style="display:none;">
+										<input type="hidden" id="TxtIDLinea" name="TxtIDLinea">
+										<input type="hidden" id="LblTreeClick" name="LblTreeClick">
+									</div>
 									<div class="row">
 										<div class="col-sm-5">
 											<div class="form-group">
 												<label for="inputEmail3" class="col-sm-2 control-label">CODIGO</label>
 												<div class="col-sm-10">
-													<input type="text" class="form-control input-xs" id="TextCodigo" name="TextCodigo" placeholder="" value=".">
+													<input type="text" class="form-control input-xs" id="TextCodigo" name="TextCodigo" placeholder="" value="." onchange="validar_codigo();">
 												</div>
 											</div>	
 										</div>
@@ -2101,6 +2584,9 @@ async function datos_empresa()
 										</div>
 									</div>
 									<div class="row">
+										<div id="carga_linea_detalles" style="display: none; position: absolute; top: 0px; left: 0px; height: 100%; width: 100%; background-color: rgba(255, 255, 255, 0.5); z-index: 50; justify-content: center; align-items: center;">
+											<img src="../../img/gif/loader4.1.gif" height="20%">
+										</div>
 										<div class="col-sm-12">
 											<div class="box">
 												<div class="box-body">
