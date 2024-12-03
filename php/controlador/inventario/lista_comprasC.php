@@ -389,7 +389,7 @@ class lista_comprasC
 						// print_r($value);die();
 						$cuenta = $this->modelo->catalogo_cuentas($cta[0]['Codigo']);		
 							$parametros_debe = array(
-							  "va" =>round($value2['total'],2),//valor que se trae del otal sumado
+							  "va" =>$value2['total'],//valor que se trae del otal sumado
 			                  "dconcepto1" =>$cuenta[0]['Cuenta'].' Orden '.$parametros['orden'],
 			                  "codigo" => $cuenta[0]['Codigo'], // cuenta de codigo de 
 			                  "cuenta" => $cuenta[0]['Cuenta'], // detalle de cuenta;
@@ -403,6 +403,7 @@ class lista_comprasC
 			                  "codigoc"=>$value['CodigoC'],
 			                  "beneficiario"=>$nombre
 						);
+							// print_r($parametros_debe);die();
 						 ingresar_asientos($parametros_debe);
 					}
 
@@ -416,7 +417,7 @@ class lista_comprasC
 						$cuenta = $this->modelo->catalogo_cuentas($value2['cuenta']);		
 						// print_r($cuenta);die();	
 							$parametros_haber = array(
-			                  "va" =>round($value2['total'],2),//valor que se trae del otal sumado
+			                  "va" =>$value2['total'],//valor que se trae del otal sumado
 			                  "dconcepto1" =>$cuenta[0]['Cuenta'],
 			                  "codigo" => $cuenta[0]['Codigo'], // cuenta de codigo de 
 			                  "cuenta" => $cuenta[0]['Cuenta'], // detalle de cuenta;
@@ -441,12 +442,15 @@ class lista_comprasC
 						$num_comprobante = numero_comprobante1('Diario',true,true,$fecha);
 						// print_r($num_comprobante);die();
 					    $dat_comprobantes = $this->modelo->datos_comprobante();
-					    $debe = 0;
+					  $debe = 0;
 						$haber = 0;
 						foreach ($dat_comprobantes as $key => $value3) {
 							$debe+=$value3['DEBE'];
 							$haber+=$value3['HABER'];
 						}
+						// print_r($dat_comprobantes);die();
+						$debe = number_format($debe,2,'.','');
+						$haber = number_format($haber,2,'.','');
 						// print_r($debe.'-'.$haber);die();
 						if(strval($debe)==strval($haber))
 						{
