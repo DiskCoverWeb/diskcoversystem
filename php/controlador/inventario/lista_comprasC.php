@@ -474,7 +474,7 @@ class lista_comprasC
 				                		$resp = $this->modelo->eliminar_asiento_K($parametros['orden'],$value['CodigoC']);
 				                		if($resp==1)
 				                		{
-				                			$this->modelo->eliminar_asiento();
+				                			$this->modelo->eliminar_asiento('99');
 				                			$orden = date('Ymd');
 				                			$this->modelo->eliminar_asiento_sc($orden);                			
 				                			//mayorizar_inventario_sp();
@@ -491,20 +491,21 @@ class lista_comprasC
 				                }else
 				                {
 
-				                			$this->modelo->eliminar_asiento();
+				                			$this->modelo->eliminar_asiento('99');
 							     // $this->modelo->eliminar_aiseto_sc($orden);
 				        	        return array('resp'=>-1,'com'=>$resp);
 				                }
 							}else
 							{
-				                			$this->modelo->eliminar_asiento();
+				                			$this->modelo->eliminar_asiento('99');
 								// $this->modelo->eliminar_aiseto_sc($fecha);
 								return array('resp'=>-1,'com'=>'No coinciden','debe'=>$debe,'haber'=>$haber);
 							}
 						}else
 						{
 								// print_r($debe."-".$haber); 
-								 return array('resp'=>-1,'com'=>'Los resultados son 0');
+									$this->modelo->eliminar_asiento('99');
+								 return array('resp'=>-1,'com'=>'Los resultados son debe '.$debe."- haber: ".$haber);
 						}
 						
 					// print_r($value);die();

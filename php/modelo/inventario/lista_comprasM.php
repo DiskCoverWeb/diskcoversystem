@@ -573,10 +573,14 @@ class lista_comprasM
 	    return $this->conn->String_Sql($sql);
 
 	}
-	function eliminar_asiento()
+	function eliminar_asiento($T_no)
 	{
 		 $cid=$this->conn;
-		$sql = "DELETE Asiento WHERE Item='".$_SESSION['INGRESO']['item']."' AND CodigoU='".$_SESSION['INGRESO']['CodigoU']."' AND T_No ='".$_SESSION['INGRESO']['modulo_']."'";
+		$sql = "DELETE Asiento 
+		WHERE Item='".$_SESSION['INGRESO']['item']."' 
+		AND CodigoU='".$_SESSION['INGRESO']['CodigoU']."' 
+		AND T_No ='".$T_no."'";
+		// print_r($sql);die();
 		
 		return $this->conn->String_Sql($sql);
 
