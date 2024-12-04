@@ -55,7 +55,7 @@ class autoriza_sri
 			$msj = $this->descargar_archivos_ftp($parametros['XML']);
 			if($msj!="")
 			{
-				$this->deleteFolder($temp_file);
+				// $this->deleteFolder($temp_file);
 				return $msj;
 			}
 		}
@@ -85,7 +85,7 @@ class autoriza_sri
 			   		 		$resp =  $this->comprobar_xml_sri($xml,$this->linkSriAutorizacion);
 			   		 		if($resp==1)
 			   		 		{
-			   		 			$this->deleteFolder($temp_file);
+			   		 			// $this->deleteFolder($temp_file);
 			   		 			return  "Autorizado";
 			   		 		}else
 			   		 		{
@@ -95,7 +95,7 @@ class autoriza_sri
 				   		}else
 				   		{
 				   			$mensaje = $this->validar_existencia($xml);
-			   				$this->deleteFolder($temp_file);
+			   				// $this->deleteFolder($temp_file);
 				   			return $mensaje;
 				   		}
 
@@ -103,7 +103,7 @@ class autoriza_sri
 			   		{			
 			   			if($validar_autorizado==1)
 			   			{
-			   				$this->deleteFolder($temp_file);
+			   				// $this->deleteFolder($temp_file);
 			   				return "Autorizado";
 			   			}else{   		 
 			   				return $validar_autorizado;
