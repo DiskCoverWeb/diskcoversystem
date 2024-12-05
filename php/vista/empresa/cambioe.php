@@ -1918,118 +1918,122 @@ async function datos_empresa()
 	<div class="row" id="datos_empresa">
 	</div>
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-sm-12">
 			<div class="nav-tabs-custom">
 				<ul class="nav nav-tabs">					
 					<li id="li_tab1" class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Configuracion Principal</a></li>
 					<li id="li_tab2" class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Datos Principales</a></li>
 					<li id="li_tab3" class=""><a href="#tab_3" data-toggle="tab" aria-expanded="false">Procesos Generales</a></li>
-					<li id="li_tab5" class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">Lineas de CxC</a></li>
+					<li id="li_tab5" class=""><a href="#tab_5" data-toggle="tab" aria-expanded="false">Lineas de CxC (Puntos de Emisión)</a></li>
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="tab_1">
 		        		<div class="row">
-			        		<div class="col-md-3">
-								<div class="form-group">
-								    <label for="Estado">Estado</label>
-								    <select class="form-control input-sm" name="Estado" id="Estado" >
-										<option value=''>Estado</option>
-									    <option value="0">Seleccione Estado</option>
-									    <!-- $op.= $this->estados(); -->
-									</select>
+							<div class="col-sm-12">
+
+								<div class="col-sm-3 col-lg-3">
+									<div class="form-group">
+										<label for="Estado">Estado</label>
+										<select class="form-control input-sm" name="Estado" id="Estado" >
+											<option value=''>Estado</option>
+											<option value="0">Seleccione Estado</option>
+											<!-- $op.= $this->estados(); -->
+										</select>
+									</div>
+								</div>
+								<div class="col-sm-6 col-lg-4" style="padding:0;">
+									<div class="col-sm-4 col-lg-4">
+										<div class="form-group">
+										  <label for="FechaR">Renovación</label>
+										   
+										  <input type="date" class="form-control input-sm" id="FechaR" name="FechaR" placeholder="FechaR" 
+										  value='' onKeyPress="return soloNumeros(event)"  maxlength="10" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
+										</div>
+									</div>
+									<div class="col-sm-4 col-lg-4">
+										<div class="form-group">
+										  <label for="Fecha">Comp. Electronico</label>								   
+										  <input type="date" class="form-control input-sm" id="FechaCE" name="FechaCE" placeholder="Fecha" 
+										  value="" onKeyPress="return soloNumeros(event)" maxlength="10" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
+										</div>
+									</div>							
+									<div class="col-sm-4 col-lg-4">
+										<div class="form-group">
+										  <label for="Fecha_DB">BD</label>
+										  <input type="date" class="form-control input-sm" id="FechaDB" name="FechaDB" value="">
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-3 col-lg-4" style="padding:0;">
+									<div class="col-sm-6 col-lg-4">
+										<div class="form-group">
+										  <label for="Fecha_P12">Fecha P12</label>
+										  <input type="date" class="form-control input-sm" id="FechaP12" name="FechaP12" value="">
+										</div>
+									</div>
+									<div class="col-sm-6 col-lg-4">
+										<div class="form-group">
+											<label for="Plan">Plan</label>
+											
+											<input type="text" class="form-control input-sm" id="Plan" name="Plan" placeholder="Plan" value="">
+										</div>
+									</div>
 								</div>
 							</div>
-							<div class="col-md-4">
-								<div class="col-md-4">
+							<div class="col-sm-12">
+								<div class="col-lg-2">
 									<div class="form-group">
-									  <label for="FechaR">Renovación</label>
-									   
-									  <input type="date" class="form-control input-sm" id="FechaR" name="FechaR" placeholder="FechaR" 
-									  value='' onKeyPress="return soloNumeros(event)"  maxlength="10" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
+									  <label for="Servidor">Servidor</label>
+									  <input type="text" class="form-control input-sm" id="Servidor" name="Servidor" placeholder="Servidor" value="">
 									</div>
 								</div>
-								<div class="col-md-4">
+								<div class="col-lg-3">
 									<div class="form-group">
-									  <label for="Fecha">Comp. Electronico</label>								   
-									  <input type="date" class="form-control input-sm" id="FechaCE" name="FechaCE" placeholder="Fecha" 
-									  value="" onKeyPress="return soloNumeros(event)" maxlength="10" onkeyup="validar_year_mayor(this.id)" onblur="validar_year_menor(this.id)">
-									</div>
-								</div>							
-								<div class="col-md-4">
-									<div class="form-group">
-									  <label for="Fecha_DB">BD</label>
-									  <input type="date" class="form-control input-sm" id="FechaDB" name="FechaDB" value="">
+									  <label for="Base">Base</label>
+									  <input type="text" class="form-control input-sm" id="Base" name="Base" placeholder="Base" value="">
 									</div>
 								</div>
-							</div>
-							<div class="col-md-4">
-								<div class="col-md-4">
-									<div class="form-group">
-									  <label for="Fecha_P12">Fecha P12</label>
-									  <input type="date" class="form-control input-sm" id="FechaP12" name="FechaP12" value="">
+								<div class="col-lg-4">
+									<div class="col-lg-3">
+										<div class="form-group">
+										  <label for="Usuario">Usuario</label>								   
+										  <input type="text" class="form-control input-sm" id="Usuario" name="Usuario" placeholder="Usuario" value="">
+										</div>
 									</div>
-								</div>
-								<div class="col-md-4">
-									<div class="form-group">
-										<label for="Plan">Plan</label>
-										
-										<input type="text" class="form-control input-sm" id="Plan" name="Plan" placeholder="Plan" value="">
+									<div class="col-lg-3">
+										<div class="form-group">
+										  <label for="Clave">Clave</label>
+										  <input type="text" class="form-control input-sm" id="Clave" name="Clave" placeholder="Clave" value="">
+										</div>
 									</div>
-								</div>
-							</div>
-							
-							<div class="col-md-2">
-								<div class="form-group">
-								  <label for="Servidor">Servidor</label>
-								  <input type="text" class="form-control input-sm" id="Servidor" name="Servidor" placeholder="Servidor" value="">
+									
+									<div class="col-lg-3">
+										<div class="form-group">
+										  <label for="Motor">Motor BD</label>
+										  <input type="text" class="form-control input-sm" id="Motor" name="Motor" placeholder="Motor" value="">
+										</div>
+									</div>
+									<div class="col-lg-3">
+										<div class="form-group">
+										  <label for="Puerto">Puerto</label>
+										   
+										  <input type="text" class="form-control input-sm" id="Puerto" name="Puerto" placeholder="Puerto" value="">
+										</div>
+									</div>				
 								</div>
 							</div>
-							<div class="col-md-3">
-								<div class="form-group">
-								  <label for="Base">Base</label>
-								  <input type="text" class="form-control input-sm" id="Base" name="Base" placeholder="Base" value="">
-								</div>
-							</div>
-							<div class="col-md-4">
-								<div class="col-md-3">
+							<div class="col-sm-12">
+								<div class="col-sm-12">
 									<div class="form-group">
-									  <label for="Usuario">Usuario</label>								   
-									  <input type="text" class="form-control input-sm" id="Usuario" name="Usuario" placeholder="Usuario" value="">
+									  <label for="Mensaje">Mensaje</label>
+									  <input type="text" class="form-control input-sm" id="Mensaje" name="Mensaje" placeholder="Mensaje" value="">
 									</div>
-								</div>
-								<div class="col-md-3">
-									<div class="form-group">
-									  <label for="Clave">Clave</label>
-									  <input type="text" class="form-control input-sm" id="Clave" name="Clave" placeholder="Clave" value="">
-									</div>
-								</div>
-								
-								<div class="col-md-3">
-									<div class="form-group">
-									  <label for="Motor">Motor BD</label>
-									  <input type="text" class="form-control input-sm" id="Motor" name="Motor" placeholder="Motor" value="">
-									</div>
-								</div>
-								<div class="col-md-3">
-									<div class="form-group">
-									  <label for="Puerto">Puerto</label>
-									   
-									  <input type="text" class="form-control input-sm" id="Puerto" name="Puerto" placeholder="Puerto" value="">
-									</div>
-								</div>				
-							</div>
-							
-						
-							<div class="col-md-12">
-								<div class="form-group">
-								  <label for="Mensaje">Mensaje</label>
-								  <input type="text" class="form-control input-sm" id="Mensaje" name="Mensaje" placeholder="Mensaje" value="">
 								</div>
 							</div>	        
 		        		</div>
-						<div class="col-sm-12" style="font-size:16pt;font-weight:800;padding-left:0"><b>Comprobantes Electrónicos</b></div>
+						<div class="col-sm-12" style="font-size:16pt;font-weight:800;padding-left:0"><b style="background-color: #c6dcf9;padding: 5px;border: 1px solid #999999;border-radius: 5px 5px 0 0;">Comprobantes Electrónicos</b></div>
 						<div class="row">
-							<div class="col-md-12" style="background-color:#c6dcf9;margin:5px;padding:10px">
+							<div class="col-md-12" style="background-color:#c6dcf9;margin: 0 5px 5px 5px;padding:10px;border: 1px solid #999999;border-radius: 5px;">
 								
 								<div class="row">
 									<div class="col-sm-3"><label>WEBSERVICE SRI RECEPCION</label></div>
