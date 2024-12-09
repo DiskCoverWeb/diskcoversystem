@@ -91,6 +91,7 @@ class enviar_emails
           }
 
           $from = str_replace("@diskcoversystem.com","@imap.diskcoversystem.com", $_SESSION['INGRESO']['Email_Conexion_CE']);
+          $email_to = $value;
 
           $mail->setFrom($from, 'DiskCover System');
           $mail->addAddress($value); //Add a recipient
@@ -138,6 +139,7 @@ class enviar_emails
           if(strlen($from)>3)
           {
             if ($mail->send()) {
+              control_procesos("EMW", "Email: ".trim($from)."=>".trim($email_to), "Asunto: ".$titulo_correo);
               $res = 1;
             }
           }
@@ -146,6 +148,8 @@ class enviar_emails
           // print_r($mail);
           // print_r($e);
           // die();
+
+          control_procesos("EMW", "Email: ".trim($from)." => ".trim($email_to), "Asunto(Error): ".$e);
           return -1;
         }
 
@@ -224,6 +228,7 @@ class enviar_emails
             $mail->Port = $empresaGeneral[0]['smtp_Puerto'];
           }
           $from = str_replace("@diskcoversystem.com","@imap.diskcoversystem.com", $_SESSION['INGRESO']['Email_Conexion_CE']);
+           $email_to = $value;
           $mail->setFrom($from, 'DiskCover System');
           $mail->addAddress($value); //Add a recipient
           $mail->addReplyTo($from, 'Informacion');
@@ -249,6 +254,7 @@ class enviar_emails
           {
             if ($mail->send()) {
               $res = 1;
+               control_procesos("EMW", "Email: ".trim($from)."=>".trim($email_to), "Asunto: ".$titulo_correo);
             }
           }
 
@@ -257,6 +263,8 @@ class enviar_emails
           // print_r($mail);
           // print_r($e);
           // die();
+          control_procesos("EMW", "Email: ".trim($from)." => ".trim($email_to), "Asunto(Error): ".$e);
+            
           return -1;
         }
 
@@ -317,11 +325,14 @@ class enviar_emails
       // print_r('host:'.$mail->Host.'//Username:'.$mail->Username.'//pass:'.$mail->Password.'//Puerto:'.$mail->Port.'//Secure:'.$mail->SMTPSecure);die();
 
       if ($mail->send()) {
+          control_procesos("EMW", "Email: ".trim($empresaGeneral[0]['Email_Conexion'])."=>".trim($to_correo), "Asunto: ".$titulo_correo);
+       
         return 1;
       }
 
     } catch (Exception $e) {
       // print_r($mail);die();
+          control_procesos("EMW", "Email: ".trim($empresaGeneral[0]['Email_Conexion'])." => ".trim($to_correo), "Asunto(Error): ".$e);
       return -1;
     }
   }
@@ -383,6 +394,7 @@ class enviar_emails
   {
     $to = explode(',', $to_correo);
     foreach ($to as $key => $value) {
+      $email_to = $value;
       $mail = new PHPMailer();
       $mail->SMTPOptions = array(
         'ssl' => array(
@@ -420,9 +432,12 @@ class enviar_emails
           }
         }
       }
-      if (!$mail->send()) {
+      if (!$mail->send()) {        
+          control_procesos("EMW", "Email: ".trim($correo_apooyo)." => ".trim($email_to), "Asunto(Error): ".$e);
         return -1;
       } else {
+
+        control_procesos("EMW", "Email: ".trim($correo_apooyo)."=>".trim($email_to), "Asunto: ".$titulo_correo);
         return 1;
       }
     }
