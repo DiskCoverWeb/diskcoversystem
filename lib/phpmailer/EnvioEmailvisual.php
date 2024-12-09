@@ -115,7 +115,7 @@ class EnviarVisual
 			          {
 			            if ($mail->send()) {
 			              $res = 1;
-			              control_procesos("EMW", "Email: ".trim($from)."=>".trim($email_to), "Asunto: ".$parametros['subject']);
+			              // control_procesos("EMW", "Email: ".trim($from)."=>".trim($email_to), "Asunto: ".$parametros['subject']);
 			            }
 			          }
 
@@ -124,7 +124,7 @@ class EnviarVisual
 		          // print_r($mail);
 		          // print_r($e);
 		          // die();
-		          control_procesos("EMW", "Email: ".trim($from)." => ".trim($email_to), "Asunto(Error): ".$e);
+		          // control_procesos("EMW", "Email: ".trim($from)." => ".trim($email_to), "Asunto(Error): ".$e);
 		          return -1;
 		        }
 	     	}
