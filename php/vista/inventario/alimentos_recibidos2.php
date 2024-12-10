@@ -931,6 +931,50 @@ function autocoplet_ingreso()
      var url = '../controlador/inventario/alimentos_recibidosC.php?imprimir_pdf=true&num_ped='+num_ped;  
       window.open(url, '_blank');
   }
+
+  function imprimir_etiquetas()
+  {  
+     var num_ped = $('#txt_codigo').val();
+     if(num_ped.trim()==''){
+      Swal.fire('Seleccione codigo de Ingreso', '', 'warning');
+      return;
+     }
+      $('#myModal_espera').modal('show');
+      $.ajax({
+        type: "POST",
+        url: '../controlador/inventario/alimentos_recibidosC.php?imprimir_etiquetas=true',
+        data: {num_ped}, 
+        dataType:'json',
+        success: function(data)
+        {
+          $('#myModal_espera').modal('hide');
+          var url = '../../TEMP/' + data.pdf + '.pdf';
+          window.open(url, '_blank');
+        }
+      })
+  }
+
+  function imprimir_etiquetas_prueba()
+  {  
+     var num_ped = $('#txt_codigo').val();
+     if(num_ped.trim()==''){
+      Swal.fire('Seleccione codigo de Ingreso', '', 'warning');
+      return;
+     }
+      $('#myModal_espera').modal('show');
+      $.ajax({
+        type: "POST",
+        url: '../controlador/inventario/alimentos_recibidosC.php?imprimir_etiquetas_prueba=true',
+        data: {num_ped}, 
+        dataType:'json',
+        success: function(data)
+        {
+          $('#myModal_espera').modal('hide');
+          var url = '../../TEMP/' + data.pdf + '.pdf';
+          window.open(url, '_blank');
+        }
+      })
+  }
 	 
 
   function escanear_qr(){
@@ -1003,10 +1047,20 @@ function autocoplet_ingreso()
     			</button>
     		</div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
-            <button type="button" class="btn btn-default" title="Imprimir" onclick="reporte_pdf()">
+            <button type="button" class="btn btn-default" title="Generar PDF" onclick="reporte_pdf()">
+              <img src="../../img/png/pdf.png" height="32px">
+            </button>
+        </div>
+        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
+            <button type="button" class="btn btn-default" title="Imprimir etiquetas" onclick="imprimir_etiquetas()">
               <img src="../../img/png/paper.png" height="32px">
             </button>
         </div>
+        <!--<div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
+            <button type="button" class="btn btn-default" title="Imprimir prueba etiquetas" onclick="imprimir_etiquetas_prueba()">
+              <img src="../../img/png/impresora.png" height="32px">
+            </button>
+        </div>-->
         <!--<div class="col-xs-2 col-md-2 col-sm-2">
           <button class="btn btn-default" title="Escanear QR" onclick="escanear_qr()">
             <img src="../../img/png/escanear_qr.png">
