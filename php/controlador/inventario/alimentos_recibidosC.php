@@ -1,6 +1,7 @@
 <?php 
 require_once(dirname(__DIR__,2)."/modelo/inventario/alimentos_recibidosM.php");
 require_once(dirname(__DIR__,2)."/funciones/funciones.php");
+require_once(dirname(__DIR__,3)."/lib/fpdf/fpdf.php");
 
 /*
 -----------------nota importante en campo (T)----------------------
@@ -132,6 +133,14 @@ if(isset($_GET['guardar_recibido']))
 if (isset($_GET['imprimir_pdf'])) {
 	$parametros = $_GET;
 	$controlador->imprimir_pdf($parametros);
+}
+if (isset($_GET['imprimir_etiquetas'])) {
+	$parametros = $_POST;
+	echo json_encode($controlador->imprimir_etiquetas($parametros));
+}
+if (isset($_GET['imprimir_etiquetas_prueba'])) {
+	$parametros = $_POST;
+	echo json_encode($controlador->imprimir_etiquetas_prueba($parametros));
 }
 if(isset($_GET['pedido']))
 {
@@ -315,10 +324,11 @@ class alimentos_recibidosC
 	//private $pdf;
 	private $barras;
 	private $modales;
+	//private $pdf;
 	function __construct()
 	{
 		$this->modelo = new alimentos_recibidosM();
-		//$this->pdf = new cabecera_pdf();
+		
 	}
 
 	function guardar($parametros,$transporte,$gavetas)
@@ -729,44 +739,12 @@ class alimentos_recibidosC
 				'Sucursal' => $sucursal,
 				'QR' => dirname(__DIR__, 3) . $ruta
 			);
-
-			/*if($d=='')
-			{
-				$d =  dimenciones_tabl(strlen($value['ID']));
-				$d1 =  dimenciones_tabl(strlen($value['Fecha_Exp']->format('Y-m-d')));
-				$d2 =  dimenciones_tabl(strlen($value['Fecha_Fab']->format('Y-m-d')));
-				$d3 =  dimenciones_tabl(strlen($value['Producto']));
-				$d4 =  dimenciones_tabl(strlen($value['Entrada']));
-			}
-			$tr.='<tr>
-  					<td width="'.$d.'">'.($key+1).'</td>
-  					<td width="'.$d1.'">'.$value['Fecha_Fab']->format('Y-m-d').'</td>
-  					<td width="'.$d2.'">'.$value['Fecha_Exp']->format('Y-m-d').'</td>
-  					<td width="'.$d3.'">'.$value['Producto'].'</td>
-  					<td width="'.$d4.'">'.number_format($value['Entrada'],2,'.','').' '.$value['Unidad'].'</td>
-  					<td width="'.$d4.'">'.$value['Nombre_Completo'].'</td>
-  					<td width="'.$d4.'">'.$value['Codigo_Barra'].'</td>
-  					<td width="'.$d4.'">'.$sucursal.'</td>
-  					<td>';
-  					if($art!='.')
-  					{
-  						$tr.='<button class="btn btn-xs btn-primary" title="Agregar a '.$value['Producto'].'"  onclick=" show_producto2(\''.$value['ID'].'\')" ><i class=" fa fa-list"></i></button>';
-  						$primeravez = 1;
-  						$canti2 = $canti2+$value['Entrada'];
-  					}
-
-  					$tr.='<button class="btn btn-xs btn-danger" title="Eliminar linea"  onclick="eliminar_lin(\''.$value['ID'].'\',\''.$art.'\')" ><span class="glyphicon glyphicon-trash"></span></button>
-  					</td>
-  				</tr>';*/
 			
 		}
 
-		//print_r($info);die();
 		$titulo = 'L I S T A  D E  A L I M E N T O S';
 		$sizetable = 7;
 		$mostrar = TRUE;
-		// $Fechaini = $parametros['txt_desde'] ;//str_replace('-','',$parametros['Fechaini']);
-		// $Fechafin = $parametros['txt_hasta']; //str_replace('-','',$parametros['Fechafin']);
 		$tablaHTML = array();
 		$pos = 0;
 		$borde = 1;
@@ -790,6 +768,74 @@ class alimentos_recibidosC
 		}
 
 		$pdf->cabecera_reporte_productos($titulo, $tablaHTML, $contenido = false, $image = false, $Fechaini = false, $Fechafin = false, $sizetable, $mostrar, 15, 'H');
+	}
+
+
+	function imprimir_etiquetas($parametros)//cambiar
+	{
+		$tbl = $this->modelo->cargar_pedidos_trans($parametros['num_ped'],false);
+
+		$pdf = new FPDF();
+		$pdf->SetMargins(0, 0, 0);
+		$pdf->SetAutoPageBreak(false);
+
+		$archivo = 'ETIQUETA_'.$_SESSION['INGRESO']['Entidad_No'].$_SESSION['INGRESO']['item'].'_'.str_replace('-', '', $parametros['num_ped']);
+		$ruta = dirname(__DIR__, 3).'/TEMP/'.$archivo.'.pdf';
+		foreach ($tbl as $key => $value) 
+		{
+
+			$archivo_qr = 'QR_'.$_SESSION['INGRESO']['Entidad_No'].$_SESSION['INGRESO']['item'].'_'.str_replace('-', '', $value['Codigo_Barra']).'.png';
+			$ruta_qr = "/TEMP/".$archivo_qr;
+			if(!file_exists(dirname(__DIR__, 3) . $ruta_qr)){
+				$this->generarQR($value['Codigo_Barra']);
+			}
+
+			$pdf->AddPage('L', array(60, 20));
+			$pdf->SetFont('Arial', 'B', 10);
+			$pdf->Cell(0, 5, $value['Producto'],0);
+			$pdf->Image(dirname(__DIR__, 3) . $ruta_qr,0,5,10,10);
+			$pdf->SetXY(11,5);
+			$pdf->SetFont('Arial', 'B', 8);
+			$pdf->MultiCell(0, 10, $value['Codigo_Barra'],0,0);
+		}
+
+		$pdf->Output('F',$ruta);
+		
+		return array('pdf' => $archivo);
+	}
+	function imprimir_etiquetas_prueba($parametros)//cambiar
+	{
+		$tbl = $this->modelo->cargar_pedidos_trans($parametros['num_ped'],false);
+
+		$pdf = new FPDF();
+		$pdf->SetMargins(0, 0, 0);
+		$pdf->AddPage();
+		$pdf->SetFont('Arial', 'B', 10);
+		$archivo = 'ETIQUETAPRUEBA_'.$_SESSION['INGRESO']['Entidad_No'].$_SESSION['INGRESO']['item'].'_'.str_replace('-', '', $parametros['num_ped']);
+		$ruta = dirname(__DIR__, 3).'/TEMP/'.$archivo.'.pdf';
+		foreach ($tbl as $key => $value) 
+		{
+
+			$archivo_qr = 'QR_'.$_SESSION['INGRESO']['Entidad_No'].$_SESSION['INGRESO']['item'].'_'.str_replace('-', '', $value['Codigo_Barra']).'.png';
+			$ruta_qr = "/TEMP/".$archivo_qr;
+			if(!file_exists(dirname(__DIR__, 3) . $ruta_qr)){
+				$this->generarQR($value['Codigo_Barra']);
+			}
+
+			
+			$pdf->Cell(0, 5, $value['Producto'],0,1);
+			$pdf->Image(dirname(__DIR__, 3) . $ruta_qr,0,$pdf->GetY(),20);
+			$pdf->Cell(20);
+			$pdf->Cell(0, 5, $value['Codigo_Barra'],0,0);
+			$pdf->Ln(5);
+			$pdf->Cell(20);
+			$pdf->Cell(0, 10, "",0,0);
+			$pdf->Ln(15);
+		}
+
+		$pdf->Output('F',$ruta);
+		
+		return array('pdf' => $archivo);
 	}
 
 	function generarQR($codigo){
@@ -1215,6 +1261,26 @@ class alimentos_recibidosC
 
 		return $tr;
 		// print_r($datos);die();
+	}
+
+	function imprimirEtiqueta($parametros){
+		$qr = str_replace('../..', dirname(__DIR__, 3), $parametros['qr']);
+		$archivo = 'ETIQUETA_'.$_SESSION['INGRESO']['Entidad_No'].$_SESSION['INGRESO']['item'].'_'.str_replace('.', '', $parametros['codigo']);
+		$ruta = dirname(__DIR__, 3).'/TEMP/'.$archivo.'.pdf';
+
+		$this->pdf->AddPage();
+		$this->pdf->SetXY(10, 10);
+		$this->pdf->SetFont('Arial', 'B', 10);
+		$this->pdf->Cell(0, 10, "Producto: ".$parametros['producto'],0,1);
+		$this->pdf->Image($qr,10,20,20);
+		$this->pdf->Cell(20);
+		$this->pdf->Cell(0, 5, "Codigo: ".$parametros['codigo'],0,0);
+		$this->pdf->Ln(5);
+		$this->pdf->Cell(20);
+		$this->pdf->Cell(0, 10, "Nomenclatura: ".$parametros['nomenclatura'],0,0);
+		$this->pdf->Output('F',$ruta);
+		
+		return array('pdf' => $archivo);
 	}
 
 	function cargar_datos_procesados($parametros)

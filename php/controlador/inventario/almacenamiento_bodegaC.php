@@ -135,7 +135,7 @@ class almacenamiento_bodegaC
 
 	function buscar_contabilizado($cod)
 	{
-		$datos = $this->modelo->Buscar_productos_ingresados($cod);
+		$datos = $this->modelo->Buscar_productos_ingresados(false, $cod);
 		$result = array();
 		$color2 = '#000000';
 		$color = '';
