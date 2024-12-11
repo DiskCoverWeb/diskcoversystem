@@ -256,8 +256,13 @@ class inventario_onlineC
 					<td>'.$value['Codigo_Inv'].'</a></td>
 					<td>'.$value['Producto'].'</td>
 					<td>'.$value['Salida'].'</td>
-					<td>
-						<select id="ddl_linea_cc_'.$value['ID'].'" class="form-control" onchange="cargar_rubro_linea('.$value['ID'].',this.value)">';
+					<td>';
+					if($estado=='GC')
+					{
+						$tr.=$value['Cuenta'];
+
+					}else{
+						$tr.='<select id="ddl_linea_cc_'.$value['ID'].'" class="form-control" onchange="cargar_rubro_linea('.$value['ID'].',this.value)">';
 							$centroC = $this->modelo->listar_cc_info();
 
 							foreach ($centroC as $key2 => $value2) {
@@ -265,21 +270,33 @@ class inventario_onlineC
 								if($value2['id'] == $value['Contra_Cta']){$select = 'selected';}
 								$tr.='<option value="'.$value2['id'].'" '.$select.'>'.$value2['text'].'</option>';
 							}
-						$tr.='</select>
-					</td>
-					<td>
-					<select class="form-control" id="ddl_linea_rubro_'.$value['ID'].'">';
+						$tr.='</select>';
+					}
+					$tr.='</td>
+					<td>';
+					if($estado=='GC')
+					{
+						$tr.=$value['Detalle'];
+
+					}else{
+					$tr.='<select class="form-control" id="ddl_linea_rubro_'.$value['ID'].'">';
 							$rubro = $this->modelo->listar_rubro(false,$value['Contra_Cta']);
 							foreach ($rubro as $key2 => $value2) {
 								$select = '';
 								if($value2['id'] == $value['CodigoL']){$select = 'selected';}
 								$tr.='<option value="'.$value2['id'].'" '.$select.'>'.$value2['text'].'</option>';
 							}
-						$tr.='</select>
-					</td>
-					<td>
-						<button class="btn btn-sm btn-primary" title="Editar linea" onclick="guardar_linea('.$value['ID'].')"><i class="fa fa-save"></i></button>
-					</td>
+						$tr.='</select>';
+					}
+					$tr.='</td>
+					<td>';
+					if($estado!='GC')
+					{
+						$tr.='<button class="btn btn-sm btn-primary" title="Editar linea" onclick="guardar_linea('.$value['ID'].')"><i class="fa fa-save"></i></button>';
+
+					}
+						
+					$tr.='</td>
 				</tr>';
 		}
 

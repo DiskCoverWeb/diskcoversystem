@@ -311,7 +311,7 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 	{
      $cid = $this->conn;
     // 'LISTA DE CODIGO DE ANEXOS
-     $sql = "SELECT AK.Codigo_Inv,Producto,Salida,Contra_Cta,CodigoL,AK.ID,Cliente,Orden_No,AK.TC
+     $sql = "SELECT AK.Codigo_Inv,Producto,Salida,Contra_Cta,CodigoL,AK.ID,Cliente,Orden_No,AK.TC,CC.Cuenta,SC.Detalle
      	FROM Trans_Kardex AK
 		INNER JOIN Catalogo_Cuentas  CC ON AK.CONTRA_CTA = CC.Codigo
 		inneR JOIN Catalogo_Productos CP ON AK.Codigo_Inv = CP.Codigo_Inv
@@ -326,7 +326,7 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 		AND AK.Item = SC.Item
 		AND AK.Periodo = SC.Periodo
 		AND AK.T = 'S'
-		AND AK.TC = '.'";
+		AND (AK.TC = '.' OR AK.TC = 'GC')";
          if($fecha)
          {
          	$sql .= " AND AK.Fecha='".$fecha."'";
