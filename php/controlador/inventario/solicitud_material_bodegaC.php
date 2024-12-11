@@ -348,7 +348,7 @@ class inventario_onlineC
 	}
 	function AprobarEntrega($parametro)
 	{
-		$datos = $this->modelo->lista_entrega_salida(false,$parametro['orden']);
+		$datos = $this->modelo->lista_entrega_salida_check(false,$parametro['orden']);
 		foreach ($datos as $key => $value) {
 			SetAdoAddNew("Trans_Kardex");
 			SetAdoFields('TC','GC');
