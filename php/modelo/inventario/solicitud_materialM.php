@@ -466,9 +466,4 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
 		$datos = $this->conn->datos($sql);
        	return $datos;
 	}
-
-
-
-
 } 
-?>

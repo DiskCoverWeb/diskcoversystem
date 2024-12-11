@@ -1269,6 +1269,30 @@ function cambiar_iva(valor)
     $('#LabelTotTarifa').text('Total Tarifa '+parseInt(valor)+'%');
 }
 
+
+
+function enviaremail()   //funcion para enviarlo por javascript
+  { 
+
+
+          const xhr = new XMLHttpRequest();
+          // const url =  'https://erp.diskcoversystem.com/~diskcover/lib/phpmailer/EnvioEmailvisual.php?EnviarVisual';
+            const url =  '../../php/comprobantes/SRI/autorizar_sri_visual.php?AutorizarXMLOnline=true';
+
+
+          xhr.open('POST', url, true);
+          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              console.log('Respuesta:', xhr.responseText);
+            }
+          };
+
+           const params = `XML=1311202301172221450700110010010000000141234567813.xml`;
+
+          xhr.send(params);
+  }
 //fin guia de remision
 </script>
 <style type="text/css">
@@ -1302,10 +1326,10 @@ function cambiar_iva(valor)
             <button type="button" class="btn btn-default" title="Asignar guia de remision"
                 onclick="btn_guiaRemision()"><img src="../../img/png/ats.png"></button>
         </div>
-        <!-- <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
+         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
             <button type="button" class="btn btn-default" title="Asignar guia de remision"
-                onclick="enviar_email_comprobantes()"><img src="../../img/png/ats.png"></button>
-        </div> -->
+                onclick="enviaremail()"><img src="../../img/png/ats.png"></button>
+        </div> 
     </div>
     <div class="col-sm-2 col-lg-3 col-md-4 col-xs-2">
         <?php if($_SESSION['INGRESO']['Ambiente']==1){echo '<h4>Ambiente Pruebas</h4>';}else if($_SESSION['INGRESO']['Ambiente']==2){echo '<h4>Ambiente Produccion</h4>';} ?>

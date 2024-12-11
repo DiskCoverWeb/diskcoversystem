@@ -101,6 +101,7 @@ function grabar_kardex()
 
 function comprobante_individual(orden,proveedor)
 {
+    $('#myModal_espera').modal('show');
     var parametros = 
       {
         'orden':orden,
@@ -120,7 +121,11 @@ function comprobante_individual(orden,proveedor)
               })
             }  
                               
-          }
+          },
+          error: function (error) {
+            $('#myModal_espera').modal('hide');
+            // Puedes manejar el error aquí si es necesario
+          },
       });
 }
 

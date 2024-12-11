@@ -412,7 +412,7 @@ class inventario_onlineC
 		$id =count($this->lista_entrega())+1;
 		if($parametro['id']=='')
 		{
-			 SetAdoAddNew("Asiento_K");
+		   SetAdoAddNew("Asiento_K");
 		   SetAdoFields('CODIGO_INV',$parametro['codigo']);
 		   SetAdoFields('PRODUCTO',$parametro['producto']);
 		   SetAdoFields('UNIDAD',$parametro['uni']);
