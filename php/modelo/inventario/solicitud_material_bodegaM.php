@@ -685,6 +685,9 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 			   AND Item = '".$_SESSION['INGRESO']['item']."'
 			   AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
 			   AND Codigo_Inv = '".$codigo_inv."'";
+
+			   // print_r($sql);die();
+			   
 		return $this->db->String_Sql($sql);
 	}
 

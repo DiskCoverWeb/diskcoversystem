@@ -179,7 +179,7 @@ class inventario_onlineC
 		   		SetAdoFields('CodigoL',$value['SUBCTA']);
 				SetAdoUpdate();
 
-				$this->modelo->eliminarAsientoK('P',$orden,$value['CODIGO_INV']);
+				$this->modelo->eliminarAsientoK('P','.',$value['CODIGO_INV']);
 			}
 			return 1;
 		}catch(Exception $e)
@@ -343,9 +343,10 @@ class inventario_onlineC
 
 	function editarCCRubro($parametro)
 	{
+		// print_r($parametro);die();
 		SetAdoAddNew("Trans_Kardex");
 		SetAdoFields('CodigoL',$parametro['rubro']);
-		SetAdoFields('CONTRA_CTA',$parametro['cc']);
+		SetAdoFields('Contra_Cta',$parametro['cc']);
 
 		SetAdoFieldsWhere('ID', $parametro['ID']);
 		return SetAdoUpdateGeneric();
