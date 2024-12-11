@@ -652,7 +652,7 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 					$sql.=" AND TK.Fecha = '".$fecha."'";
 				}
 			$sql.= " GROUP BY TK.Fecha,Orden_No,Cliente,Codigo,TC";
-			print_r($sql);die();
+			// print_r($sql);die();
 		return $this->db->datos($sql);
 	}
 
