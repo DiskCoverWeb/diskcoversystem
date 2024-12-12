@@ -317,7 +317,6 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 		inneR JOIN Catalogo_Productos CP ON AK.Codigo_Inv = CP.Codigo_Inv
 		INNER JOIN Clientes C ON AK.CodigoU = C.Codigo
 		INNER JOIN Catalogo_SubCtas  SC ON AK.CodigoL = SC.Codigo
-		WHERE AK.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' 
 		AND AK.Item = '".$_SESSION['INGRESO']['item']."' 
 		AND CC.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 		AND AK.Item = CC.Item
@@ -421,64 +420,40 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
        	return $datos;
 
 	}
-  function datos_asiento_debe($fecha)
+
+  function datos_asiento_debe($orden)
+	{
+    	// 'LISTA DE CODIGO DE ANEXOS
+ 	    $sql = "SELECT SUM(VALOR_TOTAL) as 'total',Contra_Cta as 'cuenta',CodigoL as 'SUBCTA',Fecha as 'fecha',TC 
+     	FROM Trans_Kardex  
+     	WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+     	AND  Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+     	AND Orden_No = '".$orden."' 
+     	AND TC = 'GC'
+		GROUP BY Orden_No,Contra_Cta,Fecha,TC,CodigoL";
+          // print_r($sql);die();
+	   $datos =  $this->db->datos($sql);
+       return $datos;
+	}
+
+	function datos_asiento_haber($orden)
 	{
      $cid = $this->conn;
     // 'LISTA DE CODIGO DE ANEXOS
-     $sql = "SELECT SUM(VALOR_TOTAL) as 'total',CONTRA_CTA as 'cuenta',Fecha_Fab as 'fecha',TC,SUM(Consumos) AS 'Consumos' 
-     FROM Asiento_K  
-     WHERE Item =  '".$_SESSION['INGRESO']['item']."' 
-     AND CodigoU ='".$_SESSION['INGRESO']['Id']."' 
-     AND Fecha_Fab = '".$fecha."' 
-     GROUP BY CONTRA_CTA,Fecha_Fab,TC,Consumos";
+     $sql = "SELECT SUM(VALOR_TOTAL) as 'total',Cta_Inv as 'cuenta',Fecha as 'fecha',TC 
+             FROM Trans_Kardex  
+             WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+     	   AND  Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+             AND Orden_No = '".$orden."'  
+             AND TC = 'GC'
+             GROUP BY Orden_No,Cta_Inv,Fecha,TC";
           // print_r($sql);die();
 
 	   $datos =  $this->db->datos($sql);
        return $datos;
 	}
 
-	function datos_asiento_haber($fecha)
-	{
-     $cid = $this->conn;
-    // 'LISTA DE CODIGO DE ANEXOS
-     $sql = "SELECT SUM(VALOR_TOTAL) as 'total',CTA_INVENTARIO as 'cuenta',Fecha_Fab as 'fecha',TC FROM Asiento_K  WHERE Item = '".$_SESSION['INGRESO']['item']."' AND CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' AND Fecha_Fab = '".$fecha."' GROUP BY CTA_INVENTARIO,Fecha_Fab,TC";
-          // print_r($sql);die();
-
-	   $datos =  $this->db->datos($sql);
-       return $datos;
-	}
-
-	function desperdicios_debe($fecha)
-	{
-     $cid = $this->conn;
-    // 'LISTA DE CODIGO DE ANEXOS
-     $sql = "SELECT Codigo_Dr,Sum(Consumos*VALOR_UNIT) AS 'TOTAL',Fecha_Fab as 'fecha' FROM Asiento_K  WHERE Item = '".$_SESSION['INGRESO']['item']."' AND CodigoU =  '".$_SESSION['INGRESO']['CodigoU']."'  AND LEN(Codigo_Dr)>1  AND Fecha_Fab = '".$fecha."' GROUP BY Codigo_Dr,Fecha_Fab";
-          // print_r($sql);die();
-
-	   $datos =  $this->db->datos($sql);
-       return $datos;
-	}
-	function desperdicios_haber($fecha)
-	{
-     $cid = $this->conn;
-    // 'LISTA DE CODIGO DE ANEXOS
-     $sql = "SELECT CTA_INVENTARIO,Sum(Consumos*VALOR_UNIT) AS 'TOTAL',Fecha_Fab as 'fecha' FROM Asiento_K  WHERE Item = '".$_SESSION['INGRESO']['item']."' AND CodigoU =  '".$_SESSION['INGRESO']['CodigoU']."'  AND LEN(Codigo_Dr)>1  AND Fecha_Fab = '".$fecha."'  GROUP BY CTA_INVENTARIO,Fecha_Fab";
-          // print_r($sql);die();
-	   $datos =  $this->db->datos($sql);
-       return $datos;
-	}
-
-
-	function datos_asiento_SC($fecha)
-	{
-     $cid = $this->conn;
-    // 'LISTA DE CODIGO DE ANEXOS
-     $sql = "SELECT SUM(VALOR_TOTAL) as 'total',CONTRA_CTA,SUBCTA,Fecha_Fab,TC FROM Asiento_K  WHERE Item = '".$_SESSION['INGRESO']['item']."' AND CodigoU = '".$_SESSION['INGRESO']['Id']."' AND Fecha_Fab = '".$fecha."' GROUP BY CONTRA_CTA,Fecha_Fab,TC,SUBCTA";
-          // print_r($sql);die();
-
-	   $datos =  $this->db->datos($sql);
-       return $datos;
-	}
+	
 
 	function cuenta_existente()
 	{
@@ -532,7 +507,7 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 	function datos_comprobante()
 	{
 		$cid = $this->conn;
-		$sql="SELECT * FROM Asiento WHERE CodigoU='".$_SESSION['INGRESO']['CodigoU']."' AND Item='".$_SESSION['INGRESO']['item']."' AND T_No = '60'";
+		$sql="SELECT * FROM Asiento WHERE CodigoU='".$_SESSION['INGRESO']['CodigoU']."' AND Item='".$_SESSION['INGRESO']['item']."' AND T_No = '99'";
 	   $datos =  $this->db->datos($sql);
        return $datos;
 	}
@@ -687,8 +662,49 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 			   AND Codigo_Inv = '".$codigo_inv."'";
 
 			   // print_r($sql);die();
-			   
+
 		return $this->db->String_Sql($sql);
+	}
+
+	function pedidos_contratista_comprobante($orden=false,$fecha=false)
+	{
+		$sql = "SELECT AK.Codigo_Inv,Producto,Salida,Contra_Cta,CodigoL,AK.ID,Cliente,C.CI_RUC,Orden_No,AK.TC,CC.Cuenta,SC.Detalle
+	     	FROM Trans_Kardex AK
+			INNER JOIN Catalogo_Cuentas  CC ON AK.CONTRA_CTA = CC.Codigo
+			inneR JOIN Catalogo_Productos CP ON AK.Codigo_Inv = CP.Codigo_Inv
+			INNER JOIN Clientes C ON AK.CodigoU = C.Codigo
+			INNER JOIN Catalogo_SubCtas  SC ON AK.CodigoL = SC.Codigo
+			AND AK.Item = '".$_SESSION['INGRESO']['item']."' 
+			AND CC.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+			AND AK.Item = CC.Item
+			AND AK.Item = CP.Item
+			AND AK.Periodo = CP.Periodo
+			AND AK.Item = SC.Item
+			AND AK.Periodo = SC.Periodo
+			AND AK.T = 'S'
+			AND AK.TC = 'GC'";
+	         if($fecha)
+	         {
+	         	$sql .= " AND AK.Fecha='".$fecha."'";
+	         }
+	         if($orden)
+	         {
+	         	$sql.= " AND Orden_No='".$orden."'";
+	         }
+
+			// print_r($sql);die();
+		return $this->db->datos($sql);
+	}
+
+	function datos_asiento_SC($orden)
+	{
+		$sql="SELECT SUM(VALOR_TOTAL) as 'total',CONTRA_CTA,Fecha_Fab,TC,CodigoL,Fecha FROM Trans_Kardex  
+				WHERE Item ='".$_SESSION['INGRESO']['item']."' 
+				AND Periodo ='".$_SESSION['INGRESO']['periodo']."' 
+				AND TC = 'GC'
+				AND Orden_No = '".$orden."'
+				GROUP BY CONTRA_CTA,Fecha_Fab,TC,CodigoL,Fecha";		
+		return $this->db->datos($sql);
 	}
 
 

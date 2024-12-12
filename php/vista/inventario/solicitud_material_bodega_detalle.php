@@ -111,7 +111,24 @@ function AprobarSolicitud()
 }
 function GenerarComprobante()
 {
-	Swal.fire("","Proceso comprobante","success");
+	var parametros = 
+	  {
+	    'order': orden,
+	  }
+	  $.ajax({
+	      url:   '../controlador/inventario/solicitud_material_bodegaC.php?GenerarComprobante=true',
+	      type:  'post',
+	      data: {parametros:parametros},
+	      dataType: 'json',
+	      success:  function (response) {           
+	        if(response==1)
+	        {
+	        	Swal.fire("","Solicitud Aprobada","success").then(function(){
+	        		location.reload();
+	        	});
+	        }   
+	      }
+	  });
 
 }
 
