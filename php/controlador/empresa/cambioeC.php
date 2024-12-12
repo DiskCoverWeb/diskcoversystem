@@ -128,6 +128,13 @@ if(isset($_GET['detalle']))
   echo json_encode($controlador->detalle_linea($id, $item, $entidad));
 }
 
+if(isset($_GET['consultar_lineas']))
+{
+  $item = $_POST['item'];
+  $entidad = $_POST['entidad'];
+  echo json_encode($controlador->consultarLinea($item, $entidad));
+}
+
 class cambioeC 
 {
 	private $modelo;
@@ -271,6 +278,7 @@ class cambioeC
 
 	function editar_datos_empresa($parametros)
 	{
+		//print_r($parametros);die();
 		$contribuyente = $this->modelo->tipoContribuyente($parametros['TxtRuc']);
 		if(count($contribuyente)==0)
 		{
@@ -561,8 +569,38 @@ class cambioeC
 	{
 		$item = $parametros['item'];
 		$entidad = $parametros['ent'];
+		
+		$datos = $this->modelo->Catalogo_Lineas($entidad, $item);
+		$niveles = ["Autorizacion", "Serie", "Fact"];
+		$arbol = [];
+
+		foreach ($datos as $registro) {
+			$nodo = &$arbol;
+
+			foreach ($niveles as $nivel) {
+				$valorNivel = $registro[$nivel];
+
+				if (!isset($nodo[$valorNivel])) {
+					$nodo[$valorNivel] = [];
+				}
+
+				$nodo = &$nodo[$valorNivel];
+			}
+
+			$nodo[] = $registro;
+		}
+
+		
+		$html = '<li >
+					<label id="label_'.str_replace('.','_','A').'" for="A">AUTORIZACIONES</label>
+					<input type="checkbox" id="A" onclick="TVcatalogo(1,\'A\',\'\',\'\',\'\')" />
+					<ol id="hijos_'.str_replace('.','_','A').'">';
+		$html .= $this->generarLista($arbol,1);
+		$html .= '</ol></li>';
+		//print_r($html);die();
+		return $html;
     // print_r($parametros);die();
-    $nl = $parametros['nivel'];
+    /*$nl = $parametros['nivel'];
 	  $h='';
 		if($nl!='')
 		{
@@ -625,7 +663,7 @@ class cambioeC
 							   <ol id="hijos_'.str_replace('.','_','A').'"></ol></li>';
 		}
 
-		return $h;
+		return $h;*/
 	}
 	function detalle_linea($id, $item, $entidad)
 	{
@@ -634,6 +672,106 @@ class cambioeC
       $datos = $this->modelo->Catalogo_Lineas($entidad, $item, $id);
     }
 		return $datos;
+	}
+
+	function consultarLinea($item, $entidad){
+		$datos = $this->modelo->Catalogo_Lineas($entidad, $item);
+		$niveles = ["Autorizacion", "Serie", "Fact"];
+		$arbol = [];
+
+		foreach ($datos as $registro) {
+			$nodo = &$arbol;
+
+			foreach ($niveles as $nivel) {
+				$valorNivel = $registro[$nivel];
+
+				if (!isset($nodo[$valorNivel])) {
+					$nodo[$valorNivel] = [];
+				}
+
+				$nodo = &$nodo[$valorNivel];
+			}
+
+			$nodo[] = $registro;
+		}
+
+		
+		$html = '<li >
+					<label id="label_'.str_replace('.','_','A').'" for="A">AUTORIZACIONES</label>
+					<input type="checkbox" id="A" onclick="TVcatalogo(1,\'A\',\'\',\'\',\'\')" />
+					<ol id="hijos_'.str_replace('.','_','A').'">';
+		$html .= $this->generarLista($arbol,1);
+		$html .= '</ol></li>';
+		//print_r($html);die();
+		return $html;
+	}
+
+	function generarLista($data, $nivel, $parametros=array()){
+		$html = '';
+		$indice = 0;
+		$param = $parametros;
+		foreach ($data as $clave => $valor) {
+			$auto = "";
+			$serie = "";
+			$fact = "";
+			$codigo = "";
+
+			switch($nivel){
+				case 1:
+				{
+					$param['auto'] = $clave;
+					$auto = $clave;
+				}
+				break;
+				case 2:
+				{
+					$param['serie'] = $clave;
+					$auto = $param['auto'];
+					$serie = $clave;
+				}
+				break;
+				case 3:
+				{
+					$param['fact'] = $clave;
+					$auto = $param['auto'];
+					$serie = $param['serie'];
+					$fact = $clave;
+				}
+				break;
+				case 4:
+				{
+					$param['codigo'] = $valor['Codigo'];
+					$auto = $param['auto'];
+					$serie = $param['serie'];
+					$fact = $param['fact'];
+					$codigo = $valor['Codigo'];
+				}
+				break;
+			}
+			
+			if($nivel < 4){
+				if (is_array($valor)) {
+					/*$html .= "<li><strong>$clave</strong>";
+					$html .= $this->generarLista($valor, $nivel+1); // Llamada recursiva para arrays anidados
+					$html .= "</li>";*/
+					$html .= '<li><label id="label_A'.$nivel.'_'.$indice.$auto.$serie.$fact.'" for="A'.$nivel.'_'.$indice.$auto.$serie.$fact.'">'.$clave.'</label>
+									<input type="checkbox" id="A'.$nivel.'_'.$indice.$auto.$serie.$fact.'" onclick="TVcatalogo('.strval($nivel+1).',\'A'.$nivel.'_'.$indice.'\',\''.$auto.'\',\''.$serie.'\',\''.$fact.'\')">
+									<ol id="hijos_A'.$nivel.'_'.$indice.$auto.$serie.$fact.'">';
+					$html .= $this->generarLista($valor, $nivel+1, $param);
+					$html .= '</ol></li>';
+				} else {
+					$html .= "<li><strong>Item $indice</strong></li>";
+				}
+			}else{
+				//$html .= "<li><strong>".$valor['Concepto']."</strong></li>";
+				$html .= '<li class="file" id="label_A'.$nivel.'_'.$indice.'_'.$valor["ID"].'" title="">
+							<a href="#" onclick="detalle_linea(\''.$valor["ID"].'\', \'A'.$nivel.'_'.$indice.'\')">'.$valor['Concepto'].'</a>
+						</li>';
+			}
+			$indice += 1;
+		}
+		//$html .= "</ol>";
+		return $html;
 	}
 
 	function validar_codigo($parametros){
@@ -708,15 +846,18 @@ class cambioeC
 				SetAdoFields("Periodo", $_SESSION['INGRESO']['periodo']);
 				SetAdoFields("TL", 1);*/
 			}
-	
+			
 			$campos['Concepto'] = "'".$vpar['TextLinea']."'";
-			$campos['CxC'] = "'".substr($vpar['MBoxCta'], 0, -1)."'";
-			$campos['CxC_Anterior'] = "'".substr($vpar['MBoxCta_Anio_Anterior'], 0, -1)."'";
+			/*$campos['CxC'] = "'".CambioCodigoCta($vpar['MBoxCta'])."'";
+			$campos['CxC_Anterior'] = "'".CambioCodigoCta($vpar['MBoxCta_Anio_Anterior'])."'";
 			if(isset($vpar['MBoxCta_Venta']) && strlen($vpar['MBoxCta_Venta']) > 1){
-				$campos['Cta_Venta'] = substr($vpar['MBoxCta_Venta'], 0, -1);
+				$campos['Cta_Venta'] = "'".CambioCodigoCta($vpar['MBoxCta_Venta'])."'";
 			}else{
 				$campos['Cta_Venta'] = "'".$vpar['MBoxCta_Venta']."'";
-			}
+			}*/
+			$campos['CxC'] = "'".$vpar['MBoxCta']."'";
+			$campos['CxC_Anterior'] = "'".$vpar['MBoxCta_Anio_Anterior']."'";
+			$campos['Cta_Venta'] = "'".$vpar['MBoxCta_Venta']."'";
 			$campos['Logo_Factura'] = "'".$vpar['TxtLogoFact']."'";
 			$campos['Largo'] = $vpar['TxtLargo'];
 			$campos['Ancho'] = $vpar['TxtAncho'];
@@ -743,6 +884,7 @@ class cambioeC
 				$campos['Imp_Mes'] = 1;
 				
 			}
+			//print_r($campos);die();
 			
 			$this->modelo->crearActualizarRegistro($Entidad, $Item, "Catalogo_Lineas", $campos, $actualizar, $act_where);
 	
