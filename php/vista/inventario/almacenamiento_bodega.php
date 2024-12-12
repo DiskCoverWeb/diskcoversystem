@@ -8,6 +8,7 @@
 	var canvasElement;
 	var canvas;
 	var scanning = false;
+	var campo_qr = '';
   $(document).ready(function () {
 	video = document.createElement("video");
 	canvasElement = document.getElementById("qr-canvas");
@@ -115,6 +116,11 @@
         }
 			}
 		});
+	}
+
+	function lugarPorQr(codigo){
+		$('#txt_cod_lugar').val(codigo.trim());
+		$('#txt_cod_lugar').trigger('blur');
 	}
 
   function cargar_nombre_bodega(nombre,cod)
@@ -455,13 +461,18 @@ async function buscar_ruta()
 		});
 }
 
-function escanear_qr(){
+function escanear_qr(campo){
+	/*if(campo == 'lugar' && $('#txt_codigo').val() == ''){
+		Swal.fire('Seleccione un codigo de ingreso', '', 'error');
+		return;
+	}*/
 	$('#modal_qr_escaner').modal('show');
 	navigator.mediaDevices
 	.getUserMedia({ video: { facingMode: "environment" } })
 	.then(function (stream) {
 	$('#qrescaner_carga').hide();
 		scanning = true;
+		campo_qr = campo;
 		//document.getElementById("btn-scan-qr").hidden = true;
 		canvasElement.hidden = false;
 		video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
@@ -504,7 +515,12 @@ qrcode.callback = (respuesta) => {
 	if (respuesta) {
 		//console.log(respuesta);
 		//Swal.fire(respuesta)
-		pedidosPorQR(respuesta);
+
+		if(campo_qr == 'ingreso'){
+			pedidosPorQR(respuesta);
+		}else if(campo_qr == 'lugar'){
+			lugarPorQr(respuesta);
+		}
 		//activarSonido();
 		//encenderCamara();    
 		cerrarCamara();    
@@ -548,7 +564,7 @@ qrcode.callback = (respuesta) => {
 							<option value="">Seleccione</option>
 						</select>
 						<span class="input-group-btn">
-							<button type="button" class="btn btn-primary btn-flat btn-xs" title="Escanear QR" onclick="escanear_qr()">
+							<button type="button" class="btn btn-primary btn-flat btn-xs" title="Escanear QR" onclick="escanear_qr('ingreso')">
 								<i class="fa fa-qrcode" aria-hidden="true"></i>
 							</button>
 						</span>    
@@ -628,6 +644,11 @@ qrcode.callback = (respuesta) => {
 												<input type="" class="form-control input-xs" id="txt_cod_lugar" style="font-size: 20px;" name="txt_cod_lugar" onblur="buscar_ruta();productos_asignados()">	
 												<span class="input-group-btn">
 														<button type="button" class="btn btn-info btn-flat" onclick="abrir_modal_bodegas()"><i class="fa fa-sitemap"></i></button>
+												</span>
+												<span class="input-group-btn">
+													<button type="button" class="btn btn-primary btn-flat btn-xs" title="Escanear QR" onclick="escanear_qr('lugar')">
+														<i class="fa fa-qrcode" aria-hidden="true"></i>
+													</button>
 												</span>
 										</div>
 									</div>

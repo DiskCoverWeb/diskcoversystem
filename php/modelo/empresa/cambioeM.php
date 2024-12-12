@@ -501,6 +501,7 @@ class cambioeM
         	{
         		$sql.=" AND ID = '".$id."'"; 
         	}
+		$sql.=" ORDER BY Autorizacion";
        	// print_r($sql);die();
        	//return $this->db->datos($sql);
 		return $this->db->consulta_datos_db_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
@@ -682,23 +683,50 @@ class cambioeM
 		if($actualizar){
 			$sql = "UPDATE ".$tabla." SET ";
 
+			$sql2 = "SELECT TOP 1 * FROM ".$tabla;
+			if(count($where)>0){
+				$arrWhere2 = array();
+				foreach($where as $key => $value){
+					array_push($arrWhere2, $key."=".$value);
+				}
+				$whereJoin2 = join(", ", $arrWhere2);
+			}
+			$sql2 .= " WHERE " . $whereJoin2;
+			$datos = $this->db->consulta_datos_db_sql_terceros($sql2,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+			//print_r($datos);
+			/*$datos[0]["Vencimiento"] = $datos[0]["Vencimiento"]->format('Y-m-d');
+			$datos[0]["Fecha"] = $datos[0]["Fecha"]->format('Y-m-d');*/
 			$arrCampos = array();
 			foreach($campos as $key => $value){
-				array_push($arrCampos, $key."=".$value);
-			}
-			$camposJoin = join(", ", $arrCampos);
-			$sql .= $camposJoin . " WHERE ";
-
-			$whereJoin = '';
-			if(count($where)>0){
-				$arrWhere = array();
-				foreach($where as $key => $value){
-					array_push($arrWhere, $key."=".$value);
+				if(count($datos)>0){
+					$valStr = (substr($value,0,1) == "'" && substr($value,-1) == "'") ? substr($value,1,-1) : $value;
+					$datos[0][$key] = is_a($datos[0][$key], 'DateTime') ? $datos[0][$key]->format('Y-m-d') : $datos[0][$key];
+					
+					if($datos[0][$key] != $valStr){
+						array_push($arrCampos, $key."=".$value);
+					}
+				}else{
+					array_push($arrCampos, $key."=".$value);;
 				}
-				$whereJoin = join(", ", $arrWhere);
 			}
 
-			$sql .= $whereJoin;
+			if(count($arrCampos) > 0){
+				$camposJoin = join(", ", $arrCampos);
+				$sql .= $camposJoin . " WHERE ";
+	
+				$whereJoin = '';
+				if(count($where)>0){
+					$arrWhere = array();
+					foreach($where as $key => $value){
+						array_push($arrWhere, $key."=".$value);
+					}
+					$whereJoin = join(", ", $arrWhere);
+				}
+	
+				$sql .= $whereJoin;
+			}else{
+				return 1;
+			}
 		}else{
 			$sql = "INSERT INTO ".$tabla." ";
 
@@ -716,8 +744,19 @@ class cambioeM
 			$valuesJoin = join(", ", $arrValues);
 			$sql .= "(" . $valuesJoin . ")";
 		}
-		//print_r($sql);
-		return $this->db->ejecutar_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+		//print_r($sql."\n");die();
+		$this->db->ejecutar_sql_terceros($sql,$conn_sql[0]['host'],$conn_sql[0]['usu'],$conn_sql[0]['pass'],$conn_sql[0]['base'],$conn_sql[0]['Puerto']);
+		
+		// ELIMINAR NULOS EN BASE DE DATOS DE TERCEROS
+		$server=''.$conn_sql[0]['host'].', '.$conn_sql[0]['Puerto'];
+		$connectionInfo = array("Database"=>$conn_sql[0]['base'], "UID" => $conn_sql[0]['usu'],"PWD" => $conn_sql[0]['pass'],"CharacterSet" => "UTF-8");
+		$parametros_sp = array(
+			array(&$tabla, SQLSRV_PARAM_IN),
+		  );
+		$sql_sp = "EXEC sp_Eliminar_Nulos @NombreTabla= ?";
+	  	$cid = sqlsrv_connect($server, $connectionInfo); //returns false
+		$stmt = sqlsrv_prepare($cid, $sql_sp, $parametros_sp);
+	  	$res = sqlsrv_execute($stmt);
 	}
 
 }

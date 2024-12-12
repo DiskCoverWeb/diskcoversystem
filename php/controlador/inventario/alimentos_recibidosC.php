@@ -134,6 +134,10 @@ if (isset($_GET['imprimir_pdf'])) {
 	$parametros = $_GET;
 	$controlador->imprimir_pdf($parametros);
 }
+if (isset($_GET['imprimir_pedido'])) {
+	$parametros = $_POST;
+	echo json_encode($controlador->imprimir_pedido($parametros));
+}
 if (isset($_GET['imprimir_etiquetas'])) {
 	$parametros = $_POST;
 	echo json_encode($controlador->imprimir_etiquetas($parametros));
@@ -798,6 +802,56 @@ class alimentos_recibidosC
 			$pdf->SetFont('Arial', 'B', 8);
 			$pdf->MultiCell(0, 10, $value['Codigo_Barra'],0,0);
 		}
+
+		$pdf->Output('F',$ruta);
+		
+		return array('pdf' => $archivo);
+	}
+	function imprimir_pedido($parametros)//cambiar
+	{
+		$datos = $this->modelo->detalle_ingreso($parametros['id']);
+		$cliente = $datos[0]['Cliente'];
+		$valor_corte = 27;
+		$cliente_size = 10;
+		$cliente_altura = 5;
+		$imagen_Y = 5;
+		$codigo_size = 8;
+		$codigo_altura = 10;
+		if(strlen($cliente) > $valor_corte){
+			//$cliente = substr($cliente, 0, 40) . "\n" . substr($cliente, 40);
+			$str_cortada = substr($cliente, 0, $valor_corte);
+			$str_espacio = strrpos($str_cortada, ' ')+1;
+			$cliente = substr($cliente, 0, $str_espacio) . "\n" . substr($cliente, $str_espacio);
+
+			$cliente_size = 8;
+			$cliente_altura = 4;
+			$imagen_Y = $cliente_altura * 2;
+			$codigo_size = 7;
+			$codigo_altura = 14;
+		}
+
+		//print_r($cliente.$cliente_size.$cliente_altura.$imagen_Y);die();
+
+		$pdf = new FPDF();
+		$pdf->SetMargins(0, 0, 0);
+		$pdf->SetAutoPageBreak(false);
+
+		$archivo = 'ETIQUETA_'.$_SESSION['INGRESO']['Entidad_No'].$_SESSION['INGRESO']['item'].'_'.str_replace('-', '', $parametros['codigo']);
+		$ruta = dirname(__DIR__, 3).'/TEMP/'.$archivo.'.pdf';
+
+		$archivo_qr = 'QR_'.$_SESSION['INGRESO']['Entidad_No'].$_SESSION['INGRESO']['item'].'_'.str_replace('-', '', $parametros['codigo']).'.png';
+		$ruta_qr = "/TEMP/".$archivo_qr;
+		if(!file_exists(dirname(__DIR__, 3) . $ruta_qr)){
+			$this->generarQR($parametros['codigo']);
+		}
+
+		$pdf->AddPage('L', array(60, 20));
+		$pdf->SetFont('Arial', 'B', $cliente_size);
+		$pdf->MultiCell(0, $cliente_altura, $cliente,0);
+		$pdf->Image(dirname(__DIR__, 3) . $ruta_qr,0,$imagen_Y,10,10);
+		$pdf->SetXY(11,5);
+		$pdf->SetFont('Arial', 'B', $codigo_size);
+		$pdf->MultiCell(0, $codigo_altura, $parametros['codigo'],0,0);
 
 		$pdf->Output('F',$ruta);
 		
