@@ -845,6 +845,37 @@ function autocoplet_ingreso_donante(){
 
   }
 
+  function imprimir_pedido()
+  {  
+	var id = $('#txt_donante').val();
+     var codigo = $('#txt_codigo').val();
+
+	 if(id==null || id=='')
+	{
+		Swal.fire('Seleccione un detalle de ingreso', '', 'error');
+		return;
+	}
+	 if(codigo==null || codigo=='')
+	{
+		Swal.fire('No se ha generado un codigo de ingreso', '', 'error');
+		return;
+	}
+
+      $('#myModal_espera').modal('show');
+      $.ajax({
+        type: "POST",
+        url: '../controlador/inventario/alimentos_recibidosC.php?imprimir_pedido=true',
+        data: {id, codigo}, 
+        dataType:'json',
+        success: function(data)
+        {
+          $('#myModal_espera').modal('hide');
+          var url = '../../TEMP/' + data.pdf + '.pdf';
+          window.open(url, '_blank');
+        }
+      })
+  }
+
 </script>
 
  <div class="row">
@@ -858,7 +889,12 @@ function autocoplet_ingreso_donante(){
 			<button class="btn btn-default" title="Guardar" onclick="guardar()" id="btn_guardar">
 				<img src="../../img/png/grabar.png">
 			</button>
-		</div>  
+		</div>
+		<div class="col-xs-2 col-md-2 col-sm-2">
+            <button type="button" class="btn btn-default" title="Imprimir QR" onclick="imprimir_pedido()">
+              <img src="../../img/png/paper.png" height="32px">
+            </button>
+        </div>
 		<!-- <div class="col-xs-2 col-md-2 col-sm-2">
 			<button class="btn btn-default" title="Guardar" onclick="nuevo_proveedor()">
 				<img src="../../img/png/mostrar.png">
