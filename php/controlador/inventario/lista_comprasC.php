@@ -483,7 +483,7 @@ class lista_comprasC
 				                			$this->modelo->eliminar_asiento_sc($orden);                			
 				                			//mayorizar_inventario_sp();
 				                			// return array('resp'=>1,'com'=>$num_comprobante);
-				                			$msj.= 'comprobante '.$num_comprobante.' Generado <br>';
+				                			$msj.= $num_comprobante;
 				                		}else
 				                		{
 				                			return array('resp'=>-1,'com'=>'No se pudo eliminar asiento_K');

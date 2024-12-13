@@ -111,6 +111,7 @@ function AprobarSolicitud()
 }
 function GenerarComprobante()
 {
+	$('#myModal_espera').modal('show');
 	var parametros = 
 	  {
 	    'order': orden,
@@ -120,10 +121,12 @@ function GenerarComprobante()
 	      type:  'post',
 	      data: {parametros:parametros},
 	      dataType: 'json',
-	      success:  function (response) {           
-	        if(response==1)
+	      success:  function (response) {
+					$('#myModal_espera').modal('hide');           
+	        if(response.resp==1)
 	        {
-	        	Swal.fire("","Solicitud Aprobada","success").then(function(){
+	        	Swal.fire("Comprobate "+response.com+" Generado:","","success").then(function(){
+	        		window.open('../controlador/contabilidad/comproC.php?reporte&comprobante='+response.com+'&TP=CD','_blank')
 	        		location.reload();
 	        	});
 	        }   

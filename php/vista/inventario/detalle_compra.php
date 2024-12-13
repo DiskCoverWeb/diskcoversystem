@@ -90,7 +90,9 @@ function grabar_kardex()
             $('#myModal_espera').modal('hide');
             if(response.resp==1)
             {
-              Swal.fire(response.com,"","success").then(function(){
+              Swal.fire('Comprobantes '+response.com+' Generado',"","success").then(function(){
+                 window.open('../controlador/contabilidad/comproC.php?reporte&comprobante='+response.com+'&TP=CD','_blank')
+            
                 location.href = 'inicio.php?mod=03&acc=lista_compras';
               })
             }  
@@ -116,7 +118,9 @@ function comprobante_individual(orden,proveedor)
             $('#myModal_espera').modal('hide');
             if(response.resp==1)
             {
-              Swal.fire(response.com,"","success").then(function(){
+              Swal.fire('Comprobantes '+response.com+' Generado',"","success").then(function(){
+                  window.open('../controlador/contabilidad/comproC.php?reporte&comprobante='+response.com+'&TP=CD','_blank')
+            
                 location.href = 'inicio.php?mod=03&acc=lista_compras';
               })
             }  

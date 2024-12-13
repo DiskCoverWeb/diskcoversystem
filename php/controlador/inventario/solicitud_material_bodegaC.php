@@ -549,7 +549,7 @@ class inventario_onlineC
 			SetAdoAddNew("Trans_Kardex");
 			SetAdoFields('TC','.');
 			SetAdoFields('Numero',$comprobante);
-			SetAdoFields('T','.');
+			SetAdoFields('T','N');
 
 			SetAdoFieldsWhere('ID', $value['ID']);
 			SetAdoUpdateGeneric();		
