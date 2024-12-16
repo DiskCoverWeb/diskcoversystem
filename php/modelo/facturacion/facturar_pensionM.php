@@ -337,6 +337,7 @@ class facturar_pensionM
           AND Credito_No = '".$Codigo3."' 
           ".(($Codigo_Auto!="")?" AND Codigo_Auto = '".$Codigo_Auto."'":"")."
           AND Mes = '".$Codigo2."' ";
+          // print_r($sql);die();
     $stmt = $this->db->String_Sql($sql);
     return $stmt;
 
@@ -425,9 +426,17 @@ class facturar_pensionM
           WHERE Item = '".$_SESSION['INGRESO']['item']."' 
           AND Codigo = '$codigoCliente' 
           AND Codigo_Inv = '$CodigoInv' 
-          AND Periodo = '$Anio' 
-          AND Num_Mes = '$NoMes'
-          ".(($Codigo_Auto!=G_NINGUNO)?" AND Codigo_Auto='".$Codigo_Auto."'":"");
+          AND Periodo = '$Anio' ";
+           if(is_numeric($NoMes))
+          {
+            $sSQL.=" AND Num_Mes = '$NoMes'";
+          }else
+          {
+            $sSQL.=" AND Mes = '$NoMes' ";
+          }
+
+          $sSQL.=(($Codigo_Auto!=G_NINGUNO)?" AND Codigo_Auto='".$Codigo_Auto."'":"");
+          // print_r($sSQL);die();
     $stmt = $this->db->String_Sql($sSQL);
     return $stmt;
   }

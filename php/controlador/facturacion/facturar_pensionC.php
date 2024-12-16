@@ -775,20 +775,38 @@ class facturar_pensionC
        $Anio1 = $value["TICKET"];
        $ID_Reg = $value["A_No"];
        $Medidor_Asiento = $value["Tipo_Hab"];
+       // print_r($Total_Abonos);die();
+       if($Total_Abonos>=$ValorDH)
+       {
+         // elimina registro
+         $this->facturacion->deleteClientes_FacturacionProductoClienteAnioMes($codigoCliente,$Codigo1, $value['TICKET'], $value['Mes']);
+         // print_r('eli');
+       }else
+       {
+         $Valor = $Total_Abonos;
+           $this->facturacion->actualizar_Clientes_Facturacion($Valor,$Anio1,$Codigo,$Codigo1,$Codigo2,$Codigo3, $Medidor_Asiento);
+           $this->facturacion->actualizar_asiento_F($Valor,$ID_Reg);
+
+         // print_r('actu');
+       }
+
        $Total_Abonos = $Total_Abonos - $ValorDH;
-          if($Total_Abonos >= 0){
-            $this->facturacion->actualizar_Clientes_Facturacion($Valor,$Anio1,$Codigo,$Codigo1,$Codigo2,$Codigo3, $Medidor_Asiento);
-          }else{
-            $Valor = $Valor + $Total_Abonos;
-            if($Valor > 0){
-              $this->facturacion->actualizar_Clientes_Facturacion2($Total_Abonos,$Total_Desc,$Anio1,$Codigo,$Codigo1,$Codigo2,$Codigo3, $Medidor_Asiento);
-              $Total_Abonos = $Total_Abonos + $Total_Desc;
-              $Valor = $Valor - $Total_Desc;
-              $this->facturacion->actualizar_asiento_F($Valor,$ID_Reg);
-            }else{
-              $this->facturacion->deleteAsientoEd($ID_Reg);              
-            }
-          }
+
+
+
+          // if($Total_Abonos >= 0){
+          //   $this->facturacion->actualizar_Clientes_Facturacion($Valor,$Anio1,$Codigo,$Codigo1,$Codigo2,$Codigo3, $Medidor_Asiento);
+          // }else{
+          //   $Valor = $Valor + $Total_Abonos;
+          //   if($Valor > 0){
+          //     $this->facturacion->actualizar_Clientes_Facturacion2($Total_Abonos,$Total_Desc,$Anio1,$Codigo,$Codigo1,$Codigo2,$Codigo3, $Medidor_Asiento);
+          //     $Total_Abonos = $Total_Abonos + $Total_Desc;
+          //     $Valor = $Valor - $Total_Desc;
+          //     $this->facturacion->actualizar_asiento_F($Valor,$ID_Reg);
+          //   }else{
+          //     $this->facturacion->deleteAsientoEd($ID_Reg);              
+          //   }
+          // }
     }
 
 
