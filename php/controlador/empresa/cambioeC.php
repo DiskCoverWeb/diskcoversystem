@@ -129,17 +129,16 @@ if(isset($_GET['detalle']))
   echo json_encode($controlador->detalle_linea($id, $item, $entidad));
 }
 
-<<<<<<< HEAD
 if(isset($_GET['enviar_email']))
 {
   	echo json_encode($controlador->enviar_email($_FILES,$_POST));
-=======
+}
+
 if(isset($_GET['consultar_lineas']))
 {
   $item = $_POST['item'];
   $entidad = $_POST['entidad'];
   echo json_encode($controlador->consultarLinea($item, $entidad));
->>>>>>> c3ffc57510037b90d8e4c2d4b87e9e84152a7660
 }
 
 class cambioeC 
