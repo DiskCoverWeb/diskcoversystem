@@ -952,7 +952,7 @@ function autocoplet_ingreso()
           /*let host = location.pathname;
 
           let url = "";
-          if (host.includes('diskcoversystem')) {
+          if (host.includes('diskcover')) {
             
             //  let indiceFinal = indiceInicial + subcadena.length - 1;
               url = '/'+host.split('/')[1]+'/TEMP/' + data.pdf + '.pdf';
@@ -991,7 +991,7 @@ function autocoplet_ingreso()
           let host = location.pathname;
 
           let url = "";
-          if (host.includes('diskcoversystem')) {
+          if (host.includes('diskcover')) {
             
             //  let indiceFinal = indiceInicial + subcadena.length - 1;
               url = '/'+host.split('/')[1]+'/TEMP/' + data.pdf + '.pdf';
@@ -1030,7 +1030,7 @@ function autocoplet_ingreso()
           let host = location.pathname;
 
           let url = "";
-          if (host.includes('diskcoversystem')) {
+          if (host.includes('diskcover')) {
             
             //  let indiceFinal = indiceInicial + subcadena.length - 1;
               url = '/'+host.split('/')[1]+'/TEMP/' + data.pdf + '.pdf';
