@@ -1,6 +1,7 @@
 <?php date_default_timezone_set('America/Guayaquil'); ?>
   <link rel="stylesheet" href="../../dist/css/style_calendar.css">
   <script src="../../dist/js/qrCode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/print-js/1.6.0/print.min.js"></script>
 <script type="text/javascript">
   var video;
 	var canvasElement;
@@ -932,6 +933,45 @@ function autocoplet_ingreso()
       window.open(url, '_blank');
   }
 
+  function imprimir_etiquetas_pdf()
+  {  
+     var num_ped = $('#txt_codigo').val();
+     if(num_ped.trim()==''){
+      Swal.fire('Seleccione codigo de Ingreso', '', 'warning');
+      return;
+     }
+      $('#myModal_espera').modal('show');
+      $.ajax({
+        type: "POST",
+        url: '../controlador/inventario/alimentos_recibidosC.php?imprimir_etiquetas=true',
+        data: {num_ped}, 
+        dataType:'json',
+        success: function(data)
+        {
+          $('#myModal_espera').modal('hide');
+          /*let host = location.pathname;
+
+          let url = "";
+          if (host.includes('diskcoversystem')) {
+            
+            //  let indiceFinal = indiceInicial + subcadena.length - 1;
+              url = '/'+host.split('/')[1]+'/TEMP/' + data.pdf + '.pdf';
+          } else {
+              url = '/TEMP/' + data.pdf + '.pdf';
+          }
+
+          printJS({ 
+            printable: url,
+            type: 'pdf'
+          });*/
+
+          var url = '../../TEMP/' + data.pdf + '.pdf';
+          
+          window.open(url, '_blank');
+        }
+      })
+  }
+
   function imprimir_etiquetas()
   {  
      var num_ped = $('#txt_codigo').val();
@@ -948,8 +988,25 @@ function autocoplet_ingreso()
         success: function(data)
         {
           $('#myModal_espera').modal('hide');
-          var url = '../../TEMP/' + data.pdf + '.pdf';
-          window.open(url, '_blank');
+          let host = location.pathname;
+
+          let url = "";
+          if (host.includes('diskcoversystem')) {
+            
+            //  let indiceFinal = indiceInicial + subcadena.length - 1;
+              url = '/'+host.split('/')[1]+'/TEMP/' + data.pdf + '.pdf';
+          } else {
+              url = '/TEMP/' + data.pdf + '.pdf';
+          }
+
+          printJS({ 
+            printable: url,
+            type: 'pdf'
+          });
+
+          /*var url = '../../TEMP/' + data.pdf + '.pdf';
+          
+          window.open(url, '_blank');*/
         }
       })
   }
@@ -970,8 +1027,25 @@ function autocoplet_ingreso()
         success: function(data)
         {
           $('#myModal_espera').modal('hide');
-          var url = '../../TEMP/' + data.pdf + '.pdf';
-          window.open(url, '_blank');
+          let host = location.pathname;
+
+          let url = "";
+          if (host.includes('diskcoversystem')) {
+            
+            //  let indiceFinal = indiceInicial + subcadena.length - 1;
+              url = '/'+host.split('/')[1]+'/TEMP/' + data.pdf + '.pdf';
+          } else {
+              url = '/TEMP/' + data.pdf + '.pdf';
+          }
+          //var url = "http://localhost/diskcoversystem/TEMP/ETIQUETAPRUEBA_65001_GMERK231213004.pdf";
+          /*var url = '../../TEMP/' + data.pdf + '.pdf';*/
+
+          printJS({ 
+            printable: url,
+            type: 'pdf'
+          });
+          //console.log(data)
+          //window.open(url, '_blank');
         }
       })
   }
@@ -1054,6 +1128,11 @@ function autocoplet_ingreso()
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
             <button type="button" class="btn btn-default" title="Imprimir etiquetas" onclick="imprimir_etiquetas()">
               <img src="../../img/png/paper.png" height="32px">
+            </button>
+        </div>
+        <div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">
+            <button type="button" class="btn btn-default" title="Imprimir etiquetas PDF" onclick="imprimir_etiquetas_pdf()">
+              <img src="../../img/png/impresora.png" height="32px">
             </button>
         </div>
         <!--<div class="col-xs-2 col-md-2 col-sm-2 col-lg-2">

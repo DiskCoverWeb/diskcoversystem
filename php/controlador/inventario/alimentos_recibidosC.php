@@ -780,7 +780,7 @@ class alimentos_recibidosC
 		$tbl = $this->modelo->cargar_pedidos_trans($parametros['num_ped'],false);
 
 		$pdf = new FPDF();
-		$pdf->SetMargins(0, 0, 0);
+		$pdf->SetMargins(2, 0, 0);
 		$pdf->SetAutoPageBreak(false);
 
 		$archivo = 'ETIQUETA_'.$_SESSION['INGRESO']['Entidad_No'].$_SESSION['INGRESO']['item'].'_'.str_replace('-', '', $parametros['num_ped']);
@@ -797,8 +797,8 @@ class alimentos_recibidosC
 			$pdf->AddPage('L', array(60, 20));
 			$pdf->SetFont('Arial', 'B', 10);
 			$pdf->Cell(0, 5, $value['Producto'],0);
-			$pdf->Image(dirname(__DIR__, 3) . $ruta_qr,0,5,10,10);
-			$pdf->SetXY(11,5);
+			$pdf->Image(dirname(__DIR__, 3) . $ruta_qr,2,5,12,12);
+			$pdf->SetXY(13,5);
 			$pdf->SetFont('Arial', 'B', 8);
 			$pdf->MultiCell(0, 10, $value['Codigo_Barra'],0,0);
 		}
@@ -833,7 +833,7 @@ class alimentos_recibidosC
 		//print_r($cliente.$cliente_size.$cliente_altura.$imagen_Y);die();
 
 		$pdf = new FPDF();
-		$pdf->SetMargins(0, 0, 0);
+		$pdf->SetMargins(2, 0, 0);
 		$pdf->SetAutoPageBreak(false);
 
 		$archivo = 'ETIQUETA_'.$_SESSION['INGRESO']['Entidad_No'].$_SESSION['INGRESO']['item'].'_'.str_replace('-', '', $parametros['codigo']);
@@ -848,8 +848,8 @@ class alimentos_recibidosC
 		$pdf->AddPage('L', array(60, 20));
 		$pdf->SetFont('Arial', 'B', $cliente_size);
 		$pdf->MultiCell(0, $cliente_altura, $cliente,0);
-		$pdf->Image(dirname(__DIR__, 3) . $ruta_qr,0,$imagen_Y,10,10);
-		$pdf->SetXY(11,5);
+		$pdf->Image(dirname(__DIR__, 3) . $ruta_qr,2,$imagen_Y,12,12);
+		$pdf->SetXY(13,5);
 		$pdf->SetFont('Arial', 'B', $codigo_size);
 		$pdf->MultiCell(0, $codigo_altura, $parametros['codigo'],0,0);
 

@@ -8,7 +8,7 @@
     border-bottom-color: transparent;
 }
 </style>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/print-js/1.6.0/print.min.js"></script>
 <script type="text/javascript">
   $(document).ready(function () {
   	cargar_datos_procesados();
@@ -870,6 +870,69 @@ function autocoplet_ingreso_donante(){
         success: function(data)
         {
           $('#myModal_espera').modal('hide');
+
+		  let host = location.pathname;
+
+          let url = "";
+          if (host.includes('diskcoversystem')) {
+            
+            //  let indiceFinal = indiceInicial + subcadena.length - 1;
+              url = '/'+host.split('/')[1]+'/TEMP/' + data.pdf + '.pdf';
+          } else {
+              url = '/TEMP/' + data.pdf + '.pdf';
+          }
+
+          printJS({ 
+            printable: url,
+            type: 'pdf'
+          });
+          /*var url = '../../TEMP/' + data.pdf + '.pdf';
+          window.open(url, '_blank');*/
+        }
+      })
+  }
+
+  function imprimir_pedido_pdf()
+  {  
+	var id = $('#txt_donante').val();
+     var codigo = $('#txt_codigo').val();
+
+	 if(id==null || id=='')
+	{
+		Swal.fire('Seleccione un detalle de ingreso', '', 'error');
+		return;
+	}
+	 if(codigo==null || codigo=='')
+	{
+		Swal.fire('No se ha generado un codigo de ingreso', '', 'error');
+		return;
+	}
+
+      $('#myModal_espera').modal('show');
+      $.ajax({
+        type: "POST",
+        url: '../controlador/inventario/alimentos_recibidosC.php?imprimir_pedido=true',
+        data: {id, codigo}, 
+        dataType:'json',
+        success: function(data)
+        {
+          $('#myModal_espera').modal('hide');
+
+		  /*let host = location.pathname;
+
+          let url = "";
+          if (host.includes('diskcoversystem')) {
+            
+            //  let indiceFinal = indiceInicial + subcadena.length - 1;
+              url = '/'+host.split('/')[1]+'/TEMP/' + data.pdf + '.pdf';
+          } else {
+              url = '/TEMP/' + data.pdf + '.pdf';
+          }
+
+          printJS({ 
+            printable: url,
+            type: 'pdf'
+          });*/
           var url = '../../TEMP/' + data.pdf + '.pdf';
           window.open(url, '_blank');
         }
@@ -893,6 +956,11 @@ function autocoplet_ingreso_donante(){
 		<div class="col-xs-2 col-md-2 col-sm-2">
             <button type="button" class="btn btn-default" title="Imprimir QR" onclick="imprimir_pedido()">
               <img src="../../img/png/paper.png" height="32px">
+            </button>
+        </div>
+		<div class="col-xs-2 col-md-2 col-sm-2">
+            <button type="button" class="btn btn-default" title="Imprimir QR PDF" onclick="imprimir_pedido_pdf()">
+              <img src="../../img/png/impresora.png" height="32px">
             </button>
         </div>
 		<!-- <div class="col-xs-2 col-md-2 col-sm-2">
