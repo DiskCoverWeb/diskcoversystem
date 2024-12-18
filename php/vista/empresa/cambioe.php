@@ -3055,7 +3055,6 @@ async function datos_empresa()
 	</div>
 
 </form>	
-<<<<<<< HEAD
 
 <div id="myModalCorreo" class="modal fade" role="dialog">
       <div class="modal-dialog">
@@ -3140,7 +3139,6 @@ async function datos_empresa()
 	    });
 	}
 </script>
-=======
 <div id="modal_prueba" class="modal" role="dialog" data-keyboard="false" data-backdrop="static">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
@@ -3163,4 +3161,3 @@ async function datos_empresa()
 
 	</div>
 </div>
->>>>>>> c3ffc57510037b90d8e4c2d4b87e9e84152a7660
