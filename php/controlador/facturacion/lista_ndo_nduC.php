@@ -9,6 +9,10 @@ if (!class_exists('enviar_emails')) {
 }
 
 $controlador = new lista_facturasC();
+if(isset($_GET['sesion']))
+{
+  	echo json_encode($_SESSION);
+}
 if(isset($_GET['catalogo']))
 {
 	$parametros = $_POST['parametros'];
@@ -437,7 +441,7 @@ class lista_facturasC
 			// print_r('expression');die();
 			$this->punto_venta->pdf_factura_elec_rodillo($cod, $ser, $ci, $nombre, $auto, $per, $aprobado = false);
 		}*/
-		$Grafico_PV = Leer_Campo_Empresa("Grafico_PV");
+		//$Grafico_PV = Leer_Campo_Empresa("Grafico_PV");
 
 		$FA = array(
 			'Factura' => $cod,
@@ -446,12 +450,20 @@ class lista_facturasC
 			'TC' => $tc
 		);
 
-		if ($Grafico_PV) {
-			$TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
-			//$TFA['PorcIva'] = $FA['Porc_IVA'];
-			$TFA['PorcIva'] = $_SESSION['INGRESO']['porc'];
-			$this->pdf->Imprimir_Punto_Venta_Grafico($TFA);
-			//Imprimir_Punto_Venta_Grafico($TFA);
+		$TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
+		$TFA['CLAVE'] = '.';
+		//$TFA['PorcIva'] = $FA['Porc_IVA'];
+		$TFA['PorcIva'] = $_SESSION['INGRESO']['porc'];
+		$this->pdf->Imprimir_Punto_Venta($TFA);
+		//Imprimir_Punto_Venta_Grafico($TFA);
+		$imp = $FA['Serie'] . '-' . generaCeros($FA['Factura'], 7);
+		$rep = 1;
+		if ($rep == 1) {
+			return array('respuesta' => $rep, 'pdf' => $imp);
+		} else {
+			return array('respuesta' => -1, 'pdf' => $imp, 'text' => $rep);
+		}
+		/*if ($Grafico_PV) {
 		} else {
 			$TFA = Imprimir_Punto_Venta_Grafico_datos($FA);
 			$TFA['CLAVE'] = '.';
@@ -468,8 +480,8 @@ class lista_facturasC
 
 			// ojo ver cula se piensa imprimir
 			// Imprimir_Punto_Venta($FA);
-		}
-		// $this->modelo->pdf_factura($cod,$ser,$ci,$per);
+		}*/
+		//$this->modelo->pdf_factura($cod,$ser,$ci,$per);
 
 	}
 	function imprimir_pdf($parametros)

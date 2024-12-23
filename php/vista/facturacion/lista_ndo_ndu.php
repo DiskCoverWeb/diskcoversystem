@@ -18,6 +18,16 @@
 
   $(document).ready(function()
   {
+    $.ajax({
+      url: '../controlador/facturacion/lista_ndo_nduC.php?sesion=true',
+      type:  'GET',
+      dataType: 'json',
+       success:  function (response) { 
+        console.log(response);
+        
+       }
+        
+    });
     catalogoLineas();
     //console.log();
     // fin paginacion
@@ -395,7 +405,7 @@
 
   function Ver_factura(id,serie,ci,aut,tc)
 	{		 
-    $('#myModal_espera').show();
+    $('#myModal_espera').modal('show');
     peri = $('#ddl_periodo').val();
     $.ajax({
 			type: "GET",
@@ -403,7 +413,7 @@
 			//data: { parametros: parametros },
 			//dataType: 'json',
 			success: function (data) {
-        $('#myModal_espera').hide();
+        $('#myModal_espera').modal('hide');
         let datajson = JSON.parse(data);
         if(datajson['respuesta'] == 1){
           var url = '../../TEMP/' + datajson['pdf'] + '.pdf';
