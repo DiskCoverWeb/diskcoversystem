@@ -1961,7 +1961,7 @@ async function datos_empresa()
             <button type="button" class="btn btn-default" title="Guardar" onclick="cambiarEmpresa();"><img src="../../img/png/grabar.png"></button>
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
-			<button type="button" id="btnLineasGrabar" class="btn btn-default" title="Grabar Lineas CxC" onclick="confirmar()" disabled><img src="../../img/png/grabar_lineascxc.png"></button>
+			<button type="button" id="btnLineasGrabar" class="btn btn-default" title="Actualizar Puntos de Emisión" onclick="confirmar()" disabled><img src="../../img/png/grabar_lineascxc.png"></button>
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
             <button type="button" class="btn btn-default" title="Guardar Masivo: Fechas de renovaciones" onclick='cambiarEmpresaMa();'><img src="../../img/png/guardarmasivo.png"></button>
