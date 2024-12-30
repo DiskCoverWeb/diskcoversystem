@@ -512,6 +512,8 @@ class punto_ventaM
     $TFA['CLAVE'] = $datos_fac[0]['Autorizacion'];
     $TFA['factura'][0]['Telefono'] = $datos_cli_edu[0]['Telefono'];
     $TFA['factura'][0]['Email'] = $datos_cli_edu[0]['Email'];
+    $TFA['PorcIva'] = $_SESSION['INGRESO']['porc'];
+    //print_r($TFA['PorcIva']);die();
 
     $this->pdf->Imprimir_Punto_Venta_Grafico($TFA, 0);
   }
