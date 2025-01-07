@@ -707,6 +707,12 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 		return $this->db->datos($sql);
 	}
 
+	function eliminar_linea($id)
+	{
+		$sql = "DELETE FROM Trans_Kardex WHERE ID = '".$id."'";
+		return $this->db->String_Sql($sql);
+	}
+
 
 }
 ?>

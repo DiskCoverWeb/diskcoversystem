@@ -40,6 +40,11 @@ if (isset($_GET['editarCCRubro'])) {
 	echo json_encode($controlador->editarCCRubro($parametro));
 }
 
+if (isset($_GET['eliminarLinea'])) {
+	$parametro = $_POST['id'];
+	echo json_encode($controlador->eliminarLinea($parametro));
+}
+
 if (isset($_GET['AprobarSolicitud'])) {
 	$parametro = $_POST['parametros'];
 	echo json_encode($controlador->AprobarSolicitud($parametro));
@@ -261,9 +266,15 @@ class inventario_onlineC
 			$tr.='<tr>
 					<td>'.($key+1).'</td>
 					<td>'.$value['Codigo_Inv'].'</a></td>
-					<td>'.$value['Producto'].'</td>
-					<td>'.$value['Salida'].'</td>
-					<td>';
+					<td>'.$value['Producto'].'</td>';
+					if($estado=='GC')
+					{
+						$tr.='<td>'.$value['Salida'].'</td>';
+					}else{
+						$tr.='<td><input class="form-control input-xs"  id="txt_salida_'.$value['ID'].'" name ="txt_salida_'.$value['ID'].'"value="'.$value['Salida'].'"></td>';
+					}
+
+					$tr.='<td>';
 					if($estado=='GC')
 					{
 						$tr.=$value['Cuenta'];
@@ -299,7 +310,8 @@ class inventario_onlineC
 					<td>';
 					if($estado!='GC')
 					{
-						$tr.='<button class="btn btn-sm btn-primary" title="Editar linea" onclick="guardar_linea('.$value['ID'].')"><i class="fa fa-save"></i></button>';
+						$tr.='<button class="btn btn-sm btn-primary" title="Editar linea" onclick="guardar_linea('.$value['ID'].')"><i class="fa fa-save"></i></button>
+						<button class="btn btn-sm btn-danger" title="Eliminar linea" onclick="eliminar_linea('.$value['ID'].')"><i class="fa fa-trash"></i></button>';
 
 					}
 						
@@ -354,9 +366,15 @@ class inventario_onlineC
 		SetAdoAddNew("Trans_Kardex");
 		SetAdoFields('CodigoL',$parametro['rubro']);
 		SetAdoFields('Contra_Cta',$parametro['cc']);
+		SetAdoFields('Salida',$parametro['salida']);
 
 		SetAdoFieldsWhere('ID', $parametro['ID']);
 		return SetAdoUpdateGeneric();
+	}
+
+	function eliminarLinea($parametro)
+	{
+		return $this->modelo->eliminar_linea($parametro);
 	}
 
 	function AprobarSolicitud($parametro)

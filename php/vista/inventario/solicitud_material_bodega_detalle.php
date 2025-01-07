@@ -65,10 +65,16 @@ function guardar_linea(id)
 		Swal.fire("","Seleccione todos los capos","info")
 		return false;
 	}
+	if($('#txt_salida_'+id).val()=='' || $('#txt_salida_'+id).val()=='0')
+	{
+		Swal.fire("","Cantidad incorrecta","info")
+		return false;
+	}
 	var parametros = 
 	  {
 	    'cc':$('#ddl_linea_cc_'+id).val(),
 	    'rubro':$('#ddl_linea_rubro_'+id).val(),
+	    'salida':$('#txt_salida_'+id).val(),
 	    'ID':id,
 	  }
 	  $.ajax({
@@ -80,6 +86,43 @@ function guardar_linea(id)
 	      	if(response==1)
 	      	{
 	      		Swal.fire('','Linea Editada','success').then(function(){
+	      			pedidos_contratista(orden);	 
+	      		})   
+	      	}     
+	      }
+	  });
+
+}
+
+function eliminar_linea(id)
+{
+	 Swal.fire({
+       title: 'Esta seguro?',
+       text: "Esta usted seguro de que quiere borrar este registro!",
+       type: 'warning',
+       showCancelButton: true,
+       confirmButtonColor: '#3085d6',
+       cancelButtonColor: '#d33',
+       confirmButtonText: 'Si!'
+     }).then((result) => {
+       if (result.value==true) {
+        linea_eliminar(id);
+       }
+     })
+}
+
+function linea_eliminar(id)
+{
+
+	 $.ajax({
+	      url:   '../controlador/inventario/solicitud_material_bodegaC.php?eliminarLinea=true',
+	      type:  'post',
+	      data: {id:id},
+	      dataType: 'json',
+	      success:  function (response) {
+	      	if(response==1)
+	      	{
+	      		Swal.fire('','Linea eliminada','success').then(function(){
 	      			pedidos_contratista(orden);	 
 	      		})   
 	      	}     
