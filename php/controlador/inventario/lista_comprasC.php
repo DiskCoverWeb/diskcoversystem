@@ -340,13 +340,13 @@ class lista_comprasC
 		$provedor = $this->modelo->lineas_compras_solicitados_proveedores($parametros['orden'],false,$prove);
 		$fecha = date('Y-m-d');
 		$numOrde = $this->modelo->numeroFactura($fecha);
-		$numeroSubCta =date('Ymd').'01';
+		$numeroSubCta =date('ymd').'01';
 		if(count($numOrde)>0 && $numOrde[0]['num']!=0)
 		{
-			 $numeroSubCta = date('Ymd').generaCeros($numOrde[0]['num']+1,2);
+			 $numeroSubCta = date('ymd').generaCeros($numOrde[0]['num']+1,2);
 		}
 
-		// print_r($provedor);die();
+		// print_r($numeroSubCta);die();
 		foreach ($provedor as $key => $value) 
 		{
 			$nombre = $value['Cliente'];
