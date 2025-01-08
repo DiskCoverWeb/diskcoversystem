@@ -310,19 +310,24 @@ class lista_comprasC
 
 	function grabar_kardex($parametros)
 	{
-		
-		$cta = LeerCta('2.1.05.01.12');
+		// print_r($_SESSION['SETEOS']['Cta_Provision_Compras']);die();
+		$t_no = $_SESSION['INGRESO']['modulo_'];
+		if(isset($parametros['T_No']))
+		{
+			$t_no = $parametros['T_No'];
+		}
+		$cta = LeerCta($_SESSION['SETEOS']['Cta_Provision_Compras']);
 		$msj = '';
 		if(count($cta)==0)
 		{
 				SetAdoAddNew("Catalogo_Cuentas");
 		    SetAdoFields("TC","P");
-		    SetAdoFields("Cta","2.1.05.01.12");
+		    SetAdoFields("Cta",$_SESSION['SETEOS']['Cta_Provision_Compras']);
 		    SetAdoFields("Cuenta","PROVISION COMPRAS INVENTARIO");
 		    SetAdoFields("Item",$_SESSION['INGRESO']['item']);
 		    SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
 				SetAdoUpdate();
-				$cta[0]['Codigo'] = "2.1.05.01.12";
+				$cta[0]['Codigo'] = $_SESSION['SETEOS']['Cta_Provision_Compras'];
 				$cta[0]['Cuenta'] = "PROVISION COMPRAS INVENTARIO";
 				$cta[0]['SubCta'] = "P";
 		}
@@ -371,7 +376,7 @@ class lista_comprasC
 		                    'valorn'=> round($value['Total'],2),//valor de sub cuenta 
 		                    'moneda'=> 1, /// moneda 1
 		                    'Trans'=>$cta[0]['Cuenta'].' Orden '.$parametros['orden'], //detalle que se trae del asiento
-		                    'T_N'=> '99',
+		                    'T_N'=> $t_no,
 		                    't'=> $sub[0]['TC'],       
 		                    'serie'=> '999999',                      
 		                  );
@@ -399,7 +404,7 @@ class lista_comprasC
 			                  "tipo_cue" => 2,
 			                  "cotizacion" => 0,
 			                  "con" => 0,// depende de moneda
-			                  "t_no" => '99',
+			                  "t_no" =>$t_no,
 			                  "codigoc"=>$value['CodigoC'],
 			                  "beneficiario"=>$nombre
 						);
@@ -427,7 +432,7 @@ class lista_comprasC
 			                  "tipo_cue" => 1,
 			                  "cotizacion" => 0,
 			                  "con" => 0,// depende de moneda
-			                  "t_no" => '99',
+			                  "t_no" => 	$t_no,
 			                  "codigoc"=>$value['CodigoC'],
 			                  "beneficiario"=>$nombre
 			                );
@@ -441,7 +446,7 @@ class lista_comprasC
 					// print_r($fecha);die();
 						$num_comprobante = numero_comprobante1('Diario',true,true,$fecha);
 						// print_r($num_comprobante);die();
-					    $dat_comprobantes = $this->modelo->datos_comprobante();
+					    $dat_comprobantes = $this->modelo->datos_comprobante($t_no);
 					  $debe = 0;
 						$haber = 0;
 						foreach ($dat_comprobantes as $key => $value3) {
@@ -463,6 +468,7 @@ class lista_comprasC
 				        	        'concepto'=>'Entrada de inventario  '.$nombre.' con CI: '.$ruc.' el dia '.$fecha, //detalle de la transaccion realida
 				        	        'totalh'=> round($haber,2), //total del haber
 				        	        'num_com'=> '.'.date('Y', strtotime($fecha)).'-'.$num_comprobante, // codigo de comprobante de esta forma 2019-9000002
+				        	        't_no'=>$t_no,
 				        	        );
 								 // print_r($parametro_comprobante);die();
 				               	$resp = $this->ingDescargos->generar_comprobantes($parametro_comprobante);
@@ -478,7 +484,7 @@ class lista_comprasC
 				                		$resp = $this->modelo->eliminar_asiento_K($parametros['orden'],$value['CodigoC']);
 				                		if($resp==1)
 				                		{
-				                			$this->modelo->eliminar_asiento('99');
+				                			$this->modelo->eliminar_asiento($t_no);
 				                			$orden = date('Ymd');
 				                			$this->modelo->eliminar_asiento_sc($orden);                			
 				                			//mayorizar_inventario_sp();
@@ -495,20 +501,20 @@ class lista_comprasC
 				                }else
 				                {
 
-				                			$this->modelo->eliminar_asiento('99');
+				                			$this->modelo->eliminar_asiento($t_no);
 							     // $this->modelo->eliminar_aiseto_sc($orden);
 				        	        return array('resp'=>-1,'com'=>$resp);
 				                }
 							}else
 							{
-				                			$this->modelo->eliminar_asiento('99');
+				                			$this->modelo->eliminar_asiento($t_no);
 								// $this->modelo->eliminar_aiseto_sc($fecha);
 								return array('resp'=>-1,'com'=>'No coinciden','debe'=>$debe,'haber'=>$haber);
 							}
 						}else
 						{
 								// print_r($debe."-".$haber); 
-									$this->modelo->eliminar_asiento('99');
+									$this->modelo->eliminar_asiento($t_no);
 								 return array('resp'=>-1,'com'=>'Los resultados son debe '.$debe."- haber: ".$haber);
 						}
 						

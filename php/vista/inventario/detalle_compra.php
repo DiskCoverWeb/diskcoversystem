@@ -79,6 +79,7 @@ function grabar_kardex()
   var parametros = 
       {
         'orden':orden,
+        'T_No' : '101',
       }
     //  $('#myModal_espera').modal('show');
       $.ajax({
@@ -108,6 +109,7 @@ function comprobante_individual(orden,proveedor)
       {
         'orden':orden,
         'proveedor':proveedor,
+        'T_No':'101',
       }
      $.ajax({
           url:   '../controlador/inventario/lista_comprasC.php?grabar_kardex_indi=true',

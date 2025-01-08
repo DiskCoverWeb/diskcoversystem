@@ -1,0 +1,15 @@
+'Constante          Valor
+'-----------------------------------------------------------------
+'Nuevo Comprobantes     : 1
+'Modificar Comprobantes : 1
+'Copiar Comprobantes    : 1
+'Saldos Ctas. Especiales: 15
+'Conciliacion           : 30
+'Pago a Bancos Cash     : 35
+'Anexos Transaccionales : 96
+'Cierre de Caja         : 96,97,255
+'Importar Excele        : 100,180,190,199
+'Suscripciones          : 250
+'Inventario'            :101,102
+'-----------------------------------------------------------------
+' Trans_No = 36-78, 201-249

@@ -504,10 +504,10 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
        return $datos;
 	}
 
-	function datos_comprobante()
+	function datos_comprobante($t_no=99)
 	{
 		$cid = $this->conn;
-		$sql="SELECT * FROM Asiento WHERE CodigoU='".$_SESSION['INGRESO']['CodigoU']."' AND Item='".$_SESSION['INGRESO']['item']."' AND T_No = '99'";
+		$sql="SELECT * FROM Asiento WHERE CodigoU='".$_SESSION['INGRESO']['CodigoU']."' AND Item='".$_SESSION['INGRESO']['item']."' AND T_No = '".$t_no."'";
 	   $datos =  $this->db->datos($sql);
        return $datos;
 	}

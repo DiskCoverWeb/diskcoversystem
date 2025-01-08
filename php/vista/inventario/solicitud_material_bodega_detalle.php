@@ -158,6 +158,7 @@ function GenerarComprobante()
 	var parametros = 
 	  {
 	    'order': orden,
+	    'T_No':'102',
 	  }
 	  $.ajax({
 	      url:   '../controlador/inventario/solicitud_material_bodegaC.php?GenerarComprobante=true',

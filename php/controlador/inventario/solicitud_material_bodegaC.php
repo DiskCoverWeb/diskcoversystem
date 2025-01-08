@@ -404,6 +404,11 @@ class inventario_onlineC
 
 	function GenerarComprobante($parametro)
 	{
+		$t_no = $_SESSION['INGRESO']['modulo_'];
+		if(isset($parametro['T_No']))
+		{
+			$t_no = $parametro['T_No'];
+		}
 		// $datos = $this->modelo->pedidos_contratista_comprobante($parametro['order']);
 		// print_r($datos);die();
 		// $cliente = Leer_Datos_Clientes($Codigo_CIRUC_Cliente,$Por_Codigo=true,$Por_CIRUC=false,$Por_Cliente=false)
@@ -441,7 +446,7 @@ class inventario_onlineC
                     'valorn'=> round($value['total'],2),//valor de sub cuenta 
                     'moneda'=> 1, /// moneda 1
                     'Trans'=>$sub[0]['Detalle'],//detalle que se trae del asiento
-                    'T_N'=> '99',
+                    'T_N'=> $t_no,
                     't'=> $cuenta[0]['TC'],                        
                   );
 
@@ -468,7 +473,7 @@ class inventario_onlineC
                   "tipo_cue" => 1,
                   "cotizacion" => 0,
                   "con" => 0,// depende de moneda
-                  "t_no" => '99',
+                  "t_no" => $t_no,
 			);
 
 			// print_r($cuenta);die();
@@ -492,7 +497,7 @@ class inventario_onlineC
                   "tipo_cue" => 2,
                   "cotizacion" => 0,
                   "con" => 0,// depende de moneda
-                  "t_no" => '99',
+                  "t_no" => $t_no,
                 );
                 $this->ing_des->ingresar_asientos($parametros_haber);
 		}
@@ -505,7 +510,7 @@ class inventario_onlineC
 	 //    $num_comprobante = $this->modelo->numero_comprobante($parametros);
 
 	    $num_comprobante = numero_comprobante1('Diario',true,true,$fecha);
-	    $dat_comprobantes = $this->modelo->datos_comprobante();
+	    $dat_comprobantes = $this->modelo->datos_comprobante($t_no);
 	    $debe = 0;
 		$haber = 0;
 		foreach ($dat_comprobantes as $key => $value) {
@@ -523,6 +528,7 @@ class inventario_onlineC
         	        'concepto'=>'Salida de inventario para '.$nombre.' con CI: '.$ruc.' el dia '.$fecha, //detalle de la transaccion realida
         	        'totalh'=> round($haber,2), //total del haber
         	        'num_com'=> '.'.date('Y', strtotime($fecha)).'-'.$num_comprobante, // codigo de comprobante de esta forma 2019-9000002
+        	        't_no'=>$t_no,
         	        );
 				 // print_r($nombre);print_r($ruc);print_r($fecha);
 				 // print_r($parametro_comprobante);die();

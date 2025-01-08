@@ -254,7 +254,8 @@ function SeteosCtas()
     $_SESSION['SETEOS']['Cta_Seguro_I'] = "0";
     $_SESSION['SETEOS']['Cta_Proveedores'] = "0";
     $_SESSION['SETEOS']['Cta_Anticipos'] = "0";    
-    $_SESSION['SETEOS']['Cta_Ret_Egreso'] = "0";
+    $_SESSION['SETEOS']['Cta_Ret_Egreso'] = "0";   
+    $_SESSION['SETEOS']['Cta_Provision_Compras'] = "0";
     // 	// ' Consultamos las cuentas de la tabla
     $datos = $modelo->SeteoCta();
 
@@ -414,6 +415,9 @@ function SeteosCtas()
                     break;
                 case 'Cta_Ret_Egreso':
                      $_SESSION['SETEOS']['Cta_Ret_Egreso'] = $value['Codigo'];
+                    break;
+                case 'Cta_Provision_Compras':
+                     $_SESSION['SETEOS']['Cta_Provision_Compras'] = $value['Codigo'];
                     break;
                 case "Inv_Promedio":
                     if ($value['Codigo'] == "TRUE") {

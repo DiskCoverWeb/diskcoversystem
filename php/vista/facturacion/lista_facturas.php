@@ -991,8 +991,8 @@ function modal_email_fac(factura,serie,codigoc,emails)
 
 
           const xhr = new XMLHttpRequest();
-          const url =  'https://erp.diskcoversystem.com/~diskcover/php/comprobantes/SRI/autorizar_sri_visual.php?AutorizarXMLOnline=true';
-            // const url =  '../../php/comprobantes/SRI/autorizar_sri_visual.php?AutorizarXMLOnline=true';
+          // const url =  'https://erp.diskcoversystem.com/~diskcover/php/comprobantes/SRI/autorizar_sri_visual.php?AutorizarXMLOnline=true';
+            const url =  '../../php/comprobantes/SRI/autorizar_sri_visual.php?AutorizarXMLOnline=true';
 
 
           xhr.open('POST', url, true);
@@ -1011,7 +1011,7 @@ function modal_email_fac(factura,serie,codigoc,emails)
             }
           };
 
-           const params = `XML=1311202401070216417900110010030000025301234567811.xml`;
+           const params = `XML=1812202404179089888100120010020000003621234567810.xml`;
 
           xhr.send(params);
   }
