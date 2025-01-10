@@ -424,13 +424,13 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
   function datos_asiento_debe($orden)
 	{
     	// 'LISTA DE CODIGO DE ANEXOS
- 	    $sql = "SELECT SUM(VALOR_TOTAL) as 'total',Contra_Cta as 'cuenta',CodigoL as 'SUBCTA',Fecha as 'fecha',TC 
+ 	    $sql = "SELECT SUM(VALOR_TOTAL) as 'total',Contra_Cta as 'cuenta',Fecha as 'fecha',TC 
      	FROM Trans_Kardex  
      	WHERE Item = '".$_SESSION['INGRESO']['item']."' 
      	AND  Periodo = '".$_SESSION['INGRESO']['periodo']."' 
      	AND Orden_No = '".$orden."' 
      	AND TC = 'GC'
-		GROUP BY Orden_No,Contra_Cta,Fecha,TC,CodigoL";
+		GROUP BY Orden_No,Contra_Cta,Fecha,TC";
           // print_r($sql);die();
 	   $datos =  $this->db->datos($sql);
        return $datos;

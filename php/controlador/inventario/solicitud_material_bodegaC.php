@@ -483,6 +483,8 @@ class inventario_onlineC
 
         // asiento para el haber
 		$asiento_haber  = $this->modelo->datos_asiento_haber($orden);
+
+		// print_r($asiento_haber);die();
 		foreach ($asiento_haber as $key => $value) {
 			$cuenta = $this->modelo->catalogo_cuentas($value['cuenta']);		
 			// print_r($cuenta);die();	
