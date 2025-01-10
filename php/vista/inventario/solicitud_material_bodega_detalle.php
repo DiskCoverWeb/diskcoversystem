@@ -154,7 +154,7 @@ function AprobarSolicitud()
 }
 function GenerarComprobante()
 {
-	// $('#myModal_espera').modal('show');
+	$('#myModal_espera').modal('show');
 	var parametros = 
 	  {
 	    'order': orden,
