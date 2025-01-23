@@ -1539,6 +1539,8 @@ class solicitud_materialC
 		    	SetAdoFields("Costo_Original",$value['costo']);
 		    	SetAdoFields("Cantidad",$value['cantidad']);
 		    	SetAdoFields("Total_Original",($value['cantidad']*$value['costo']));
+		    	SetAdoFields("Total",($value['cantidad']*$value['costo']));
+		    	SetAdoFields("Cantidad_Total",$value['cantidad']);
 		    	SetAdoFieldsWhere('ID',$parametros['txt_id_linea']);
 		    	SetAdoUpdateGeneric();	      
 			}else
@@ -1561,6 +1563,7 @@ class solicitud_materialC
 		        SetAdoFields("CodMarca",$linea_org[0]['CodMarca']);     
 		    	SetAdoFields("CodigoC",$value['CodigoC']);    
 		    	SetAdoFields("Orden_No",$linea_org[0]['Orden_No']);
+		    	SetAdoFields("Cantidad_Total",$value['cantidad']);
 				SetAdoUpdate();
 			}
 		}
