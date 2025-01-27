@@ -986,7 +986,7 @@ class facturar_pensionC
               $rep = $resultado = $this->autorizar_sri->Autorizar_factura_o_liquidacion($FA);
               $dataFac = $this->facturacion->getDataBasicFactura($FA['Serie'], $FA['Factura'], $FA['CodigoC']);
 
-              // print_r($rep);
+              print_r($rep);
               // print_r($dataFac);die();
               if($rep==1)
               {

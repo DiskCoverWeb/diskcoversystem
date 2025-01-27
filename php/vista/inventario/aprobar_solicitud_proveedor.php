@@ -205,7 +205,7 @@ if(isset($_GET['orden']))
     window.open('../controlador/inventario/solicitud_materialC.php?imprimir_excel_proveedor=true&orden_pdf='+orden,'_blank');
   }
 
-  function mostrar_proveedor(id,codigo,orden)
+  function mostrar_proveedor(id,codigo,orden,cantidad)
   {
     $('#myModal_provedor').modal('show');
     $('#txt_id_linea').val(id);
@@ -213,6 +213,8 @@ if(isset($_GET['orden']))
     {
       'orden':orden,
       'codigo':codigo,
+      'cantidad':cantidad,
+      'id':id,
     }
      $.ajax({
           url:   '../controlador/inventario/solicitud_materialC.php?lista_provee=true',

@@ -1245,7 +1245,7 @@ class solicitud_materialC
 							}
 						}else
 						{
-							$tr.='<button class="btn btn-sm btn-primary" type="button" onclick="mostrar_proveedor(\''.$value['ID'].'\',\''.$value['Codigo_Inv'].'\',\''.$value['Orden_No'].'\')"><i class="fa fa fa-user"></i> Seleccionar proveedor</button>';
+							$tr.='<button class="btn btn-sm btn-primary" type="button" onclick="mostrar_proveedor(\''.$value['ID'].'\',\''.$value['Codigo_Inv'].'\',\''.$value['Orden_No'].'\',\''.$value['Cantidad'].'\')"><i class="fa fa fa-user"></i> Seleccionar proveedor</button>';
 						}
 						$tr.='
 					</td>
@@ -1459,7 +1459,9 @@ class solicitud_materialC
 	function lista_provee($parametros)
 	{
 		// print_r($parametros);die();
-		$data = $this->modelo->proveedores_seleccionados_x_producto($parametros['codigo'],$parametros['orden']);
+		$select = $this->modelo->lineas_pedido_aprobacion_solicitados_proveedor(false,false,$parametros['id']);
+		// print_r($select);die();
+		$data = $this->modelo->proveedores_seleccionados_x_producto($parametros['codigo'],$parametros['orden'],false,$select[0]['Cantidad']);
 		$lista = '';
 		$id = '';
 		foreach ($data as $key => $value) {

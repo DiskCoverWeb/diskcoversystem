@@ -445,7 +445,7 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
        	return $datos;
 	}
 
-	function proveedores_seleccionados_x_producto($producto,$orden=false,$proveedor=false)
+	function proveedores_seleccionados_x_producto($producto,$orden=false,$proveedor=false,$cantidad=false)
 	{
 		$sql = "SELECT  T.*,C.*,T.ID as IDT 
 		FROM Trans_Ticket  T
@@ -460,6 +460,14 @@ TP.Estado, HABIT, TP.X, TP.ID, Fecha_Ent, CodMarca, Comentario,CM.Marca,CP.Unida
 		if($proveedor)
 		{
 			$sql.="AND CodigoC = '".$proveedor."'";
+		}
+		// if($id)
+		// {
+		// 	$sql.=" AND T.ID='".$id."'";
+		// }
+		if($cantidad)
+		{
+			$sql.=" AND T.Cantidad='".$cantidad."'";
 		}
 
 		// print_r($sql);die();
