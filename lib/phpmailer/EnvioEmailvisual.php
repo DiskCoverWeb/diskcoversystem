@@ -28,6 +28,13 @@ if(isset($_GET['EnviarVisual']))
 	echo json_decode($controlor->EnvioEmailVisual($parametros));
 }
 
+if(isset($_GET['PruebaEmail']))
+{
+	$controlor = new EnviarVisual();
+	$parametros = $_GET['to'];
+	echo json_decode($controlor->Emaildebug($parametros));
+}
+
 class EnviarVisual 
 {
 	
@@ -76,8 +83,6 @@ class EnviarVisual
 				    $mail->SMTPAuth = true;
 				    $mail->Username = 'admin';
 				    $mail->Password = 'Admin@2023';
-				    $mail->SMTPSecure = false; // Dejar en blanco para 'tls'
-				    $mail->SMTPAutoTLS = true; // Desactivar el inicio automático de TLS
 				    $mail->SMTPSecure = 'tls';
 				    $mail->Port = 587;
 	         
@@ -185,6 +190,57 @@ class EnviarVisual
 		ftp_close($ftp_conn);
 
 
+
+	}
+
+
+	function Emaildebug($value)
+	{
+	    
+	  $mail = new PHPMailer(true);
+  	$mail->SMTPOptions = array(
+    	'ssl' => array(
+      	'verify_peer' => false,
+      	'verify_peer_name' => false,
+      	'allow_self_signed' => true
+      	)
+    );
+	  try {
+		          //Server settings
+	        $mail->isSMTP(); //Send using SMTP
+	        $mail->SMTPDebug = SMTP::DEBUG_SERVER;     
+	        $mail->Helo = 'imap.diskcoversystem.com';
+			    $mail->Host = 'imap.diskcoversystem.com';
+			    $mail->SMTPAuth = true;
+			    $mail->Username = 'admin';
+			    $mail->Password = 'Admin@2023';
+			    $mail->SMTPSecure = 'tls';
+			    $mail->Port = 587; 
+			   
+	        $mail->setFrom('admin@imap.diskcoversystem.com','Mailer');
+	        $mail->addAddress($value);  
+			   
+			    $mail->isHTML(true);                                  //Set email format to HTML
+			    $mail->Subject = 'Here is the subject';
+			    $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
+   
+			       
+          if ($mail->send()) {
+            $res = 1;
+          }
+      
+
+
+	        } catch (Exception $e) {
+	          // print_r($mail);
+	          // print_r($e);
+	          // die();
+	          // control_procesos("EMW", "Email: ".trim($from)." => ".trim($email_to), "Asunto(Error): ".$e);
+
+	          print_r("=====================================parametos ===================================================\n");
+	          print_r($mail);
+	          // return -1;
+	        }   
 
 	}
 
