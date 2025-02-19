@@ -569,7 +569,7 @@ class lista_comprasC
 			    SetAdoFields('Numero',$comprobante);  
 			    SetAdoFields('T','N'); 
 			    SetAdoFields('TP','CD'); 
-			    SetAdoFields('Codigo_P',$_SESSION['INGRESO']['CodigoU']); 
+			    SetAdoFields('Codigo_P',$CodigoPrv); 
 			    SetAdoFields('Cta_Inv',$Cta_Inventario); 
 			    SetAdoFields('Contra_Cta',$cta[0]['Codigo']); 
 			    SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']); 
@@ -589,7 +589,8 @@ class lista_comprasC
 			    SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);
 			    SetAdoFields('Item',$_SESSION['INGRESO']['item']);
 			    SetAdoFields('CodBodega','01');
-			    // SetAdoFields('CodigoL',$value['SUBCTA']);
+			    SetAdoFields('Orden_No',$orden);
+			    SetAdoFields('Serie_No','999999');
 			    SetAdoFields('Detalle','Entrada de inventario por '.$nombre.' de la factura '.$orden.' el dia '.$fechaC);
 			    SetAdoFields('Fecha_Exp',$value['Fecha_Ent']->format('Y-m-d'));
 			    SetAdoFields('Fecha_Fab',$value['Fecha_Ent']->format('Y-m-d'));
