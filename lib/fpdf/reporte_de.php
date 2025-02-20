@@ -2826,7 +2826,7 @@ function imprimirDocEle_fac($datos, $detalle, $educativo, $matri = false, $nombr
 
 	$medida_1 = $pdf->GETY();
 
-	$pdf->SetTextColor(255, 255, 255);
+	$pdf->SetTextColor(225, 225, 225);
 	$x = 200 + 100;
 	$pdf->SetY($yfin + 20);
 	$y = $pdf->GetY();
@@ -2838,7 +2838,8 @@ function imprimirDocEle_fac($datos, $detalle, $educativo, $matri = false, $nombr
 	$misma_ln = $pdf->GetY();
 	$pdf->SetFont('Arial', 'B', 12);
 	$pdf->SetWidths(array($col_1));
-	$arr = array('R.U.C. ' . $_SESSION['INGRESO']['RUC']);
+	// $arr = array('R.U.C. ' . $_SESSION['INGRESO']['RUC']);
+	$arr = array('');
 	$pdf->Row($arr, 10);
 
 	if ($rimpe == '') {
@@ -2857,7 +2858,8 @@ function imprimirDocEle_fac($datos, $detalle, $educativo, $matri = false, $nombr
 		$pdf->SetTextColor(255, 255, 255);
 		$pdf->SetFont('Arial', '', 7);
 		$pdf->SetWidths(array($col_1 + $col_2));
-		$arr = array('Agente de Retención Resolución: ' . $agente);
+		// $arr = array('Agente de Retención Resolución: ' . $agente);
+		$arr = array('');
 		$pdf->Row($arr, 10);
 	}
 	// ----------------------------------------------------------------------------------
@@ -2874,6 +2876,7 @@ function imprimirDocEle_fac($datos, $detalle, $educativo, $matri = false, $nombr
 	} else {
 		$arr = array('Factura No.');
 	}
+	$arr = array('');
 	$pdf->Row($arr, 10);
 
 	$pdf->SetXY($x, $misma_ln);
@@ -2883,7 +2886,8 @@ function imprimirDocEle_fac($datos, $detalle, $educativo, $matri = false, $nombr
 	$pdf->SetWidths(array($col_1, $col_2));
 	$ptoEmi = substr($datos[0]['Serie'], 3, 6);
 	$Serie = substr($datos[0]['Serie'], 0, 3);
-	$arr = array('', $Serie . '-' . $ptoEmi . '-' . generaCeros($datos[0]['Factura'], 9)); //mio
+	// $arr = array('', $Serie . '-' . $ptoEmi . '-' . generaCeros($datos[0]['Factura'], 9)); //mio
+	$arr = array('', ''); //mio
 	$pdf->Row($arr, 10);
 	$pdf->SetTextColor(0);
 	// print_r($datos);die();
@@ -2894,7 +2898,8 @@ function imprimirDocEle_fac($datos, $detalle, $educativo, $matri = false, $nombr
 	$pdf->SetTextColor(255, 255, 255);
 	$pdf->SetFont('Arial', 'B', 7);
 	$pdf->SetWidths(array($col_1, $col_2));
-	$arr = array('FECHA Y HORA DE AUTORIZACIÓN:', $datos[0]['Fecha_Aut']->format('Y-m-d  h:m:s'));
+	// $arr = array('FECHA Y HORA DE AUTORIZACIÓN:', $datos[0]['Fecha_Aut']->format('Y-m-d  h:m:s'));
+	$arr = array('', '');
 	$pdf->Row($arr, 10);
 
 
@@ -2902,7 +2907,8 @@ function imprimirDocEle_fac($datos, $detalle, $educativo, $matri = false, $nombr
 	$pdf->SetX($x);
 	$pdf->SetFont('Arial', 'B', 7);
 	$pdf->SetWidths(array($col_1, $col_2));
-	$arr = array('EMISIÓN:', 'NORMAL');
+	// $arr = array('EMISIÓN:', 'NORMAL');
+	$arr = array('', '');
 	$pdf->Row($arr, 13);
 
 
@@ -2920,7 +2926,8 @@ function imprimirDocEle_fac($datos, $detalle, $educativo, $matri = false, $nombr
 	$pdf->SetX($x);
 	$pdf->SetFont('Arial', 'B', 7);
 	$pdf->SetWidths(array($col_1, $col_2));
-	$arr = array('AMBIENTE: ', $am);
+	// $arr = array('AMBIENTE: ', $am);
+	$arr = array('', '');
 	$pdf->Row($arr, 10);
 
 
@@ -2928,7 +2935,8 @@ function imprimirDocEle_fac($datos, $detalle, $educativo, $matri = false, $nombr
 	$pdf->SetFont('Arial', 'B', 7);
 	$pdf->SetX($x);
 	$pdf->SetWidths(array($margen_med));
-	$arr = array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
+	// $arr = array('NÚMERO DE AUTORIZACIÓN Y CLAVE DE ACCESO');
+	$arr = array('');
 	$pdf->Row($arr, 10);
 	if ($datos[0]['Clave_Acceso'] != $datos[0]['Autorizacion']) {
 
