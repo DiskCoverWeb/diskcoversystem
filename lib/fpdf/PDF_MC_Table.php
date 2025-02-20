@@ -40,6 +40,7 @@ class PDF_MC_Table extends FPDF
 	function Row($data,$h1=null,$b=null,$estiloRow=null,$ali=null,$mostrar_cero=false, $dataCabecera=null)
 	{
 		//para el alto
+		$this->SetTextColor(0,0,0);
 		if ($h1==null)
 		{
 			$h1=5;
@@ -139,9 +140,12 @@ class PDF_MC_Table extends FPDF
 					{
 						$this->SetTextColor(255,51,51);
 						$data[$i] = number_format($data[$i], 2);
-						if(($data[$i] == 0 ) )
+						if($data[$i] == 0 and $mostrar_cero==false )
 						{
 							$data[$i] = '';
+						}else
+						{
+							$data[$i] = $data[$i];
 						}
 					}else
 					{

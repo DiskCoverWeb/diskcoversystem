@@ -31,22 +31,23 @@ $mail = new PHPMailer(true);
     // $mail->SMTPSecure = '';//PHPMailer::ENCRYPTION_STARTTLS;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
     // $mail->SMTPAutoTLS = false;
     // $mail->Port       = 26;                                    //TCP port to connect to, use 465 for PHPMailer::ENCRYPTION_SMTPS` above
-    $mail->Helo = 'smtp.diskcoversystem.com';    
-    $mail->Host = 'smtp.diskcoversystem.com';
+    
+    $mail->Helo = 'imap.diskcoversystem.com';
+    $mail->Host = 'imap.diskcoversystem.com';
     $mail->SMTPAuth = true;
     $mail->Username = 'admin';
     $mail->Password = 'Admin@2023';
-    $mail->SMTPSecure = false; // Dejar en blanco para 'tls'
-    $mail->SMTPAutoTLS = true; // Desactivar el inicio automático de TLS
-    $mail->Port = 26;
+    $mail->SMTPSecure = 'tls';
+    $mail->Port = 587;
+
 
    
 
 
     //Recipients
-    $mail->setFrom('electronicos@smtp.diskcoversystem.com', 'Mailer');
+    $mail->setFrom('admin@imap.diskcoversystem.com', 'Mailer');
     $mail->addAddress('javier.farinango92@gmail.com');     //Add a recipient
-    // $mail->addAddress('javier.farinango92@gmail.com');     //Add a recipient
+    $mail->addAddress('diskcoversystem@msn.com');     //Add a recipient
     // $mail->addAddress('diskcoversystem@msn.com');     //Add a recipient
     // $mail->addAddress('ellen@example.com');               //Name is optional
     // $mail->addReplyTo('info@example.com', 'Information');

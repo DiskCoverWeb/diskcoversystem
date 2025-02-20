@@ -629,6 +629,18 @@ if (isset($_SESSION['INGRESO']['IP_VPN_RUTA']) && $_SESSION['INGRESO']['Tipo_Bas
 			case 'detalle_compra':
 				require_once("inventario/detalle_compra.php");
 				break;
+			case 'constructora_detalle':
+				require_once("inventario/reporte_constructora_detalle.php");
+				break;
+			case 'constructora_orden':
+				require_once("inventario/reporte_constructora_orden.php");
+				break;
+			case 'constructora_historico':
+				require_once("inventario/reporte_constructora_historial.php");
+				break;
+			case 'constructora_tiempos':
+				require_once("inventario/reporte_constructora_tiempos.php");
+				break;
 			//Auditoria -> Archivo -> Modulo de auditoria
 			case 'auditoria':
 				require_once("auditoria/modulo_auditoria.php");
