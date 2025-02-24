@@ -561,10 +561,9 @@ class lista_comprasM
 	
 	}
 
-	function eliminar_asiento_K($orden,$CodigoPrv)
+	function update_asiento_K($orden,$CodigoPrv,$numero)
 	{
-		$sql = "DELETE   
-				FROM Trans_Pedidos  
+		$sql = "UPDATE Trans_Pedidos  SET Fecha_Ent = '".date('Y-m-d')."' ,TC='N',Numero = '".$numero."'
 				WHERE Item = '".$_SESSION['INGRESO']['item']."' 
 				AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 	     		AND Orden_No = '".$orden."' 

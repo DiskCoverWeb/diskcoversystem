@@ -481,7 +481,7 @@ class lista_comprasC
 				                	{
 				                		// hasta aqui 
 				                		// print_r('ingreso kardex'.$num_comprobante);die();
-				                		$resp = $this->modelo->eliminar_asiento_K($parametros['orden'],$value['CodigoC']);
+				                		$resp = $this->modelo->update_asiento_K($parametros['orden'],$value['CodigoC'],$num_comprobante);
 				                		if($resp==1)
 				                		{
 				                			$this->modelo->eliminar_asiento($t_no);

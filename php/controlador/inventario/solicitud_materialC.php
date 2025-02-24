@@ -493,7 +493,8 @@ class solicitud_materialC
 		foreach ($datos as $key => $value) {
 
 			SetAdoAddNew("Trans_Pedidos");          
-        	SetAdoFields("Orden_No",$codigo);     
+        	SetAdoFields("Orden_No",$codigo);       
+        	SetAdoFields("Fecha",date('Y-m-d'));     
         	SetAdoFields("TC",'S');
 
         	SetAdoFieldsWhere('ID',$value['ID']);
@@ -716,8 +717,8 @@ class solicitud_materialC
 		foreach ($datos as $key => $value) {
 			
 			SetAdoAddNew("Trans_Pedidos");         
-        	SetAdoFields("TC",'E');
-
+        	SetAdoFields("TC",'E');       
+        	SetAdoFields("Fecha_Aprob",date('Y-m-d'));
         	SetAdoFieldsWhere('ID',$value['ID']);
         	SetAdoUpdateGeneric();
 		}
@@ -1595,7 +1596,8 @@ class solicitud_materialC
 			{
 				// print_r($value);die();
 				SetAdoAddNew("Trans_Pedidos");         
-		    	SetAdoFields("TC",'B');  //BUY compra en ingles    
+		    	SetAdoFields("TC",'B');  //BUY compra en ingles  
+		    	SetAdoFields("Fecha_Provee",'B');  //BUY compra en ingles    
 		    	SetAdoFieldsWhere('ID',$value2['ID'] );
 		    	SetAdoUpdateGeneric();
 		    	$this->enviar_email($value2['CodigoC']);	   
