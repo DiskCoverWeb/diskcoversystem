@@ -181,10 +181,10 @@
 
         	 tr+=`<tr>
 	        	 			<td>`+(i+1)+`</td>
-	      					<td>FAMILIA</td>
+	      					<td>`+item.familia+`</td>
 	      					<td>`+item.Codigo_Inv+`</td>
 	      					<td>`+item.Cliente+`</td>
-	      					<td>MARCAS</td>
+	      					<td>`+item.Marca+`</td>
 	      					<td>`+item.Entrada+`</td>
 	      					<td>`+item.Costo+`</td>
 	      					<td>`+refere+`</td>

@@ -250,10 +250,10 @@ class reporte_constructora_Compras
 				$tablaHTML[$j]['alineado']=$tablaHTML[$i]['alineado'];
 				$tablaHTML[$j]['datos']=array(
 					($key2+1),
-					'',
+					$value2['familia'],
 					$value2['Codigo_Inv'],
 					$value2['Producto'],
-					'',
+					$value2['Marca'],
 					$value2['Entrada'],
 					$value2['Costo'], 
 					number_format(($value2['Costo']*$value2['Entrada']),3,'.',''),
@@ -369,7 +369,7 @@ class reporte_constructora_Compras
 					'',
 					$value2['Codigo_Inv'],
 					$value2['Producto'],
-					'',
+					$value2['Marca'],
 					$value2['Entrada'],
 					$value2['Costo'], 
 					number_format(($value2['Costo']*$value2['Entrada']),3,'.',''),

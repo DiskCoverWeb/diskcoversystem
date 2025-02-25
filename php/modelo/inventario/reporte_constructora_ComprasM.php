@@ -170,10 +170,11 @@ class reporte_constructora_ComprasM
 
     function lineas_pedidos($orden,$proveedor=false)
     {
-    	$sql = "SELECT T.*,Producto,Cliente
-    	FROM Trans_Kardex T
-    	INNER JOIN Catalogo_Productos CP on T.Codigo_Inv = CP.Codigo_Inv
-    	INNER JOIN Clientes C on T.Codigo_P = C.Codigo
+    	$sql = "SELECT DISTINCT T.*,CP.Producto,Cliente,CM.Marca,CP2.Producto as familia  FROM Trans_Kardex T 
+		INNER JOIN Catalogo_Productos CP on T.Codigo_Inv = CP.Codigo_Inv 
+		INNER JOIN Catalogo_Productos CP2 on CP2.Codigo_Inv = LEFT(T.Codigo_Inv, LEN(T.Codigo_Inv) - 4)
+		INNER JOIN Clientes C on T.Codigo_P = C.Codigo 
+		LEFT JOIN Catalogo_Marcas CM on T.CodMarca = CM.CodMar
     	WHERE T.Item = '".$_SESSION['INGRESO']['item']."'
     	AND CP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
     	AND T.Item = CP.Item
