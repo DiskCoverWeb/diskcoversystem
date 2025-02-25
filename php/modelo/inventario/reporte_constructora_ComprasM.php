@@ -51,6 +51,8 @@ class reporte_constructora_ComprasM
 
     function lineas_pedidos_orden($parametros)
     {
+    	// AND Serie_No = '999999'
+				
     	$sql =" SELECT Cliente,Orden_No,DATEPART(week, T.Fecha) as semana,
     			FORMAT(T.Fecha, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS Fecha,SUM(T.Valor_Total) as total 
     			FROM Trans_Kardex T 
@@ -63,7 +65,7 @@ class reporte_constructora_ComprasM
 				AND T.Periodo = CP.Periodo ";
 				if($parametros['contratista'])
 		    	{
-		    		$sql.=" AND T.Codigo_P = '".$parametros['contratista']."'";
+		    		$sql.=" AND T.CodigoU = '".$parametros['contratista']."'";
 		    	}
 		    	if($parametros['orden'])
 		    	{
@@ -130,6 +132,41 @@ class reporte_constructora_ComprasM
     	return $this->db->datos($sql);
     }
 
+     function cargar_datos_tiempos($parametros)
+    {
+    	$sql ="SELECT  Orden_No,FORMAT(Fecha, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS solicitud,
+    			FORMAT(Fecha_Aprob, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS aprobacion,
+    			FORMAT(Fecha_Provee, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS proveedor,
+    			FORMAT(Fecha_Ent, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS compra
+				FROM Trans_Pedidos
+				WHERE Item = '".$_SESSION['INGRESO']['item']."'
+				AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				AND TC = 'N'";
+				
+		    	if($parametros['orden'])
+		    	{
+		    		$sql.=" AND Orden_No = '".$parametros['orden']."'";
+		    	}
+		    	if($parametros['fecha'])
+		    	{
+		    		$sql.=" AND Fecha = '".$parametros['fecha']."'";
+		    	}
+		    	if($parametros['semanas'])
+		    	{
+		    		$sql.="AND DATEPART(week, Fecha) = ".$parametros['semanas'];
+		    	}
+		    	if($parametros['mes'])
+		    	{
+		    		$sql.="AND MONTH(Fecha) = ".$parametros['mes'];
+		    	}	
+				// $sql.=" group by Cliente,Orden_No,T.Fecha,Entrada,Valor_Unitario,T.Valor_Total ";
+
+				// print_r($sql);die();
+
+
+    	return $this->db->datos($sql);
+    }
+
 
     function lineas_pedidos($orden,$proveedor=false)
     {
@@ -168,7 +205,28 @@ class reporte_constructora_ComprasM
 				}
 				if($contratista)
 				{
-					$sql.=" AND Codigo_P = '".$contratista."'";
+					$sql.=" AND CodigoU = '".$contratista."'";
+				}
+		$sql.= " group by Orden_No";
+
+		// print_r($sql);die();
+    	return $this->db->datos($sql);
+    }
+
+    function orden_arti($query,$contratista=false)
+    {
+    	$sql= "SELECT Orden_No as id,Orden_No as text
+				FROM Trans_Kardex TK 
+				WHERE Item = '".$_SESSION['INGRESO']['item']."'
+				AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+				AND Serie_No = '999999'";
+				if($query)
+				{
+					$sql.=" AND Orden_No like'%".$query."%'";
+				}
+				if($contratista)
+				{
+					$sql.=" AND Codigo_Inv = '".$contratista."'";
 				}
 		$sql.= " group by Orden_No";
 

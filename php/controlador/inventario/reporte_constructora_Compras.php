@@ -22,6 +22,11 @@ if(isset($_GET['cargar_datos_historial']))
 	$parametros = $_POST['parametros'];
 	echo json_encode($controlador->cargar_datos_historial($parametros));
 }
+if(isset($_GET['cargar_datos_tiempos']))
+{
+	$parametros = $_POST['parametros'];
+	echo json_encode($controlador->cargar_datos_tiempos($parametros));
+}
 if(isset($_GET['contratistas']))
 {
 	// $parametros = $_POST['parametros'];
@@ -47,6 +52,18 @@ if(isset($_GET['ddl_orden']))
 	$query = '';
 	if(isset($_GET['q'])){ $query = $_GET['q'];}
 	echo json_encode($controlador->orden($query,$contratista));
+}
+
+if(isset($_GET['ddl_orden_arti']))
+{
+	$contratista = '';
+	if(isset($_GET['arti']))
+	{
+		$contratista = $_GET['arti'];
+	}
+	$query = '';
+	if(isset($_GET['q'])){ $query = $_GET['q'];}
+	echo json_encode($controlador->orden_arti($query,$contratista));
 }
 
 //reportes
@@ -83,6 +100,18 @@ if(isset($_GET['cargar_historial_excel']))
 {
 	$parametros = $_GET;
 	echo json_encode($controlador->cargar_historial_excel($parametros));
+}
+
+// reporte tiempos 
+if(isset($_GET['cargar_tiempos_pdf']))
+{
+	$parametros = $_GET;
+	echo json_encode($controlador->cargar_tiempos_pdf($parametros));
+}
+if(isset($_GET['cargar_tiempos_excel']))
+{
+	$parametros = $_GET;
+	echo json_encode($controlador->cargar_tiempos_excel($parametros));
 }
 
 /**
@@ -122,6 +151,12 @@ class reporte_constructora_Compras
 		return $datos;
 	}
 
+	function cargar_datos_tiempos($parametros)
+	{
+		$datos = $this->modelo->cargar_datos_tiempos($parametros);
+		return $datos;
+	}
+
 
 	function contratistas($query)
 	{
@@ -131,6 +166,12 @@ class reporte_constructora_Compras
 	function orden($query,$contratista = false)
 	{
 		$datos = $this->modelo->orden($query,$contratista);
+		return $datos;
+	}
+
+	function orden_arti($query,$contratista = false)
+	{
+		$datos = $this->modelo->orden_arti($query,$contratista);
 		return $datos;
 	}
 
@@ -486,6 +527,70 @@ class reporte_constructora_Compras
 		}
       	excel_generico($titulo,$tablaHTML);  
 	}
+
+	// reportes tiempos
+
+	function cargar_tiempos_pdf($parametros)
+	{
+		// print_r($parametros);die();
+		$datos = $this->modelo->cargar_datos_tiempos($parametros);
+		$titulo = 'T I E M P O S';
+		$sizetable =7;
+		$mostrar = 1;
+		$desde = ''; //$parametros['desde'];
+		$hasta = ''; //$parametros['hasta'];
+		$tablaHTML= array();
+
+		$tablaHTML[0]['medidas']=array(38,38,38,38,38);
+		$tablaHTML[0]['alineado']=array('L','L','L','L','L');
+		$tablaHTML[0]['datos']=array('ORDEN','FECHA SOLICITUD','FECHA APROBACION','FECHA PROVEEDOR','FECHA COMPRA');
+		$tablaHTML[0]['estilo']='B';
+		$tablaHTML[0]['borde'] =1;
+
+
+		$i = 1;
+		foreach ($datos as $key => $value) {
+			$tablaHTML[$i]['medidas']=$tablaHTML[0]['medidas'];
+			$tablaHTML[$i]['alineado']=$tablaHTML[0]['alineado'];
+			$tablaHTML[$i]['datos']=array($value['Orden_No'],$value['solicitud'],$value['aprobacion'],$value['proveedor'],$value['compra']);
+			$tablaHTML[$i]['borde'] =1;
+			$i++;
+			
+		}
+		$this->pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$desde,$hasta,$sizetable,$mostrar,15,'P',true,null,1,$nuevaPagina=false);
+		// return $datos;
+	}
+
+
+	function cargar_tiempos_excel($parametros)
+	{
+		$datos = $this->modelo->cargar_datos_tiempos($parametros);
+		$titulo = 'T I E M P O S';
+		$sizetable =7;
+		$mostrar = 1;
+		$desde = ''; //$parametros['desde'];
+		$hasta = ''; //$parametros['hasta'];
+		$tablaHTML= array();
+
+		$tablaHTML[0]['medidas']=array(38,38,38,38,38);
+		$tablaHTML[0]['alineado']=array('L','L','L','L','L','L');		
+		$tablaHTML[0]['datos']=array('ORDEN','FECHA SOLICITUD','FECHA APROBACION','FECHA PROVEEDOR','FECHA COMPRA');
+		$tablaHTML[0]['tipo']='B';
+		$tablaHTML[0]['borde'] =1;
+
+
+		$i = 1;
+		foreach ($datos as $key => $value) {
+			$tablaHTML[$i]['medidas']=$tablaHTML[0]['medidas'];
+			$tablaHTML[$i]['alineado']=$tablaHTML[0]['alineado'];
+			$tablaHTML[$i]['datos']=array($value['Orden_No'],$value['solicitud'],$value['aprobacion'],$value['proveedor'],$value['compra']);
+			$tablaHTML[$i]['borde'] =1;
+			$i++;
+			
+		}
+      	excel_generico($titulo,$tablaHTML);  
+	}
+
 
 
 

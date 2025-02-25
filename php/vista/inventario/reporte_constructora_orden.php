@@ -111,10 +111,12 @@
 
   	function orden()
   	{
+
+  		let contra = $('#ddl_contratista').val() || ''
   		$('#ddl_orden').select2({
 	      placeholder: 'Seleccione orden',
 	      ajax: {
-	        url:   '../controlador/inventario/reporte_constructora_Compras.php?ddl_orden=true',
+	        url:   '../controlador/inventario/reporte_constructora_Compras.php?ddl_orden=true&contratista='+contra,
 	        dataType: 'json',
 	        delay: 250,
 	        processResults: function (data) {
@@ -127,6 +129,18 @@
 	    });
 
   	}
+
+  	function limpiar_contra()
+  	{
+  		$('#ddl_contratista').empty()
+  		orden();
+  	}
+  	function limpiar_orden()
+  	{
+  		$('#ddl_orden').empty();
+  		cargar_datos();
+  	}
+
 
   	function imprimir_pdf()
   	{  		
@@ -163,15 +177,26 @@
 <div class="row mb-2">
 	<div class="col-sm-4">
 		<b>Contratista</b>
-		<select class="form-control input-sm" id="ddl_contratista" onchange=" cargar_datos()">
-			<option value="">Selecciones</option>
-		</select>
+		<div class="input-group input-group-sm">
+			<select class="form-control input-sm" id="ddl_contratista" onchange=" cargar_datos();orden()">
+				<option value="">Selecciones</option>
+			</select>
+			<span class="input-group-btn">
+				<button class="btn btn-danger btn-xs" style="height: 18pt;padding-top: 3px;"  onclick="limpiar_contra()"><i class="fa fa-close"></i></button>
+			</span>
+		</div>
 	</div>
 	<div class="col-sm-3">
 		<b>Orden</b>
-		<select class="form-control input-sm" id="ddl_orden" onchange=" cargar_datos()">
-			<option value="">Selecciones</option>
-		</select>
+		<div class="input-group input-group-sm">
+			<select class="form-control input-sm" id="ddl_orden" onchange=" cargar_datos()">
+				<option value="">Selecciones</option>
+			</select>
+			<span class="input-group-btn">
+					<button class="btn btn-danger btn-xs" style="height: 18pt;padding-top: 3px;" onclick="limpiar_orden()"><i class="fa fa-close"></i></button>
+				</span>
+		</div>
+		
 	</div>
 	<div class="col-sm-2">
 		<b>Meses</b>

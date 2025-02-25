@@ -251,20 +251,24 @@
 <div class="row mb-2">
 	<div class="col-sm-4">
 		<b>Contratista</b>
-		<div class="input-group">
-			<select class="form-control input-sm" id="ddl_contratista" onchange="cargar_datos();orden()">
+		<div class="input-group input-group-sm">
+			<select class="form-control" id="ddl_contratista" onchange="cargar_datos();orden()">
 				<option value="">Selecciones</option>
 			</select>
-			<button class="btn btn-danger btn-xs" onclick="limpiar_contra()"><i class="fa fa-close"></i></button>
+			<span class="input-group-btn">
+					<button class="btn btn-danger btn-flat p-0" style="height: 18pt;padding-top: 3px;" onclick="limpiar_contra()"><i class="fa fa-close"></i></button>
+			</span>
 		</div>
 	</div>
 	<div class="col-sm-3">
 		<b>Orden</b>
-		<div class="input-group">
+		<div class="input-group input-group-sm">
 			<select class="form-control input-sm" id="ddl_orden" onchange="cargar_datos()">
 				<option value="">Selecciones</option>
 			</select>
-			<button class="btn btn-danger btn-xs" onclick="limpiar_orden()"><i class="fa fa-close"></i></button>
+			<span class="input-group-btn">
+					<button class="btn btn-danger btn-flat p-0" style="height: 18pt;padding-top: 3px;" onclick="limpiar_orden()"><i class="fa fa-close"></i></button>
+			</span>
 		</div>
 	</div>
 	<div class="col-sm-2">

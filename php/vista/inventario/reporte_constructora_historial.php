@@ -112,11 +112,11 @@
 
   	function orden()
   	{
-  		let contra = $('#ddl_contratista').val() || ''
+  		let contra = $('#ddl_articulos').val() || ''
   		$('#ddl_orden').select2({
 	      placeholder: 'Seleccione orden',
 	      ajax: {
-	        url:   '../controlador/inventario/reporte_constructora_Compras.php?orden=true&arti='+contra,
+	        url:   '../controlador/inventario/reporte_constructora_Compras.php?ddl_orden_arti=true&arti='+contra,
 	        dataType: 'json',
 	        delay: 250,
 	        processResults: function (data) {
@@ -177,20 +177,24 @@
 <div class="row mb-2">
 	<div class="col-sm-4">
 		<b>Productos</b>
-		<div class="input-group">
+		<div class="input-group input-group-sm">
 			<select class="form-control input-sm" id="ddl_articulos" onchange="cargar_datos();orden()">
 				<option value="">Selecciones</option>
 			</select>
-			<button class="btn btn-danger btn-xs" onclick="limpiar_contra()"><i class="fa fa-close"></i></button>
+			<span class="input-group-btn">
+				<button class="btn btn-danger btn-xs" style="height: 18pt;padding-top: 3px;" onclick="limpiar_contra()"><i class="fa fa-close"></i></button>
+			</span>
 		</div>
 	</div>
 	<div class="col-sm-3">
 		<b>Orden</b>
-		<div class="input-group">
+		<div class="input-group input-group-sm">
 			<select class="form-control input-sm" id="ddl_orden" onchange="cargar_datos()">
 				<option value="">Selecciones</option>
-			</select>
-			<button class="btn btn-danger btn-xs" onclick="limpiar_orden()"><i class="fa fa-close"></i></button>
+			</select>			
+			<span class="input-group-btn">
+				<button class="btn btn-danger btn-xs" style="height: 18pt;padding-top: 3px;" onclick="limpiar_orden()"><i class="fa fa-close"></i></button>
+			</span>
 		</div>
 	</div>
 	<div class="col-sm-2">

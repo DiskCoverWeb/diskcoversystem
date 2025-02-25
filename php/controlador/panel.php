@@ -1207,6 +1207,7 @@ function validar_estado_all()
         . "FROM Accesos "
         . "WHERE UPPER(Usuario) = '" . $_SESSION['INGRESO']['usuario'] . "' " //definido en loginController.php
         . "AND UPPER(Clave) = '" . $_SESSION['INGRESO']['pass'] . "' "; //definido en loginController.php
+    // print_r($sSQL);
     $dataUser = $conn->datos($sSQL);
 
     // print_r($dataUser);die();
@@ -1215,7 +1216,9 @@ function validar_estado_all()
     $ComunicadoEntidad, $SerieFE, $Cartera, $Cant_FA, $TipoPlan, $PCActivo, $EstadoUsuario,
     $ConexionConMySQL;
 
+// print_r(expression)
     //llamada al SP de MySql
+    // print_r($dataUser);die();
     Datos_Iniciales_Entidad_SP_MySQL($empresa[0], $dataUser[0]);
     if ($ConexionConMySQL) {
         if (

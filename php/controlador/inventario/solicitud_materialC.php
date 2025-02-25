@@ -731,7 +731,7 @@ class solicitud_materialC
 
 			SetAdoAddNew("Trans_Pedidos");         
         	SetAdoFields("Opc1",true);
-
+        	SetAdoFields("Fecha_Aprob",date('Y-m-d'));
         	SetAdoFieldsWhere('ID',$id);
         	SetAdoUpdateGeneric();		
 
