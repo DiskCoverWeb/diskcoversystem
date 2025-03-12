@@ -226,6 +226,7 @@ class devoluciones_insumosC
 		   SetAdoFields('Codigo_B',$linea[0]['Codigo_P']);		   
 		   SetAdoFields('Procedencia','Devolucion');
 		   SetAdoFields('Codigo_Dr',$parametro['solicitante']);
+		   SetAdoFields('CodBod','D');
 
 		   // print_r($_SESSION['SetAdoAddNew']);die();
 		   // print_r('dddd');die();

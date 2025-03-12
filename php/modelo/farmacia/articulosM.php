@@ -63,9 +63,13 @@ class articulosM
 	{
      $cid = $this->conn;
     // 'LISTA DE CODIGO DE ANEXOS
-     $sql = "SELECT DISTINCT ORDEN,SUBCTA FROM Asiento_K WHERE CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' AND Item = '".$_SESSION['INGRESO']['item']."' AND DH = '1'";
-       
-    		 return $this->conn->datos($sql);
+     $sql = "SELECT DISTINCT ORDEN,SUBCTA 
+     FROM Asiento_K 
+     WHERE CodigoU = '".$_SESSION['INGRESO']['CodigoU']."' 
+     AND Item = '".$_SESSION['INGRESO']['item']."' AND DH = '1'
+     AND CodBod <> 'D' ";
+     		// print_r($sql);die(); 
+    	return $this->conn->datos($sql);
 	}
 
 
