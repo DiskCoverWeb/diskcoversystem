@@ -586,6 +586,8 @@ class lista_comprasC
 			    {
 			    	SetAdoFields('Existencia',floatval($value['Cantidad']));
 			    }
+
+			    SetAdoFields('Codigo_Dr',$value['Codigo_Sup']);
 			    SetAdoFields('CodigoU',$_SESSION['INGRESO']['CodigoU']);
 			    SetAdoFields('Item',$_SESSION['INGRESO']['item']);
 			    SetAdoFields('CodBodega','01');

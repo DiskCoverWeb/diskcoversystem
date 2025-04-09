@@ -383,6 +383,7 @@ class solicitud_materialC
 		        SetAdoFields("Total",$parametros['total']);
 		        SetAdoFields("Item",$_SESSION['INGRESO']['item']);
 		        SetAdoFields("Periodo",$_SESSION['INGRESO']['periodo']);
+		        SetAdoFields("Codigo_Sup",$_SESSION['INGRESO']['CodigoU']);
 		        SetAdoFields("CodigoU",$_SESSION['INGRESO']['CodigoU']);
 		        SetAdoFields("Comentario",$parametros['obs']);
 		        SetAdoFields("CodMarca",$parametros['marca']);

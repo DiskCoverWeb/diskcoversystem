@@ -3,8 +3,36 @@
 		contratistas()
 		orden();
 		meses();
-		semanas()
+		Calcularsemanas()
   	});
+
+	function obtenerSemanasDelMes(year, month) {
+    // Ajustar month (0-11 en JavaScript)
+	    const firstDay = new Date(year, month - 1, 1);
+	    const lastDay = new Date(year, month, 0); // Último día del mes
+	    
+	    // Función para número de semana ISO
+	    const getISOWeek = (date) => {
+	        const d = new Date(date);
+	        d.setHours(0, 0, 0, 0);
+	        d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+	        const firstDayOfYear = new Date(d.getFullYear(), 0, 1);
+	        const diffDays = Math.round((d - firstDayOfYear) / (86400000));
+	        return Math.floor(diffDays / 7) + 1;
+	    };
+
+	    // Calcular semanas del primer y último día
+	    const firstWeek = getISOWeek(firstDay);
+	    const lastWeek = getISOWeek(lastDay);
+
+	    // Generar array de semanas
+	    const semanas = [];
+	    for (let week = firstWeek; week <= lastWeek; week++) {
+	        semanas.push(week);
+	    }
+
+	    return semanas;
+	}
 
   	function NumeroSemanasxAnio(year) {
 	    const firstDayOfYear = new Date(year, 0, 1);
@@ -42,15 +70,26 @@
      
   	}
 
-  	function semanas()
+ 	function Calcularsemanas()
   	{
   		const year = new Date().getFullYear();
-  		semanas = NumeroSemanasxAnio(year)
-  		for (var i = 1; i <= semanas; i++) {
-  			$('#ddl_semanas').append('<option value="'+i+'">'+i+'</option>')
+  		$('#ddl_semanas').html('<option value="">Seleccione</option>');
+  		if($('#ddl_meses').val()=='')
+  		{
+  			semanas = NumeroSemanasxAnio(year)
+  			for (var i = 1; i <= semanas; i++) {
+	  			$('#ddl_semanas').append('<option value="'+i+'">'+i+'</option>')
+	  		}
+  		}else
+  		{
+  			var month = $('#ddl_meses').val();
+  		 	semanas = obtenerSemanasDelMes(year, month);
+  		 	semanas.forEach(function(item,i){
+  		 			$('#ddl_semanas').append('<option value="'+item+'">'+item+'</option>')
+  		 	})
   		}
-
   	}
+
 
   	function cargar_datos()
   	{
@@ -61,6 +100,7 @@
   			'mes':$('#ddl_meses').val(),
   			'semanas':$('#ddl_semanas').val(),
   			'fecha':$('#txt_fecha').val(),
+  			'hasta':$('#txt_fecha_hasta').val(),
   		}
   		$.ajax({
         data:  {parametros:parametros},
@@ -83,7 +123,7 @@
         	})
 
         	$('#lbl_num_ord').text(response.length);
-			$('#lbl_resumen').text(total);
+			$('#lbl_resumen').text(total.toFixed(2));
         	$('#tbl_body').html(table)
   		}
       });
@@ -132,7 +172,8 @@
 
   	function limpiar_contra()
   	{
-  		$('#ddl_contratista').empty()
+  		$('#ddl_contratista').empty()  		
+  		$('#ddl_contratista').val('')
   		orden();
   	}
   	function limpiar_orden()
@@ -144,12 +185,12 @@
 
   	function imprimir_pdf()
   	{  		
-  		var url = '../controlador/inventario/reporte_constructora_Compras.php?cargar_orden_pdf=true&contratista='+$('#ddl_contratista').val()+'&orden='+$('#ddl_orden').val()+'&mes='+$('#ddl_meses').val()+'&semanas='+$('#ddl_semanas').val()+'&fecha='+$('#txt_fecha').val()                 
+  		var url = '../controlador/inventario/reporte_constructora_Compras.php?cargar_orden_pdf=true&contratista='+$('#ddl_contratista').val()+'&orden='+$('#ddl_orden').val()+'&mes='+$('#ddl_meses').val()+'&semanas='+$('#ddl_semanas').val()+'&fecha='+$('#txt_fecha').val()+'&hasta='+$('#txt_fecha_hasta').val()                                  
       window.open(url, '_blank');
   	}
   	function imprimir_excel()
   	{  		
-  		var url = '../controlador/inventario/reporte_constructora_Compras.php?cargar_orden_excel=true&contratista='+$('#ddl_contratista').val()+'&orden='+$('#ddl_orden').val()+'&mes='+$('#ddl_meses').val()+'&semanas='+$('#ddl_semanas').val()+'&fecha='+$('#txt_fecha').val()                 
+  		var url = '../controlador/inventario/reporte_constructora_Compras.php?cargar_orden_excel=true&contratista='+$('#ddl_contratista').val()+'&orden='+$('#ddl_orden').val()+'&mes='+$('#ddl_meses').val()+'&semanas='+$('#ddl_semanas').val()+'&fecha='+$('#txt_fecha').val()+'&hasta='+$('#txt_fecha_hasta').val()                                  
       window.open(url, '_blank');
   	}
 	
@@ -200,18 +241,51 @@
 	</div>
 	<div class="col-sm-2">
 		<b>Meses</b>
-		<select class="form-control input-sm" id="ddl_meses" onchange=" cargar_datos()">
-			<option value="">Selecciones</option>
-		</select>
-	</div>
-	<div class="col-sm-1">
-		<b>Semana</b><select class="form-control input-sm" id="ddl_semanas" onchange=" cargar_datos()">
-			<option value="">Selecciones</option>
-		</select>
+		<div class="input-group input-group-sm">
+			<select class="form-control input-sm" id="ddl_meses" onchange="Calcularsemanas();">
+				<option value="">Selecciones</option>
+			</select>
+			<span class="input-group-btn">
+					<button class="btn btn-danger btn-flat p-0" onclick="$('#ddl_meses').val('');Calcularsemanas()"><i class="fa fa-close"></i></button>
+			</span>
+		</div>
 	</div>
 	<div class="col-sm-2">
-		<b>Fecha</b>
-		<input type="date" name="txt_fecha" id="txt_fecha" class="form-control input-sm" onblur="cargar_datos()">
+		<b>Semana</b>
+		<div class="input-group input-group-sm">
+			<select class="form-control input-sm" id="ddl_semanas">
+				<option value="">Selecciones</option>
+			</select>
+			<span class="input-group-btn">
+						<button class="btn btn-danger btn-flat p-0" onclick="$('#ddl_semanas').val('')"><i class="fa fa-close"></i></button>
+			</span>
+		</div>
+	</div>
+	<div class="col-sm-4">
+		<div class="row">
+			<div class="col-sm-6">
+				Desde
+				<div class="input-group input-group-sm">
+					<input type="date" name="txt_fecha" id="txt_fecha" class="form-control input-sm">
+					<span class="input-group-btn">
+						<button class="btn btn-danger btn-flat p-0" onclick="$('#txt_fecha').val('')"><i class="fa fa-close"></i></button>
+					</span>
+				</div>
+			</div>
+			<div class="col-sm-6">
+					Hasta
+				<div class="input-group input-group-sm">
+					<input type="date" name="txt_fecha" id="txt_fecha_hasta" class="form-control input-sm">
+					<span class="input-group-btn">
+							<button class="btn btn-danger btn-flat p-0" onclick="$('#txt_fecha_hasta').val('')"><i class="fa fa-close"></i></button>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-8 text-right">
+		<br>
+		<button class="btn btn-primary btn-sm" onclick="cargar_datos()"><i class="fa fa-search"></i>Buscar</button>		
 	</div>
 	
 </div>

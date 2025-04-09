@@ -20,19 +20,22 @@ class reporte_constructora_ComprasM
     	// print_r($parametros);die();
     	$sql = "SELECT T.Fecha,SUM(Valor_Total) as valor_compra,Orden_No,Codigo_P,SUM(Costo*Entrada) as valor_ref,Cliente 
 				FROM Trans_Kardex T 
-				INNER JOIN Clientes C on T.CodigoU = C.Codigo 
+				INNER JOIN Clientes C on T.Codigo_Dr = C.Codigo 
 				WHERE T.Item = '".$_SESSION['INGRESO']['item']."'
 				AND T.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 				AND Serie_No = '999999'";
-    	if($parametros['contratista'])
+    	if($parametros['contratista'] && $parametros['contratista']!='null')
     	{
     		$sql.=" AND T.CodigoU = '".$parametros['contratista']."'";
     	}
-    	if($parametros['orden'])
+    	if($parametros['orden'] && $parametros['orden']!='null')
     	{
     		$sql.=" AND Orden_No = '".$parametros['orden']."'";
     	}
-    	if($parametros['fecha'])
+    	if($parametros['fecha']!='' && $parametros['hasta']!='')
+    	{
+    		$sql.=" AND T.Fecha between '".$parametros['fecha']."' AND '".$parametros['hasta']."'";
+    	}else if($parametros['fecha']!=''  && $parametros['hasta']=='')
     	{
     		$sql.=" AND T.Fecha = '".$parametros['fecha']."'";
     	}
@@ -57,21 +60,24 @@ class reporte_constructora_ComprasM
     			FORMAT(T.Fecha, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS Fecha,SUM(T.Valor_Total) as total 
     			FROM Trans_Kardex T 
     			INNER JOIN Catalogo_Productos CP on T.Codigo_Inv = CP.Codigo_Inv
-    			INNER JOIN Clientes C on T.CodigoU = C.Codigo 
+    			INNER JOIN Clientes C on T.Codigo_Dr = C.Codigo 
     			WHERE T.Item = '".$_SESSION['INGRESO']['item']."'
 				AND CP.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 				AND Serie_No = '999999'
 				AND T.Item = CP.Item
 				AND T.Periodo = CP.Periodo ";
-				if($parametros['contratista'])
+				if($parametros['contratista'] && $parametros['contratista']!='null')
 		    	{
 		    		$sql.=" AND T.CodigoU = '".$parametros['contratista']."'";
 		    	}
-		    	if($parametros['orden'])
+		    	if($parametros['orden'] && $parametros['orden']!='null')
 		    	{
 		    		$sql.=" AND Orden_No = '".$parametros['orden']."'";
 		    	}
-		    	if($parametros['fecha'])
+		    	if($parametros['fecha']!='' && $parametros['hasta']!='')
+		    	{
+		    		$sql.=" AND T.Fecha between '".$parametros['fecha']."' AND '".$parametros['hasta']."'";
+		    	}else if($parametros['fecha']!=''  && $parametros['hasta']=='')
 		    	{
 		    		$sql.=" AND T.Fecha = '".$parametros['fecha']."'";
 		    	}
@@ -104,15 +110,18 @@ class reporte_constructora_ComprasM
 				AND Serie_No = '999999'
 				AND T.Item = CP.Item
 				AND T.Periodo = CP.Periodo ";
-				if($parametros['articulos'])
+				if($parametros['articulos'] && $parametros['articulos']!='null')
 		    	{
 		    		$sql.=" AND T.Codigo_Inv = '".$parametros['articulos']."'";
 		    	}
-		    	if($parametros['orden'])
+		    	if($parametros['orden'] && $parametros['orden']!='null')
 		    	{
 		    		$sql.=" AND Orden_No = '".$parametros['orden']."'";
 		    	}
-		    	if($parametros['fecha'])
+		    	if($parametros['fecha']!='' && $parametros['hasta']!='')
+		    	{
+		    		$sql.=" AND T.Fecha between '".$parametros['fecha']."' AND '".$parametros['hasta']."'";
+		    	}else if($parametros['fecha']!=''  && $parametros['hasta']=='')
 		    	{
 		    		$sql.=" AND T.Fecha = '".$parametros['fecha']."'";
 		    	}
@@ -135,15 +144,15 @@ class reporte_constructora_ComprasM
      function cargar_datos_tiempos($parametros)
     {
     	$sql ="SELECT  Orden_No,FORMAT(Fecha, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS solicitud,
-    			FORMAT(Fecha_Aprob, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS aprobacion,
+    			FORMAT(Fecha_Aprob, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS aprobacion,DATEDIFF(DAY,Fecha,Fecha_Aprob) as 'dias1',
     			FORMAT(Fecha_Provee, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS proveedor,
-    			FORMAT(Fecha_Ent, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS compra
+    			FORMAT(Fecha_Ent, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS compra,DATEDIFF(DAY,Fecha_Provee,Fecha_Ent) as 'dias2'
 				FROM Trans_Pedidos
 				WHERE Item = '".$_SESSION['INGRESO']['item']."'
 				AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 				AND TC = 'N'";
 				
-		    	if($parametros['orden'])
+		    	if($parametros['orden'] && $parametros['orden']!='null')
 		    	{
 		    		$sql.=" AND Orden_No = '".$parametros['orden']."'";
 		    	}
@@ -237,9 +246,9 @@ class reporte_constructora_ComprasM
 
     function contratistas($query)
     {
-    	$sql= "SELECT TK.CodigoU as id,Cliente as text 
+    	$sql= "SELECT TK.CodigoU as id,Nombre_Completo as text
 				FROM Trans_Kardex TK 
-				inner join Clientes C ON TK.CodigoU = C.Codigo
+				inner join Accesos C ON TK.Codigo_Dr = C.Codigo
 				WHERE Item= '".$_SESSION['INGRESO']['item']."'
 				AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
 				AND Entrada <> 0 ";
@@ -247,7 +256,9 @@ class reporte_constructora_ComprasM
 				{
 					$sql.=" AND Nombre_Completo like'%".$query."%'";
 				}
-		$sql.="	group by TK.CodigoU,Cliente ";
+		$sql.="	group by TK.CodigoU,Nombre_Completo";
+
+		// print_r($sql);die();
     	return $this->db->datos($sql);
     }
 

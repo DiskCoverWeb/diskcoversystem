@@ -298,6 +298,7 @@ class reporte_constructora_Compras
 	{
 		// print_r($parametros);die();
 		$datos = $this->modelo->cargar_datos($parametros);
+		// print_r($datos);die();
 		$titulo = 'REPORTE DETALLE - AHORRO';
 		$sizetable =7;
 		$mostrar = 1;
@@ -321,21 +322,21 @@ class reporte_constructora_Compras
 			$i++;
 
 			$tablaHTML[$i]['medidas']=$tablaHTML[0]['medidas'];
-			$tablaHTML[$i]['alineado']=$tablaHTML[0]['alineado'];
+			// $tablaHTML[$i]['alineado']=$tablaHTML[0]['alineado'];
 			$tablaHTML[$i]['datos']=array('Precio referencial','',$value['valor_ref']);
 			$tablaHTML[$i]['estilo']='BIU';
 			$tablaHTML[$i]['unir'] =array('AB');
 			$i++;
 
 			$tablaHTML[$i]['medidas']=$tablaHTML[0]['medidas'];
-			$tablaHTML[$i]['alineado']=$tablaHTML[0]['alineado'];
+			// $tablaHTML[$i]['alineado']=$tablaHTML[0]['alineado'];
 			$tablaHTML[$i]['datos']=array('Precio compra','',$value['valor_compra']);
 			// $tablaHTML[$i]['estilo']='BIU';
 			$tablaHTML[$i]['borde'] =array('L','R');
 			$i++;
 
 			$tablaHTML[$i]['medidas']=$tablaHTML[0]['medidas'];
-			$tablaHTML[$i]['alineado']=$tablaHTML[0]['alineado'];
+			// $tablaHTML[$i]['alineado']=$tablaHTML[0]['alineado'];
 			$tablaHTML[$i]['datos']=array('Ahorro','',number_format(($value['valor_ref']-$value['valor_compra']),3,'.',''));
 			// $tablaHTML[$i]['estilo']='BIU';
 			$tablaHTML[$i]['borde'] =array('L','R');
@@ -343,7 +344,7 @@ class reporte_constructora_Compras
 			$i++;
 
 			$tablaHTML[$i]['medidas']=$tablaHTML[0]['medidas'];
-			$tablaHTML[$i]['alineado']=$tablaHTML[0]['alineado'];
+			// $tablaHTML[$i]['alineado']=$tablaHTML[0]['alineado'];
 			$tablaHTML[$i]['datos']=array('Proveedor','',$lineas[0]['Cliente']);
 			$tablaHTML[$i]['tipo']='B';
 			$tablaHTML[$i]['unir'] =array('AB');
@@ -366,7 +367,7 @@ class reporte_constructora_Compras
 				$tablaHTML[$j]['alineado']=$tablaHTML[$i]['alineado'];
 				$tablaHTML[$j]['datos']=array(
 					($key2+1),
-					'',
+					$value2['familia'],
 					$value2['Codigo_Inv'],
 					$value2['Producto'],
 					$value2['Marca'],
@@ -541,9 +542,9 @@ class reporte_constructora_Compras
 		$hasta = ''; //$parametros['hasta'];
 		$tablaHTML= array();
 
-		$tablaHTML[0]['medidas']=array(38,38,38,38,38);
-		$tablaHTML[0]['alineado']=array('L','L','L','L','L');
-		$tablaHTML[0]['datos']=array('ORDEN','FECHA SOLICITUD','FECHA APROBACION','FECHA PROVEEDOR','FECHA COMPRA');
+		$tablaHTML[0]['medidas']=array(45,45,45,10,45,45,10);
+		$tablaHTML[0]['alineado']=array('L','L','L','L','L','L','L');
+		$tablaHTML[0]['datos']=array('ORDEN','FECHA SOLICITUD','FECHA APROBACION','DIAS','FECHA PROVEEDOR','FECHA COMPRA','DIAS');
 		$tablaHTML[0]['estilo']='B';
 		$tablaHTML[0]['borde'] =1;
 
@@ -552,12 +553,12 @@ class reporte_constructora_Compras
 		foreach ($datos as $key => $value) {
 			$tablaHTML[$i]['medidas']=$tablaHTML[0]['medidas'];
 			$tablaHTML[$i]['alineado']=$tablaHTML[0]['alineado'];
-			$tablaHTML[$i]['datos']=array($value['Orden_No'],$value['solicitud'],$value['aprobacion'],$value['proveedor'],$value['compra']);
+			$tablaHTML[$i]['datos']=array($value['Orden_No'],$value['solicitud'],$value['aprobacion'],$value['dias1'],$value['proveedor'],$value['compra'],$value['dias2']);
 			$tablaHTML[$i]['borde'] =1;
 			$i++;
 			
 		}
-		$this->pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$desde,$hasta,$sizetable,$mostrar,15,'P',true,null,1,$nuevaPagina=false);
+		$this->pdf->cabecera_reporte_MC($titulo,$tablaHTML,$contenido=false,$image=false,$desde,$hasta,$sizetable,$mostrar,15,'L',true,null,1,$nuevaPagina=false);
 		// return $datos;
 	}
 
@@ -572,9 +573,9 @@ class reporte_constructora_Compras
 		$hasta = ''; //$parametros['hasta'];
 		$tablaHTML= array();
 
-		$tablaHTML[0]['medidas']=array(38,38,38,38,38);
-		$tablaHTML[0]['alineado']=array('L','L','L','L','L','L');		
-		$tablaHTML[0]['datos']=array('ORDEN','FECHA SOLICITUD','FECHA APROBACION','FECHA PROVEEDOR','FECHA COMPRA');
+		$tablaHTML[0]['medidas']=array(38,38,38,10,38,38,10);
+		$tablaHTML[0]['alineado']=array('L','L','L','L','L','L','L','L');		
+		$tablaHTML[0]['datos']=array('ORDEN','FECHA SOLICITUD','FECHA APROBACION',"DIAS",'FECHA PROVEEDOR','FECHA COMPRA',"DIAS");
 		$tablaHTML[0]['tipo']='B';
 		$tablaHTML[0]['borde'] =1;
 
@@ -583,7 +584,7 @@ class reporte_constructora_Compras
 		foreach ($datos as $key => $value) {
 			$tablaHTML[$i]['medidas']=$tablaHTML[0]['medidas'];
 			$tablaHTML[$i]['alineado']=$tablaHTML[0]['alineado'];
-			$tablaHTML[$i]['datos']=array($value['Orden_No'],$value['solicitud'],$value['aprobacion'],$value['proveedor'],$value['compra']);
+			$tablaHTML[$i]['datos']=array($value['Orden_No'],$value['solicitud'],$value['aprobacion'],$value['dias1'],$value['proveedor'],$value['compra'],$value['dias2']);
 			$tablaHTML[$i]['borde'] =1;
 			$i++;
 			
