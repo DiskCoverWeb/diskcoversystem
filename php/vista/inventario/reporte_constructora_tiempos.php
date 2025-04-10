@@ -119,8 +119,9 @@
         		<td>`+item.aprobacion+`</td>
         		<td>`+item.dias1+`</td>
         		<td>`+item.proveedor+`</td>
-        		<td>`+item.compra+`</td>
         		<td>`+item.dias2+`</td>
+        		<td>`+item.compra+`</td>
+        		<td>`+item.dias3+`</td>
         		</tr>`
         		// total= total+parseFloat(item.total);
         	})
@@ -293,6 +294,7 @@
 				<th>APROBACION</th>
 				<th>DIAS</th>
 				<th>PROVEEDOR</th>
+				<th>DIAS APRO-PROV</th>
 				<th>LISTA DE COMPRAS</th>
 				<th>DIAS</th>
 			</thead>

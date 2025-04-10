@@ -542,9 +542,9 @@ class reporte_constructora_Compras
 		$hasta = ''; //$parametros['hasta'];
 		$tablaHTML= array();
 
-		$tablaHTML[0]['medidas']=array(45,45,45,10,45,45,10);
-		$tablaHTML[0]['alineado']=array('L','L','L','L','L','L','L');
-		$tablaHTML[0]['datos']=array('ORDEN','FECHA SOLICITUD','FECHA APROBACION','DIAS','FECHA PROVEEDOR','FECHA COMPRA','DIAS');
+		$tablaHTML[0]['medidas']=array(45,45,45,10,45,10,45,10);
+		$tablaHTML[0]['alineado']=array('L','L','L','L','L','L','L','L');
+		$tablaHTML[0]['datos']=array('ORDEN','FECHA SOLICITUD','FECHA APROBACION','DIAS','FECHA PROVEEDOR','DIAS APRO-PROVE','FECHA COMPRA','DIAS');
 		$tablaHTML[0]['estilo']='B';
 		$tablaHTML[0]['borde'] =1;
 
@@ -553,7 +553,7 @@ class reporte_constructora_Compras
 		foreach ($datos as $key => $value) {
 			$tablaHTML[$i]['medidas']=$tablaHTML[0]['medidas'];
 			$tablaHTML[$i]['alineado']=$tablaHTML[0]['alineado'];
-			$tablaHTML[$i]['datos']=array($value['Orden_No'],$value['solicitud'],$value['aprobacion'],$value['dias1'],$value['proveedor'],$value['compra'],$value['dias2']);
+			$tablaHTML[$i]['datos']=array($value['Orden_No'],$value['solicitud'],$value['aprobacion'],$value['dias1'],$value['proveedor'],$value['dias2'],$value['compra'],$value['dias3']);
 			$tablaHTML[$i]['borde'] =1;
 			$i++;
 			
@@ -573,9 +573,9 @@ class reporte_constructora_Compras
 		$hasta = ''; //$parametros['hasta'];
 		$tablaHTML= array();
 
-		$tablaHTML[0]['medidas']=array(38,38,38,10,38,38,10);
+		$tablaHTML[0]['medidas']=array(38,38,38,10,38,10,38,10);
 		$tablaHTML[0]['alineado']=array('L','L','L','L','L','L','L','L');		
-		$tablaHTML[0]['datos']=array('ORDEN','FECHA SOLICITUD','FECHA APROBACION',"DIAS",'FECHA PROVEEDOR','FECHA COMPRA',"DIAS");
+		$tablaHTML[0]['datos']=array('ORDEN','FECHA SOLICITUD','FECHA APROBACION',"DIAS",'FECHA PROVEEDOR','DIAS APRO-PROVE','FECHA COMPRA',"DIAS");
 		$tablaHTML[0]['tipo']='B';
 		$tablaHTML[0]['borde'] =1;
 
@@ -584,7 +584,7 @@ class reporte_constructora_Compras
 		foreach ($datos as $key => $value) {
 			$tablaHTML[$i]['medidas']=$tablaHTML[0]['medidas'];
 			$tablaHTML[$i]['alineado']=$tablaHTML[0]['alineado'];
-			$tablaHTML[$i]['datos']=array($value['Orden_No'],$value['solicitud'],$value['aprobacion'],$value['dias1'],$value['proveedor'],$value['compra'],$value['dias2']);
+			$tablaHTML[$i]['datos']=array($value['Orden_No'],$value['solicitud'],$value['aprobacion'],$value['dias1'],$value['proveedor'],$value['dias2'],$value['compra'],$value['dias3']);
 			$tablaHTML[$i]['borde'] =1;
 			$i++;
 			

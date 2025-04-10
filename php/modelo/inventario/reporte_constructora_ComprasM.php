@@ -145,8 +145,8 @@ class reporte_constructora_ComprasM
     {
     	$sql ="SELECT  Orden_No,FORMAT(Fecha, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS solicitud,
     			FORMAT(Fecha_Aprob, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS aprobacion,DATEDIFF(DAY,Fecha,Fecha_Aprob) as 'dias1',
-    			FORMAT(Fecha_Provee, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS proveedor,
-    			FORMAT(Fecha_Ent, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS compra,DATEDIFF(DAY,Fecha_Provee,Fecha_Ent) as 'dias2'
+    			FORMAT(Fecha_Provee, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS proveedor,DATEDIFF(DAY,Fecha_Aprob,Fecha_Provee) as 'dias2',
+    			FORMAT(Fecha_Ent, 'dddd, dd \"de\" MMMM \"de\" yyyy','es-ES') AS compra,DATEDIFF(DAY,Fecha_Provee,Fecha_Ent) as 'dias3'
 				FROM Trans_Pedidos
 				WHERE Item = '".$_SESSION['INGRESO']['item']."'
 				AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
