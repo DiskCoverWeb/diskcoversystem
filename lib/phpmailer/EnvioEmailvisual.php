@@ -35,6 +35,13 @@ if(isset($_GET['PruebaEmail']))
 	echo json_decode($controlor->Emaildebug($parametros));
 }
 
+if(isset($_GET['subirftp']))
+{
+	$controlor = new EnviarVisual();
+	echo json_decode($controlor->subirftp());
+}
+
+
 class EnviarVisual 
 {
 	
@@ -190,6 +197,44 @@ class EnviarVisual
 		ftp_close($ftp_conn);
 
 
+
+	}
+
+	function subirFtp()
+	{
+		$nombre_file = "leeme permisos para gmail.txt"; 
+		// Datos de conexión
+		$ftp_host = "erp.diskcoversystem.com";
+		$ftp_user = "ftpuser";
+		$ftp_pass = "ftp2023User";
+		$ftp_port = 21; // Cambia al puerto que necesites
+
+		$archivo_remoto = '/files/AddAttachment/Autorizados/'.$nombre_file;
+		$archivo_local = $nombre_file;    // Cómo se llamará en el servidor FTP
+
+		// Conectar al servidor FTP
+		$conn_id = ftp_connect($ftp_host);
+
+		if ($conn_id) {
+		    // Autenticarse
+		    if (ftp_login($conn_id, $ftp_user, $ftp_pass)) {
+		        ftp_pasv($conn_id, true); // Modo pasivo recomendado
+
+		        // Subir archivo
+		        if (ftp_put($conn_id, $archivo_remoto, $archivo_local, FTP_BINARY)) {
+		            echo "Archivo subido exitosamente.";
+		        } else {
+		            echo "Error al subir el archivo.";
+		        }
+
+		        // Cerrar conexión
+		        ftp_close($conn_id);
+		    } else {
+		        echo "Error al iniciar sesión FTP.";
+		    }
+		} else {
+		    echo "No se pudo conectar al servidor FTP.";
+		}
 
 	}
 
