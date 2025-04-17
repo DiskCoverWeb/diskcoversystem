@@ -10914,7 +10914,6 @@ function Datos_Iniciales_Entidad_SP_MySQL($empresa, $usuario)
       array(&$PC_MAC, 'IN'),
       array("FechaCO", 'OUT'),
       array("FechaCE", 'OUT'),
-      array("FechaVPN", 'OUT'),
       array("FechaDB", 'OUT'),
       array("FechaP12", 'OUT'),
       array("AgenteRetencion", 'OUT'),
@@ -10931,12 +10930,15 @@ function Datos_Iniciales_Entidad_SP_MySQL($empresa, $usuario)
       array("TipoPlan", 'OUT'),
       array("pActivo", 'OUT'),
       array("EstadoUsuario", 'OUT'),
+      array("TokenEmpresa", 'OUT'),
+      array("URLEmpresa", 'OUT'),
   );
   $sql = "Call sp_mysql_datos_iniciales_entidad";
+
   $rsMySQL =  $conn->ejecutar_procesos_almacenados($sql,$parametros, true,$tipo='MYSQL');
   $Fecha_CO = $rsMySQL["@FechaCO"];
   $Fecha_CE = $rsMySQL["@FechaCE"];
-  $Fecha_VPN = $rsMySQL["@FechaVPN"];
+  // $Fecha_VPN = $rsMySQL["@FechaVPN"];
   $Fecha_DB = $rsMySQL["@FechaDB"];
   $Fecha_P12 = $rsMySQL["@FechaP12"];
   $AgenteRetencion = $rsMySQL["@AgenteRetencion"];
