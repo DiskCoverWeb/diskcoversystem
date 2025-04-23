@@ -47,8 +47,8 @@ class autoriza_sri
 		$this->iv = base64_decode("C9fBxl1EWtYTL1/M8jfstw==");
 		// $this->conn = new Conectar();
 		$this->db = new db();
-		// $this->rutaJava8  = "";
-		$this->rutaJava8  = escapeshellarg("C:\\Program Files\\Java\\jdk-1.8\\bin\\");
+		$this->rutaJava8  = "";
+		// $this->rutaJava8  = escapeshellarg("C:\\Program Files\\Java\\jdk-1.8\\bin\\");
 	}
 
 
@@ -465,7 +465,7 @@ class autoriza_sri
 		// print_r($nombre_file);die();
 		if(!file_exists($nombre_file))
 		{
-			$archivo_remoto = '/files/AddAttachment/No_Autorizados/'.$archivo;
+			$archivo_remoto = '/files/ComprobantesElectronicos/No_Autorizados/'.$archivo;
 			$nombre_file = dirname(__DIR__)."/SRI/ftp_folder_xmls/Rechazados/".$archivo; 
 			if(!file_exists($nombre_file))
 			{
