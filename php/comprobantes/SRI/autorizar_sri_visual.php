@@ -15,6 +15,15 @@ if(isset($_GET['AutorizarXMLOnline']))
 	$parametros = $_POST;
      echo json_encode($controlador->AutorizarXMLOnline($parametros));
 }
+if(isset($_GET['subirftp']))
+{
+	$xml = '';
+	if(isset($_GET['XML']))
+	{
+		$xml = $_GET['XML'];
+	}
+	echo json_decode($controlador->subirftp($xml));
+}
 
 /**
  * 
@@ -38,8 +47,8 @@ class autoriza_sri
 		$this->iv = base64_decode("C9fBxl1EWtYTL1/M8jfstw==");
 		// $this->conn = new Conectar();
 		$this->db = new db();
-		$this->rutaJava8  = "";
-		// $this->rutaJava8  = escapeshellarg("C:\\Program Files\\Java\\jdk-1.8\\bin\\");
+		// $this->rutaJava8  = "";
+		$this->rutaJava8  = escapeshellarg("C:\\Program Files\\Java\\jdk-1.8\\bin\\");
 	}
 
 
@@ -86,9 +95,16 @@ class autoriza_sri
 			   		 		if($resp==1)
 			   		 		{
 			   		 			// $this->deleteFolder($temp_file);
-			   		 			return  "Autorizado";
+			   		 			if($this->subirftp($xml))
+			   		 			{
+			   		 				return  "Autorizado";
+			   		 			}else
+			   		 			{
+			   		 				return "No se subio al ftp";
+			   		 			}
 			   		 		}else
 			   		 		{
+			   		 			$this->subirftp($xml);
 			   		 			return $resp;
 			   		 		}
 				   		 		// print_r($resp);die();
@@ -96,16 +112,21 @@ class autoriza_sri
 				   		{
 				   			$mensaje = $this->validar_existencia($xml);
 			   				// $this->deleteFolder($temp_file);
+			   				// print_r($xml);die();
+			   				$this->subirftp($xml);
 				   			return $mensaje;
 				   		}
 
 			   		}else 
-			   		{			
+			   		{	
+			   			// print_r($xml);die();		
 			   			if($validar_autorizado==1)
 			   			{
 			   				// $this->deleteFolder($temp_file);
+			   				$this->subirftp($xml);
 			   				return "Autorizado";
 			   			}else{   		 
+			   				$this->subirftp($xml);
 			   				return $validar_autorizado;
 			   			}
 			   		}
@@ -431,6 +452,71 @@ class autoriza_sri
 			return 'false';
 		}
 	}
+
+
+	function subirftp($nombre_file)
+	{
+		$archivo = $nombre_file.'.xml';		
+		$archivo_remoto = '/files/ComprobantesElectronicos/Autorizados/'.$archivo;
+
+		// print_r($nombre_file);die();
+
+		$nombre_file = dirname(__DIR__)."/SRI/ftp_folder_xmls/Autorizados/".$archivo; 
+		// print_r($nombre_file);die();
+		if(!file_exists($nombre_file))
+		{
+			$archivo_remoto = '/files/AddAttachment/No_Autorizados/'.$archivo;
+			$nombre_file = dirname(__DIR__)."/SRI/ftp_folder_xmls/Rechazados/".$archivo; 
+			if(!file_exists($nombre_file))
+			{
+				$nombre_file = dirname(__DIR__)."/SRI/ftp_folder_xmls/No_autorizados/".$archivo; 
+				if(!file_exists($nombre_file))
+				{
+					echo "No subido";
+				}
+			}
+
+		}
+
+		// print_r($archivo_remoto."--".$archivo_local);die();
+		// Datos de conexión
+		// print_r($nombre_file);die();
+		$ftp_host = "erp.diskcoversystem.com";
+		$ftp_user = "ftpuser";
+		$ftp_pass = "ftp2023User";
+		$ftp_port = 21; // Cambia al puerto que necesites
+
+		$archivo_local = $nombre_file;    // Cómo se llamará en el servidor FTP
+
+		// Conectar al servidor FTP
+		// print_r($archivo_remoto."--".$archivo_local);die();
+		$conn_id = ftp_connect($ftp_host);
+
+		if ($conn_id) {
+		    // Autenticarse
+		    if (ftp_login($conn_id, $ftp_user, $ftp_pass)) {
+		        ftp_pasv($conn_id, true); // Modo pasivo recomendado
+
+		        // Subir archivo
+		        if (ftp_put($conn_id, $archivo_remoto, $archivo_local, FTP_BINARY)) {
+		           return 1;
+		        } else {
+		        	return -1;
+		        }
+
+		        // Cerrar conexión
+		        ftp_close($conn_id);
+		    } else {
+		        // echo "Error al iniciar sesión FTP.";
+		        return -2;
+		    }
+		} else {
+		    // echo "No se pudo conectar al servidor FTP.";
+		    return -3;
+		}
+
+	}
+
 
 
  // function enviaremail()   //funcion para enviarlo por javascript

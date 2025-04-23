@@ -1446,6 +1446,28 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
 
 
 </style>
+
+<script type="text/javascript">
+  function enviaremail()   //funcion para enviarlo por javascript
+  { 
+        const xhr = new XMLHttpRequest();
+        const url =  'https://erp.diskcoversystem.com/php/comprobantes/SRI/autorizar_sri_visual.php?AutorizarXMLOnline=true';
+          // const url =  '../../php/comprobantes/SRI/autorizar_sri_visual.php?AutorizarXMLOnline=true';
+
+
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            console.log('Respuesta:', xhr.responseText);
+          }
+        };
+         const params = `XML=2304202501139172192700120010040000624141234567817.xml`;
+
+        xhr.send(params);
+  }
+</script>
   <div class="row">
     <div class="col-sm-5 col-xs-12">
       <div class="col">
@@ -1484,6 +1506,13 @@ input:focus, select:focus, span:focus, button:focus, #guardar:focus, a:focus  {
           <img src="../../img/png/update_user.png" width="25" height="30">
         </a>
       </div>
+
+      <div class="col">
+        <a href="#" title="Actualizar datos del Cliente"  class="btn btn-default" onclick="enviaremail()">
+          <img src="../../img/png/update_user.png" width="25" height="30">
+        </a>
+      </div>
+
     </div>
     <div class="col-sm-7 col-xs-12">
       <div class="row">
