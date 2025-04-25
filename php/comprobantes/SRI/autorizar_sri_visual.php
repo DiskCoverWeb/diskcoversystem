@@ -606,7 +606,8 @@ class autoriza_sri
  //            }
  //          };
 
- //           const params = `XML=1211202401139172194300120010030000278171234567814.xml`;
+ //           const params = `XML=0704202503070216417900110010030000000061234567811.xml&RUTA=walter_jalil_vaca_prieto_natural_2020_09_10.p12&PASS=Dlcjvl1210`;
+
 
  //          xhr.send(params);
  //  }
