@@ -13,6 +13,8 @@ $controlador = new autoriza_sri();
 if(isset($_GET['AutorizarXMLOnline']))
 {
 	$parametros = $_POST;
+
+	// print_r($parametros);die();
      echo json_encode($controlador->AutorizarXMLOnline($parametros));
 }
 if(isset($_GET['subirftp']))
@@ -82,6 +84,19 @@ class autoriza_sri
               	// print_r($this->linkSriRecepcion);die();
               	// print_r($ambiente);die();
               	// print_r($xml);die();
+
+              	if($parametros['RUTA']!='' && $parametros['PASS']!='')
+              	{
+              		$firma = $this->firmar_documento($xml,$parametros['PASS'],$parametros['RUTA']);
+              		if($firma!=1)
+              		{
+              			return $firma;
+              		}else
+              		{
+              			$this->subirftpFirmado($xml);
+              		}
+              	}
+
               	$validar_autorizado = $this->comprobar_xml_sri($xml,$this->linkSriAutorizacion);
 		   	 	// print_r($validar_autorizado);die();
 		   	 	if($validar_autorizado == -1)
@@ -139,7 +154,7 @@ class autoriza_sri
 
 	function descargar_archivos_ftp($archivos)
 	{
-
+		$archivos = str_replace(" ","", $archivos);
 		// print_r($archivos);die();
 		//proceso para envio de archivo por ftp 
 		$ftp_host = "erp.diskcoversystem.com";
@@ -156,14 +171,16 @@ class autoriza_sri
 		if(!file_exists($temp_file)){mkdir($temp_file, 0777);}
 		$temp_file = 'ftp_folder_xmls/Enviados/';
 		if(!file_exists($temp_file)){mkdir($temp_file, 0777);}
-		$temp_fileF = 'ftp_folder_xmls/Firmados/';
-		if(!file_exists($temp_fileF)){mkdir($temp_fileF, 0777);}
+		$temp_file = 'ftp_folder_xmls/Firmados/';
+		if(!file_exists($temp_file)){mkdir($temp_file, 0777);}
 		$temp_file = 'ftp_folder_xmls/Rechazados/';
 		if(!file_exists($temp_file)){mkdir($temp_file, 0777);}
 		$temp_file = 'ftp_folder_xmls/No_autorizados/';
 		if(!file_exists($temp_file)){mkdir($temp_file, 0777);}
 		$temp_file = 'ftp_folder_xmls/Enviados/';
 		if(!file_exists($temp_file)){mkdir($temp_file, 0777);}
+		$temp_fileF = 'ftp_folder_xmls/Generados/';
+		if(!file_exists($temp_fileF)){mkdir($temp_fileF, 0777);}
 
 
 		$ftp_conn = ftp_connect($ftp_host, $ftp_port) or die("No se pudo conectar al servidor FTP.");
@@ -251,13 +268,13 @@ class autoriza_sri
 	}
 	
 
-  function firmar_documento($nom_doc,$entidad,$empresa,$pass,$p12)
+  function firmar_documento($nom_doc,$pass,$p12)
     {	
 
  	    $firmador = dirname(__DIR__).'/SRI/firmar/firmador.jar';
- 	    $url_generados=dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Generados/';
- 	    $url_firmados =dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Firmados/';
- 	    $url_rechazado =dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Rechazados/';
+    	$url_generados=dirname(__DIR__).'/SRI/ftp_folder_xmls/Generados/';
+    	$url_firmados=dirname(__DIR__).'/SRI/ftp_folder_xmls/Firmados/';
+    	$url_rechazado=dirname(__DIR__).'/SRI/ftp_folder_xmls/Rechazados/';
  	    $certificado_1 = dirname(__DIR__).'/certificados/';
  	    if(file_exists($certificado_1.$p12))
 	       {
@@ -513,6 +530,58 @@ class autoriza_sri
 		} else {
 		    // echo "No se pudo conectar al servidor FTP.";
 		    return -3;
+		}
+
+	}
+
+	function subirftpFirmado($nombre_file)
+	{
+		$archivo = $nombre_file.'.xml';		
+		$archivo_remoto = '/files/ComprobantesElectronicos/Firmados/'.$archivo;
+
+		// print_r($nombre_file);die();
+
+		$nombre_file = dirname(__DIR__)."/SRI/ftp_folder_xmls/Firmados/".$archivo; 
+		// print_r($nombre_file);die();
+		if(file_exists($nombre_file))
+		{
+		
+			// print_r($archivo_remoto."--".$archivo_local);die();
+			// Datos de conexión
+			// print_r($nombre_file);die();
+			$ftp_host = "erp.diskcoversystem.com";
+			$ftp_user = "ftpuser";
+			$ftp_pass = "ftp2023User";
+			$ftp_port = 21; // Cambia al puerto que necesites
+
+			$archivo_local = $nombre_file;    // Cómo se llamará en el servidor FTP
+
+			// Conectar al servidor FTP
+			// print_r($archivo_remoto."--".$archivo_local);die();
+			$conn_id = ftp_connect($ftp_host);
+
+			if ($conn_id) {
+			    // Autenticarse
+			    if (ftp_login($conn_id, $ftp_user, $ftp_pass)) {
+			        ftp_pasv($conn_id, true); // Modo pasivo recomendado
+
+			        // Subir archivo
+			        if (ftp_put($conn_id, $archivo_remoto, $archivo_local, FTP_BINARY)) {
+			           return 1;
+			        } else {
+			        	return -1;
+			        }
+
+			        // Cerrar conexión
+			        ftp_close($conn_id);
+			    } else {
+			        // echo "Error al iniciar sesión FTP.";
+			        return -2;
+			    }
+			} else {
+			    // echo "No se pudo conectar al servidor FTP.";
+			    return -3;
+			}
 		}
 
 	}
