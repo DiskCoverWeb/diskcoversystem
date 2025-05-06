@@ -594,6 +594,32 @@ function cambiarEmpresaMa()
 		}
 	});
 }
+
+function cambiarEmpresaMaFechaComElec()
+{
+	$('#myModal_espera').modal('show');
+	var parametros = $('#form_encabezados').serialize() + "&" + $('#form_empresa').find(':not(#tab_5 input, #tab_5 select)').serialize();
+	$.ajax({
+		type: "POST",
+		 url: '../controlador/empresa/cambioeC.php?guardar_masivoFechaCompElec=true',
+		data: parametros,
+		dataType:'json',
+
+		success: function(data)
+		{
+			if(data==1)
+			{
+				Swal.fire('Entidad modificada con exito.','','success');
+			}else
+			{
+				Swal.fire('Intente mas tarde','','error');
+			}	
+
+			$('#myModal_espera').modal('hide');		
+		}
+	});
+
+}
 function mostrarEmpresa()
 {
 	$('#reporte_excel').css('display','initial');
@@ -1965,6 +1991,9 @@ async function datos_empresa()
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
             <button type="button" class="btn btn-default" title="Guardar Masivo: Fechas de renovaciones" onclick='cambiarEmpresaMa();'><img src="../../img/png/guardarmasivo.png"></button>
+        </div>
+         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
+            <button type="button" class="btn btn-default" title="Guardar Masivo: Fechas de Comprobantes electronicos" onclick='cambiarEmpresaMaFechaComElec();'><img src="../../img/png/guardarmasivo.png"></button>
         </div>
         <div class="col-xs-2 col-md-2 col-sm-2 col-lg-1">
             <button type="button" class="btn btn-default" title="Mostrar Vencimiento" onclick='mostrarEmpresa();'><img src="../../img/png/reporte_1.png"></button>
