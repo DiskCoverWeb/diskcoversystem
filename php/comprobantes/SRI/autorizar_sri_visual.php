@@ -66,7 +66,7 @@ class autoriza_sri
 			$msj = $this->descargar_archivos_ftp($parametros['XML']);
 			if($msj!="")
 			{
-				// $this->deleteFolder($temp_file);
+				$this->deleteFolder($temp_file);
 				return $msj;
 			}
 		}
@@ -105,13 +105,14 @@ class autoriza_sri
 				   		if($enviar_sri==1)
 				   		{
 				   		 	//una vez enviado comprobamos el estado de la factura
-			   		 		sleep(3);
+			   		 		// sleep(3);
 			   		 		$resp =  $this->comprobar_xml_sri($xml,$this->linkSriAutorizacion);
 			   		 		if($resp==1)
 			   		 		{
 			   		 			// $this->deleteFolder($temp_file);
 			   		 			if($this->subirftp($xml))
 			   		 			{
+			   		 				$this->borrar_xml_file($xml)
 			   		 				return  "Autorizado";
 			   		 			}else
 			   		 			{
@@ -583,6 +584,21 @@ class autoriza_sri
 			    return -3;
 			}
 		}
+
+	}
+
+	function borrar_xml_file($xml)
+	{
+		$temp_file = 'ftp_folder_xmls/Enviados/'.$xml;
+		unlink($temp_file);
+		$temp_file = 'ftp_folder_xmls/Firmados/'.$xml;
+		unlink($temp_file);
+		$temp_file = 'ftp_folder_xmls/Rechazados/'.$xml;
+		unlink($temp_file);
+		$temp_file = 'ftp_folder_xmls/No_autorizados/'.$xml;
+		unlink($temp_file);
+		$temp_fileF = 'ftp_folder_xmls/Generados/'.$xml;
+		unlink($temp_file);
 
 	}
 
