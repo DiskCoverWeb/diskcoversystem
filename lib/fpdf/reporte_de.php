@@ -3120,7 +3120,10 @@ function imprimirDocEle_fac($datos, $detalle, $educativo, $matri = false, $nombr
 
 
 
-
+	if($datos[0]['Direccion_RS']=='.' && isset($educativo[0]['Direccion']) && $educativo[0]['Direccion']!='.')
+	{
+		$datos[0]['Direccion_RS'] = $educativo[0]['Direccion'];
+	}
 
 	//============================================cuadro cliente ==========================================
 	$y = $pdf->GetY() + $margen * 2;
