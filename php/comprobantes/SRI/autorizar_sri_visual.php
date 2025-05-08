@@ -112,7 +112,7 @@ class autoriza_sri
 			   		 			// $this->deleteFolder($temp_file);
 			   		 			if($this->subirftp($xml))
 			   		 			{
-			   		 				$this->borrar_xml_file($xml)
+			   		 				$this->borrar_xml_file($xml);
 			   		 				return  "Autorizado";
 			   		 			}else
 			   		 			{
