@@ -97,10 +97,10 @@ class autoriza_sri
               		}
               	}
 
-              	$validar_autorizado = $this->comprobar_xml_sri($xml,$this->linkSriAutorizacion);
-		   	 	// print_r($validar_autorizado);die();
-		   	 	if($validar_autorizado == -1)
-		   	 		{
+              	// $validar_autorizado = $this->comprobar_xml_sri($xml,$this->linkSriAutorizacion);
+		   	 	// // print_r($validar_autorizado);die();
+		   	 	// if($validar_autorizado == -1)
+		   	 	// 	{
 				   	 	$enviar_sri = $this->enviar_xml_sri($xml,$this->linkSriRecepcion);
 				   		if($enviar_sri==1)
 				   		{
@@ -133,19 +133,19 @@ class autoriza_sri
 				   			return $mensaje;
 				   		}
 
-			   		}else 
-			   		{	
-			   			// print_r($xml);die();		
-			   			if($validar_autorizado==1)
-			   			{
-			   				// $this->deleteFolder($temp_file);
-			   				$this->subirftp($xml);
-			   				return "Autorizado";
-			   			}else{   		 
-			   				$this->subirftp($xml);
-			   				return $validar_autorizado;
-			   			}
-			   		}
+			   		// }else 
+			   		// {	
+			   		// 	// print_r($xml);die();		
+			   		// 	if($validar_autorizado==1)
+			   		// 	{
+			   		// 		// $this->deleteFolder($temp_file);
+			   		// 		$this->subirftp($xml);
+			   		// 		return "Autorizado";
+			   		// 	}else{   		 
+			   		// 		$this->subirftp($xml);
+			   		// 		return $validar_autorizado;
+			   		// 	}
+			   		// }
             }
           }
 
