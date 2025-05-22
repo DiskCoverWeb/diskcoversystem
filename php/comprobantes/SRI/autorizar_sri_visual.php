@@ -97,7 +97,13 @@ class autoriza_sri
               		}
               	}
 
-              	// $validar_autorizado = $this->comprobar_xml_sri($xml,$this->linkSriAutorizacion);
+              	 $validar_autorizado = $this->comprobar_xml_sri($xml,$this->linkSriAutorizacion);
+              	 if($validar_autorizado == 1)
+		   	 		{
+		   	 			$this->borrar_xml_file($xml);
+			   		 	return  "Autorizado";
+		   	 		}
+
 		   	 	// // print_r($validar_autorizado);die();
 		   	 	// if($validar_autorizado == -1)
 		   	 	// 	{
