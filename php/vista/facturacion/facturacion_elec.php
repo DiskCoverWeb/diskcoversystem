@@ -14,6 +14,8 @@ $(document).ready(function() {
 
     var operadora = '<?php echo $operadora; ?>';
     var servicio = '<?php echo $servicio; ?>';
+    var txt='';
+    var txt1='';
 
     DCPorcenIva('MBFecha', 'DCPorcenIVA');
     if(servicio!=0)
@@ -1071,9 +1073,22 @@ function cerrar_modal_cambio_nombre() {
 
 }
 
-function mostara_observacion() {
-    var op = $('#rbl_obs').prop('checked');
-    $('#modal_obs').modal('show');
+function mostara_observacion(opcion=1) {
+    if(opcion===1){
+        if($('#rbl_obs').is(':checked')){
+            $('#modal_obs').modal('show');
+        } else {
+            txt='';
+        }
+        var op = $('#rbl_obs').prop('checked');
+    } else if (opcion===2){
+        if($('#rbl_obs1').is(':checked')){
+            $('#modal_obs1').modal('show');
+        } else {
+            txt1='';
+        }
+    }
+    add_observaciones();
 }
 
 function ddl_DCTipoPago() {
@@ -1464,8 +1479,11 @@ function enviaremail()   //funcion para enviarlo por javascript
                 <input type="text" name="TxtNota" id="TxtNota" class="form-control input-xs">
             </div>
             <div class="col-sm-6">
-                <label><input type="checkbox" name="rbl_obs" id="rbl_obs" onclick="mostara_observacion()">
-                    OBSERVACION</label>
+                <label>1.- <input type="checkbox" name="rbl_obs" id="rbl_obs" onclick="mostara_observacion(1)">
+                    </label>
+                <label>2.- <input type="checkbox" name="rbl_obs_1" id="rbl_obs1" onclick="mostara_observacion(2)">
+                    </label>
+                <label>  OBSERVACIONES</label>
                 <input type="text" name="TxtObservacion" id="TxtObservacion" class="form-control input-xs">
             </div>
             <div class="col-sm-2" style="display:none">
@@ -1667,18 +1685,58 @@ function enviaremail()   //funcion para enviarlo por javascript
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" onclick="add_observaciones()">Agregar</button>
+                <button type="button" class="btn btn-primary" onclick="add_observaciones(1)">Agregar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal_obs1" role="dialog" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Observaciones</h4>
+            </div>
+            <div class="modal-body">
+                <b>PO:</b>
+                <input type="text" name="TxtPo" id="TxtPo" class="form-control input-xs" value="0">
+                <b>MIGO:</b>
+                <input type="text" name="TxtMigo" id="TxtMigo" class="form-control input-xs" value="0">
+                <b>POSICION:</b>
+                <input type="text" name="TxtPosicion" id="TxtPosicion" class="form-control input-xs" value="0">
+                <b>PROV:</b>
+                <input type="text" name="TxtProv" id="TxtProv" class="form-control input-xs" value="0">
+                <b>CONDITION</b>
+                <input type="text" name="TxtCondition" id="TxtCondition" class="form-control input-xs" value="0">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="add_observaciones(2)">Agregar</button>
             </div>
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
-function add_observaciones() {
-    var to = $('#TxtTonelaje').val();
-    var an = $('#TxtAnio').val();
-    var pl = $('#TxtPlacas').val();
-    $('#modal_obs').modal('hide');
-    $('#TxtObservacion').val('Tonelaje=' + to + ', Año=' + an + ', Placa=' + pl);
+
+function add_observaciones(opcion=0) {
+    if(opcion===1){
+        var to = $('#TxtTonelaje').val();
+        var an = $('#TxtAnio').val();
+        var pl = $('#TxtPlacas').val();
+        $('#modal_obs').modal('hide');
+        txt = 'Tonelaje=' + to + ', Año=' + an + ', Placa=' + pl;
+    } else if (opcion===2){
+        var po = $('#TxtPo').val();
+        var migo = $('#TxtMigo').val();
+        var pos = $('#TxtPosicion').val();
+        var prov = $('#TxtProv').val();
+        var cond = $('#TxtCondition').val();
+        $('#modal_obs1').modal('hide');
+        txt1 = ', Po='+po+', MIGO='+migo+', POSICION='+pos+', Prov='+prov+', Cond='+cond;
+    }
+    //la opcion 0 no entra a ningun if y solo actualiza e label.
+    $('#TxtObservacion').val(txt+txt1);   
 }
 </script>
