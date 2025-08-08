@@ -393,22 +393,34 @@ class EnviarVisual
 			      $mail->Body =  $parametros['body'];
 
 
-				   // Carpeta temporal para almacenar antes de enviar
-						$tmpDir = sys_get_temp_dir();
 
-						foreach ($archivosAdjuntos as $rutaRemota => $nombreLocal) {
-						    $tmpFile = $tmpDir . "/" . $nombreLocal;
+			    $ruta_remota = "/files/AddAttachment/ANEXO_1.pdf";
+					$nombre_local = "ANEXO_1.pdf";
 
-						    if (ftp_get($conn_id, $tmpFile, $rutaRemota, FTP_BINARY)) {
-						        $mail->addAttachment($tmpFile, $nombreLocal);
-						    } else {
-						        echo "⚠️ No se pudo leer: $rutaRemota\n";
-						    }
-						}
+					// 1. Crear un stream temporal
+					$tempHandle = fopen('php://temp', 'r+');
 
-						ftp_close($conn_id);
+					// 2. Descargar desde FTP al stream
+					if (ftp_fget($conn_id, $tempHandle, $ruta_remota, FTP_BINARY, 0)) {
 
-				    // print_r($mail);die();
+					    // 3. Regresar el puntero al inicio y obtener contenido
+					    rewind($tempHandle);
+					    $contenido = stream_get_contents($tempHandle);
+					    fclose($tempHandle);
+
+					    // 4. Detectar MIME según extensión (puedes usar tu propia función)
+					    $mime = $this->mime_content_type_from_extension($nombre_local);
+
+					    // 5. Agregar a PHPMailer como adjunto desde string
+					    $mail->addStringAttachment($contenido, $nombre_local, 'base64', $mime);
+
+					    echo "✅ $nombre_local agregado como adjunto";
+					} else {
+					    fclose($tempHandle);
+					    echo "❌ No se pudo leer $ruta_remota";
+					}
+
+				    ftp_close($conn_id);
 
 		    // Enviar correo
 		    $mail->send();
@@ -417,6 +429,20 @@ class EnviarVisual
 		    echo " Error al enviar: {$mail->ErrorInfo}";
 		}
 }
+
+
+function mime_content_type_from_extension($filename) {
+    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    return match ($ext) {
+        'pdf' => 'application/pdf',
+        'xml' => 'application/xml',
+        'txt' => 'text/plain',
+        'jpg', 'jpeg' => 'image/jpeg',
+        'png' => 'image/png',
+        default => 'application/octet-stream',
+    };
+ }
+
 
 
 
