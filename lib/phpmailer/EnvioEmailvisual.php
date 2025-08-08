@@ -330,6 +330,8 @@ class EnviarVisual
 		// Conectar al servidor FTP
 		$conn_id = ftp_connect($ftp_server,$ftp_port);
 		$login_result = ftp_login($conn_id, $ftp_user, $ftp_pass);
+		ftp_pasv($conn_id, true); // modo pasivo
+
 
 		if (!$conn_id || !$login_result) {
 		    die("❌ No se pudo conectar al servidor FTP");
@@ -391,25 +393,20 @@ class EnviarVisual
 			      $mail->Body =  $parametros['body'];
 
 
-				    // Descargar y adjuntar archivos
-				    foreach ($archivosAdjuntos as $ruta_remota => $nombre_local) {
-				        $tempHandle = fopen('php://temp', 'r+');
-				        if (ftp_fget($conn_id,$tempHandle, $ruta_remota, FTP_BINARY, 0)) {
-				            rewind($tempHandle);
-				            $contenido = stream_get_contents($tempHandle);
-				            fclose($tempHandle);
+				   // Carpeta temporal para almacenar antes de enviar
+						$tmpDir = sys_get_temp_dir();
 
-				            // Detectar MIME según extensión
-				            $mime = $this->mime_content_type_from_extension($nombre_local);
+						foreach ($archivosAdjuntos as $rutaRemota => $nombreLocal) {
+						    $tmpFile = $tmpDir . "/" . $nombreLocal;
 
-				            $mail->addStringAttachment($contenido, $nombre_local, 'base64', $mime);
-				        } else {
-				            fclose($tempHandle);
-				            echo "⚠️ No se pudo leer: $ruta_remota<br>";
-				        }
-				    }
+						    if (ftp_get($conn, $tmpFile, $rutaRemota, FTP_BINARY)) {
+						        $mail->addAttachment($tmpFile, $nombreLocal);
+						    } else {
+						        echo "⚠️ No se pudo leer: $rutaRemota\n";
+						    }
+						}
 
-				    ftp_close($conn_id);
+						ftp_close($conn);
 
 				    // print_r($mail);die();
 
