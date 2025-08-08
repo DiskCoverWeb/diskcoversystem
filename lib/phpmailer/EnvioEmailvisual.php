@@ -28,6 +28,15 @@ if(isset($_GET['EnviarVisual']))
 	echo json_decode($controlor->EnvioEmailVisual($parametros));
 }
 
+if(isset($_GET['EnviarVisualNew']))
+{
+	// print_r("hola");die();
+	$controlor = new EnviarVisual();
+	$parametros = $_POST;
+	$controlor->EnvioEmailVisualNew($parametros);
+	// );
+}
+
 if(isset($_GET['PruebaEmail']))
 {
 	$controlor = new EnviarVisual();
@@ -288,6 +297,129 @@ class EnviarVisual
 	        }   
 
 	}
+
+	function EnvioEmailVisualNew($parametros)
+	{
+
+		$ftp_server = "erp.diskcoversystem.com";
+		$ftp_user = "ftpuser";
+		$ftp_pass = "ftp2023User";
+		$ftp_port = 21; // Cambia al puerto que necesites
+
+		$remote_file = '/files/AddAttachment/';
+		$temp_file = 'ftp_folder_visual/';
+		$remote_path = '/';
+
+		$dataArchivos = explode(";",$parametros['Archivo']);
+		if(count($dataArchivos)>0)
+		{
+			$archivosAdjuntos = array();
+			foreach ($dataArchivos as $key => $value) {
+					$tipo_archivo = explode(".", $value);
+			    $extension = strtolower(trim($tipo_archivo[1]));
+
+			    if ($extension == 'pdf') {
+			        $archivosAdjuntos["/files/AddAttachment/$value"] = $value;
+			    } elseif ($extension == 'xml') {
+			        $archivosAdjuntos["/files/ComprobantesElectronicos/$value"] = $value;
+			    }
+			}
+		}
+
+
+		// Conectar al servidor FTP
+		$conn_id = ftp_connect($ftp_server,$ftp_port);
+		$login_result = ftp_login($conn_id, $ftp_user, $ftp_pass);
+
+		if (!$conn_id || !$login_result) {
+		    die("❌ No se pudo conectar al servidor FTP");
+		}
+
+		// Crear PHPMailer
+		$mail = new PHPMailer(true);
+  	$mail->SMTPOptions = array(
+    	'ssl' => array(
+      	'verify_peer' => false,
+      	'verify_peer_name' => false,
+      	'allow_self_signed' => true
+      	)
+    );
+
+
+
+		try {
+    // Configurar servidor SMTP
+			$to_correo = trim($parametros['to']);
+    	$to_correo = str_replace(';',',',$to_correo);
+    	$to = explode(',', $to_correo);
+			foreach ($to as $key => $value) 
+    	{
+						$mail->isSMTP(); //Send using SMTP
+	        	if(isset($parametros['debug']) && $parametros['debug']==1)
+	        	{
+		          $mail->SMTPDebug = SMTP::DEBUG_SERVER;     
+		        }  
+
+          	$mail->SMTPDebug = SMTP::DEBUG_SERVER; 
+		        $mail->Helo = 'imap.diskcoversystem.com';
+				    $mail->Host = 'imap.diskcoversystem.com';
+				    $mail->SMTPAuth = true;
+				    $mail->Username = 'admin';
+				    $mail->Password = 'Admin@2023';
+				    $mail->SMTPSecure = 'tls';
+				    $mail->Port = 587;
+
+  					$from = $parametros['from'];
+			      $fromName = $parametros['fromName']; 
+			      $reply = $from;
+			      if(isset($parametros['reply']) && trim($parametros['reply'])!='')
+			        {
+			        	$reply = $parametros['reply']; 
+			        }
+			      
+			      $email_to = $value;
+			      $replyName = $parametros['replyName']; 
+			      $mail->addAddress($value);  
+			      $mail->setFrom($from,$fromName );
+			      $mail->addReplyTo($reply, $replyName);
+			      
+			      if ($parametros['HTML']) 
+			      {
+			          $mail->isHTML(true);
+			      } 
+			      $mail->Subject = $parametros['subject'];
+			      $mail->Body =  $parametros['body'];
+
+
+				    // Descargar y adjuntar archivos
+				    foreach ($archivosAdjuntos as $ruta_remota => $nombre_local) {
+				        $tempHandle = fopen('php://temp', 'r+');
+				        if (ftp_fget($conn_id, $tempHandle, $ruta_remota, FTP_BINARY, 0)) {
+				            rewind($tempHandle);
+				            $contenido = stream_get_contents($tempHandle);
+				            fclose($tempHandle);
+
+				            // Detectar MIME según extensión
+				            $mime = $this->mime_content_type_from_extension($nombre_local);
+
+				            $mail->addStringAttachment($contenido, $nombre_local, 'base64', $mime);
+				        } else {
+				            fclose($tempHandle);
+				            echo "⚠️ No se pudo leer: $ruta_remota<br>";
+				        }
+				    }
+
+				    ftp_close($conn_id);
+
+				    // print_r($mail);die();
+
+		    // Enviar correo
+		    $mail->send();
+		  }
+		} catch (Exception $e) {
+		    echo " Error al enviar: {$mail->ErrorInfo}";
+		}
+}
 
 
 
