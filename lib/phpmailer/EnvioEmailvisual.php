@@ -399,14 +399,14 @@ class EnviarVisual
 						foreach ($archivosAdjuntos as $rutaRemota => $nombreLocal) {
 						    $tmpFile = $tmpDir . "/" . $nombreLocal;
 
-						    if (ftp_get($conn, $tmpFile, $rutaRemota, FTP_BINARY)) {
+						    if (ftp_get($conn_id, $tmpFile, $rutaRemota, FTP_BINARY)) {
 						        $mail->addAttachment($tmpFile, $nombreLocal);
 						    } else {
 						        echo "⚠️ No se pudo leer: $rutaRemota\n";
 						    }
 						}
 
-						ftp_close($conn);
+						ftp_close($conn_id);
 
 				    // print_r($mail);die();
 
