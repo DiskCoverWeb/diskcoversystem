@@ -394,7 +394,7 @@ class EnviarVisual
 				    // Descargar y adjuntar archivos
 				    foreach ($archivosAdjuntos as $ruta_remota => $nombre_local) {
 				        $tempHandle = fopen('php://temp', 'r+');
-				        if (ftp_fget($conn_id,$remote_file, $ruta_remota, FTP_BINARY, 0)) {
+				        if (ftp_fget($conn_id,$tempHandle, $ruta_remota, FTP_BINARY, 0)) {
 				            rewind($tempHandle);
 				            $contenido = stream_get_contents($tempHandle);
 				            fclose($tempHandle);
