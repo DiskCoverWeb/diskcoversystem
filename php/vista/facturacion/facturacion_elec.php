@@ -9,13 +9,13 @@ if($operadora!='.' && strlen($operadora)>=13)
 $servicio = $_SESSION['INGRESO']['Servicio'];
 ?>
 <script type="text/javascript">
+var txt='';
+var txt1='';
 eliminar_linea('', '');
 $(document).ready(function() {
 
     var operadora = '<?php echo $operadora; ?>';
     var servicio = '<?php echo $servicio; ?>';
-    var txt='';
-    var txt1='';
 
     DCPorcenIva('MBFecha', 'DCPorcenIVA');
     if(servicio!=0)
@@ -107,6 +107,26 @@ $(document).ready(function() {
 
 });
 
+
+function add_observaciones(opcion=0) {
+    if(opcion===1){
+        var to = $('#TxtTonelaje').val();
+        var an = $('#TxtAnio').val();
+        var pl = $('#TxtPlacas').val();
+        $('#modal_obs').modal('hide');
+        txt = 'Tonelaje=' + to + ', Año=' + an + ', Placa=' + pl;
+    } else if (opcion===2){
+        var po = $('#TxtPo').val();
+        var migo = $('#TxtMigo').val();
+        var pos = $('#TxtPosicion').val();
+        var prov = $('#TxtProv').val();
+        var cond = $('#TxtCondition').val();
+        $('#modal_obs1').modal('hide');
+        txt1 = ', Po='+po+', MIGO='+migo+', POSICION='+pos+', Prov='+prov+', Cond='+cond;
+    }
+    //la opcion 0 no entra a ningun if y solo actualiza e label.
+    $('#TxtObservacion').val(txt+txt1);   
+}
 
 function usar_cliente(nombre, ruc, codigo, email, t = 'N') {
     $('#Lblemail').val(email);
@@ -1717,26 +1737,3 @@ function enviaremail()   //funcion para enviarlo por javascript
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-
-function add_observaciones(opcion=0) {
-    if(opcion===1){
-        var to = $('#TxtTonelaje').val();
-        var an = $('#TxtAnio').val();
-        var pl = $('#TxtPlacas').val();
-        $('#modal_obs').modal('hide');
-        txt = 'Tonelaje=' + to + ', Año=' + an + ', Placa=' + pl;
-    } else if (opcion===2){
-        var po = $('#TxtPo').val();
-        var migo = $('#TxtMigo').val();
-        var pos = $('#TxtPosicion').val();
-        var prov = $('#TxtProv').val();
-        var cond = $('#TxtCondition').val();
-        $('#modal_obs1').modal('hide');
-        txt1 = ', Po='+po+', MIGO='+migo+', POSICION='+pos+', Prov='+prov+', Cond='+cond;
-    }
-    //la opcion 0 no entra a ningun if y solo actualiza e label.
-    $('#TxtObservacion').val(txt+txt1);   
-}
-</script>
