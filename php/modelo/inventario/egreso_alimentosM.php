@@ -154,15 +154,15 @@ class egreso_alimentosM
 			    MAX(C.Cliente) AS Cliente,
 			    MAX(CP.Producto) AS Producto,
 			    MAX(CP.Unidad) AS Unidad,
-			    MAX(C1.Cliente) AS usuario,
+			    MAX(C1.Nombre_Completo) AS usuario,
 			    MAX(CPO.Proceso) AS area,
 			    MAX(CPO1.Proceso) AS Motivo
 			FROM Trans_Kardex TK
 			INNER JOIN Catalogo_Productos CP ON TK.Codigo_Inv = CP.Codigo_Inv 
 			INNER JOIN Clientes C ON TK.Codigo_P = C.Codigo
-			INNER JOIN Clientes C1 ON TK.CodigoU = C1.Codigo
-			INNER JOIN Catalogo_Proceso CPO ON TK.Codigo_Tra = CPO.Cmds
-			INNER JOIN Catalogo_Proceso CPO1 ON TK.Modelo = CPO1.Cmds
+			INNER JOIN Accesos C1 ON TK.CodigoU = C1.Codigo
+			INNER JOIN Catalogo_Proceso CPO ON TK.Codigo_Tra = CPO.Cmds   AND CPO.Item = TK.Item 
+			INNER JOIN Catalogo_Proceso CPO1 ON TK.Modelo = CPO1.Cmds   AND CPO1.Item = TK.Item 
 			INNER JOIN Catalogo_Cuentas CC ON CPO1.Cta_Debe = CC.Codigo
 			WHERE TK.Item = '".$_SESSION['INGRESO']['item']."'
 			AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
