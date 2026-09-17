@@ -163,7 +163,7 @@ class egreso_alimentosM
 			INNER JOIN Accesos C1 ON TK.CodigoU = C1.Codigo
 			INNER JOIN Catalogo_Proceso CPO ON TK.Codigo_Tra = CPO.Cmds   AND CPO.Item = TK.Item 
 			INNER JOIN Catalogo_Proceso CPO1 ON TK.Modelo = CPO1.Cmds   AND CPO1.Item = TK.Item 
-			INNER JOIN Catalogo_Cuentas CC ON CPO1.Cta_Debe = CC.Codigo
+			INNER JOIN Catalogo_Cuentas CC ON CPO1.Cta_Debe = CC.Codigo AND CC.Item = TK.Item  AND CC.Periodo = TK.Periodo
 			WHERE TK.Item = '".$_SESSION['INGRESO']['item']."'
 			AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 			AND TK.Item = CP.Item
