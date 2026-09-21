@@ -368,7 +368,7 @@ class egreso_alimentosC
 		// print_r($parametros);die();
 		$tr = '';
 		$datos = $this->modelo->lista_egreso_checking(false,false,$area,false,$parametros['desde'],$parametros['hasta']);
-		print_r($datos);die();
+		// print_r($datos);die();
 		foreach ($datos as $key => $value) {
 			$datos[$key]['listo'] = 1;		
 			$op = "";	
