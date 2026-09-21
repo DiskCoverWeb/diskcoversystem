@@ -285,7 +285,7 @@ function cargar_motivo_lista(orden,motivo,TC)
                       +'<input type="" name="txt_pvp_all" id="txt_pvp_all" class="form-control form-control-sm" value="0">'
                     +'</td>'
                     +'<td></td>'
-                    +'<td></td>'
+                    +'<td><input type="checkbox" name="rbl_validar_all" id="rbl_validar_all" onclick="cambiar_validar_all()"></td>'
                     +'<td></td>'
                     +'<td></td>'
                   +'</tr>';
@@ -303,10 +303,10 @@ function cargar_motivo_lista(orden,motivo,TC)
                     <td>`+total.toFixed(2)+`</td>`
                     if(item.Solicitud==1)
                     {
-                        tr+=`<td><input type="checkbox" onclick="cambiar_estado('`+item.ID+`')" id="rbl_`+item.ID+`" name="rbl_`+item.ID+`" checked=""></td>`
+                        tr+=`<td><input  class="form-check-input rbl_valdar" type="checkbox" onclick="cambiar_estado('`+item.ID+`')" id="rbl_`+item.ID+`" name="rbl_`+item.ID+`" checked=""></td>`
                     }else
                     {                    
-                        tr+=`<td><input class="form-check-input" type="checkbox" onclick="cambiar_estado('`+item.ID+`')" id="rbl_`+item.ID+`" name="rbl_`+item.ID+`"></td>`
+                        tr+=`<td><input class="form-check-input rbl_valdar" type="checkbox" onclick="cambiar_estado('`+item.ID+`')" id="rbl_`+item.ID+`" name="rbl_`+item.ID+`"></td>`
                     }
                     tr+=`<td>`+item.SubModulo+`</td>`                    
                 tr+=`<td>
@@ -743,4 +743,20 @@ function lista_egreso_checking()
     });
 
     console.log(listaSubcta)
+  }
+
+  function cambiar_validar_all()
+  {
+    if($('#rbl_validar_all').prop('checked'))
+     {
+       $('.rbl_valdar').each(function() {
+          const input = $(this);
+          var id = input[0].id;
+          var idItem = id.replace("rbl_","");
+          // console.log(idItem)
+          $('#'+id).prop('checked',true);   
+          cambiar_estado(idItem)   
+      });
+     }
+
   }
