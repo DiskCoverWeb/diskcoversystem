@@ -11,6 +11,25 @@ var btnTomarFoto = null;
 var streaming = false;
 var foto_data = "";
 $(document).ready(function () {
+
+	var limite = 60; // Define el límite máximo
+
+  $('#txt_detalle').on('input', function() {
+  		 var texto = $(this).val();
+
+    // Si supera el límite, recorta el texto al número máximo de caracteres
+    if (texto.length > limite) {
+        texto = texto.substring(0, limite);
+        $(this).val(texto); // Actualiza el campo con el texto recortado
+    }
+
+    var extension = texto.length;
+    var restantes = limite - extension;
+    $('#lbl_num_caracteres').text(extension)
+
+    // $('#numCaracteres').text(restantes);
+  });
+
   validar_ingreso();
   areas();  
   motivo_egreso()	

@@ -123,6 +123,7 @@ function isMobileDevice() {
 							<div class="col-lg-8 col-md-9 col-sm-9">
 								<b>Detalle de egreso:</b>
 								<textarea id="txt_detalle" name="txt_detalle" rows="1"  class="form-control form-control-sm"></textarea>
+								<span id="lbl_num_caracteres">0</span> / <span>60</span>
 							</div>
 						</div>						
 					</div>
