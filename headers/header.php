@@ -134,6 +134,18 @@ function estado_licencia($f3)
     	} ?>";
 	</script>
 	<title>Diskcover system - <?php  $_SESSION['INGRESO']['NombreModulo'] = $NombreModulo; echo $NombreModulo; ?></title>
+
+	<script>
+	    // Detecta si la página fue cargada desde la memoria caché del navegador (BFCache)
+	    window.addEventListener('pageshow', function (event) {
+	        if (event.persisted || (performance.navigation && performance.navigation.type === 2)) {
+	            // Forzar recarga completa desde el servidor para validar si la sesión sigue activa
+	            window.location.reload();
+	        }
+	    });
+	</script>
+
+
 	<script type="text/javascript">
 		window.addEventListener('pageshow', function (event) {
 		    if (event.persisted) {
@@ -157,6 +169,7 @@ function estado_licencia($f3)
 		}
 
 	</script>
+
 	
 </head>
 

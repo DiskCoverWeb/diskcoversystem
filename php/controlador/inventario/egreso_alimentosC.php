@@ -202,8 +202,8 @@ class egreso_alimentosC
 	    SetAdoFields('Fecha',$parametros['fecha']);	
 	    SetAdoFields('Codigo_P',$data['Codigo_P']);	
 	    SetAdoFields('CodigoU',$data['CodigoU']);	
-	    SetAdoFields('Valor_Unitario',number_format($data['Valor_Unitario'],2,'.',''));	
-
+	    SetAdoFields('Valor_Unitario',number_format($data['Valor_Unitario'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));	
+	    SetAdoFields('Costo',number_format(floatval($data['Valor_Unitario'])*floatval($parametros['cantidad']),$_SESSION['INGRESO']['Dec_Costo'],'.',''));	
 	    SetAdoFields('Codigo_Tra',$parametros['area']);	
 	    SetAdoFields('Modelo',$parametros['motivo']);	
 	    SetAdoFields('Detalle',$parametros['detalle']);	
@@ -368,7 +368,7 @@ class egreso_alimentosC
 		// print_r($parametros);die();
 		$tr = '';
 		$datos = $this->modelo->lista_egreso_checking(false,false,$area,false,$parametros['desde'],$parametros['hasta']);
-		// print_r($datos);die();
+		print_r($datos);die();
 		foreach ($datos as $key => $value) {
 			$datos[$key]['listo'] = 1;		
 			$op = "";	
