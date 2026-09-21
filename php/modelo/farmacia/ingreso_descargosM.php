@@ -1105,7 +1105,7 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
            ,'".$parametros['tic']."'
            ,".$parametros['valorn']."
            ,0
-           ,'".substr( mb_convert_encoding($parametros['Trans'], 'UTF-8', 'ISO-8859-1'),0,60)."'
+           ,'".substr($parametros['Trans'],0,60)."'
            ,'".$fecha_actual."'
            ,'".$parametros['t']."'
            ,'".$parametros['co']."'
@@ -1138,7 +1138,7 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 			   ,'".$parametros['tic']."'
 			   ,".$parametros['valorn']."
 			   ,0
-			   ,'".substr( mb_convert_encoding($parametros['Trans'], 'UTF-8', 'ISO-8859-1'),0,60)."'
+			   ,'".substr($parametros['Trans'],0,60)."'
 			   ,'".$fecha_actual."'
 			   ,'".$parametros['t']."'
 			   ,'".$parametros['co']."'
