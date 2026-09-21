@@ -635,10 +635,21 @@ class egreso_alimentosC
 
 		foreach ($asientos_SC as $key => $value) {
 			 $cuenta = $this->modelo->catalogo_cuentas($value['CONTRA_CTA']);
-			 // print_r($tipo);die();
+			 // print_r($value);die();
 			 if($tipo=='C' || $tipo=='P')
 			 {
 			 	$sub = $this->modelo->Catalogo_CxCxP($value['CONTRA_CTA'],$value['CodigoL']);
+			 	if(count($sub)==0)
+			 	{
+		 			SetAdoAddNew("Catalogo_CxCxP"); 	
+					SetAdoFields('TC',$tipo);
+ 					SetAdoFields('Codigo',$value['CodigoL']);
+ 					SetAdoFields('Cta',$value['CONTRA_CTA']);
+ 					SetAdoFields('Item',$_SESSION['INGRESO']['item']);
+ 					SetAdoFields('Periodo',$_SESSION['INGRESO']['periodo']);
+ 					SetAdoUpdateGeneric();
+ 					$sub = $this->modelo->Catalogo_CxCxP($value['CONTRA_CTA'],$value['CodigoL']);
+			 	}
 			 }else
 			 {			 	
 			 	$sub = $this->modelo->Catalogo_SubCtas($tipo,$value['CodigoL']);
@@ -664,7 +675,9 @@ class egreso_alimentosC
                     'T_N'=> '109',
                     't'=> $sub[0]['TC'],                        
                   );
-                  $this->ing_des->generar_asientos_SC($dataSub);
+			// print_r($dataSub);die();
+                $r=   $this->ing_des->generar_asientos_SC($dataSub);
+                // print_r($r);die();
 		}
 
 		// print_r('expression');die();
