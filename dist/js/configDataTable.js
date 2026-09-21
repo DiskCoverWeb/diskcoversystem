@@ -7,7 +7,8 @@ $(document).ready(function() {
         });
 
         var columnasTexto = [
-            "RUC_CI","RUC","TELEFONO","NUM HISTORIA","AUTORIZACION", "FACTURA", "CODIGO", 
+            "RUC_CI","RUC","TELEFONO","AUTORIZACION", "FACTURA", "CODIGO", 
+            'MATRICULA','CI_RUC','TELEFONO',
             "PRODUCTO", "ITEM", "A_NO", "ID", "NOMBRE", "DESCRIPCION",'ORDEN','SEMANA'
         ];
 
