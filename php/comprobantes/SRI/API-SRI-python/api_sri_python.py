@@ -249,15 +249,35 @@ def verificar_autorizacion(clave_acceso,WSDL_AUTORIZACION,ruta_xml_autorizado,ru
         
         # En caso de NO AUTORIZADO o DEVUELTO
         # print(estado)
-        # print(aut)
+        # print(aut.mensajes.mensaje)
+        # return None
         errores = []
         if hasattr(aut, 'mensajes') and aut.mensajes:
             # print('entra')
+            # print(aut.mensajes)
             for m in aut.mensajes.mensaje:
                 detalle = getattr(m, 'informacionAdicional', m.mensaje)
                 errores.append(f"{m.mensaje} ({detalle})")
 
-        guardar_xml_en_carpeta(contenido_xml, ruta_xml_no_autorizado, clave_acceso+".xml")
+
+        contenido_xml_sin = "\n".join([linea.strip() for linea in contenido_xml.splitlines() if linea.strip()])
+        xml_auto = f"""<?xml version="1.0" encoding="UTF-8"?>
+<autorizacion>
+    <estado>{estado}</estado>
+    <fechaAutorizacion>{str(aut.fechaAutorizacion)}</fechaAutorizacion>
+    <comprobante><![CDATA[{contenido_xml_sin}]]></comprobante>
+    <mensajes>
+    <mensaje>
+      <mensaje>
+        <identificador>{aut.mensajes.mensaje.identificador}</identificador>
+        <mensaje>{ut.mensajes.mensaje.mensaje}</mensaje>
+        <informacionAdicional>{detalle}</informacionAdicional>
+        <tipo>{ut.mensajes.mensaje.tipo}</tipo>
+      </mensaje>
+    </mensaje>
+  </mensajes>
+</autorizacion>"""
+        guardar_xml_en_carpeta(xml_auto, ruta_xml_no_autorizado, clave_acceso+".xml")
         return {
             "0":-1,
             "1": clave_acceso,
@@ -269,6 +289,25 @@ def verificar_autorizacion(clave_acceso,WSDL_AUTORIZACION,ruta_xml_autorizado,ru
 
     except Exception as e:
         # return {"estado": "ERROR", "mensaje": f"Error de conexión con el SRI: {str(e)}"}
+        contenido_xml_sin = "\n".join([linea.strip() for linea in contenido_xml.splitlines() if linea.strip()])
+        xml_auto = f"""<?xml version="1.0" encoding="UTF-8"?>
+<autorizacion>
+    <estado>{estado}</estado>
+    <fechaAutorizacion>{str(aut.fechaAutorizacion)}</fechaAutorizacion>
+    <comprobante><![CDATA[{contenido_xml_sin}]]></comprobante>
+    <mensajes>
+    <mensaje>
+      <mensaje>
+        <identificador>{aut.mensajes.mensaje[0].identificador}</identificador>
+        <mensaje>{ut.mensajes.mensaje[0].mensaje}</mensaje>
+        <informacionAdicional>{ut.mensajes.mensaje[0].informacionAdicional}</informacionAdicional>
+        <tipo>{ut.mensajes.mensaje[0].tipo}</tipo>
+      </mensaje>
+    </mensaje>
+  </mensajes>
+</autorizacion>"""
+        guardar_xml_en_carpeta(xml_auto, ruta_xml_no_autorizado, clave_acceso+".xml")
+
         return {
                 "0":-1,
                 "1": clave_acceso,
