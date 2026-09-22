@@ -530,7 +530,8 @@ class autoriza_sri
     // 2 para devueltas
     function comprobar_xml_sri($clave_acceso,$link_autorizacion)
     {
-    	$comprobar_sri = dirname(__DIR__).'/SRI/firmar/JavClientSri.jar';
+    	// $comprobar_sri = dirname(__DIR__).'/SRI/firmar/JavClientSri.jar';    	
+    	$comprobar_sri = dirname(__DIR__).'/SRI/API-SRI-python/api_sri_python.py';
     	$url_autorizado= dirname(__DIR__).'/SRI/ftp_folder_xmls/Autorizados/';
  	    $url_No_autorizados = dirname(__DIR__).'/SRI/ftp_folder_xmls/No_autorizados/';
 
@@ -538,7 +539,9 @@ class autoriza_sri
  	    $output = '';
  	    $veces_envio = 1;
  	    while ($comprobado) {
- 	    	$command = $this->rutaJava8."java -jar ".$comprobar_sri." 2 ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion; 
+ 	    	// $command = $this->rutaJava8."java -jar ".$comprobar_sri." 2 ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion; 
+ 	    	$command = "python ".$comprobar_sri." 2 ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion; 
+ 	    	
 	   		$output = shell_exec($command);  
 	   		// print_r($command);die(); 
 	   		// print_r($output);die();		
@@ -561,7 +564,7 @@ class autoriza_sri
     	$ruta_firmados=dirname(__DIR__).'/SRI/ftp_folder_xmls/Firmados/';
     	$ruta_enviados=dirname(__DIR__).'/SRI/ftp_folder_xmls/Enviados/';
  	    $ruta_rechazados =dirname(__DIR__).'/SRI/ftp_folder_xmls/Rechazados/';
-    	$enviar_sri = dirname(__DIR__).'/SRI/firmar/JavClientSri.jar';
+    	$enviar_sri = dirname(__DIR__).'/SRI/API-SRI-python/api_sri_python.py';
 
     	if(!file_exists($ruta_firmados.$clave_acceso.'.xml'))
     	{
@@ -575,9 +578,9 @@ class autoriza_sri
 	 		return $respuesta;
     	}
 		
-		$command = $this->rutaJava8."java -jar ".$enviar_sri." 1 ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion; 
+		// $command = $this->rutaJava8."java -jar ".$enviar_sri." 1 ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion; 
    		 // print_r($command);die();
-
+    	$command = "python ".$enviar_sri." 1 ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion; 
    		$output = shell_exec($command);
    		if($output!=null && $output!='')
    		{
