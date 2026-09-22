@@ -128,7 +128,7 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
         # 4. Invocar el método 'validarComprobante' pasando los bytes del XML
         # El SRI requiere que el parámetro sea un arreglo de bytes (byte[])
         respuesta = client.service.validarComprobante(xml_bytes)
-        print(respuesta)
+        # print(respuesta)
 
         # 5. Procesar la respuesta del SRI
         estado = respuesta.estado
