@@ -29,6 +29,48 @@ if(isset($_GET['datos_beneficiario']))
     echo json_encode($controlador->datosBeneficiario($parametros));
 }
 
+if(isset($_GET['insertarRegistroManual']))
+{
+    $controlador = new registroHorasLaboradasC();
+    $parametros = $_POST;
+    echo json_encode($controlador->insertarRegistroManual($parametros));
+}
+
+if(isset($_GET['eliminarRegistroHoras']))
+{
+    $controlador = new registroHorasLaboradasC();
+    $parametros = $_POST;
+    echo json_encode($controlador->eliminarRegistroHoras($parametros));
+}
+
+if(isset($_GET['eliminarDiasFecha']))
+{
+    $controlador = new registroHorasLaboradasC();
+    $parametros = $_POST;
+    echo json_encode($controlador->eliminarDiasFecha($parametros));
+}
+
+if(isset($_GET['permisoEnfermedad']))
+{
+    $controlador = new registroHorasLaboradasC();
+    $parametros = $_POST;
+    echo json_encode($controlador->permisoEnfermedad($parametros));
+}
+
+if(isset($_GET['agregarNovedad']))
+{
+    $controlador = new registroHorasLaboradasC();
+    $parametros = $_POST;
+    echo json_encode($controlador->agregarNovedad($parametros));
+}
+
+if(isset($_GET['eliminarNovedad']))
+{
+    $controlador = new registroHorasLaboradasC();
+    $parametros = $_POST;
+    echo json_encode($controlador->eliminarNovedad($parametros));
+}
+
 class registroHorasLaboradasC
 {
     private $modelo;
@@ -97,6 +139,69 @@ class registroHorasLaboradasC
         $parametros['Fecha'] = BuscarFecha($parametros['Fecha']);
         $datos = $this->modelo->getValorHora($parametros);
         return $datos;
+    }
+
+    function insertarRegistroManual($parametros){
+        $horas = floatval($parametros['Horas']);
+        $valorHora = floatval($parametros['ValorHora']);
+        $horasExtras = floatval($parametros['HorasExtras']);
+        $modo = $parametros['ModoHoraExtra'];
+        $valorPorHora = floatval($parametros['ValorPorHora']);
+
+        if($modo == '%'){
+            $cuota = 1 + ($valorPorHora/100);
+            $totalExtra = $horasExtras * ($valorHora * $cuota);
+        } else {
+            $cuota = $valorPorHora;
+            $totalExtra = $horasExtras * $cuota;
+        }
+        $ingLiquido = isset($parametros['IngLiquido']) && $parametros['IngLiquido'] !== ''
+            ? floatval($parametros['IngLiquido'])
+            : (($horas * $valorHora) + $totalExtra);
+
+        $datos = [
+            'Codigo' => $parametros['Codigo'],
+            'Fecha' => BuscarFecha($parametros['Fecha']),
+            'Dias' => intval($parametros['Dias']),
+            'Horas' => $horas,
+            'HorasExtras' => $horasExtras,
+            'PorcHrExt' => $modo == '%' ? $cuota : 0,
+            'ValorHora' => $valorHora,
+            'IngLiquido' => round($ingLiquido, 2),
+            'IngHorasExt' => round($totalExtra, 2),
+            'Orden' => $parametros['Orden'],
+        ];
+        return $this->modelo->insertarRegistroManual($datos);
+    }
+
+    function eliminarRegistroHoras($parametros){
+        $parametros['Fecha'] = BuscarFecha($parametros['Fecha']);
+        return $this->modelo->eliminarRegistroHoras($parametros);
+    }
+
+    function eliminarDiasFecha($parametros){
+        $parametros['Fecha'] = BuscarFecha($parametros['Fecha']);
+        return $this->modelo->eliminarDiasFecha($parametros['Fecha']);
+    }
+
+    function permisoEnfermedad($parametros){
+        if(intval($parametros['Dias']) <= 3){
+            return -1;
+        }
+        $parametros['Fecha'] = BuscarFecha($parametros['Fecha']);
+        return $this->modelo->permisoEnfermedad($parametros);
+    }
+
+    function agregarNovedad($parametros){
+        $parametros['Fecha'] = BuscarFecha($parametros['Fecha']);
+        $parametros['Hora'] = date('H:i:s');
+        $parametros['Tarea'] = substr(trim($parametros['Tarea']), 0, 50);
+        return $this->modelo->agregarNovedad($parametros);
+    }
+
+    function eliminarNovedad($parametros){
+        $parametros['Fecha'] = BuscarFecha($parametros['Fecha']);
+        return $this->modelo->eliminarNovedad($parametros);
     }
 
 }

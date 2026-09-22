@@ -229,7 +229,7 @@ class db
            $stmt = sqlsrv_query($conn, $sql);
 		   if(!$stmt)
 		   {
-			   //die( print_r( sqlsrv_errors(), true));
+			   error_log("String_Sql SQLSRV error. SQL: ".$sql." | Errores: ".print_r(sqlsrv_errors(), true));
 			   sqlsrv_close($conn);
 			return -1;
 		   }
