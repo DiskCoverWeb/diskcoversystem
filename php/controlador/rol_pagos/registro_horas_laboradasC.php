@@ -81,6 +81,10 @@ class registroHorasLaboradasC
     }
 
     function generarDias($parametros){
+        if(!in_array($parametros['OpcIngreso'] ?? '', ['Semanal', 'Quincenal', 'Mensual'])){
+            return -1;
+        }
+        $parametros['Orden'] = $parametros['Orden'] ?? '0';
         $parametros['PrimerDiaMes'] = PrimerDiaMes($parametros['Fecha'], "Y/m/d");
         $parametros['UltimoDiaMes'] = UltimoDiaMes($parametros['Fecha'], "Y/m/d");
         $parametros['FechaIni'] = BuscarFecha($parametros['PrimerDiaMes']);

@@ -83,6 +83,19 @@ function fechaSQLtoLocale(valor) {
 	return isNaN(fecha) ? '' : fecha.toLocaleDateString();
 }
 
+// Envuelve fecha_valida_valor (global) y además descarta años fuera de un rango razonable,
+// para evitar enviar al servidor fechas incompletas/corruptas que se pueden generar al
+// escribir manualmente en el <input type="date"> (ej: el año se queda a medio escribir).
+function fechaValidaRango(valor) {
+	const base = fecha_valida_valor(valor);
+	if (!base.valido) return base;
+	const anio = new Date(valor).getFullYear();
+	if (anio < 1950 || anio > 2200) {
+		return { valido: false, mensaje: 'El año de la fecha no es válido.' };
+	}
+	return { valido: true };
+}
+
 // ---------- Beneficiarios ----------
 
 function obtenerBeneficiarios() {
@@ -100,6 +113,14 @@ function obtenerBeneficiarios() {
 
 function rellenarBeneficiarios() {
 	limpiarInfoBeneficiario();
+	// El evento "change" del input nativo type="date" se dispara con cada dígito
+	// que se completa en el segmento de año mientras se escribe a mano, así que aquí
+	// una fecha "inválida" (año incompleto) se ignora en silencio, sin interrumpir al
+	// usuario con un mensaje; solo se consulta cuando la fecha ya quedó completa y sana.
+	const isFecha = fechaValidaRango($('#txt_fecha').val());
+	if (!isFecha.valido) {
+		return;
+	}
 	obtenerBeneficiarios().then(function (beneficiarios) {
 		$('#beneficiario').html('<option value="">Seleccione un beneficiario</option>');
 		$.each(beneficiarios, function (key, value) {
@@ -247,18 +268,23 @@ function pintarTablaNovedades(datos) {
 function generarDias() {
 	let opcionIngreso = $('input[name="Ingreso"]:checked').val();
 	let fecha = $('#txt_fecha').val();
-	const isFecha = fecha_valida_valor(fecha);
+	const isFecha = fechaValidaRango(fecha);
 	if (!isFecha.valido) {
 		Swal.fire('Fecha inválida', isFecha.mensaje, 'error');
 		return;
 	}
+	if (opcionIngreso !== 'Semanal' && opcionIngreso !== 'Quincenal' && opcionIngreso !== 'Mensual') {
+		Swal.fire('Tipo de ingreso no válido', 'La generación masiva de días solo aplica para Semanal, Quincenal o Mensual.', 'warning');
+		return;
+	}
 	fecha = fecha.replace(/-/g, "/");
+	const orden = $('#txt_orden').val() || '0';
 
 	ShowModalEspera();
 	$.ajax({
 		type: 'POST',
 		url: '../controlador/rol_pagos/registro_horas_laboradasC.php?generarDias=true',
-		data: { 'Fecha': fecha, 'OpcIngreso': opcionIngreso },
+		data: { 'Fecha': fecha, 'OpcIngreso': opcionIngreso, 'Orden': orden },
 		success: function (response) {
 			HideModalEspera();
 			if (response == 1) {
@@ -277,7 +303,7 @@ function generarDias() {
 
 function eliminarDiasFecha() {
 	let fecha = $('#txt_fecha').val();
-	const isFecha = fecha_valida_valor(fecha);
+	const isFecha = fechaValidaRango(fecha);
 	if (!isFecha.valido) {
 		Swal.fire('Fecha inválida', isFecha.mensaje, 'error');
 		return;
@@ -325,7 +351,7 @@ function agregarRegistroManual() {
 		return;
 	}
 	let fecha = $('#txt_fecha').val();
-	const isFecha = fecha_valida_valor(fecha);
+	const isFecha = fechaValidaRango(fecha);
 	if (!isFecha.valido) {
 		Swal.fire('Fecha inválida', isFecha.mensaje, 'error');
 		return;
@@ -437,7 +463,7 @@ function permisoEnfermedad() {
 		return;
 	}
 	let fecha = $('#txt_fecha').val();
-	const isFecha = fecha_valida_valor(fecha);
+	const isFecha = fechaValidaRango(fecha);
 	if (!isFecha.valido) {
 		Swal.fire('Fecha inválida', isFecha.mensaje, 'error');
 		return;
@@ -486,7 +512,7 @@ function agregarNovedad() {
 		return;
 	}
 	let fecha = $('#txt_fecha').val();
-	const isFecha = fecha_valida_valor(fecha);
+	const isFecha = fechaValidaRango(fecha);
 	if (!isFecha.valido) {
 		Swal.fire('Fecha inválida', isFecha.mensaje, 'error');
 		return;

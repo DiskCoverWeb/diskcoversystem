@@ -6,28 +6,6 @@
         color: #444;
         border-color: #ddd;
     }
-    .hp-toolbar-btn {
-        min-width: 96px;
-        height: 76px;
-        gap: 4px;
-    }
-    .hp-toolbar-btn img {
-        width: 32px;
-        height: 32px;
-    }
-    .hp-toolbar-btn i {
-        width: 32px;
-        height: 32px;
-        font-size: 32px;
-        line-height: 32px;
-        display: inline-block;
-        margin: 0 !important;
-    }
-    .hp-toolbar-btn label {
-        font-size: 0.72rem;
-        font-weight: 600;
-        margin: 0;
-    }
     .hp-stat-card {
         border-left: 4px solid var(--bs-primary);
         border-radius: .5rem;
@@ -41,6 +19,30 @@
         text-transform: uppercase;
         color: #8a8a8a;
         letter-spacing: .03em;
+    }
+    .hp-tabs {
+        border-bottom: none;
+        background: #eef2f6;
+        border-radius: .5rem;
+        padding: 4px;
+        gap: 4px;
+    }
+    .hp-tabs .nav-link {
+        border: none;
+        border-radius: .4rem;
+        color: #6c757d;
+        font-weight: 600;
+        padding: .5rem 1rem;
+        transition: background-color .15s ease, color .15s ease;
+    }
+    .hp-tabs .nav-link:hover {
+        color: #495057;
+        isolation: isolate;
+    }
+    .hp-tabs .nav-link.active {
+        background: #fff;
+        color: var(--bs-primary);
+        box-shadow: 0 1px 3px rgba(0,0,0,.12);
     }
     .hp-info-chip {
         font-size: .78rem;
@@ -65,12 +67,31 @@
     </div>
 </div>
 
+<div class="row mb-2">
+    <div class="col-12">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-secondary" title="Generar los días del período según el tipo de ingreso seleccionado" onclick="generarDias()">
+                <img src="../../img/png/users.png">
+            </button>
+            <button type="button" class="btn btn-outline-danger" title="Elimina TODOS los registros de horas de la fecha seleccionada" onclick="eliminarDiasFecha()">
+                <img src="../../img/png/eliminar.png">
+            </button>
+            <button type="button" class="btn btn-outline-secondary" title="Registrar permiso de enfermedad del beneficiario" onclick="permisoEnfermedad()">
+                <i class='bx bx-plus-medical fs-5'></i>
+            </button>
+            <button type="button" class="btn btn-outline-secondary" title="Limpiar formulario" onclick="limpiarFormulario()">
+                <img src="../../img/png/salire.png">
+            </button>
+        </div>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-body">
         <div class="row g-3">
             <div class="col-12 col-lg-3">
                 <label class="form-label fw-bold mb-1">Fecha</label>
-                <input type="date" id="txt_fecha" class="form-control" onchange="rellenarBeneficiarios()">
+                <input type="date" id="txt_fecha" class="form-control" min="1950-01-01" max="2200-12-31" onchange="rellenarBeneficiarios()">
             </div>
             <div class="col-12 col-lg-5">
                 <label class="form-label fw-bold mb-1">Tipo de ingreso</label>
@@ -190,33 +211,10 @@
 
 <div class="mt-3">
     <div class="card">
-        <div class="card-body d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
-            <button class="btn btn-sm btn-outline-secondary d-flex flex-column justify-content-center align-items-center hp-toolbar-btn" title="Generar los días del período según el tipo de ingreso seleccionado" onclick="generarDias()">
-                <img src="../../img/png/users.png">
-                <label>Generar días</label>
-            </button>
-            <button class="btn btn-sm btn-outline-danger d-flex flex-column justify-content-center align-items-center hp-toolbar-btn" title="Elimina TODOS los registros de horas de la fecha seleccionada" onclick="eliminarDiasFecha()">
-                <img src="../../img/png/eliminar.png">
-                <label>Eliminar días</label>
-            </button>
-            <button class="btn btn-sm btn-outline-secondary d-flex flex-column justify-content-center align-items-center hp-toolbar-btn" title="Registrar permiso de enfermedad del beneficiario" onclick="permisoEnfermedad()">
-                <i class='bx bx-plus-medical'></i>
-                <label>Permiso enfermedad</label>
-            </button>
-            <button class="btn btn-sm btn-outline-secondary d-flex flex-column justify-content-center align-items-center hp-toolbar-btn" title="Limpiar formulario" onclick="limpiarFormulario()">
-                <img src="../../img/png/salire.png">
-                <label>Limpiar</label>
-            </button>
-        </div>
-    </div>
-</div>
-
-<div class="mt-3">
-    <div class="card">
         <div class="card-body">
             <div class="row">
                 <div class="col-12">
-                    <ul class="nav nav-tabs w-100">
+                    <ul class="nav nav-tabs hp-tabs w-100">
                         <li class="nav-item flex-fill text-center" role="presentation">
                             <a class="nav-link active" href="#sueldo_div" data-bs-toggle="tab">SUELDO</a>
                         </li>
