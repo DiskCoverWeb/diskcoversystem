@@ -346,7 +346,7 @@ class autorizacion_sri
 			   		 	if( isset($enviar_sri[0]) && $enviar_sri[0]==1)
 			   		 	{
 			   		 		//una vez enviado comprobamos el estado de la factura
-			   		 		sleep(6);
+			   		 		// sleep(6);
 			   		 		$resp =  $this->comprobar_xml_sri($cabecera['ClaveAcceso'],$this->linkSriAutorizacion);
 			   		 		if($resp[0]==1)
 			   		 		{
@@ -3276,6 +3276,69 @@ function generar_xml_retencion($cabecera,$detalle)
     {
     	$entidad =  generaCeros($_SESSION['INGRESO']['IDEntidad'],3);
     	$empresa = $_SESSION['INGRESO']['item'];
+    	$comprobar_sri = dirname(__DIR__).'/SRI/API-SRI-python/api_sri_python.py';
+    	$url_autorizado=dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Autorizados/';
+ 	    $url_No_autorizados =dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/No_autorizados/';
+
+ 	    $comprobado = true;
+ 	    $output = '';
+ 	    $veces_envio = 1;
+ 	    while ($comprobado) {
+
+ 	    	$command = "python ".$comprobar_sri." 2 ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion; 
+ 	    	$output = shell_exec($command);   
+
+	   		// print_r($output);die();		
+	   		$output = mb_convert_encoding($output, 'UTF-8', 'ISO-8859-1');
+			$output = json_decode($output,true); // <== para que la respuesta se haga un array
+			if($output[2]=='AUTORIZADO' || $veces_envio>=3)
+			{
+				$comprobado = false;
+			}	
+			$veces_envio = $veces_envio+1;
+ 	    }  		 
+   		
+   		return $output;
+    }
+
+    function enviar_xml_sri($clave_acceso,$url_recepcion)
+    {
+    	$entidad =  generaCeros($_SESSION['INGRESO']['IDEntidad'],3);
+    	$empresa = $_SESSION['INGRESO']['item'];
+
+    	$ruta_firmados=dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Firmados/';
+    	$ruta_enviados=dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Enviados/';
+ 	    $ruta_rechazados =dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Rechazados/';
+    	$enviar_sri = dirname(__DIR__).'/SRI/API-SRI-python/api_sri_python.py';
+
+    	if(!file_exists($ruta_firmados.$clave_acceso.'.xml'))
+    	{
+    		$respuesta = ' XML firmado no encontrado';
+	 		return $respuesta;
+    	}
+
+    	if(!file_exists($ruta_firmados.$clave_acceso.'.xml'))
+    	{
+    		$respuesta = ' XML firmado no encontrado';
+	 		return $respuesta;
+    	}
+
+
+    	$command = "python ".$enviar_sri." 1 ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion; 
+    	$output = shell_exec($command);
+   		if($output!=null && $output!='')
+   		{
+   			$output = mb_convert_encoding($output, 'UTF-8', 'ISO-8859-1');
+   		}
+   		$output = json_decode($output,true);
+   		// print_r($output);die();
+   		return $output;
+    }
+
+    function comprobar_xml_sri_jar($clave_acceso,$link_autorizacion)
+    {
+    	$entidad =  generaCeros($_SESSION['INGRESO']['IDEntidad'],3);
+    	$empresa = $_SESSION['INGRESO']['item'];
     	$comprobar_sri = dirname(__DIR__).'/SRI/firmar/JavClientSri.jar';
     	$url_autorizado=dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Autorizados/';
  	    $url_No_autorizados =dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/No_autorizados/';
@@ -3299,8 +3362,9 @@ function generar_xml_retencion($cabecera,$detalle)
    		return $output;
     }
 
+
     //envia el xml asia el sri
-    function enviar_xml_sri($clave_acceso,$url_recepcion)
+    function enviar_xml_sri_jar($clave_acceso,$url_recepcion)
     {
     	$entidad =  generaCeros($_SESSION['INGRESO']['IDEntidad'],3);
     	$empresa = $_SESSION['INGRESO']['item'];
