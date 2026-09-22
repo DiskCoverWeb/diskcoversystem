@@ -3289,13 +3289,21 @@ function generar_xml_retencion($cabecera,$detalle)
  	    	$output = shell_exec($command);   
 
 	   		// print_r($output);die();		
-	   		$output = mb_convert_encoding($output, 'UTF-8', 'ISO-8859-1');
-			$output = json_decode($output,true); // <== para que la respuesta se haga un array
-			if($output[2]=='AUTORIZADO' || $veces_envio>=3)
-			{
-				$comprobado = false;
-			}	
-			$veces_envio = $veces_envio+1;
+	   		try {
+
+	   			$output = mb_convert_encoding($output, 'UTF-8', 'ISO-8859-1');
+				$output = json_decode($output,true); // <== para que la respuesta se haga un array
+				if($output[2]=='AUTORIZADO' || $veces_envio>=3)
+				{
+					$comprobado = false;
+				}	
+				$veces_envio = $veces_envio+1;			
+	   			
+	   		} catch (Exception $e) {
+
+	   			return $output;	
+	   		}
+	   		
  	    }  		 
    		
    		return $output;
@@ -3326,13 +3334,21 @@ function generar_xml_retencion($cabecera,$detalle)
 
     	$command = "python ".$enviar_sri." 1 ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion; 
     	$output = shell_exec($command);
-   		if($output!=null && $output!='')
-   		{
-   			$output = mb_convert_encoding($output, 'UTF-8', 'ISO-8859-1');
-   		}
-   		$output = json_decode($output,true);
-   		// print_r($output);die();
-   		return $output;
+    	try {
+    		if($output!=null && $output!='')
+	   		{
+	   			$output = mb_convert_encoding($output, 'UTF-8', 'ISO-8859-1');
+	   		}
+	   		$output = json_decode($output,true);
+	   		// print_r($output);die();
+	   		return $output;
+
+    	 	
+    	 } catch (Exception $e) {
+
+	   		return $output;    	 	
+    	 } 
+   		
     }
 
     function comprobar_xml_sri_jar($clave_acceso,$link_autorizacion)
