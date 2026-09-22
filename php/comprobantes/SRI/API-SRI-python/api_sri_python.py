@@ -5,6 +5,8 @@ from zeep import Client
 from zeep.transports import Transport
 import requests
 import json
+import re
+from lxml import etree
 
 # 1. Definición de la URL del Web Service de Recepción (Producción o Pruebas)
 # Producción: https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl
@@ -126,7 +128,7 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
         # 4. Invocar el método 'validarComprobante' pasando los bytes del XML
         # El SRI requiere que el parámetro sea un arreglo de bytes (byte[])
         respuesta = client.service.validarComprobante(xml_bytes)
-        # print(respuesta)
+        print(respuesta)
 
         # 5. Procesar la respuesta del SRI
         estado = respuesta.estado
@@ -144,30 +146,44 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
         elif estado == "DEVUELTA":
 
             result[0] = -1
-           # print("El comprobante fue DEVUELTO por el SRI con las siguientes observaciones:")
+            # print("El comprobante fue DEVUELTO por el SRI con las siguientes observaciones:")
             # Recorrer los errores/observaciones devueltos
+
             if hasattr(respuesta, 'comprobantes') and respuesta.comprobantes:
                 for comp in respuesta.comprobantes.comprobante:
                     if hasattr(comp, 'mensajes') and comp.mensajes:
                         detalle_mensajes = "";
+                        detalle_xml_mensaje = "";
                         for msg in comp.mensajes.mensaje:
-                            # print(f" - Identificador: {getattr(msg, 'identificador', 'N/A')}")
-                            # print(f" - Mensaje: {msg.mensaje}")
-                            # print(f" - Tipo: {getattr(msg, 'tipo', 'N/A')}")
-                            # print(f" - Información Adicional: {getattr(msg, 'informacionAdicional', 'N/A')}\n")
                             identificador = getattr(msg, 'identificador', 'N/A')
                             mensaje = getattr(msg, 'mensaje', 'Sin mensaje')
                             tipo = getattr(msg, 'tipo', 'N/A')
                             info_adicional = getattr(msg, 'informacionAdicional', 'N/A')
 
-                            # 2. Acumulas el formato de texto en la variable con +=
-                            detalle_mensajes += f" - Identificador: {identificador}\n"
-                            detalle_mensajes += f" - Mensaje: {mensaje}\n"
-                            detalle_mensajes += f" - Tipo: {tipo}\n"
-                            detalle_mensajes += f" - Información Adicional: {info_adicional}\n\n"
+
+                            detalle_xml_mensaje = f""" <estado>{estado}</estado>
+    <comprobantes>
+        <comprobante>
+            <claveAcceso>0608202601175783157100120010020000061571234567815</claveAcceso>
+            <mensajes>
+                <mensaje>
+                    <identificador>{identificador}</identificador>
+                    <mensaje>{mensaje}</mensaje>
+                    <informacionAdicional>{info_adicional}</informacionAdicional>
+                    <tipo>{tipo}</tipo>
+                </mensaje>
+            </mensajes>
+        </comprobante>
+    </comprobantes>"""
+
+                    root = etree.fromstring(xml_bytes)
+                    fragmento_doc = etree.fromstring(f"<root>{detalle_xml_mensaje}</root>".encode('utf-8'))
+                    for elemento in fragmento_doc:
+                        root.append(elemento)
+                    xml_final_texto = etree.tostring(root, encoding="utf-8", pretty_print=True).decode("utf-8")
 
                     result[3] = "El comprobante fue DEVUELTO por el SRI con las siguientes observaciones:"+detalle_mensajes                
-                    guardar_xml_en_carpeta(detalle_mensajes, ruta_xml_rechazados, clave_acceso+".txt")
+                    guardar_xml_en_carpeta(xml_final_texto, ruta_xml_rechazados, clave_acceso+".xml")
 
         return result
 
@@ -212,8 +228,16 @@ def verificar_autorizacion(clave_acceso,WSDL_AUTORIZACION,ruta_xml_autorizado,ru
 
         # 4. Retornar según el estado obtenido
         if estado == "AUTORIZADO":
-
-            guardar_xml_en_carpeta(contenido_xml, ruta_xml_autorizado, clave_acceso+".xml")
+            contenido_xml_sin = "\n".join([linea.strip() for linea in contenido_xml.splitlines() if linea.strip()])
+            xml_auto = f"""<?xml version="1.0" encoding="UTF-8"?>
+<autorizacion>
+    <estado>AUTORIZADO</estado>
+    <numeroAutorizacion>{aut.numeroAutorizacion}</numeroAutorizacion>
+    <fechaAutorizacion>{str(aut.fechaAutorizacion)}</fechaAutorizacion>
+    <comprobante><![CDATA[{contenido_xml_sin}]]></comprobante>
+    <mensajes/>
+</autorizacion>"""
+            guardar_xml_en_carpeta(xml_auto, ruta_xml_autorizado, clave_acceso+".xml")
             return {
                 "0":1,
                 "1": aut.numeroAutorizacion,
