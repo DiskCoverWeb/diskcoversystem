@@ -87,7 +87,7 @@
 </div>
 
 <div class="card">
-    <div class="card-body">
+    <div class="card-body pb-2">
         <div class="row g-3">
             <div class="col-12 col-lg-3">
                 <label class="form-label fw-bold mb-1">Fecha</label>
@@ -139,13 +139,13 @@
     </div>
 </div>
 
-<div class="mt-3">
+<div class="mt-1">
     <div class="card">
-        <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2 py-1">
             <h6 class="mb-0"><i class="bx bx-time-five me-1"></i>Registro manual de horas</h6>
         </div>
-        <div class="card-body row g-3">
-            <div class="col-6 col-lg-2">
+        <div class="card-body row g-2 align-items-end pb-2">
+            <div class="col-6 col-md-3 col-lg-2">
                 <div class="input-group">
                     <div class="col-12 bg-person-sky-blue text-center rounded-top">
                         <b>VALOR HORA</b>
@@ -153,7 +153,7 @@
                     <input class="form-control form-control-sm" type="number" step="0.01" id="txt_valor_hora" placeholder="0.00">
                 </div>
             </div>
-            <div class="col-6 col-lg-2">
+            <div class="col-6 col-md-3 col-lg-2">
                 <div class="input-group">
                     <div class="col-12 bg-person-sky-blue text-center rounded-top">
                         <b>HORAS TRABAJADAS</b>
@@ -161,7 +161,7 @@
                     <input class="form-control form-control-sm" type="number" step="0.01" id="txt_horas_trabajadas" placeholder="0.00">
                 </div>
             </div>
-            <div class="col-6 col-lg-2">
+            <div class="col-6 col-md-2 col-lg-1">
                 <div class="input-group">
                     <div class="col-12 bg-person-sky-blue text-center rounded-top">
                         <b>DIAS</b>
@@ -169,7 +169,7 @@
                     <input class="form-control form-control-sm" type="number" id="txt_dias" placeholder="0">
                 </div>
             </div>
-            <div class="col-6 col-lg-2">
+            <div class="col-6 col-md-3 col-lg-2">
                 <div class="input-group">
                     <div class="col-12 bg-person-sky-blue text-center rounded-top">
                         <b>HORAS EXTRAS</b>
@@ -177,13 +177,13 @@
                     <input class="form-control form-control-sm" type="number" step="0.01" id="txt_horas_extras" placeholder="0.00">
                 </div>
             </div>
-            <div class="col-8 col-lg-3">
+            <div class="col-6 col-md-4 col-lg-2">
                 <div class="input-group">
                     <div class="col-12 bg-person-sky-blue text-center rounded-top">
                         <b>VALOR HORA EXTRA</b>
                     </div>
                     <div class="d-flex">
-                        <select class="form-select form-select-sm" id="cmb_modo_extra" style="max-width: 70px;">
+                        <select class="form-select form-select-sm" id="cmb_modo_extra" style="max-width: 60px;">
                             <option value="%">%</option>
                             <option value="V">V</option>
                         </select>
@@ -191,7 +191,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-4 col-lg-1">
+            <div class="col-6 col-md-2 col-lg-1">
                 <div class="input-group">
                     <div class="col-12 bg-person-sky-blue text-center rounded-top">
                         <b>ORDEN</b>
@@ -199,8 +199,7 @@
                     <input class="form-control form-control-sm" id="txt_orden" placeholder="0">
                 </div>
             </div>
-
-            <div class="col-12 text-end">
+            <div class="col-12 col-md-3 col-lg-2 d-grid">
                 <button class="btn btn-primary btn-sm" onclick="agregarRegistroManual()">
                     <i class="bx bx-plus"></i> Agregar registro
                 </button>
@@ -209,7 +208,7 @@
     </div>
 </div>
 
-<div class="mt-3">
+<div class="mt-1">
     <div class="card">
         <div class="card-body">
             <div class="row">
@@ -223,7 +222,7 @@
                         </li>
                     </ul>
 
-                    <div class="tab-content mt-3">
+                    <div class="tab-content mt-2">
                         <div class="tab-pane fade show active" id="sueldo_div">
                             <div class="col-sm-12">
                                 <table class="table text-sm w-100" id="tbl_sueldo"></table>

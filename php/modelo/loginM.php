@@ -449,12 +449,12 @@ class loginM
 	function modulos_habiliatados()
 	{
 		$usuario=array();
-		$sql="SELECT DISTINCT M.modulo,A.Modulo as 'modulo',M.Aplicacion as 'apli',M.link as 'link',M.icono as 'icono' 
-		FROM acceso_empresas A 
-		JOIN modulos M on A.Modulo = M.modulo 
-		WHERE CI_NIC='".$_SESSION['INGRESO']['Id']."' 
-		AND Item='".$_SESSION['INGRESO']['item']."' 
-		AND ID_Empresa='".$_SESSION['INGRESO']['IDEntidad']."' 
+		$sql="SELECT DISTINCT M.modulo,A.Modulo as 'modulo',M.Aplicacion as 'apli',M.link as 'link',M.icono as 'icono',M.descripcion as 'descripcion'
+		FROM acceso_empresas A
+		JOIN modulos M on A.Modulo = M.modulo
+		WHERE CI_NIC='".$_SESSION['INGRESO']['Id']."'
+		AND Item='".$_SESSION['INGRESO']['item']."'
+		AND ID_Empresa='".$_SESSION['INGRESO']['IDEntidad']."'
 		 AND link<>'.' AND icono<>'.' ORDER BY aplicacion ASC ";
 		// print_r($sql);die();
 		$datos = $this->db->datos($sql,$tipo='MY SQL');

@@ -19,9 +19,14 @@
 						   '12' => 'bg-primary');
     		$pos = 1;
     		// print_r($modulo);die();
-			foreach ($modulo as $key => $value) {				
+			foreach ($modulo as $key => $value) {
+				$descripcion = trim($value['descripcion'] ?? '');
+				$tooltipAttrs = '';
+				if($descripcion !== '' && $descripcion !== '.'){
+					$tooltipAttrs = ' data-bs-toggle="tooltip" data-bs-placement="top" title="'.htmlspecialchars($descripcion, ENT_QUOTES).'"';
+				}
 				$moduloView.='<div class="col">
-								<a href="'.$value['link'].'">
+								<a href="'.$value['link'].'"'.$tooltipAttrs.'>
 									<div class="card radius-10 overflow-hidden '.$color[$pos].' ">
 										<div class="card-body">
 											<div class="d-flex align-items-center">
@@ -46,5 +51,14 @@
 	</div>
 	<!--end row-->
 </div>
+
+<script>
+	$(function () {
+		var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+		tooltipTriggerList.forEach(function (el) {
+			new bootstrap.Tooltip(el);
+		});
+	});
+</script>
 
 <?php require_once(dirname(__Dir__,2).'/headers/footer2.php'); ?>
