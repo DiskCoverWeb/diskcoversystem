@@ -46,12 +46,22 @@ class catalogoCuentasRolC
         return $g;
     }
 
+    // Si el grupo ya existe tal cual fue escrito (ej. "Gerente general") se respeta ese nombre;
+    // solo un grupo nuevo se normaliza (mayúsculas, espacios/puntos a "_").
+    function resolverGrupoRol($grupoRol){
+        $exacto = trim($grupoRol);
+        if(strlen($exacto) > 1 && $this->modelo->existeGrupo($exacto)){
+            return $exacto;
+        }
+        return $this->normalizarGrupoRol($grupoRol);
+    }
+
     function listarGrupos(){
         return $this->modelo->listarGrupos();
     }
 
     function datosGrupo($parametros){
-        $grupoRol = $this->normalizarGrupoRol($parametros['GrupoRol'] ?? '');
+        $grupoRol = $this->resolverGrupoRol($parametros['GrupoRol'] ?? '');
         if(strlen($grupoRol) <= 1){
             return null;
         }
@@ -59,7 +69,7 @@ class catalogoCuentasRolC
     }
 
     function guardarGrupo($parametros){
-        $grupoRol = $this->normalizarGrupoRol($parametros['GrupoRol'] ?? '');
+        $grupoRol = $this->resolverGrupoRol($parametros['GrupoRol'] ?? '');
         if(strlen($grupoRol) <= 1){
             return -1;
         }
@@ -75,7 +85,7 @@ class catalogoCuentasRolC
     }
 
     function eliminarGrupo($parametros){
-        $grupoRol = $this->normalizarGrupoRol($parametros['GrupoRol'] ?? '');
+        $grupoRol = $this->resolverGrupoRol($parametros['GrupoRol'] ?? '');
         if(strlen($grupoRol) <= 1){
             return -1;
         }

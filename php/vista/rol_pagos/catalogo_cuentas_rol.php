@@ -1,4 +1,33 @@
 <?php
+$formatoCta = $_SESSION['INGRESO']['Formato_Cuentas'] ?? '';
+
+// Cada bloque = filas de pares [Gastos (izquierda), Pasivo (derecha)], igual que el formulario VB6.
+$bloques = [
+    [
+        [['Cta_Sueldo', 'Sueldo Normal (G)'],               ['Cta_Antiguedad', 'Antigüedad']],
+        [['Cta_Vacacion', 'Sueldo Vacación (G)'],           ['Cta_Per_Maternidad', 'Per. de Maternidad (P)']],
+        [['Cta_Horas_Ext', 'Horas Extras (G)'],             ['Cta_Ext_Conyugue_P', 'Ext. de Cónyuge (P)']],
+        [['Cta_Quincena', 'Quincena (A-CxC)'],              ['Cta_IESS_Personal', 'Aporte Personal (P)']],
+    ],
+    [
+        [['Cta_Aporte_Patronal_G', 'Aporte Patronal (G)'],  ['Cta_IESS_Patronal', 'Aporte Patronal (P)']],
+        [['Cta_Decimo_Tercer_G', 'Décimo Tercero (G)'],     ['Cta_Decimo_Tercer_P', 'Décimo Tercero (P)']],
+        [['Cta_Decimo_Cuarto_G', 'Décimo Cuarto (G)'],      ['Cta_Decimo_Cuarto_P', 'Décimo Cuarto (P)']],
+        [['Cta_Fondo_Reserva_G', 'Fondo de Reserva (G)'],   ['Cta_Fondo_Reserva_P', 'Fondo de Reserva (P)']],
+        [['Cta_Vacaciones_G', 'Prov. Vacaciones (G)'],      ['Cta_Vacaciones_P', 'Prov. Vacaciones (P)']],
+    ],
+    [
+        [['Cta_Per_Efermedad', 'Per. de Enfermedad'],       ['Cta_Diferencia', 'Horas no Trabajadas']],
+    ],
+];
+
+function campoCuenta($id, $etiqueta, $formatoCta){
+    return '<div class="input-group input-group-sm">
+        <span class="input-group-text bg-person-sky-blue hp-cta-label">'.htmlspecialchars($etiqueta).'</span>
+        <input type="text" class="form-control cta-input" id="'.$id.'" placeholder="'.htmlspecialchars($formatoCta).'"
+            onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
+    </div>';
+}
 ?>
 <style>
     .bg-person-sky-blue {
@@ -16,6 +45,26 @@
     .btn-group img {
         width: 24px;
         height: 24px;
+    }
+    .hp-cta-label {
+        width: 185px;
+        min-width: 185px;
+        font-weight: 700;
+        font-size: .78rem;
+        text-align: left;
+    }
+    .hp-col-title {
+        text-align: center;
+        font-weight: 700;
+        letter-spacing: .04em;
+        color: #fff;
+        border-radius: .4rem;
+        padding: .3rem 0;
+    }
+    .hp-bloque + .hp-bloque {
+        border-top: 1px dashed #d5dbe1;
+        margin-top: .6rem;
+        padding-top: .6rem;
     }
 </style>
 <?php $jsCatCtasRol = dirname(__DIR__, 3).'/dist/js/rol_pagos/catalogo_cuentas_rol.js'; ?>
@@ -56,7 +105,7 @@
     <div class="card-body pb-2">
         <div class="row g-3">
             <div class="col-12 col-lg-6">
-                <label class="form-label fw-bold mb-1">Grupo de Rol</label>
+                <label class="form-label fw-bold mb-1">Grupo de Rol Pago</label>
                 <select class="form-select" id="cmb_grupo" style="width:100%">
                 </select>
             </div>
@@ -67,142 +116,23 @@
     </div>
 </div>
 
-<div class="mt-1">
-    <div class="card">
-        <div class="card-header py-1"><h6 class="mb-0"><i class="bx bx-money me-1"></i>Nómina</h6></div>
-        <div class="card-body row g-2 pb-2">
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>SUELDO NORMAL (G)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Sueldo" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>HORAS EXTRAS (G)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Horas_Ext" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>ANTIGÜEDAD</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Antiguedad" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>HORAS NO TRABAJADAS</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Diferencia" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>SUELDO VACACIÓN (G)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Vacacion" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>QUINCENA (A-CxC)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Quincena" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="mt-1">
-    <div class="card">
-        <div class="card-header py-1"><h6 class="mb-0"><i class="bx bx-shield-quarter me-1"></i>Aportes IESS</h6></div>
-        <div class="card-body row g-2 pb-2">
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>APORTE PATRONAL (G)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Aporte_Patronal_G" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>APORTE PERSONAL (P)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_IESS_Personal" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>APORTE PATRONAL (P)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_IESS_Patronal" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="mt-1">
-    <div class="card">
-        <div class="card-header py-1"><h6 class="mb-0"><i class="bx bx-gift me-1"></i>Décimos</h6></div>
-        <div class="card-body row g-2 pb-2">
-            <div class="col-6 col-md-3 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>DÉCIMO TERCERO (G)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Decimo_Tercer_G" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-            <div class="col-6 col-md-3 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>DÉCIMO TERCERO (P)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Decimo_Tercer_P" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-            <div class="col-6 col-md-3 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>DÉCIMO CUARTO (G)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Decimo_Cuarto_G" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-            <div class="col-6 col-md-3 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>DÉCIMO CUARTO (P)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Decimo_Cuarto_P" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="mt-1">
-    <div class="card">
-        <div class="card-header py-1"><h6 class="mb-0"><i class="bx bx-wallet me-1"></i>Fondo de Reserva y Provisión de Vacaciones</h6></div>
-        <div class="card-body row g-2 pb-2">
-            <div class="col-6 col-md-3 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>FONDO DE RESERVA (G)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Fondo_Reserva_G" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-            <div class="col-6 col-md-3 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>FONDO DE RESERVA (P)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Fondo_Reserva_P" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-            <div class="col-6 col-md-3 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>PROV. VACACIONES (G)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Vacaciones_G" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-            <div class="col-6 col-md-3 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>PROV. VACACIONES (P)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Vacaciones_P" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="mt-1 mb-3">
     <div class="card">
-        <div class="card-header py-1"><h6 class="mb-0"><i class="bx bx-heart me-1"></i>Otros beneficios</h6></div>
-        <div class="card-body row g-2 pb-2">
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>PERMISO ENFERMEDAD</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Per_Efermedad" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
+        <div class="card-body pb-2">
+            <div class="row g-2 mb-2">
+                <div class="col-12 col-md-6"><div class="hp-col-title bg-primary">GASTOS (G)</div></div>
+                <div class="col-12 col-md-6"><div class="hp-col-title bg-secondary">PASIVO / PROVISIÓN (P)</div></div>
             </div>
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>EXT. DE CÓNYUGE (P)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Ext_Conyugue_P" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
+            <?php foreach ($bloques as $filas) { ?>
+                <div class="hp-bloque">
+                    <?php foreach ($filas as $par) { ?>
+                        <div class="row g-2 mb-1">
+                            <div class="col-12 col-md-6"><?php echo campoCuenta($par[0][0], $par[0][1], $formatoCta); ?></div>
+                            <div class="col-12 col-md-6"><?php echo campoCuenta($par[1][0], $par[1][1], $formatoCta); ?></div>
+                        </div>
+                    <?php } ?>
                 </div>
-            </div>
-            <div class="col-6 col-md-4 col-lg-2">
-                <div class="input-group"><div class="col-12 bg-person-sky-blue text-center rounded-top"><b>PERMISO MATERNIDAD (P)</b></div>
-                    <input type="text" class="form-control form-control-sm cta-input" id="Cta_Per_Maternidad" placeholder="<?php echo $_SESSION['INGRESO']['Formato_Cuentas'] ?? ''; ?>" onkeyup="if(event.keyCode!=46 && event.keyCode!=8){ validar_cuenta(this); }">
-                </div>
-            </div>
+            <?php } ?>
         </div>
     </div>
 </div>
