@@ -434,7 +434,7 @@ class asignacion_pickingM
             {
                 $sql.=" AND CP.Codigo_Inv = '".$grupo."'";
             }
-            
+            $sql.=" ORDER BY ID DESC";
             // print_r($sql);die();
         return $this->db->datos($sql);
     }
