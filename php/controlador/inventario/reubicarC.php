@@ -214,6 +214,11 @@ class reubicarC
 	function ingresar_trans_kardex_salidas($num_comprobante,$data_ubi,$data,$fecha)
 	{
 
+
+		print_r($data_ubi);
+		print_r($data);
+		die();
+
 		$data = $data[0];
 		// Salida
 	    SetAdoAddNew("Trans_Kardex"); 	
@@ -226,7 +231,7 @@ class reubicarC
 	   	SetAdoFields('Existencia',number_format($data['Diff'],2,'.','')); 
 	   	SetAdoFields('CodBodega',$data['CodBodega']); 	
 	   	SetAdoFields('Codigo_Barra',$data['Codigo_Barra']); 
-	   	SetAdoFields('Detalle','Movimeinto de bodega '.$data['CodBodega'].' el dia '.$fecha); 	
+	   	SetAdoFields('Detalle','Movimiento de bodega '.$data['CodBodega'].' a '.$data['newBodega'].' el dia '.$fecha); 	
 	   	SetAdoFields('Procesado',0); 	
 	   	SetAdoFields('Salida',number_format($data['Diff'],2,'.','')); 	
 	   	SetAdoFields('Cta_Inv',$data_ubi[0]['Cta_Inv']); 		
@@ -253,7 +258,7 @@ class reubicarC
 	   	SetAdoFields('Existencia',number_format($data['Diff'],2,'.','')); 
 	   	SetAdoFields('CodBodega',$data['newBodega']); 	
 	   	SetAdoFields('Codigo_Barra',$data['Codigo_Barra']); 	
-	   	SetAdoFields('Detalle','Movimeinto de bodega '.$data['CodBodega'].' el dia '.$fecha); 	
+	   	SetAdoFields('Detalle','Movimiento de bodega '.$data['CodBodega'].' a '.$data['newBodega'].' el dia '.$fecha); 	
 	   	SetAdoFields('Procesado',0); 	
 	   	SetAdoFields('Entrada',number_format($data['Diff'],2,'.','')); 	
 	   	SetAdoFields('Cta_Inv',$data_ubi[0]['Cta_Inv']); 		
