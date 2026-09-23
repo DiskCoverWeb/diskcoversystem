@@ -384,18 +384,24 @@ function buscar_producto()
 			if(response.datos.length>0)
 			{
 
-				console.log(response);
-
+				// console.log(response);
 				data = response.datos[0];
 				stock = response.stock;
 
+				if(stock<=0)
+				{
+					Swal.fire("Stock insuficienta ", $('#txt_cod_producto').val()+" (Stock: "+stock+")","info")
+					return false
 
-				$('#txt_id').val(data.ID)
-				$('#txt_cod_producto').val(data.Codigo_Barra)
-				$('#txt_donante').val(data.Cliente)
-				$('#txt_grupo').val(data.Producto)
-				$('#txt_stock').val(stock.toFixed(2))
-				$('#txt_unidad').val(data.Unidad)
+				}else{
+
+					$('#txt_id').val(data.ID)
+					$('#txt_cod_producto').val(data.Codigo_Barra)
+					$('#txt_donante').val(data.Cliente)
+					$('#txt_grupo').val(data.Producto)
+					$('#txt_stock').val(stock.toFixed(2))
+					$('#txt_unidad').val(data.Unidad)
+				}
 			}else
 			{
 				$('#txt_id').val("")

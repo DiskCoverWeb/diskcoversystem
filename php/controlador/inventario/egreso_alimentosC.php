@@ -182,7 +182,7 @@ class egreso_alimentosC
 		$datos = $this->modelo->buscar_producto($parametros['codigo']);
 		$data = costo_venta($datos[0]['Codigo_Inv'],$parametros['codigo']);
 		// print_r($data);die();
-		$datos = array('datos'=>$datos,'stock'=>$data[0]['Existencia']);
+		$datos = array('datos'=>$datos,'stock'=> number_format($data[0]['Existencia'],$_SESSION['INGRESO']['Dec_Costo'],'.',''));
 
 		return $datos;
 	}
@@ -726,6 +726,7 @@ class egreso_alimentosC
                   "con" => 0,// depende de moneda
                   "t_no" => '109',
                 );
+                // print_r($parametros_haber);die();
              $re =   $this->ing_des->ingresar_asientos($parametros_haber);
              // print_r($re);
 		}
@@ -745,7 +746,7 @@ class egreso_alimentosC
 			$debe+=$value['DEBE'];
 			$haber+=$value['HABER'];
 		}
-		// print_r($debe)
+		// print_r($debe);die();
 		if(strval($debe)==strval($haber))
 		{
 			if($debe !=0 && $haber!=0)
@@ -764,6 +765,7 @@ class egreso_alimentosC
                 $resp = $this->ing_des->generar_comprobantes($parametro_comprobante);
                 // $cod = explode('-',$num_comprobante);
                 // die();
+                // print_r($resp);die();
                 if($resp==$num_comprobante)
                 {
                 	if($this->ingresar_trans_kardex_salidas($parametros['orden'],$num_comprobante)==1)
