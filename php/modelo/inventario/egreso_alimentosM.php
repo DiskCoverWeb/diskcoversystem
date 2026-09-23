@@ -80,6 +80,7 @@ class egreso_alimentosM
 			{
 				$sql.=" AND CP.Codigo_Inv = '".$grupo."'";
 			}
+			$sql.=" ORDER BY ID DESC"; 
 			
 			// print_r($sql);die();
 		return $this->db->datos($sql);
@@ -353,7 +354,7 @@ class egreso_alimentosM
 				WHERE Item = '".$_SESSION['INGRESO']['item']."' 
 				AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
 				AND Codigo = '".$cuenta."'";
-          // print_r($sql);
+          // print_r($sql);die();
      	return $this->db->datos($sql);
 	}
 
