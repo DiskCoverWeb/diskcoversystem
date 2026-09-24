@@ -80,6 +80,11 @@ switch ($_SESSION['INGRESO']['modulo_']) {
         <button type="button" class="btn btn-sm btn-outline-secondary" onclick="cargar_cuentas('cxp')" data-bs-toggle="tooltip" title="Asignar a Cuenta por Pagar Contabilidad">
           <img src="../../img/png/cxp.png">
         </button>
+        <?php if (($_SESSION['INGRESO']['modulo_'] ?? '') == '04'): ?>
+        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="asignar_rol_pago()" data-bs-toggle="tooltip" title="Asignar a Rol de Pago">
+          <img src="../../img/png/asignar_rol.png" style="width: 32px; height: 32px;">
+        </button>
+        <?php endif; ?>
     </div>
   </div>
   <!-- FIN BOTONES CXC y CXP -->

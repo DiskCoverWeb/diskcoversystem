@@ -102,7 +102,7 @@ function campoCuenta($id, $etiqueta, $formatoCta){
 </div>
 
 <div class="card">
-    <div class="card-body pb-2">
+    <div class="card-body pb-0">
         <div class="row g-3">
             <div class="col-12 col-lg-6">
                 <label class="form-label fw-bold mb-1">Grupo de Rol Pago</label>
@@ -116,9 +116,9 @@ function campoCuenta($id, $etiqueta, $formatoCta){
     </div>
 </div>
 
-<div class="mt-1 mb-3">
+<div class="mb-3" style="margin-top: 1px;">
     <div class="card">
-        <div class="card-body pb-2">
+        <div class="card-body pb-2" style="padding-top: 1px;">
             <div class="row g-2 mb-2">
                 <div class="col-12 col-md-6"><div class="hp-col-title bg-primary">GASTOS (G)</div></div>
                 <div class="col-12 col-md-6"><div class="hp-col-title bg-secondary">PASIVO / PROVISIÓN (P)</div></div>

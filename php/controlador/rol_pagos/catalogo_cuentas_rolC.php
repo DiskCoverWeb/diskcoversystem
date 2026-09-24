@@ -40,7 +40,7 @@ class catalogoCuentasRolC
 
     function normalizarGrupoRol($grupoRol){
         $g = strtoupper(trim($grupoRol));
-        $g = str_replace(' ', '_', $g);
+        $g = preg_replace('/\s+/', ' ', $g);
         $g = str_replace('.', '_', $g);
         $g = substr($g, 0, 30);
         return $g;
@@ -76,7 +76,7 @@ class catalogoCuentasRolC
 
         $cuentas = [];
         foreach($this->modelo->getCampos() as $campo){
-            $valor = trim($parametros[$campo] ?? '0');
+            $valor = rtrim(trim($parametros[$campo] ?? '0'), '.');
             $cuentas[$campo] = $valor === '' ? '0' : $valor;
         }
 

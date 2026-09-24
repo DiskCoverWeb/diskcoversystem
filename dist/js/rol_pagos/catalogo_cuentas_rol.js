@@ -15,6 +15,10 @@ $(document).ready(function () {
 
 	rellenarGrupos();
 
+	$('.cta-input').on('blur', function () {
+		this.value = this.value.trim().replace(/\.+$/, '');
+	});
+
 	$('#cmb_grupo').on('change', function () {
 		const grupo = $(this).val();
 		if (!grupo) {
