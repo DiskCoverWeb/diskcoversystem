@@ -128,7 +128,7 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
         # 4. Invocar el método 'validarComprobante' pasando los bytes del XML
         # El SRI requiere que el parámetro sea un arreglo de bytes (byte[])
         respuesta = client.service.validarComprobante(xml_bytes)
-        # print(respuesta)
+        # print(respuesta);die();
 
         # 5. Procesar la respuesta del SRI
         estado = respuesta.estado
@@ -141,6 +141,7 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
             guardar_xml_en_carpeta(xml_texto, ruta_xml_enviado, clave_acceso+".xml")
             result[0]= 1            
             result[3] = "El comprobante fue recibido correctamente y está pendiente de autorización.";
+            result[4] = "";
             # print("El comprobante fue recibido correctamente y está pendiente de autorización.")
         
         elif estado == "DEVUELTA":
@@ -160,7 +161,8 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
                             tipo = getattr(msg, 'tipo', 'N/A')
                             info_adicional = getattr(msg, 'informacionAdicional', 'N/A')
 
-
+                            result[4] = identificador
+                            detalle_mensajes = mensaje +' '+info_adicional
                             detalle_xml_mensaje = f""" <estado>{estado}</estado>
     <comprobantes>
         <comprobante>
@@ -218,10 +220,20 @@ def verificar_autorizacion(clave_acceso,WSDL_AUTORIZACION,ruta_xml_autorizado,ru
 
         # 3. Validar si existen autorizaciones registradas
         autorizaciones = respuesta.autorizaciones
+        # print(autorizaciones)
+        # return None
         if not autorizaciones or not autorizaciones.autorizacion:
-            return {"estado": "SIN_REGISTRO", "mensaje": "No se encontraron registros para esta clave de acceso."}
+            return {"0":-1,
+                    "1": clave_acceso,
+                    "2": "SIN_REGISTRO",
+                    "3": "No se encontraron registros para esta clave de acceso.",
+                    "4":  "", #str(aut.fechaAutorizacion),
+                    "5": "", #aut.ambiente
+                }
 
         # Obtener la última respuesta del SRI
+        # print(autorizaciones);
+        # return None
         aut = autorizaciones.autorizacion[0]
         estado = aut.estado
         contenido_xml = aut.comprobante

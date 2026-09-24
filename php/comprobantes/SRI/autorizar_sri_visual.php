@@ -183,7 +183,7 @@ class autoriza_sri
    		 			return  array('respuesta'=>-1,"mensaje"=>"XML enviado, no comprobado por el SRI",'FechaAutorizacion'=>$fechaAutorizacion,"XML"=>$ArchivoXML);
    		 		}
    		 		// print_r($resp);die();
-   		 		if($resp[0]==1)
+   		 		if(isset($resp[0]) &&  $resp[0]==1)
    		 		{
    		 			$ArchivoXML = file_get_contents($rutaAu.$Autorizacion1);
    		 			// $ArchivoXML = str_replace('"', "'",$ArchivoXML);
@@ -217,6 +217,49 @@ class autoriza_sri
 	   		 		// print_r($resp);die();
 	   		}else
 	   		{
+	   			if($enviar_sri[4]=="70")
+	   			{
+	   				$resp =  $this->comprobar_xml_sri($Autorizacion,$this->linkSriAutorizacion);
+	   				print_r($resp);die();
+	   		 		if($resp=='' || $resp==null)
+	   		 		{
+	   		 			return  array('respuesta'=>-1,"mensaje"=>"XML enviado, no comprobado por el SRI",'FechaAutorizacion'=>$fechaAutorizacion,"XML"=>$ArchivoXML);
+	   		 		}
+	   		 		// print_r($resp);die();
+	   		 		if(isset($resp[0]) &&  $resp[0]==1)
+	   		 		{
+	   		 			$ArchivoXML = file_get_contents($rutaAu.$Autorizacion1);
+	   		 			// $ArchivoXML = str_replace('"', "'",$ArchivoXML);
+	   		 			$xml = simplexml_load_string($ArchivoXML);
+	   		 			$fechaAutorizacion =  (string)$xml->fechaAutorizacion;
+						// $this->borrar_xml_file($Autorizacion);
+						
+						$ArchivoXML = str_replace(array("\r\n", "\r", "\t"), '', $ArchivoXML);
+	   		 			// $ArchivoXML = str_replace('"', "'",$ArchivoXML);
+	   		 			return  array('respuesta'=>1,"mensaje"=>"XML autorizado",'FechaAutorizacion'=>$fechaAutorizacion,"XML"=>$ArchivoXML);
+	   		 			
+	   		 		}else
+	   		 		{
+	   		 			$ArchivoXML = "";
+	   		 			if(file_exists($rutaNo.$Autorizacion1))
+	   		 			{
+	   		 				$ArchivoXML =  file_get_contents($rutaNo.$Autorizacion1);
+	   		 			}
+	   		 			if(file_exists($rutaRe.$Autorizacion1))
+	   		 			{
+	   		 				$ArchivoXML =  file_get_contents($rutaRe.$Autorizacion1);
+	   		 			}
+						$this->borrar_xml_file($Autorizacion);
+						
+						// print_r($ArchivoXML);die();
+
+						$ArchivoXML = str_replace(array("\r\n", "\r", "\t"), '', $ArchivoXML);
+	   		 			// $ArchivoXML = str_replace('"', "'",$ArchivoXML);
+	   		 			return  array('respuesta'=>-1,"mensaje"=>"XML NO autorizado","FechaAutorizacion"=>"","XML"=>$ArchivoXML);
+	   		 		}
+
+
+	   			}else{
 	   				$ArchivoXML = "";
    		 			if(file_exists($rutaNo.$Autorizacion1))
    		 			{
@@ -231,6 +274,7 @@ class autoriza_sri
 					$ArchivoXML = str_replace(array("\r\n", "\r", "\t"), '', $ArchivoXML);
    		 			// $ArchivoXML = str_replace('"', "'",$ArchivoXML);
    		 			return  array('respuesta'=>-1,"mensaje"=>"XML NO autorizado","FechaAutorizacion"=>"","XML"=>$ArchivoXML);
+   		 		}
 	   		}
             
           }
@@ -541,6 +585,7 @@ class autoriza_sri
  	    while ($comprobado) {
  	    	// $command = $this->rutaJava8."java -jar ".$comprobar_sri." 2 ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion; 
  	    	$command = "python ".$comprobar_sri." 2 ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion; 
+ 	    	// print_r($command);die();
  	    	
 	   		$output = shell_exec($command);  
 	   		// print_r($command);die(); 
