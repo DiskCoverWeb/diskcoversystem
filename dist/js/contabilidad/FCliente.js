@@ -439,6 +439,20 @@ function tipo_proveedor_Cliente() {
     }
   });
 }
+// Rol de Pagos: abre el modal "Asignar a Rol de Pago" (definido en la pagina padre registro_empleados.php)
+function asignar_rol_pago() {
+  if ($('#txt_id').val() == '') {
+    Swal.fire('Seleccione un registro', '', 'info');
+    return false;
+  }
+  var destino = (window.parent && window.parent !== window && typeof window.parent.abrirAsignarRol === 'function') ? window.parent : window;
+  if (typeof destino.abrirAsignarRol !== 'function') {
+    Swal.fire('No se pudo abrir la asignación a rol de pagos', '', 'error');
+    return false;
+  }
+  destino.abrirAsignarRol($('#codigoc').val(), $('#nombrec').val());
+}
+
 //FUNCIONES BOTONES CXC y CXP
 function cargar_cuentas(tipo) {
   if ($('#txt_id').val() == '') {

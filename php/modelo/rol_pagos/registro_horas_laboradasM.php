@@ -154,5 +154,61 @@ class RegistroHorasLaboradas {
               ORDER BY Fecha DESC";
       return $this->conn->datos($sSQL);
    }
+
+   function insertarRegistroManual($datos){
+      $sSQL = "INSERT INTO Trans_Rol_Horas (Periodo, Item, T, Dias, Codigo, Fecha, Horas, Horas_Exts, Porc_Hr_Ext, Valor_Hora, Ing_Liquido, Ing_Horas_Ext, Orden, X)
+         VALUES ('".$_SESSION['INGRESO']['periodo']."', '".$_SESSION['INGRESO']['item']."', 0,
+         ".$datos['Dias'].", '".$datos['Codigo']."', '".$datos['Fecha']."', ".$datos['Horas'].",
+         ".$datos['HorasExtras'].", ".$datos['PorcHrExt'].", ".$datos['ValorHora'].",
+         ".$datos['IngLiquido'].", ".$datos['IngHorasExt'].", '".$datos['Orden']."', '.')";
+      return $this->conn->String_Sql($sSQL);
+   }
+
+   function eliminarRegistroHoras($parametros){
+      $sSQL = "DELETE FROM Trans_Rol_Horas
+         WHERE Item = '".$_SESSION['INGRESO']['item']."'
+         AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+         AND Codigo = '".$parametros['Codigo']."'
+         AND Fecha = '".$parametros['Fecha']."'
+         AND Horas = ".floatval($parametros['Horas'])."
+         AND Orden = '".$parametros['Orden']."'";
+      return $this->conn->String_Sql($sSQL);
+   }
+
+   function eliminarDiasFecha($fecha){
+      $sSQL = "DELETE FROM Trans_Rol_Horas
+         WHERE Item = '".$_SESSION['INGRESO']['item']."'
+         AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+         AND Fecha = '".$fecha."'";
+      return $this->conn->String_Sql($sSQL);
+   }
+
+   function permisoEnfermedad($parametros){
+      $sSQL = "UPDATE Trans_Rol_Horas
+         SET Dias_Enfermedad = ".intval($parametros['Dias'])."
+         WHERE Item = '".$_SESSION['INGRESO']['item']."'
+         AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+         AND Codigo = '".$parametros['Codigo']."'
+         AND Fecha = '".$parametros['Fecha']."'";
+      return $this->conn->String_Sql($sSQL);
+   }
+
+   function agregarNovedad($parametros){
+      $sSQL = "INSERT INTO Trans_Entrada_Salida (ES, Codigo, Hora, Fecha, Proceso, Tarea, CodigoU, Periodo, Item)
+         VALUES ('R', '".$parametros['Codigo']."', '".$parametros['Hora']."', '".$parametros['Fecha']."',
+         'NOVEDADES', '".$parametros['Tarea']."', '".$_SESSION['INGRESO']['CodigoU']."',
+         '".$_SESSION['INGRESO']['periodo']."', '".$_SESSION['INGRESO']['item']."')";
+      return $this->conn->String_Sql($sSQL);
+   }
+
+   function eliminarNovedad($parametros){
+      $sSQL = "DELETE FROM Trans_Entrada_Salida
+         WHERE Item = '".$_SESSION['INGRESO']['item']."'
+         AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+         AND Codigo = '".$parametros['Codigo']."'
+         AND Fecha = '".$parametros['Fecha']."'
+         AND Hora = '".$parametros['Hora']."'";
+      return $this->conn->String_Sql($sSQL);
+   }
 }
 ?>    

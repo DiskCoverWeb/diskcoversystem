@@ -701,6 +701,11 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) {
 					require_once('rol_pagos/registro_horas_laboradas.php');
 					break;
 
+				//Rol Pagos -> Archivo -> Catalogo Cuentas Rol Pagos
+				case 'catalogo_rubros':
+					require_once('rol_pagos/catalogo_cuentas_rol.php');
+					break;
+
 				/************************************* CONTRATOS ***************************************/
 				case 'registro_GFN':
 					require_once('contratos/registro_GFN.php');
