@@ -627,9 +627,18 @@ function ingresar_trans_kardex_salidas($comprobante,$fechaC)
 		   {
 		    $cant = explode(',',$datos_inv[0]['id']);	
 		   }
+		   $beneficiario_cc = '.';
+		   if($value['SUBCTA']!='.')
+		   {
+		   		$centro_costo = $this->modelo->catalogo_subcuentas($value['SUBCTA']);
+		   		if(count($centro_costo)>0)
+		   		{
+		   			$beneficiario_cc = $centro_costo[0]['Detalle'];
+		   		}
+		   }
 		   	 // print_r($datos_inv);
 
-	     SetAdoAddNew("Trans_Kardex");		   	 
+	     	SetAdoAddNew("Trans_Kardex");		   	 
 		    SetAdoFields('Codigo_Inv',$value['CODIGO_INV']); 
 		    SetAdoFields('Fecha',$fechaC); 
 		    SetAdoFields('Numero',$comprobante);  
@@ -649,7 +658,9 @@ function ingresar_trans_kardex_salidas($comprobante,$fechaC)
 		    SetAdoFields('Item',$_SESSION['INGRESO']['item']);
 		    SetAdoFields('CodBodega','01');
 		    SetAdoFields('CodigoL',$value['SUBCTA']);		    
-		    SetAdoFields('CodMarca',$value['CodMar']);
+		    SetAdoFields('CodMarca',$value['CodMar']);    
+		    SetAdoFields('Centro_Costo',$beneficiario_cc);
+
 		    	 // $this->modelo->insertar_trans_kardex($datos);
 		    if(SetAdoUpdate()!=1)
 		     {
@@ -700,8 +711,6 @@ function eliminar_asientos_k()
 	{
 		
 		$asientos_SC = $this->datos_asiento_SC($fecha);
-
-		// print_r($asientos_SC);die();
 
 		// print_r($asientos_SC);die();
 
