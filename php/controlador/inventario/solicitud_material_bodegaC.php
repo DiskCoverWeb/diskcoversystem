@@ -426,7 +426,7 @@ class inventario_onlineC
 		// $datos = $this->modelo->pedidos_contratista_comprobante($parametro['order']);
 		// print_r($datos);die();
 		// $cliente = Leer_Datos_Clientes($Codigo_CIRUC_Cliente,$Por_Codigo=true,$Por_CIRUC=false,$Por_Cliente=false)
-
+// print_r($t_no);die();
 		$orden = $parametro['order'];
 
 		$datos = $this->modelo->pedidos_contratista_comprobante($orden);
@@ -570,11 +570,14 @@ class inventario_onlineC
 			}else
 			{
 				// print_r($debe."-".$haber); 
+				 $this->modelo->delete_SC_ASientos($t_no);
 				 return array('resp'=>-1,'com'=>'Los resultados son 0');
 
 			}
 		}else
 		{
+
+			$this->modelo->delete_SC_ASientos($t_no);
 			$this->modelo->eliminar_asieto();
 			$this->modelo->eliminar_aiseto_sc($fecha);
 			return array('resp'=>-1,'com'=>'No coinciden','debe'=>$debe,'haber'=>$haber);
