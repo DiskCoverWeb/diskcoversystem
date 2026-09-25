@@ -544,9 +544,13 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
        return $datos;
 
 	}
-	function delete_SC_ASientos(){
-		$sql = "DELETE Asiento_SC WHERE  Item='".$_SESSION['INGRESO']['item']."' AND T_No='60' AND CodigoU='".$_SESSION['INGRESO']['CodigoU']."';";
-		$sql.= "DELETE Asiento WHERE  Item='".$_SESSION['INGRESO']['item']."' AND T_No='60' AND CodigoU='".$_SESSION['INGRESO']['CodigoU']."';";
+	function delete_SC_ASientos($t_no=60){
+		$sql = "DELETE Asiento_SC 
+		WHERE  Item='".$_SESSION['INGRESO']['item']."' 
+		AND T_No='".$t_no."' AND CodigoU='".$_SESSION['INGRESO']['CodigoU']."';";
+		$sql.= "DELETE Asiento 
+		WHERE  Item='".$_SESSION['INGRESO']['item']."' 
+		AND T_No='".$t_no."' AND CodigoU='".$_SESSION['INGRESO']['CodigoU']."';";
 		//print_r($sql);die();
 
 		return $this->db->String_Sql($sql);
