@@ -384,9 +384,9 @@ function buscar_producto()
 			if(response.datos.length>0)
 			{
 
-				// console.log(response);
+				console.log(response);
 				data = response.datos[0];
-				stock = response.stock;
+				stock = parseFloat(response.stock);
 
 				if(stock<=0)
 				{
