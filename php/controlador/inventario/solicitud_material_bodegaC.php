@@ -174,6 +174,16 @@ class inventario_onlineC
 
 			foreach ($resp as $key => $value) {
 				// print_r($value);die();
+				$beneficiario_cc = '.';
+			   if($value['SUBCTA']!='.')
+			   {
+			   		$centro_costo = $this->modelo->catalogo_subcuentas($value['SUBCTA']);
+			   		if(count($centro_costo)>0)
+			   		{
+			   			$beneficiario_cc = $centro_costo[0]['Detalle'];
+			   		}
+			   }
+
 				SetAdoAddNew("Trans_Kardex");
 				SetAdoFields('Orden_No',$orden);
 				SetAdoFields('T','S');
@@ -189,6 +199,7 @@ class inventario_onlineC
 		   		SetAdoFields('Contra_Cta',$value['CONTRA_CTA']);		   		
 		   		SetAdoFields('CodigoL',$value['SUBCTA']);		   		
 		   		SetAdoFields('Codigo_P',$_SESSION['INGRESO']['CodigoU']);
+		    	SetAdoFields('Centro_Costo',$beneficiario_cc);
 				SetAdoUpdate();
 
 				$this->modelo->eliminarAsientoK('P','.',$value['CODIGO_INV']);
