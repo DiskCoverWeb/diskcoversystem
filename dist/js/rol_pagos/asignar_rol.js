@@ -17,6 +17,12 @@ let rpInicializado = false;
 function rpVal(id) { return $('#' + id).val(); }
 function rpChk(id) { return $('#' + id).prop('checked'); }
 function rpNum(v) { const n = parseFloat(v); return isNaN(n) ? 0 : n; }
+function rpFechaValida(f) {
+	const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(f || '');
+	if (!m) { return false; }
+	const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+	return +m[1] >= 1900 && d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[3];
+}
 function rpFmt(v, dec) { return rpNum(v).toFixed(dec === undefined ? 2 : dec); }
 
 function abrirAsignarRol(codigo, nombre) {
@@ -100,7 +106,7 @@ function inicializarAsignarRol() {
 	$('#rp_condicion').on('change', actualizarVisibilidadCondicion);
 	$('#rp_fecha_vi').on('change', actualizarMesVacacion);
 	$('#rp_cod_profesion').on('blur', function () {
-		this.value = String(parseInt(this.value || 0)).padStart(10, '0');
+		this.value = String(parseInt(this.value, 10) || 0).padStart(10, '0');
 	});
 	$('#rp_porc_discap').on('blur', function () { if (rpNum(this.value) > 100) this.value = 100; });
 	$('#rp_ci_sustituye').on('blur', function () {
@@ -228,7 +234,7 @@ function pintarAsignarRol(resp) {
 		$('#rp_cssp').val(limpio(e.No_CSSP));
 		$('#rp_cussp').val(limpio(e.No_CUSSP));
 		$('#rp_afponp').val(limpio(e.AFP_ONP));
-		$('#rp_cod_profesion').val(String(parseInt(e.CodProfesion || 0)).padStart(10, '0'));
+		$('#rp_cod_profesion').val(String(parseInt(e.CodProfesion, 10) || 0).padStart(10, '0'));
 		$('#rp_fp_dec').val(limpio(e.FormaPago10to) || 'A');
 		$('#rp_acreditar_ci').val(limpio(e.Acreditar_Cta));
 		$('#rp_tarjeta').val(limpio(e.Tarjeta));
@@ -289,6 +295,17 @@ function guardarAsignarRol() {
 	if (rpNum(rpVal('rp_salario')) <= 0) {
 		Swal.fire('Ingrese el Ingreso Líquido', '', 'warning');
 		return;
+	}
+	const fechasRol = [['rp_fecha', 'Fecha de Ingreso', true], ['rp_fecha_vi', 'Vacación desde'], ['rp_fecha_vf', 'Vacación hasta'],
+		['rp_fecha_c', 'Fecha de Salida'], ['rp_fecha_m', 'Fecha de Maternidad']];
+	for (let i = 0; i < fechasRol.length; i++) {
+		const f = rpVal(fechasRol[i][0]);
+		const habilitado = !$('#' + fechasRol[i][0]).prop('disabled');
+		if (!habilitado) { continue; }
+		if ((fechasRol[i][2] && !f) || (f && !rpFechaValida(f))) {
+			Swal.fire('La ' + fechasRol[i][1] + ' no es válida', 'Use una fecha completa, no menor a 1900', 'warning');
+			return;
+		}
 	}
 	const tipoFP = $('input[name="rp_fp"]:checked').val();
 	const grupoDatos = (rpCatalogos.grupos || []).find(function (g) { return g.Grupo_Rol === grupo; }) || {};

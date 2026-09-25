@@ -99,6 +99,43 @@ class asignarRolC
         return ['Tipo' => $datos['Tipo_Beneficiario'] ?? 'N'];
     }
 
+    // Fecha Y-m-d válida y no anterior a 1900; vacío se considera "sin fecha" (el llamador decide el valor por defecto).
+    private function fechaValida($f){
+        $f = trim($f ?? '');
+        if($f === '') return true;
+        if(!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $f, $m)) return false;
+        return checkdate((int)$m[2], (int)$m[3], (int)$m[1]) && (int)$m[1] >= 1900;
+    }
+
+    // Abreviatura del nombre como Abreviatura_Texto de VB6: inicial + "." de las 4 primeras palabras, en mayúsculas.
+    private function abreviatura($nombre){
+        $nombre = trim($nombre);
+        if($nombre === '' || $nombre === '.') return '.';
+        $r = '';
+        foreach(array_slice(preg_split('/\s+/', $nombre), 0, 4) as $palabra){
+            $r .= strtoupper(mb_substr($palabra, 0, 1)).'.';
+        }
+        return $r;
+    }
+
+    // Reglas de negocio que antes solo validaba el JS. Devuelve el mensaje de error o null.
+    private function validar($p){
+        $grupo = trim($p['GrupoRol'] ?? '');
+        if($grupo === '' || $grupo === '.'){
+            return 'Seleccione el Grupo del Rol';
+        }
+        if($this->num($p['Salario'] ?? 0) <= 0){
+            return 'Ingrese el Ingreso Líquido';
+        }
+        $fechas = ['Fecha' => 'Fecha de Ingreso', 'FechaVI' => 'Vacación desde', 'FechaVF' => 'Vacación hasta', 'FechaC' => 'Fecha de Salida', 'FechaMat' => 'Fecha de Maternidad'];
+        foreach($fechas as $campo => $etiqueta){
+            if(!$this->fechaValida($p[$campo] ?? '')){
+                return 'La '.$etiqueta.' no es válida (formato AAAA-MM-DD y no menor a 1900)';
+            }
+        }
+        return null;
+    }
+
     function guardar($p){
         $codigo = trim($p['Codigo'] ?? '');
         $cli = $this->modelo->cliente($codigo);
@@ -106,8 +143,14 @@ class asignarRolC
             return ['ok' => 0, 'msg' => 'No se encontró el empleado'];
         }
         $nombre = $cli['Cliente'];
-        $usuario = $this->txt($p['Usuario']);
-        $clave = $this->txt($p['Clave']);
+
+        $error = $this->validar($p);
+        if($error !== null){
+            return ['ok' => 0, 'msg' => $error];
+        }
+
+        $usuario = strtoupper($this->txt($p['Usuario']));
+        $clave = strtoupper($this->txt($p['Clave']));
 
         if($usuario != '.' && $this->modelo->duplicado('Usuario', $usuario, $codigo)){
             return ['ok' => 0, 'msg' => 'Usuario ya asignado'];
@@ -131,8 +174,7 @@ class asignarRolC
         $fp = $p['FP'] ?? 'E';
         $codEjec = $cli['Cod_Ejec'] ?? '.';
         if($codEjec == '' || $codEjec == '.'){
-            $codEjec = '';
-            foreach(preg_split('/\s+/', trim($nombre)) as $palabra){ $codEjec .= strtoupper(substr($palabra, 0, 1)); }
+            $codEjec = $this->abreviatura($nombre);
         }
 
         SetAdoAddNew("Catalogo_Rol_Pagos");
@@ -180,9 +222,9 @@ class asignarRolC
         SetAdoFields("Aplica", $this->txt($p['Aplica'], 'NA'));
         SetAdoFields("Condicion", $this->txt($p['Condicion'], '01'));
         SetAdoFields("Porcentaje", $this->num($p['PorcDiscap']));
-        SetAdoFields("Porc_IESS_Per", $this->num($p['PorcIESSPer']) / 100);
-        SetAdoFields("Porc_IESS_Pat", $this->num($p['PorcIESSPat']) / 100);
-        SetAdoFields("Porc_IESS_ExtC", $this->num($p['PorcIESSExtC']) / 100);
+        SetAdoFields("Porc_IESS_Per", round($this->num($p['PorcIESSPer']) / 100, 4));
+        SetAdoFields("Porc_IESS_Pat", round($this->num($p['PorcIESSPat']) / 100, 4));
+        SetAdoFields("Porc_IESS_ExtC", round($this->num($p['PorcIESSExtC']) / 100, 4));
         SetAdoFields("Vivienda", $this->num($p['Vivienda']));
         SetAdoFields("Salud", $this->num($p['Salud']));
         SetAdoFields("Educacion", $this->num($p['Educacion']));
@@ -205,8 +247,8 @@ class asignarRolC
             SetAdoFields("FP", "C");
         } else if($fp == 'T'){
             SetAdoFields("FP", "T");
-            SetAdoFields("Cta_Transferencia", $this->txt($p['CtaAbono']));
-            SetAdoFields("Acreditar_Cta", $this->txt($p['AcreditarCI']));
+            SetAdoFields("Cta_Transferencia", strtoupper($this->txt($p['CtaAbono'])));
+            SetAdoFields("Acreditar_Cta", strtoupper($this->txt($p['AcreditarCI'])));
         } else {
             SetAdoFields("FP", "O");
         }

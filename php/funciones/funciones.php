@@ -10021,7 +10021,7 @@ function SetAdoFields($NombCampo, $ValorCampo) {
           $ValorCampo = str_replace("'", "`", $ValorCampo);
           $ValorCampo = str_replace("#", "No.", $ValorCampo);
           if ($DatosTabla[$IndDato]['Ancho'] != -1 && strlen($ValorCampo) > $DatosTabla[$IndDato]['Ancho']) {
-            $ValorCampo = trim(substr($ValorCampo, 1, $DatosTabla[$IndDato]['Ancho']));
+            $ValorCampo = trim(substr($ValorCampo, 0, $DatosTabla[$IndDato]['Ancho']));
           }
           if (strlen($ValorCampo) == 0) $ValorCampo = G_NINGUNO;
         break;
