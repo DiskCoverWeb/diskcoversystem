@@ -74,7 +74,7 @@ if(isset($_GET['contratistaDetalle']) && $_GET['contratistaDetalle']!=''){$contr
           <div class="col-lg-2">
             <b>Semana </b><br>
             <select class="form-select form-select-sm" id="ddl_semana" name="ddl_semana" onchange="cargar_lista_subrubros()">
-              <option value="">seleccione</option>
+              <option value="">Seleccione semana</option>
             </select>
           </div>
           <div class="col-lg-3">
@@ -165,38 +165,62 @@ if(isset($_GET['contratistaDetalle']) && $_GET['contratistaDetalle']!=''){$contr
         <div class="modal-content">
             <div class="modal-body">
               <div class="row">
+                <div class="col-sm-3">
+                  <b>Fecha inicio</b> 
+                  <b class="form-control" id="lbl_fecha_ini_sub">0000-00-00</b>              
+                </div>              
+                <div class="col-sm-3">
+                    <b>Fecha fin</b>  
+                    <b class="form-control" id="lbl_fecha_fin_sub">0000-00-00</b>     
+                </div>  
+                 <div class="col-sm-3">   
+                    <b>Total ejecutado</b>  
+                    <input id="txt_total_ejecutado" type="text" class="form-control form-control-sm" value="0" readonly>
+                </div>                
+                <div class="col-sm-3">
+                    <b>Total de multa</b>  
+                    <input id="txt_total_multa" type="text" class="form-control form-control-sm" value="0" readonly>        
+                </div>
+                                  
+              </div>
+              <hr>
+              <div class="row">
                 <div class="col-sm-12">
+                  Multas
+                  <input type="hidden" name="txt_centroCostos" id="txt_centroCostos">
                   <input type="hidden" name="txt_rubro" id="txt_rubro">
                   <div  class="table-responsive">
                     <table class="table table-hover">
                       <thead>
                         <tr>
-                          <td colspan="2" class="text-center"><b>ORDEN</b></td>
-                          <td colspan="2" class="text-center"><b>EJECUCION</b></td>
-                          <td colspan="3"></td>
-                        </tr>
-                        <tr>
-                          <td>Fecha inicio</td>
-                          <td>Fecha fin</td>
-                          <td>Fecha inicio</td>
-                          <td>Fecha fin</td>
-                          <td>Retrazo (dias)</td>
-                          <td>Adelanto (dias)</td>
+                          <td><b>Detalle</b></td>
+                          <td><b>valor</b></td>
+                          <td></td>
                         </tr>
                       </thead>
                       <tbody>
                          <tr>
-                          <td><b id="lbl_fecha_ini_sub">0000-00-00</b></td>
-                          <td><b id="lbl_fecha_fin_sub">0000-00-00</b></td>
-                          <td><input type="date" class="form-control form-control-sm" onchange="calcular_dias()" name="txt_fechaIni_eje" id="txt_fechaIni_eje"></td>
-                          <td><input type="date" class="form-control form-control-sm" onchange="calcular_dias()" name="txt_fechaFin_eje" id="txt_fechaFin_eje"></td>
-                          <td><input type="" class="form-control form-control-sm text-danger" name="txt_retrazo" id="txt_retrazo" readonly></td>
-                          <td><input type="" class="form-control form-control-sm text-success" name="txt_adelanto" id="txt_adelanto" readonly></td>
-                        </tr>                        
+                          <td style="width:45%">
+                              <input id="todo-input" type="text" class="form-control" value="">
+                          </td>
+                          <td>
+                              <input id="todo-input-valor" type="text" onKeyPress="return soloNumerosDecimales(event)" class="form-control" value="">
+                          </td>
+                          <td>
+                             <button type="button" onclick="CreateTodo();" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>Agregar</button>
+                          </td>
+                        
+                        </tr>  
+                        <tr>
+                          <td colspan="5">
+                             <div id="todo-container"></div>                            
+                          </td>
+                        </tr>                      
                       </tbody>
                     </table>                    
                   </div>                  
-                </div>
+                </div>     
+                <hr>
                 <div class="col-sm-12">
                   <b>Observacion</b>
                   <textarea id="txt_observacion" name="txt_observacion" class="form-control form-control-sm"></textarea>                  
@@ -210,3 +234,103 @@ if(isset($_GET['contratistaDetalle']) && $_GET['contratistaDetalle']!=''){$contr
         </div>
     </div>
 </div>
+
+<script></script>
+<script>
+    // to do list 
+     var todos = [];
+    var currentTodo = {
+      text: "",
+      done: false,
+      id: 0,
+      valor:0,
+    }
+    document.getElementById("todo-input").oninput = function (e) {
+      currentTodo.text = e.target.value;
+    };
+    /*
+      //jQuery Version
+      $('#todo-input').on('input',function(e){
+        currentTodo.text = e.target.value;
+         });
+      */
+    function DrawTodo(todo) {
+      var newTodoHTML = `
+      <div class="pb-1 todo-item" todo-id="${todo.id}">
+          <div class="row">
+              <div class="col-sm-8">
+                  <input type="text" readonly class="form-control form-control-sm" value="${todo.text}">
+              </div>
+              <div class="col-sm-2">
+                  <input type="text" readonly class="form-control form-control-sm" value="${todo.valor}">
+              </div>
+              <div class="col-sm-2">
+                <button todo-id="${todo.id}" class="btn btn-outline-secondary bg-danger text-white btn-sm" type="button" onclick="DeleteTodo(this);" id="button-addon2 ">X</button>
+              </div>
+          </div>  
+      </div>
+        `;
+      var dummy = document.createElement("DIV");
+      dummy.innerHTML = newTodoHTML;
+      document.getElementById("todo-container").appendChild(dummy.children[0]);
+      /*
+        //jQuery version
+         var newTodo = $.parseHTML(newTodoHTML);
+         $("#todo-container").append(newTodo);
+        */
+    }
+
+    function RenderAllTodos() {
+      var container = document.getElementById("todo-container");
+      while (container.firstChild) {
+        container.removeChild(container.firstChild);
+      }
+      /*
+        //jQuery version
+          $("todo-container").empty();
+        */
+      var total_multa = 0;
+      console.log(todos);
+      for (var i = 0; i < todos.length; i++) {
+        total_multa+=parseFloat(todos[i].valor);
+        DrawTodo(todos[i]);
+      }
+
+      $('#txt_total_multa').val(total_multa)
+    }
+    RenderAllTodos();
+
+    function DeleteTodo(button) {
+      var deleteID = parseInt(button.getAttribute("todo-id"));
+      /*
+        //jQuery version
+          var deleteID = parseInt($(button).attr("todo-id"));
+        */
+      for (let i = 0; i < todos.length; i++) {
+        if (todos[i].id === deleteID) {
+          todos.splice(i, 1);
+          RenderAllTodos();
+          break;
+        }
+      }
+    }
+
+    function TodoChecked(id) {
+      todos[id].done = !todos[id].done;
+      RenderAllTodos();
+    }
+
+    function CreateTodo() {
+      newtodo = {
+        text: currentTodo.text,
+        done: false,
+        id: todos.length,
+        valor:$('#todo-input-valor').val()
+      }
+
+      $('#todo-input').val('')
+      $('#todo-input-valor').val('')
+      todos.push(newtodo);
+      RenderAllTodos();
+    }
+  </script>

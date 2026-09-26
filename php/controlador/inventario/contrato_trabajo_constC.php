@@ -336,6 +336,7 @@ class contrato_trabajo_constC
 
     function ddl_Proceso($proyecto,$query)
     {
+        print_r('expression');die();
         $proyecto = $this->modelo->proyecto(false,$proyecto);
         $cmds = $proyecto[0]['Cmds'].'.02.';
 

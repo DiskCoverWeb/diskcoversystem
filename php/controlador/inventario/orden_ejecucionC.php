@@ -3,6 +3,9 @@ require_once(dirname(__DIR__,2).'/modelo/inventario/orden_ejecucionM.php');
 require_once(dirname(__DIR__,2).'/modelo/inventario/contrato_trabajo_detalle_constM.php');
 require_once(dirname(__DIR__,2).'/modelo/inventario/orden_trabajo_constM.php');
 
+require_once(dirname(__DIR__,2).'/modelo/farmacia/ingreso_descargosM.php');
+require_once(dirname(__DIR__,2).'/funciones/sp_generales.php');
+
 $controlador = new orden_ejecucionC();
 if(isset($_GET['lista_orden_ejecucion']))
 {
@@ -137,10 +140,17 @@ class orden_ejecucionC
     private $modelo;
     private $contratos;
     private $orden;
+
+    private $ing_des;
+    private $sp_generales;
+
     function __construct(){
         $this->modelo = new orden_ejecucionM();
         $this->contratos = new contrato_trabajo_detalle_constM();
         $this->orden = new orden_trabajo_constM();
+        $this->ing_des = new ingreso_descargosM();
+
+        $this->sp_generales = new sp_generales();
     }
 
     function lista_orden_ejecucion(){
@@ -191,14 +201,17 @@ class orden_ejecucionC
    function cargar_lista_subrubros($parametros)
     {            
         $tbl = '';
-        $CentroCostos = $this->modelo->centrosCostocXRubro($parametros['Contrato'],false,$parametros['semana']);
+        $CentroCostos = $this->modelo->centrosCostocXRubro($parametros['Contrato'],false,$parametros['semana'],$parametros['contratista']);
         // print_r($CentroCostos);die();
         foreach ($CentroCostos as $key => $value) {
             // print_r($value);die();
             $tbl.='<div class="col-sm-12">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h5>'.$value['Detalle'].'</h5>
+                            <h5>'.$value['Cuenta'].' - ('.$value['Detalle'].' )</h5>
+                        </div>
+                         <div class="col-sm-6 text-end">
+                         <button type="button" class="btn btn-primary" onclick="generar_comprobante(\''.$value['Rubro'].'\',\''.$value['Centro_Costo'].'\',\''.$value['Fecha_Inicio']->format('Y-m-d').'\',\''.$value['Fecha_Fin']->format('Y-m-d').'\');">Generar Comprobante</button>
                         </div>
                        
                         <div class="col-sm-12">
@@ -231,7 +244,9 @@ class orden_ejecucionC
             foreach ($data as $key => $value) {
                 // print_r($value);die();
                 $tbl.='<tr> 
-                            <td><button type="button" class="btn btn-primary btn-sm" onclick="add_periodo(\''.$value['ID'].'\');"><i class="bx bx-save me-0"></i></button></td>
+                            <td>
+                                   <!--  <button type="button" class="btn btn-primary btn-sm" onclick="add_periodo(\''.$value['ID'].'\');"><i class="bx bx-save me-0"></i></button> --!>
+                            </td>
                             <td>'.$value['Detalle'].'</td> 
                             <td>'.$value['No_Contrato'].'</td>
                             <td>'.$value['Total'].'</td>
@@ -243,7 +258,7 @@ class orden_ejecucionC
                                         <input type="text" class="form-control form-control-sm text-end" id="txt_cantidad_'.$value['ID'].'" value="'.$value['Cantidad'].'" readonly />
                                     </div>
                                     <div class="col-6">
-                                        <input type="text" class="form-control form-control-sm text-end" id="txt_ejecucion_'.$value['ID'].'" onblur="calcular_ejecutado('.$value['ID'].')" value="'.$value['Cant_Ejec'].'" />
+                                        <input type="text" class="form-control form-control-sm text-end classEjecutado" id="txt_ejecucion_'.$value['ID'].'" onblur="calcular_ejecutado('.$value['ID'].')" value="'.$value['Cant_Ejec'].'" />
                                     </div>
                                 </div> 
                             </td>
@@ -251,7 +266,7 @@ class orden_ejecucionC
                                 <input type="text" class="form-control form-control-sm text-end" id="txt_porce_ejecucion_'.$value['ID'].'" value="0%" readonly />
                             </td>
                             <td><input type="text" class="form-control form-control-sm text-end" id="txt_ejecutado_pvp_'.$value['ID'].'" value="'.$value['Costo_Unit_Ejec'].'" readonly /></td>
-                            <td><input type="text" class="form-control form-control-sm text-end" id="txt_ejecutado_total_'.$value['ID'].'" value="'.$value['Costo_Total_Ejec'].'" readonly /></td>
+                            <td><input type="text" class="form-control form-control-sm text-end classTotalEjecutado" id="txt_ejecutado_total_'.$value['ID'].'" value="'.$value['Costo_Total_Ejec'].'" readonly /></td>
                             <td><input type="text" class="form-control form-control-sm text-end" id="txt_ejecutado_dif_'.$value['ID'].'"  value="'.$value['Diferencia'].'"readonly /></td>
                             <!-- <td> <button type="button" onclick="add_periodo(\''.$value['ID'].'\')" class="btn btn-primary btn-sm"><i class="bx bx-calendar"></i> Periodos</button></td> -->
                         </tr>';
@@ -276,24 +291,154 @@ class orden_ejecucionC
     function guardar_subrubro_ejecucion($parametros)
     {
 
-        // print_r($parametros);die();
-        SetAdoAddNew("Entidad_Rubro_Contratista");
-        SetAdoFields("Cant_Ejec",$parametros['ejec']);
-        SetAdoFields("Diferencia",$parametros['ejec_dif']);
-        SetAdoFields("Costo_Unit_Ejec",$parametros['pvp_ejec']);
-        SetAdoFields("Costo_Total_Ejec",$parametros["total_ejec"]);
+
+        $cta_cxc  = Leer_Seteos_Ctas('Cta_CxC_Contratistas') ?? '';
+        $cta_multa = Leer_Seteos_Ctas('Cta_Multas_Contratistas') ?? '';
+        $cta_cxp =  Leer_Seteos_Ctas('Cta_CxP_Contratistas') ?? '';
+
+        // comprobante_normal 
+        $cta_cc = LeerCta($cta_cxc);
+        $cta_cp = LeerCta($cta_cxp);
+        $cta_multas = LeerCta($cta_multa);
 
 
-        SetAdoFields("Fecha_Inicio_Ejec",$parametros['iniejec']);
-        SetAdoFields("Fecha_Fin_Ejec",$parametros['finejec']);
-        SetAdoFields("Observacion",$parametros["observacion"]);
+        // para subcuentas
+        $cuenta = $this->modelo->catalogo_cuentas($parametros['rubro']);
+        $sub = $this->modelo->Catalogo_SubCtas('G',$parametros['centroCosto']);
+        $dataSub = array(
+                'be'=>$cuenta[0]['Cuenta'],
+                'ru'=> '',
+                'co'=> $cuenta[0]['Codigo'],// codigo de cuenta cc
+                'tip'=>$cuenta[0]['TC'],//tipo de cuenta(CE,CD,..--) biene de catalogo subcuentas TC
+                'tic'=> 1, //debito o credito (1 o 2);
+                'sub'=> $sub[0]['Cta'], //Codigo se trae catalogo subcuenta
+                'sub2'=>$cuenta[0]['Cuenta'],//nombre del beneficiario
+                'fecha_sc'=> date('Y-m-d'), //fecha 
+                'fac2'=>0,
+                'mes'=> 0,
+                'valorn'=> round($parametros['ejecutado_total'],2),//valor de sub cuenta 
+                'moneda'=> 1, /// moneda 1
+                'Trans'=>$sub[0]['Detalle'],//detalle que se trae del asiento
+                'T_N'=> '111',
+                't'=> $sub[0]['TC'],                        
+              );
+
+        // print_r($dataSub);die();
+        $this->ing_des->generar_asientos_SC($dataSub);
+        
 
 
-        SetAdoFields("TC",'A'); //este es el identificador para que pase a control de avances
+        // asiento normal
+        // asiento al debe
+        $cuenta = $this->modelo->catalogo_cuentas($parametros['rubro']);     
+        // print_r($cuenta);die();   
+        $parametros_debe = array(
+                 "va" =>round($parametros['ejecutado_total'],2),//valor que se trae del otal sumado
+                  "dconcepto1" =>'.',
+                  "codigo" => $cuenta[0]['Codigo'], // cuenta de codigo de 
+                  "cuenta" => $cuenta[0]['Cuenta'], // detalle de cuenta;
+                  "efectivo_as" =>date('Y-m-d'), // observacion si TC de catalogo de cuenta
+                  "chq_as" => 0,
+                  "moneda" => 1,
+                  "tipo_cue" => 1,
+                  "cotizacion" => 0,
+                  "con" => 0,// depende de moneda
+                  "t_no" => '111',
+        );
+        $this->ing_des->ingresar_asientos($parametros_debe);
 
 
-        SetAdoFieldsWhere('ID',$parametros["id"]);
-        return SetAdoUpdateGeneric(); 
+        $cuenta = $this->modelo->catalogo_cuentas($cta_cxp);    
+        // print_r($cta_cxp);    
+            // print_r($cuenta);die();  
+                $parametros_haber = array(
+                  "va" =>round($parametros['ejecutado_total'],2),//valor que se trae del otal sumado
+                  "dconcepto1" =>'.',
+                  "codigo" => $cuenta[0]['Codigo'], // cuenta de codigo de 
+                  "cuenta" => $cuenta[0]['Cuenta'], // detalle de cuenta;
+                  "efectivo_as" =>date('Y-m-d'), // observacion si TC de catalogo de cuenta
+                  "chq_as" => 0,
+                  "moneda" => 1,
+                  "tipo_cue" => 2,
+                  "cotizacion" => 0,
+                  "con" => 0,// depende de moneda
+                  "t_no" => '111',
+        );
+        
+        $re =   $this->ing_des->ingresar_asientos($parametros_haber); 
+
+
+        // en caso de que hayan multas
+        if($parametros['multa_total']>0){
+
+             $cuenta = $this->modelo->catalogo_cuentas($cta_cxc);     
+            // print_r($cuenta);die();   
+            $parametros_debe = array(
+                     "va" =>round($parametros['multa_total'],2),//valor que se trae del otal sumado
+                      "dconcepto1" =>'.',
+                      "codigo" => $cuenta[0]['Codigo'], // cuenta de codigo de 
+                      "cuenta" => $cuenta[0]['Cuenta'], // detalle de cuenta;
+                      "efectivo_as" =>date('Y-m-d'), // observacion si TC de catalogo de cuenta
+                      "chq_as" => 0,
+                      "moneda" => 1,
+                      "tipo_cue" => 1,
+                      "cotizacion" => 0,
+                      "con" => 0,// depende de moneda
+                      "t_no" => '111',
+            );
+            $this->ing_des->ingresar_asientos($parametros_debe);
+
+            $cuenta = $this->modelo->catalogo_cuentas($cta_multa);        
+                // print_r($cuenta);die();  
+                    $parametros_haber = array(
+                      "va" =>round($parametros['multa_total'],2),//valor que se trae del otal sumado
+                      "dconcepto1" =>'.',
+                      "codigo" => $cuenta[0]['Codigo'], // cuenta de codigo de 
+                      "cuenta" => $cuenta[0]['Cuenta'], // detalle de cuenta;
+                      "efectivo_as" =>date('Y-m-d'), // observacion si TC de catalogo de cuenta
+                      "chq_as" => 0,
+                      "moneda" => 1,
+                      "tipo_cue" => 2,
+                      "cotizacion" => 0,
+                      "con" => 0,// depende de moneda
+                      "t_no" => '111',
+            );
+            $re =   $this->ing_des->ingresar_asientos($parametros_haber); 
+
+        }
+
+
+        $cliente = json_decode(Leer_Datos_Cliente_SP($parametros['contratista']),true);
+
+        // print_r($cliente);die();
+        $data['NumModulo']='05';
+        $data['Item']=$_SESSION['INGRESO']['item'];
+        $data['Periodo']=$_SESSION['INGRESO']['periodo'];
+        $data['Usuario']=$_SESSION['INGRESO']['CodigoU'];
+        // $data['CodigoB'] = $cliente['CI_RUC'];
+        $data['Beneficiario']=$cliente['Cliente'];
+        $data['RUC_CI'] = $cliente['CI_RUC'];
+        $data['TD'] = $cliente['TD'];
+        $data["Telefono"] = $cliente['Telefono'];
+        $data["Direccion"] = $cliente['Direccion'];
+        $data["Email"] = $cliente['Email'];
+        $data['Concepto']='prueba concepto json';
+        $data["T_No"] = '111';
+        $data_comprobante = $this->sp_generales->generar_comprobante($data); 
+
+        if(isset($data_comprobante['Ok_Save']) && $data_comprobante['Ok_Save']==1)
+        {
+            $parametros['Numero'] = $data_comprobante['Numero'];
+            $resp =  $this->finalizar_ejecucion($parametros);
+            return array('respuesta'=>1,'comprobante'=>$data_comprobante['Numero']);
+        }else{
+            return array('respuesta'=>-1,'comprobante'=>'0');
+        }
+
+        print_r($data_comprobante);die();
+
+
+
     }
 
     function cargar_fecha_periodo($parametros)
@@ -319,8 +464,22 @@ class orden_ejecucionC
 
     function finalizar_ejecucion($parametros)
     {
+
+        $lineas = json_decode($parametros['lineas'],true);
+        foreach ($lineas as $key => $value) {
+            SetAdoAddNew("Entidad_Rubro_Contratista");
+            SetAdoFields("Observacion",$parametros["observacion"]);
+            SetAdoFields("TC",'A');
+            SetAdoFields("Cant_Ejec",$value['valor']);
+            SetAdoFieldsWhere('ID',$value['id']);
+            SetAdoUpdateGeneric(); 
+        }
+
+
         SetAdoAddNew("Trans_Contratistas");
-        SetAdoFields("TP",'N');
+        // SetAdoFields("TP",'N');
+        SetAdoFields("TP",'.');
+        SetAdoFields("Numero",$parametros['Numero']);
 
         SetAdoFieldsWhere('Codigo',$parametros["contratista"]);
         SetAdoFieldsWhere('No_Contrato',$parametros["contrato"]);
@@ -328,6 +487,11 @@ class orden_ejecucionC
         SetAdoFieldsWhere('Periodo',$_SESSION['INGRESO']["periodo"]);
 
         return SetAdoUpdateGeneric(); 
+
+
+        
+
+        
     }
 
     function contratosAvances($contratista,$query)

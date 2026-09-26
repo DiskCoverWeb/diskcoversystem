@@ -288,7 +288,7 @@ class orden_trabajo_constM
     function SemanasXcentrosCostocXRubro($proyecto=false,$rubro=false)
     {
 
-        $sql ="Select Semana
+        $sql ="Select Semana,No_Contrato
                 From Entidad_Rubro_Contratista TCR
                 INNER JOIN Catalogo_SubCtas SC ON TCR.Centro_Costo = SC.Codigo
                 where SC.Item = TCR.Item
@@ -305,7 +305,7 @@ class orden_trabajo_constM
                     $sql.=" AND No_Contrato = '".$proyecto."'";
                 }
 
-                $sql.=" group by Semana";
+                $sql.=" group by Semana,No_Contrato";
 
                 // print_r($sql);die();
         return $this->db->datos($sql);
@@ -351,6 +351,7 @@ class orden_trabajo_constM
                 {
                     $sql.=" AND Detalle like '%".$query."%'";
                 }
+                // print_r($sql);die();
 
         return $this->db->datos($sql);
     }

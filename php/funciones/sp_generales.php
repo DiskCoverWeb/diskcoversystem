@@ -94,8 +94,8 @@ class sp_generales
 	         "Item"=>$_SESSION['INGRESO']['item'],
 	         "Periodo"=>$_SESSION['INGRESO']['periodo'],
 	         "CodigoU"=>$_SESSION['INGRESO']['CodigoU'],
-	         "T_No",=>$TFA['Trans_No']
-     	)
+	         "T_No"=>$TFA['Trans_No']
+     	);
 
      	$JSON_InPut = json_encode($JSONFactura,true);
      	$JSON_InPut = str_replace(array('True','Verdadero','False','Falso'),array('1','1','0','0'), $JSON_InPut);
@@ -115,8 +115,68 @@ class sp_generales
 	        return $JSON_OutPut;
 	      }
 	      return $respuesta;   
+	}
 
 
+
+	function generar_comprobante($data)
+	{
+		$JSON = array(
+			"NumModulo"=> isset($data['NumModulo']) ? $data['NumModulo']:"01",
+			"T"=> isset($data['T']) ? $data['T']:"N",
+			"Item"=> isset($data['Item']) ? $data['Item']:"999",
+			"Periodo"=> isset($data['Periodo']) ? $data['Periodo']:".",
+			"Usuario"=> isset($data['Usuario']) ? $data['Usuario']:".",
+			"TP"=> isset($data['TP']) ? $data['TP']:"CD",
+			"Fecha"=> isset($data['Fecha']) ? $data['Fecha']:date('d/m/Y'),
+			"CodigoB"=> isset($data['CodigoB']) ? $data['CodigoB']:".",
+			"CodigoDr"=> isset($data['CodigoDr']) ? $data['CodigoDr']:".",
+			"Beneficiario"=> isset($data['Beneficiario']) ? $data['Beneficiario']:".",
+			"RUC_CI"=> isset($data['RUC_CI']) ? $data['RUC_CI']:".",
+			"TD"=> isset($data['TD']) ? $data['TD']:".",
+			"Telefono"=> isset($data['Telefono']) ? $data['Telefono']:".",
+			"Direccion"=> isset($data['Direccion']) ? $data['Direccion']:".",
+			"Email"=> isset($data['Email']) ? $data['Email']:".",
+			"AgenteRetencion"=> isset($data['AgenteRetencion']) ? $data['AgenteRetencion']:".",
+			"MicroEmpresa"=> isset($data['MicroEmpresa']) ? $data['MicroEmpresa']:"Contribuyente Regimen General",
+			"Estado"=> isset($data['Estado']) ? $data['Estado']:"RUC ACTIVO",
+			"Concepto"=> isset($data['Concepto']) ? $data['Concepto']:".",
+			"CodigoInvModificar"=>isset($data['CodigoInvModificar']) ? $data['CodigoInvModificar']: "0",
+			"Grupo"=> isset($data['Grupo']) ? $data['Grupo']:"001",
+			"Serie_R"=> isset($data['Serie_R']) ? $data['Serie_R']:".",
+			"Autorizacion_R"=> isset($data['Autorizacion_R']) ? $data['Autorizacion_R']:".",
+			"Serie_LC"=> isset($data['Serie_LC']) ? $data['Serie_LC']:".",
+			"Autorizacion_LC"=> isset($data['Autorizacion_LC']) ? $data['Autorizacion_LC']:".",
+			"Cotizacion"=> isset($data['Cotizacion']) ? $data['Cotizacion']:0,
+			"Efectivo"=> isset($data['Efectivo']) ? $data['Efectivo']:0,
+			"Total_Banco"=> isset($data['Total_Banco']) ? $data['Total_Banco']:0,
+			"Monto_Total"=> isset($data['Monto_Total']) ? $data['Monto_Total']:0,
+			"Numero"=> isset($data['Numero']) ? $data['Numero']:0,
+			"Retencion"=> isset($data['Retencion']) ? $data['Retencion']:0,
+			"Liquidacion"=> isset($data['Liquidacion']) ? $data['Liquidacion']:0,
+			"T_No"=> isset($data['T_No']) ? $data['T_No']:1,
+			"RetNueva"=> isset($data['RetNueva']) ? $data['RetNueva']:1,
+			"RetSecuencial"=> isset($data['RetSecuencial']) ? $data['RetSecuencial']:1,
+			"LCNueva"=> isset($data['LCNueva']) ? $data['LCNueva']:1,
+			"LCSecuencial"=> isset($data['LCSecuencial']) ? $data['LCSecuencial']:1
+		);
+
+
+		// print_r($JSON_InPut);die();
+
+		$JSON_InPut = json_encode($JSON);
+		$JSON_OutPut = ''; 
+		// print_r($JSON_InPut);die();
+	    $parametros = array(
+	      array(&$JSON_InPut, SQLSRV_PARAM_IN),
+	      array(&$JSON_OutPut, SQLSRV_PARAM_OUT)
+	  	);
+	    // print_r($parametros);die();
+	    $sql = "EXEC sp_Grabar_Comprobante @JSON_InPut= ?,@JSON_OutPut=?";
+	    $resultado = $this->db->ejecutar_procesos_almacenados($sql,$parametros);
+	    if ($resultado == 1){
+		    return  json_decode($JSON_OutPut,true);
+		  }
 	}
 
 

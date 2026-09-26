@@ -269,13 +269,14 @@ class orden_ejecucionM
         return $this->db->datos($sql);
     }
 
-    function centrosCostocXRubro($contratos=false,$rubro=false,$semana =false)
+    function centrosCostocXRubro($contratos=false,$rubro=false,$semana =false,$contratista=false)
     {
        
 
-            $sql = "SELECT Centro_Costo,SC.Detalle,Observacion
+            $sql = "SELECT Centro_Costo,SC.Detalle,Observacion,Rubro,CC.Cuenta,Fecha_Inicio,Fecha_Fin
             FROM Entidad_Rubro_Contratista ERC
             INNER JOIN Catalogo_SubCtas SC ON ERC.Centro_Costo = SC.Codigo AND ERC.Periodo = SC.Periodo and  ERC.Item = SC.Item
+            INNER JOIN Catalogo_Cuentas CC ON ERC.Rubro = CC.Codigo AND ERC.Periodo = CC.Periodo and  ERC.Item = CC.Item
             where ERC.Item =  '".$_SESSION['INGRESO']['item']."'
             AND ERC.Periodo ='".$_SESSION['INGRESO']['periodo']."'
             AND ERC.TC = 'E' ";
@@ -285,13 +286,17 @@ class orden_ejecucionM
             }
             if($contratos)
             {
-                $sql.=" AND Orden_Trabajo = '".$contratos."'";
+                $sql.=" AND No_Contrato = '".$contratos."'";
             }            
             if($semana)
             {
                 $sql.=" AND ERC.Semana = '".$semana."'";
             }
-            $sql.=" group by Centro_Costo,SC.Detalle,Observacion";
+            if($contratista)
+            {
+                $sql.=" AND ERC.Contratista = '".$contratista."'";
+            }
+            $sql.=" group by Centro_Costo,SC.Detalle,Observacion,Rubro,CC.Cuenta,Fecha_Inicio,Fecha_Fin";
 
                 // print_r($sql);die();
         return $this->db->datos($sql);
@@ -345,6 +350,55 @@ class orden_ejecucionM
 
         // print_r($sql);die();
 
+        return $this->db->datos($sql);
+    }
+
+    function catalogo_cuentas($cuenta)
+    {
+        $sql = "SELECT ".Full_Fields("Catalogo_Cuentas")." 
+                FROM Catalogo_Cuentas 
+                WHERE Item = '".$_SESSION['INGRESO']['item']."' 
+                AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
+                AND Codigo = '".$cuenta."'";
+          // print_r($sql);
+        return $this->db->datos($sql);
+    }
+
+    function Catalogo_CxCxP($cuenta,$codigo=false)
+    {
+        $sql="SELECT CC.TC, CC.Codigo, CC.Cta, C.Cliente  as Detalle
+                FROM Catalogo_CxCxP AS CC 
+                INNER JOIN Clientes AS C ON CC.Codigo = C.Codigo
+                WHERE  CC.Cta = '".$cuenta."'
+                AND CC.Item = '".$_SESSION['INGRESO']['item']."'
+                AND CC.Periodo = '".$_SESSION['INGRESO']['periodo']."'";
+                if($codigo)
+                {
+                    $sql.=" AND CC.Codigo = '".$codigo."'";
+                }
+                $sql.="order by c.Cliente;";
+
+
+        // print_r($sql);
+        // die();
+            
+        return $this->db->datos($sql);
+    }
+
+    function Catalogo_SubCtas($tipo,$cta=false)
+    {
+        $sql="SELECT TC,Codigo, Codigo as 'Cta', Detalle 
+        FROM  Catalogo_SubCtas 
+        WHERE Item = '".$_SESSION['INGRESO']['item']."'
+        AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+        and TC = '".$tipo."'";
+        if($cta)
+        {
+            $sql.=" AND Codigo = '".$cta."'";
+        }
+
+        // print_r($sql);die();
+            
         return $this->db->datos($sql);
     }
 

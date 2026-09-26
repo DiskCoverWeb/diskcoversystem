@@ -239,9 +239,9 @@ function lista_semanas()
         dataType:'json',
         success: function(data)
         {
-          lista = '<option>Seleccione semana</option>'
+          lista = '<option value="">Seleccione semana</option>'
            data.forEach(function(item,i){
-            lista+='<option value="'+item.Semana+'">'+item.Semana+'</option>'
+            lista+='<option value="'+item.Semana+'" data-contrato="'+item.No_Contrato+'" >'+item.Semana+'</option>'
            })
 
            $('#ddl_semana').html(lista);     
@@ -479,6 +479,15 @@ function calcular_costo_total()
 
 function cargar_lista_subrubros()
 {
+  const opt = document.getElementById('ddl_semana').selectedOptions[0];
+  if($('#ddl_semana').val()!='')
+  {
+    contrato = opt.dataset.contrato;  
+    $('#ddl_Contrato').html('<option value="'+contrato+'">'+contrato+'</option>')
+  }else{
+    $('#ddl_Contrato').html('<option value=""></option>')
+  }
+
   var contratista = $('#ddl_contratista').val();
   // var rubro = $('#ddl_Rubro').val();
   var Contrato=$('#ddl_Contrato').val();
@@ -670,9 +679,9 @@ function grabar_orden_trabajo()
 
 function calcular_ejecutado(id)
 {
-  var pvp = $('#txt_pvp_'+id).val();
-  var can = $('#txt_cantidad_'+id).val();
-  var eje = $('#txt_ejecucion_'+id).val();
+  var pvp = parseFloat($('#txt_pvp_'+id).val());
+  var can = parseFloat($('#txt_cantidad_'+id).val());
+  var eje = parseFloat($('#txt_ejecucion_'+id).val());
 
   if(eje>can || eje<0  || eje=="")
   {
@@ -686,7 +695,7 @@ function calcular_ejecutado(id)
   
   $('#txt_ejecutado_pvp_'+id).val(pvp);
   $('#txt_ejecutado_total_'+id).val(total.toFixed(2));
-  $('#txt_ejecutado_dif_'+id).val(dif);
+  $('#txt_ejecutado_dif_'+id).val(dif.toFixed(2));
 
   var porce = parseFloat((eje *100)/can).toFixed(2);
 
@@ -714,39 +723,38 @@ function guardar_subrubro_ejecucion()
 
 function guardar_subrubro_ejecucion_avance()
 {
-  var id = $('#txt_rubro').val();
-
-  var ejec = $('#txt_ejecucion_'+id).val();
-  var pvp_ejec = $('#txt_ejecutado_pvp_'+id).val();
-  var total_ejec = $('#txt_ejecutado_total_'+id).val();
-  var ejec_dif = $('#txt_ejecutado_dif_'+id).val();
-  var id = $('#txt_rubro').val();
-  
-  var iniejec = $('#txt_fechaIni_eje').val();
-  var finejec = $('#txt_fechaFin_eje').val();
-  var retraso = $('#txt_retrazo').val();
-  var adelanto = $('#txt_adelanto').val();
-
+  var centroCostos = $('#txt_centroCostos').val();
+  var rubro = $('#txt_rubro').val();
+  var multa_total = $('#txt_total_multa').val();
+  var fecha_inicio = $('#lbl_fecha_ini_sub').text();
+  var fecha_fin = $('#lbl_fecha_fin_sub').text();
   var observacion = $('#txt_observacion').val();
+  var contratista =  $('#ddl_contratista').val();
+  var ejecutado_total = $('#txt_total_ejecutado').val();
+  var contrato = $('#ddl_Contrato').val();
 
-  if(ejec=="" || ejec==null || ejec==undefined || ejec==0)
-  {
-    Swal.fire("Valor de ejecicion invalido","","info");
-    return false;
-  }
+  var lineas = [];
 
+  $('.classEjecutado').each(function() {
+      const input = $(this);
+      var id = input[0].id;
+      var id_linea = id.split('_')
+      lineas.push({'id':id_linea[2],'valor':input[0].value});
+  });
+
+ 
   var parametros = 
   {
-    'id':id,
-    'ejec':ejec,
-    'pvp_ejec':pvp_ejec,
-    'total_ejec':total_ejec,
-    'ejec_dif':ejec_dif,
-    'iniejec':iniejec,
-    'finejec':finejec,
-    'retraso':retraso,
-    'adelanto':adelanto,
+    'centroCosto':centroCostos,
+    'rubro':rubro,
+    'contratista':contratista,
+    'multa_total':multa_total,
+    'ejecutado_total':ejecutado_total,
+    'fecha_inicio':fecha_inicio,
+    'fecha_fin':fecha_fin,
     'observacion':observacion,
+    'contrato':contrato,
+    'lineas': JSON.stringify(lineas),
   }
    $.ajax({
         type: "POST",
@@ -755,9 +763,9 @@ function guardar_subrubro_ejecucion_avance()
         dataType:'json',
         success: function(data)
         {
-          if(data)
+          if(data.respuesta==1)
           {
-            Swal.fire("Guardado",'','success').then(function(){
+            Swal.fire("Comprobante "+data.comprobante+" generado",'','success').then(function(){
               $('#myModal_periodo_trabajo').modal('hide');
                 cargar_lista_subrubros()
             })
@@ -767,6 +775,48 @@ function guardar_subrubro_ejecucion_avance()
     });   
 }
 
+
+function generar_comprobante(rubro,centroCostos,fechaInicio,fechaFin)
+{
+  let valores_llenos = 1;
+  $('#txt_centroCostos').val(centroCostos)
+  $('#txt_rubro').val(rubro)
+
+  $('.classEjecutado').each(function() {
+      const input = $(this);
+      var id = input[0].id;
+      if(input[0].value=='' || input[0].value==0)
+      {
+        valores_llenos = 0;
+      }   
+      console.log(id)
+      console.log(input)  
+  });
+
+
+
+  var total_ejecutado = 0;
+  $('.classTotalEjecutado').each(function() {
+      const input = $(this);
+      var id = input[0].id;
+
+      total_ejecutado+=parseFloat(input[0].value);
+      // console.log(id)
+      // console.log(input)  
+  });
+
+
+
+  if(valores_llenos==1)
+  {    
+    $('#lbl_fecha_ini_sub').text(formatoDate(fechaInicio))
+    $('#lbl_fecha_fin_sub').text(formatoDate(fechaFin))
+    $('#txt_total_ejecutado').val(total_ejecutado);
+    $('#myModal_periodo_trabajo').modal('show')
+  }else{
+    Swal.fire("Dato invalido","Cantidad Ejecutado no valido","info")
+  }
+}
 
 function add_periodo(id)
 {
