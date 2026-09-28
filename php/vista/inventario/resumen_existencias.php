@@ -59,12 +59,12 @@
 
 								<div class="col-sm-3">
 									<div class="input-group input-group-sm mb-3"> <span class="input-group-text" id="basic-addon3">Fecha Inicial</span>
-										<input type="date" class="form-control form-control-sm" id="txt_inicial" value="<?php echo(date('Y-m-d')); ?>" aria-describedby="basic-addon3">
+										<input type="date" class="form-control form-control-sm" id="txt_inicial" value="" aria-describedby="basic-addon3">
 									</div>	
 								</div>
 								<div class="col-sm-3">
 									<div class="input-group input-group-sm mb-3"> <span class="input-group-text" id="basic-addon3">Fecha Final</span>
-										<input type="date" class="form-control form-control-sm" id="txt_final" value="<?php echo(date('Y-m-d')); ?>" aria-describedby="basic-addon3">
+										<input type="date" class="form-control form-control-sm" id="txt_final" value="" aria-describedby="basic-addon3">
 									</div>	
 								</div>
 								<div class="col-sm-3">						
@@ -82,27 +82,32 @@
 				</div>
 				<div class="row">
 				 	<div class="col-sm-2">
-				 		<label><input type="checkbox" name="CheqBod" id="CheqBod"> BODEGA</label>
+				 		<label><input type="checkbox" name="CheqBod" id="CheqBod" onclick="habilitar_bodega()"> BODEGA</label>
 				 	</div>
-				 	<div class="col-lg-4">
-					 	 		<select class="form-select form-select-sm" id="DCBodega" name="DCBodega">
-					 	 			<option value="">seleccione</option>
-					 	 		</select>
-				 	</div>			 
-				 	<div class="col-sm-2">
-				 		<label><input type="checkbox" name="CheqGrupo" id="CheqGrupo"> TIPO GRUPO</label>
-				 	</div>
-				 	<div class="col-lg-4">
-					 	 		<select class="form-select form-select-sm" id="DCTInv" name="DCTInv">
-					 	 			<option value="">seleccione</option>
-					 	 		</select>
-				 	 </div>			 	
+				 	<div class="col-sm-10 d-none" id="pnl_bodega">
+				 		<div class="row">				 			
+							 	<div class="col-lg-4">
+								 	 		<select class="form-select form-select-sm" id="DCBodega" name="DCBodega">
+								 	 			<option value="">seleccione</option>
+								 	 		</select>
+							 	</div>			 
+							 	<div class="col-sm-2">
+							 		<label><input type="checkbox" name="CheqGrupo" id="CheqGrupo"> TIPO GRUPO</label>
+							 	</div>
+							 	<div class="col-lg-4">
+								 	 		<select class="form-select form-select-sm" id="DCTInv" name="DCTInv">
+								 	 			<option value="">seleccione</option>
+								 	 		</select>
+							 	 </div>	
+				 			
+				 		</div>
+				 	</div>		 	
 			 </div>		
 			 <div class="row">
 			 		<div class="col-sm-2">
-				 		<label><input type="checkbox" name="CheqProducto" id="CheqProducto"> PRODUCTO</label>
+				 		<label><input type="checkbox" name="CheqProducto" id="CheqProducto" onclick="habilitar_producto()"> PRODUCTO</label>
 				 	</div>
-			 	 	<div class="col-lg-10">
+			 	 	<div class="col-lg-10 d-none" id="pnl_producto">
 			 	 		<div class="row">
 			 	 			 <div class="col-sm-5">
 									<label class="p-1"><input type="radio" onchange="DCTipoBusqueda()" name="rbx_producto" value="4" id="rbx_producto" checked> Productos</label>
@@ -120,9 +125,9 @@
 			 </div>		
 			 <div class="row">
 			 	<div class="col-sm-2">
-				 		<label><input type="checkbox" name=""> TIPO DE CTA</label>
+				 		<label><input type="checkbox" id="CheqTipoCta" name="" onclick="habilitar_tipo_cta()"> TIPO DE CTA</label>
 				 	</div>
-			 	 <div class="col-lg-8">
+			 	 <div class="col-lg-8 d-none" id="pnl_tipo_cta">
 			 	 		<div class="row">
 			 	 				<div class="col-sm-4">
 										<label class="p-1"><input type="radio" value="1" name="rbx_tipo_cta" id="rbx_inventario" onchange="DCCtaInv()" checked> Inventario</label>
@@ -139,9 +144,9 @@
 			 </div>		
 			 <div class="row">
 			 	<div class="col-sm-2">
-				 		<label><input type="checkbox" name=""> POR SUBMODULO</label>
+				 		<label><input type="checkbox" name="cheqSubmodulo" id="cheqSubmodulo"onclick="habilitar_submodulo()">  POR SUBMODULO</label>
 				</div>
-			 	<div class="col-lg-7">
+			 	<div class="col-lg-7 d-none" id="pnl_por_submodulo">
 			 			<div class="row">
 			 					<div class="col-sm-6">
 			 							<label class="p-1"><input type="radio" value="1" name="rbx_subModulo" id="rbx_cc" onchange="DCSubModulo()" checked> Centro de costos</label>

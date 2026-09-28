@@ -77,7 +77,7 @@ function DCBodega(){
     $('#DCBodega').select2({
         placeholder: 'Seleccione',
         allowClear: true,
-        // width:'resolve',
+        width:'100%',
         // selectionCssClass: 'form-control form-control-sm h-100',  // Para el contenedor de Select2
         ajax: {
           url:   '../controlador/inventario/resumen_existenciasC.php?DCBodega=true',
@@ -98,7 +98,7 @@ function DCTInv(){
     $('#DCTInv').select2({
         placeholder: 'Seleccione',
         allowClear: true,
-        // width:'resolve',
+        width:'100%',
         // selectionCssClass: 'form-control form-control-sm h-100',  // Para el contenedor de Select2
         ajax: {
           url:   '../controlador/inventario/resumen_existenciasC.php?DCTInv=true',
@@ -121,7 +121,7 @@ function DCTipoBusqueda(){
     $('#DCTipoBusqueda').select2({
         placeholder: 'Seleccione',
         allowClear: true,
-        // width:'resolve',
+        width:'100%',
         // selectionCssClass: 'form-control form-control-sm h-100',  // Para el contenedor de Select2
         ajax: {
           url:   '../controlador/inventario/resumen_existenciasC.php?DCTipoBusqueda=true&cbx='+cbx+'&DCInvSelec='+DCInv,
@@ -143,7 +143,7 @@ function DCCtaInv(){
     $('#DCCtaInv').select2({
         placeholder: 'Seleccione',
         allowClear: true,
-        // width:'resolve',
+        width:'100%',
         // selectionCssClass: 'form-control form-control-sm h-100',  // Para el contenedor de Select2
         ajax: {
           url:   '../controlador/inventario/resumen_existenciasC.php?DCCtaInv=true&cbx='+cbx,
@@ -165,7 +165,7 @@ function DCSubModulo(){
     $('#DCSubModulo').select2({
         placeholder: 'Seleccione',
         allowClear: true,
-        // width:'resolve',
+        width:'100%',
         // selectionCssClass: 'form-control form-control-sm h-100',  // Para el contenedor de Select2
         ajax: {
           url:   '../controlador/inventario/resumen_existenciasC.php?DCSubModulo=true&cbx='+cbx,
@@ -457,3 +457,50 @@ function Stock(StockSuperior)
     });
 
 }
+
+function habilitar_bodega()
+{
+    if($('#CheqBod').prop('checked'))
+    {
+        $('#pnl_bodega').removeClass('d-none')
+    }else{
+        $('#pnl_bodega').addClass('d-none')
+    }
+}
+
+
+
+
+function habilitar_tipo_cta()
+{
+    if($('#CheqTipoCta').prop('checked'))
+    {
+        $('#pnl_tipo_cta').removeClass('d-none')
+    }else{
+        $('#pnl_tipo_cta').addClass('d-none')
+    }
+}
+
+
+function habilitar_submodulo()
+{
+    if($('#cheqSubmodulo').prop('checked'))
+    {
+        $('#pnl_por_submodulo').removeClass('d-none')
+    }else{
+        $('#pnl_por_submodulo').addClass('d-none')
+    }
+}
+
+
+function habilitar_producto()
+{
+    if($('#CheqProducto').prop('checked'))
+    {
+        $('#pnl_producto').removeClass('d-none')
+    }else{
+        $('#pnl_producto').addClass('d-none')
+    }
+}
+
+

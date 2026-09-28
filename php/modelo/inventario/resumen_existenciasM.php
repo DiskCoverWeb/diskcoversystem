@@ -236,8 +236,12 @@ class resumen_existenciasM
        	((SUM(TK.Entrada)-SUM(TK.Salida)) * AVG(TK.Valor_Unitario)) As Total_Inventario 
        	FROM Catalogo_Productos As CP, Trans_Kardex As TK 
        	WHERE CP.Item = '" . $_SESSION['INGRESO']['item'] . "' 
-       	AND CP.Periodo = '".$_SESSION['INGRESO']['periodo']."' 
-        AND TK.Fecha BETWEEN '".$FechaIni."' and '".$FechaFin."' 
+       	AND CP.Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+        if($FechaIni!='' && $FechaFin!='')
+        {
+            $sql.=" AND TK.Fecha BETWEEN '".$FechaIni."' and '".$FechaFin."' ";
+        }
+        $sql.="
         ".$SQL_Tipo_Busqueda."
         AND CP.Item = TK.Item 
         AND CP.Periodo = TK.Periodo 
