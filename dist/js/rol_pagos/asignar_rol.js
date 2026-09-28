@@ -96,10 +96,19 @@ function inicializarAsignarRol() {
 
 	$('input[name="rp_sn"]').on('change', recalcularAportes);
 	$('#rp_horas, #rp_salario').on('blur', recalcularValorHora);
+	$('#rp_valor_hora').on('blur', function () { this.value = rpFmt(this.value, 2); });
 	$('#rp_grupo').on('change', pintarCuentasGrupo);
 	$('input[name="rp_fp"]').on('change', function () { cargarFormasPago(); });
-	$('#rp_chk_salida').on('change', function () { $('#rp_fecha_c').prop('disabled', !this.checked); });
-	$('#rp_chk_maternidad').on('change', function () { $('#rp_fecha_m').prop('disabled', !this.checked); });
+	$('#rp_chk_salida').on('change', function () {
+		$('#rp_fecha_c').prop('disabled', !this.checked);
+		if (!this.checked) { $('#rp_fecha_c').val(''); }
+		else if (!rpVal('rp_fecha_c')) { $('#rp_fecha_c').val(rpCatalogos.fecha); }
+	});
+	$('#rp_chk_maternidad').on('change', function () {
+		$('#rp_fecha_m').prop('disabled', !this.checked);
+		if (!this.checked) { $('#rp_fecha_m').val(''); }
+		else if (!rpVal('rp_fecha_m')) { $('#rp_fecha_m').val(rpCatalogos.fecha); }
+	});
 	$('#rp_chk_extc').on('change', function () {
 		$('#rp_extc').val(this.checked ? rpFmt(rpCatalogos.iess.IESS_ExtC) : '0.00');
 	});
@@ -129,9 +138,10 @@ function recalcularAportes() {
 }
 
 function recalcularValorHora() {
+	$('#rp_salario').val(rpFmt(rpVal('rp_salario'), 2));
 	let horas = rpNum(rpVal('rp_horas'));
 	if (horas <= 0) { horas = 1; $('#rp_horas').val('1.00'); }
-	$('#rp_valor_hora').val((rpNum(rpVal('rp_salario')) / (horas * 4)).toFixed(5));
+	$('#rp_valor_hora').val((rpNum(rpVal('rp_salario')) / (horas * 4)).toFixed(2));
 }
 
 function actualizarMesVacacion() {
@@ -199,7 +209,7 @@ function pintarAsignarRol(resp) {
 	['rp_salario', 'rp_valor_dec3', 'rp_valor_dec4', 'rp_porc_com', 'rp_vivienda', 'rp_salud', 'rp_educacion',
 		'rp_alimentacion', 'rp_vestimenta', 'rp_turismo', 'rp_discapacidad', 'rp_tercera_edad'].forEach(function (id) { $('#' + id).val('0.00'); });
 	$('#rp_horas').val('0.00');
-	$('#rp_valor_hora').val('0.00000');
+	$('#rp_valor_hora').val('0.00');
 	$('#rp_dias_dec3, #rp_dias_dec4, #rp_cargas, #rp_porc_discap').val('0');
 	$('#rp_extc').val('0.00');
 	$('#rp_cod_profesion').val('0000000000');
@@ -217,12 +227,12 @@ function pintarAsignarRol(resp) {
 		const limpio = function (v) { return (v === '.' || v === null || v === undefined) ? '' : String(v).trim(); };
 		$('#rp_grupo').val(e.Grupo_Rol).trigger('change');
 		$('#rp_fecha').val(e.Fecha);
-		$('#rp_fecha_c').val(e.FechaC);
-		$('#rp_fecha_m').val(e.FechaMat);
+		$('#rp_fecha_c').val(e.T === 'R' ? e.FechaC : '');
+		$('#rp_fecha_m').val(e.Maternidad ? e.FechaMat : '');
 		$('#rp_fecha_vi').val(e.FechaVI);
 		$('#rp_fecha_vf').val(e.FechaVF);
 		$('#rp_porc_com').val(rpFmt(rpNum(e.Porc_Com) * 100));
-		$('#rp_valor_hora').val(rpFmt(e.Valor_Hora, 5));
+		$('#rp_valor_hora').val(rpFmt(e.Valor_Hora, 2));
 		$('#rp_horas').val(rpFmt(e.Horas_Sem));
 		$('#rp_salario').val(rpFmt(e.Salario));
 		$('#rp_valor_dec3').val(rpFmt(e.Valor_Dec_3ro));

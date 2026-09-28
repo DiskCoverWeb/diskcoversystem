@@ -49,15 +49,13 @@ $gastos = [
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-primary py-2">
-                <h5 class="modal-title text-white"><i class="bx bx-group me-1"></i>ASIGNACIÓN A ROL DE PAGOS</h5>
+                <h5 class="modal-title text-white d-flex flex-grow-1 flex-wrap align-items-center column-gap-3 row-gap-1 mb-0 me-3">
+                    <span><i class="bx bx-group me-1"></i>ASIGNACIÓN A ROL DE PAGOS: <span id="rp_nombre_lbl">-</span></span>
+                    <span class="fw-normal ms-auto" style="font-size:.8rem"><i class="bx bx-id-card"></i> Código: <b id="rp_codigo_lbl">-</b> <span id="rp_estado_lbl" class="badge bg-success ms-1">Activo</span></span>
+                </h5>
                 <button type="button" class="btn-close btn-close-white" onclick="cancelarAsignarRol()"></button>
             </div>
             <div class="modal-body pt-2">
-                <div class="hp-rp-head d-flex justify-content-between flex-wrap gap-2 mb-2">
-                    <b id="rp_nombre_lbl">-</b>
-                    <span class="hp-info-chip"><i class="bx bx-id-card text-primary"></i> Código: <b id="rp_codigo_lbl">-</b> <span id="rp_estado_lbl" class="badge bg-success ms-1">Activo</span></span>
-                </div>
-
                 <!-- Datos generales (misma distribución que FRolPag.frm) -->
                 <div class="card mb-2">
                     <div class="card-body py-2">
@@ -76,7 +74,7 @@ $gastos = [
                         </div>
                         <div class="row g-2 mb-1">
                             <div class="col-12 col-lg-4"><?php echo rpCampo('rp_horas', 'Horas por Semana', 'number', 'step="0.01" placeholder="0.00"'); ?></div>
-                            <div class="col-12 col-lg-4"><?php echo rpCampo('rp_valor_hora', 'Valor por Hora', 'number', 'step="0.00001" placeholder="0.00000"'); ?></div>
+                            <div class="col-12 col-lg-4"><?php echo rpCampo('rp_valor_hora', 'Valor por Hora', 'number', 'step="0.01" placeholder="0.00"'); ?></div>
                             <div class="col-12 col-lg-4">
                                 <div class="input-group input-group-sm flex-nowrap">
                                     <span class="input-group-text bg-person-sky-blue hp-rp-lbl">Grupo del Rol</span>
