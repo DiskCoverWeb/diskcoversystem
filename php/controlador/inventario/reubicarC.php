@@ -45,7 +45,7 @@ class reubicarC
     	$datos = $this->modelo->lista_stock_ubicado($bodega,$cod_art);
     	$tr = '';
 
-    	
+    	$lista = array();
     	foreach ($datos as $key => $value) {
 
     		// // busca en el listado de rutas
@@ -63,17 +63,22 @@ class reubicarC
 			// }
 
     		$stock = 0;
-    		$datos_inv = Leer_Codigo_Inv($value['Codigo_Inv'],date('Y-m-d'));
-    		$datos[$key]['Stock'] = 0;
+    		$datos_inv = Leer_Codigo_Inv($value['Codigo_Inv'],date('Y-m-d'),$value['CodBodega']);
+    		// print_r($datos_inv);die();
+    		$datos[$key]['Stock'] = 0;    		
+    		$datos[$key]['Ruta'] = $rutas_txt;
     		if($datos_inv['respueta']==1)
     		{
     			$stock = $datos_inv['datos']['Stock'].' '.$datos_inv['datos']['Unidad'];
     			$datos[$key]['Stock'] = $stock;
     		}
-    		$datos[$key]['Ruta'] = $rutas_txt;
+    		if($datos[$key]['Stock']<=0)
+    		{
+    			$lista[$key] = $datos[$key]; 
+    		}
     	}
     	// print_r($this->rutas);die();
-    	return $datos;
+    	return $lista;
     	// print_r($datos);die();
     }
 
