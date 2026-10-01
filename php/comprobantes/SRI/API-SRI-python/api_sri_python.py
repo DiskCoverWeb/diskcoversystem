@@ -191,7 +191,7 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
 
     except Exception as e:
 
-        result = []        
+        result = {}        
         result[0] = -1
         result[1] = clave_acceso;
         result[2] = estado;        
