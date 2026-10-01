@@ -293,6 +293,25 @@ class resumen_existenciasM
 	    return $this->db->datos($sql);
 	}
 
+    function Stock($CheqMonto,$TxtMonto)
+    {
+        $sql = "SELECT TC,Codigo_Inv,Stock_Anterior,Entradas,Salidas,Stock_Actual,Promedio,Valor_Total,Bodega
+                    FROM Catalogo_Productos 
+                    WHERE Item = '".$_SESSION['INGRESO']['item']."'
+                    AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+         if($CheqMonto=='true')
+         {
+            $sql.=" AND Stock_Actual = ".$TxtMonto." ";
+         }else{
+            $sql.=" AND Stock_Actual <> 0 ";
+         }
+         $sql.= " AND TC = 'P' ORDER BY Codigo_Inv ";
+
+         // print_r($sql);die();
+
+        return $this->db->datos($sql);
+    }
+
 
 }
 ?>

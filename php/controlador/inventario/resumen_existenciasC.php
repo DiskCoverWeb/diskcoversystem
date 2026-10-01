@@ -1,5 +1,6 @@
 <?php
 require_once(dirname(__DIR__,2).'/modelo/inventario/resumen_existenciasM.php');
+require(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
 
 $controlador = new resumen_existenciasC();
 
@@ -69,6 +70,43 @@ if(isset($_GET['Stock'])){
     echo json_encode($controlador->Stock($parametros));
 }
 
+if(isset($_GET['reporte_PDF']))
+{
+    $filtros = $_POST;
+    // print_r($filtros);die();
+    if(count($filtros)>0)
+    {
+        $parametros = array(
+            'inicial'=>isset($_POST['txt_inicial']) ? $_POST['txt_inicial']:'',
+            'final'=>  isset($_POST['txt_final']) ? $_POST['txt_final']:'',
+            'cbxpro'=>  isset($_POST['rbx_producto']) ? $_POST['rbx_producto']:'',
+            'CheqBod'=>  isset($_POST['CheqBod']) ? $_POST['CheqBod']:'false',
+            'CheqProducto'=>  isset($_POST['CheqProducto']) ? $_POST['CheqProducto']:'false',
+            'CheqMonto'=>  isset($_POST['CheqMonto']) ?  $_POST['CheqMonto'] : 'false',
+            'CheqExist'=>  isset($_POST['CheqExist']) ?  $_POST['CheqExist'] : 'false',
+            'DCTipoBusqueda'=>  isset($_POST['DCTipoBusqueda']) ? $_POST['DCTipoBusqueda']:'',
+            'TxtMonto'=>  isset($_POST['TxtMonto']) ? $_POST['TxtMonto'] :'0' ,
+            'DCInv'=>  isset($_POST['DCTInv']) ? $_POST['DCTInv']:'',
+            'tipo_consulta'=>$_POST['tipo_consulta'],
+            'DCBodega'=> isset($_POST['DCBodega']) ? $_POST['DCBodega']:'',
+        );
+        echo json_encode($controlador->reporte_PDF($parametros));
+    }else{
+        echo "
+            <script type='text/javascript'>
+                alert('Ocurrió un error o no hay datos para mostrar.');
+                window.close();
+            </script>
+            ";
+            exit;
+    }
+    // print_r($_POST);
+    // print_r('expression');die();
+    // $datos = urldecode($_POST['datos']);
+    // parse_str($datos, $filtros);
+    // print_r($datos);
+    // print_r($filtros);die();
+}
 
 
 
@@ -77,10 +115,12 @@ class resumen_existenciasC
     private $modelo;
     private $sri;
     private $egresos;
+    private $pdf;
 
     function __construct()
     {
         $this->modelo = new resumen_existenciasM();
+        $this->pdf = new cabecera_pdf();    
     }
 
     function Listatabla($parametros)
@@ -197,29 +237,17 @@ class resumen_existenciasC
       if($parametros['CheqProducto']=="true")
       {
          $Opcion = 2;
-    //      RatonReloj
-    //      MiTiempo = Time
-    //      DGQuery.Visible = False
-    //      Progreso_Barra.Mensaje_Box = "Procesando Resumen de Existencia"
-    //      Progreso_Iniciar
-    //      If CheqBod.value = 0 Then Cod_Bodega = Ninguno Else Cod_Bodega = SinEspaciosIzq(DCBodega)
+        // print_r($parametros);die();
+        // print_r('expression');die();
+        //RatonReloj
+        //MiTiempo = Time
+        //DGQuery.Visible = False
+        //Progreso_Barra.Mensaje_Box = "Procesando Resumen de Existencia"
+        //Progreso_Iniciar
+        if($parametros['CheqBod']==false){ $Cod_Bodega = G_NINGUNO; }else{ $Cod_Bodega = $parametros['DCBodega']; }
 
-    //     // 'SQLDec = "Promedio " & CStr(Dec_Costo) & "|Valor_Total 2|."
-                                                   
-    //      sSQL = "SELECT TC,Codigo_Inv,Stock_Anterior,Entradas,Salidas,Stock_Actual,Promedio,Valor_Total,Bodega " _
-    //           & "FROM Catalogo_Productos " _
-    //           & "WHERE Item = '" & NumEmpresa & "' " _
-    //           & "AND Periodo = '" & Periodo_Contable & "' "
-    //      If CheqMonto.value = 1 Then
-    //         sSQL = sSQL & "AND Stock_Actual = " & Val(TxtMonto.Text) & " "
-    //      Else
-    //         sSQL = sSQL & "AND Stock_Actual <> 0 "
-    //      End If
-    //      sSQL = sSQL & "AND TC = 'P' " _
-    //           & "ORDER BY Codigo_Inv "
-    // // ''     If (OpcProducto.value = 1) And (Codigo3 <> "Todos") Then sSQL = sSQL & "AND Recibo = '" & Codigo3 & "' "
-    // // ''     If CheqExist.value = 1 Then sSQL = sSQL & "AND Saldo_Actual <> 0 "
-    // // ''     sSQL = sSQL & "ORDER BY Numero "
+        $data =  $this->modelo->Stock($parametros['CheqMonto'],$parametros['TxtMonto']);
+
       }else{
          $Opcion = 1;
          $SQL_Tipo_Busqueda_CP = $this->SQL_Tipo_Busqueda_CP($parametros);
@@ -318,6 +346,7 @@ class resumen_existenciasC
         // print_r($parametros);die();
         $BSQL = " ";
         $CodigoInv = G_NINGUNO;
+        $Cod_Bodega = $parametros['DCBodega'];
         // $data = $this->DCTipoBusqueda($parametros['cbxpro'],$parametros['DCInv'],"");
 
         if($parametros['cbxpro']=='4')
@@ -370,6 +399,65 @@ class resumen_existenciasC
         if($parametros['CheqExist']=='false'){ $BSQL.= " AND CP.Valor_Total <> 0 ";}
         //  // 'MsgBox BSQL
         return $BSQL;
+    }
+
+    function reporte_PDF($filtros)
+    {
+        $lista =array();
+        // print_r($filtros);die();
+        switch ($filtros['tipo_consulta']) {
+            case 'QR':
+            $data = $this->Resumen_QR($filtros);
+            $lista = $data['data'];
+                break;
+            case 'BARRAS':
+            $data = $this->Resumen_Barras($filtros);
+            $lista = $data['data'];
+                break;
+            
+            default:
+                // code...
+                break;
+        }
+
+        // print_r($lista);die();
+
+        $head = array();
+        foreach ($lista[0] as $key => $value) {
+            array_push($head, $key);
+        }
+
+
+        $tablaHTML = array();
+        $tablaHTML[0]['medidas']=array(20,49,35,50,20,18,18,18,18,25);
+        $tablaHTML[0]['alineado']=array('L','L','L','L','R','R','R','R','R','R');
+        $tablaHTML[0]['datos']=$head;
+        $tablaHTML[0]['estilo']='BI';
+        $tablaHTML[0]['borde'] = '1';
+
+        $i =  1;
+        foreach ($lista as $key => $value) {
+
+            $body = array();
+            foreach ($head as $key2 => $value2) {
+                array_push($body, $value[$value2]);
+            }
+
+
+
+            $tablaHTML[$i]['medidas']= $tablaHTML[0]['medidas'];
+            $tablaHTML[$i]['alineado']= $tablaHTML[0]['alineado'];
+            $tablaHTML[$i]['datos']= $body;
+            $tablaHTML[$i]['estilo']='BI';
+            $tablaHTML[$i]['borde'] = '1';
+
+            $i++;
+        }
+
+        $this->pdf->cabecera_reporte_MC($titulo='ss',$tablaHTML,$contenido=false,$image=false,$filtros['inicial'],$filtros['final'],$sizetable=10,$mostrar=true,25,'L');
+
+
+        print_r($data);die();
     }
 }
 ?>

@@ -2,13 +2,14 @@ let tablaKardex;
   $(document).ready(function() {
     DCBodega();
     DCTInv();
-    DCTipoBusqueda();
+    DDCTipoBusqueda();
     DCCtaInv();
     DCSubModulo();
 
 
     tablaKardex = $('#tbl_existencias').DataTable({
-        // responsive: true,
+        paging: true,      
+        pageLength: 100,
         language: {
             url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json'
         },
@@ -25,7 +26,6 @@ let tablaKardex;
         },         
         info: false, 
         searching: false,  
-        paging: false,  
         columns: [
             { data:'TC'},
             { data: 'Codigo_Inv'},
@@ -56,20 +56,21 @@ let tablaKardex;
      $('#reporte_excel').click(function(){
 
             var data = $('#form_filtros').serialize();
-            var jsonDatos = encodeURIComponent(data);
+            // var jsonDatos = encodeURIComponent(data);
             var url = '../controlador/inventario/resumen_existenciasC.php?reporte_excel&datos=' + jsonDatos;
             window.open(url, '_blank');
      });
 
-     $('#imprimir_pdf').click(function(){
+     $('#imprimir_pdf').click(function(e) {
+            e.preventDefault();
 
-        var data = $('#form_filtros').serialize();
-        var jsonDatos = encodeURIComponent(data);
-        var url = '../controlador/inventario/resumen_existenciasC.php?reporte_PDF&datos=' + jsonDatos;
-               
-         window.open(url, '_blank');
-     });
-
+            // Configurar el formulario para que se envíe por POST a una nueva pestaña
+            $('#form_filtros')
+                .attr('action', '../controlador/inventario/resumen_existenciasC.php?reporte_PDF=1')
+                .attr('method', 'POST')
+                .attr('target', '_blank')
+                .submit();
+        });
 
   });
 
@@ -115,7 +116,7 @@ function DCTInv(){
     });
 }
 
-function DCTipoBusqueda(){
+function DDCTipoBusqueda(){
     var cbx = $('input[name="rbx_producto"]:checked').val();
     var DCInv = $('#DCTInv').val();
     $('#DCTipoBusqueda').select2({
@@ -184,6 +185,8 @@ function DCSubModulo(){
 
 function Resumen_QR()
 {
+
+    $('#tipo_consulta').val('QR')
     var parametros = {
         'inicial':$('#txt_inicial').val(),
         'final':$('#txt_final').val(),
@@ -246,11 +249,14 @@ function Resumen_QR()
 
 function Resumen_Barras()
 {
+
+    $('#tipo_consulta').val('BARRAS')
     var parametros = {
         'inicial':$('#txt_inicial').val(),
         'final':$('#txt_final').val(),
         'cbxpro': $('input[name="rbx_producto"]:checked').val(),
         'CheqBod':$('#CheqBod').prop('checked'),
+        'DCBodega':$('#DCBodega').val(),
         'CheqProducto':$('#CheqProducto').prop('checked'),
         'CheqMonto':$('#CheqMonto').prop('checked'),
         'CheqExist':$('#CheqExist').prop('checked'),
@@ -316,11 +322,13 @@ function Resumen_Barras()
 
 function Resumen_Lote()
 {
+    $('#tipo_consulta').val('LOTE')
      var parametros = {
         'inicial':$('#txt_inicial').val(),
         'final':$('#txt_final').val(),
         'cbxpro': $('input[name="rbx_producto"]:checked').val(),
         'CheqBod':$('#CheqBod').prop('checked'),
+        'DCBodega':$('#DCBodega').val(),
         'CheqProducto':$('#CheqProducto').prop('checked'),
         'CheqMonto':$('#CheqMonto').prop('checked'),
         'CheqExist':$('#CheqExist').prop('checked'),
@@ -387,11 +395,14 @@ function Resumen_Lote()
 
 function Stock(StockSuperior)
 {
+
+    $('#tipo_consulta').val('STOCK')
      var parametros = {
         'inicial':$('#txt_inicial').val(),
         'final':$('#txt_final').val(),
         'cbxpro': $('input[name="rbx_producto"]:checked').val(),
         'CheqBod':$('#CheqBod').prop('checked'),
+        'DCBodega':$('#DCBodega').val(),
         'CheqProducto':$('#CheqProducto').prop('checked'),
         'CheqMonto':$('#CheqMonto').prop('checked'),
         'CheqExist':$('#CheqExist').prop('checked'),
