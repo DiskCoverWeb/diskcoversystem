@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 $tipo=2;require_once(dirname(__DIR__,2)."/db/chequear_seguridad.php");
 require_once(dirname(__DIR__,2)."/modelo/facturacion/lista_liquidacionCompraM.php");
 require_once(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');

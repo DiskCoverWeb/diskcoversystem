@@ -1,4 +1,5 @@
-<?php 
+<?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 date_default_timezone_set('America/Guayaquil');
 include (dirname(__DIR__,2).'/modelo/farmacia/pacienteM.php');
 include (dirname(__DIR__,2).'/modelo/farmacia/descargosM.php');

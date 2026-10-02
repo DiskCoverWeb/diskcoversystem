@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 //Llamada al modelo
 error_reporting(E_ALL);
 ini_set('display_errors', '1');

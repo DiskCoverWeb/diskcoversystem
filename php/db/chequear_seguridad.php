@@ -4,9 +4,7 @@ header("Pragma: no-cache"); // HTTP 1.0
 header("Expires: 0");
 
 date_default_timezone_set('America/Guayaquil');
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/session_guard.php';
 $idEntidad = $_SESSION['INGRESO']['IDEntidad'] ?? null;
 $item = $_SESSION['INGRESO']['item'] ?? null;
 $fecha_session = isset($_SESSION['INGRESO']['SESSION_FECHA']) ? $_SESSION['INGRESO']['SESSION_FECHA'] :null; 
@@ -18,8 +16,10 @@ if(isset($_GET['mod'])){ $modulo = $_GET['mod']; }
 
 if(!isset($_SESSION['INGRESO']['IDEntidad']) || !isset($_SESSION['INGRESO']['item']) || $fecha_session<$fecha_actual)
 {
-	echo "<script type='text/javascript'>window.location='".((isset($tipo)&&$tipo==2)?"../":"")."../vista/login.php'</script>";
-	die();
+	http_response_code(401);
+	header('Content-Type: application/json; charset=utf-8');
+	echo json_encode(['error' => 'Sesión no activa']);
+	exit;
 }
 
 $NombreModulo = '';

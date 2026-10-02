@@ -36,10 +36,10 @@
 				<button type="button" class="btn btn-outline-secondary" title="Resumen en codigo QR" onclick="Resumen_QR()">
 					<img src="../../img/png/qr_code.png" height="32px">
 				</button>
-				<button type="button" class="btn btn-outline-secondary" title="Imprimir QR PDF" id="imprimir_pdf">
+				<button type="button" class="btn btn-outline-secondary" title="Imprimir PDF" id="imprimir_pdf">
 					<img src="../../img/png/paper.png" height="32px">
 				</button>			
-				<button type="button" class="btn btn-outline-secondary" title="Imprimir QR PDF" onclick="imprimir_pedido_pdf()">
+				<button type="button" class="btn btn-outline-secondary" title="Imprimir EXCEL" id="imprimir_excel">
 					<img src="../../img/png/excel2.png" height="32px">
 				</button>
 			</div>

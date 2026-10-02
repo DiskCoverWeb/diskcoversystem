@@ -1,4 +1,5 @@
-<?php 
+<?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 
 require_once(dirname(__DIR__,2).'/modelo/inventario/lista_comprasM.php');
 require_once(dirname(__DIR__,2).'/modelo/farmacia/ingreso_descargosM.php');

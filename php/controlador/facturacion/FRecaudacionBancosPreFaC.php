@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Month;
 use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
 

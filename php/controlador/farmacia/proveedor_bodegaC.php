@@ -1,4 +1,5 @@
-<?php 
+<?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 require(dirname(__DIR__,2).'/modelo/farmacia/proveedor_bodegaM.php');
 /**
  * 

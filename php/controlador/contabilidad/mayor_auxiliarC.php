@@ -1,4 +1,5 @@
-<?php 
+<?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 include(dirname(__DIR__,2).'/modelo/contabilidad/mayor_auxiliarM.php');
 require(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
 require(dirname(__DIR__,2).'/modelo/contabilidad/catalogoCtaM.php');

@@ -1,4 +1,5 @@
-<?php 
+<?php
+require_once dirname(__DIR__, 1) . '/db/session_guard.php';
 require_once(dirname(__DIR__,1).'/funciones/funciones.php');
 require_once(dirname(__DIR__,2)."/lib/fpdf/reporte_de.php");
 require_once(dirname(__DIR__,1)."/db/db1.php");

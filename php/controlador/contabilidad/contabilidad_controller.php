@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 //Llamada al modelo
 require_once(dirname(__DIR__,2)."/modelo/contabilidad/contabilidad_model.php");
 require_once(dirname(__DIR__,2)."/modelo/loginM.php");

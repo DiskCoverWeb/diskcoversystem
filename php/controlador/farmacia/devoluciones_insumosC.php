@@ -1,4 +1,5 @@
-<?php 
+<?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 include 'pacienteC.php'; 
 include (dirname(__DIR__,2).'/modelo/farmacia/devoluciones_insumosM.php');
 include (dirname(__DIR__,2).'/modelo/farmacia/ingreso_descargosM.php');

@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 require_once(dirname(__DIR__, 2) . "/db/db1.php");
 require_once(dirname(__DIR__, 2) . "/funciones/funciones.php");
 require_once(dirname(__DIR__, 3) . "/lib/fpdf/reporte_de.php");

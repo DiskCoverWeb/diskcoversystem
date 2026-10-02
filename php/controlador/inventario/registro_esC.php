@@ -1,4 +1,5 @@
-<?php 
+<?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Distributions\F;
 include('../../modelo/inventario/registro_esM.php');
 require_once('../../funciones/funciones.php');

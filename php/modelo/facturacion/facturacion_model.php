@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 require_once("../db/db.php");
 require_once("../funciones/funciones.php");
 class contabilidad_model{

@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 /** 
  * AUTOR DE RUTINA	: Teddy Moreira
  * MODIFICADO POR : Teddy Moreira

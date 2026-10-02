@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 require(dirname(__DIR__, 2) . '/modelo/facturacion/facturas_distribucion_famM.php');
 require_once(dirname(__DIR__, 2) . '/modelo/facturacion/punto_ventaM.php');
 require_once(dirname(__DIR__, 2) . "/comprobantes/SRI/autorizar_sri.php");

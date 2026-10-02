@@ -1,6 +1,9 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 require_once(dirname(__DIR__,2).'/modelo/inventario/resumen_existenciasM.php');
 require(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
+// require(dirname(__DIR__,3).'/lib/excel/plantilla2.php');
+
 
 $controlador = new resumen_existenciasC();
 
@@ -100,6 +103,38 @@ if(isset($_GET['reporte_PDF']))
             ";
             exit;
     }
+}
+
+if(isset($_GET['reporte_excel']))
+{
+    $filtros = $_POST;
+    // print_r($filtros);die();
+    if(count($filtros)>0)
+    {
+        $parametros = array(
+            'inicial'=>isset($_POST['txt_inicial']) ? $_POST['txt_inicial']:'',
+            'final'=>  isset($_POST['txt_final']) ? $_POST['txt_final']:'',
+            'cbxpro'=>  isset($_POST['rbx_producto']) ? $_POST['rbx_producto']:'',
+            'CheqBod'=>  isset($_POST['CheqBod']) ? $_POST['CheqBod']:'false',
+            'CheqProducto'=>  isset($_POST['CheqProducto']) ? $_POST['CheqProducto']:'false',
+            'CheqMonto'=>  isset($_POST['CheqMonto']) ?  $_POST['CheqMonto'] : 'false',
+            'CheqExist'=>  isset($_POST['CheqExist']) ?  $_POST['CheqExist'] : 'false',
+            'DCTipoBusqueda'=>  isset($_POST['DCTipoBusqueda']) ? $_POST['DCTipoBusqueda']:'',
+            'TxtMonto'=>  isset($_POST['TxtMonto']) ? $_POST['TxtMonto'] :'0' ,
+            'DCInv'=>  isset($_POST['DCTInv']) ? $_POST['DCTInv']:'',
+            'tipo_consulta'=>$_POST['tipo_consulta'],
+            'DCBodega'=> isset($_POST['DCBodega']) ? $_POST['DCBodega']:'',
+        );
+        echo json_encode($controlador->reporte_excel($parametros));
+    }else{
+        echo "
+            <script type='text/javascript'>
+                alert('Ocurrió un error o no hay datos para mostrar.');
+                window.close();
+            </script>
+            ";
+            exit;
+    }
     // print_r($_POST);
     // print_r('expression');die();
     // $datos = urldecode($_POST['datos']);
@@ -110,17 +145,19 @@ if(isset($_GET['reporte_PDF']))
 
 
 
+
 class resumen_existenciasC
 {
     private $modelo;
     private $sri;
     private $egresos;
     private $pdf;
+    private $excel;
 
     function __construct()
     {
         $this->modelo = new resumen_existenciasM();
-        $this->pdf = new cabecera_pdf();    
+        $this->pdf = new cabecera_pdf();  
     }
 
     function Listatabla($parametros)
@@ -458,6 +495,59 @@ class resumen_existenciasC
 
 
         print_r($data);die();
+    }
+
+
+
+    function reporte_excel($filtros)
+    {
+        $tablaHTML = array();
+
+         $lista =array();
+        // print_r($filtros);die();
+        switch ($filtros['tipo_consulta']) {
+            case 'QR':
+            $data = $this->Resumen_QR($filtros);
+            $lista = $data['data'];
+                break;
+            case 'BARRAS':
+            $data = $this->Resumen_Barras($filtros);
+            $lista = $data['data'];
+                break;
+            
+            default:
+                // code...
+                break;
+        }
+
+        // print_r($lista);die();
+
+        $head = array();
+        foreach ($lista[0] as $key => $value) {
+            array_push($head, $key);
+        }
+
+
+        $tablaHTML = array();
+        $tablaHTML[0]['medidas']=array(20,49,35,50,20,18,18,18,18,25);
+        $tablaHTML[0]['datos']=$head;        
+        $tablaHTML[0]['tipo'] ='C';
+
+        $i =  1;
+        foreach ($lista as $key => $value) {
+
+            $body = array();
+            foreach ($head as $key2 => $value2) {
+                array_push($body, $value[$value2]);
+            }
+
+            $tablaHTML[$i]['medidas']= $tablaHTML[0]['medidas'];
+            $tablaHTML[$i]['datos']= $body;
+
+            $i++;
+        }
+        
+        excel_generico($titulo='hola reporte',$tablaHTML,$url=false);
     }
 }
 ?>

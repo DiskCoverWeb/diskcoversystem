@@ -1,4 +1,5 @@
     <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
     require_once(dirname(__DIR__,2).'/modelo/inventario/orden_trabajo_constM.php');
     require_once(dirname(__DIR__,2).'/modelo/inventario/contrato_trabajo_detalle_constM.php');
 

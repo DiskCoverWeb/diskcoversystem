@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 /** 
  * AUTOR DE RUTINA : Dallyana Vanegas
  * FECHA CREACION : 30/01/2024

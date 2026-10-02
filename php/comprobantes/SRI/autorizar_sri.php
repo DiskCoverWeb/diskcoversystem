@@ -42,8 +42,8 @@ class autorizacion_sri
  	   if(isset($_SESSION['INGRESO']['Web_SRI_Recepcion'])){$this->linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion'];}
 
 
-		 $this->rutaJava8  = "";
-		// $this->rutaJava8  = escapeshellarg("C:\\Program Files\\Java\\jdk-1.8\\bin\\");
+		 // $this->rutaJava8  = "";
+		$this->rutaJava8  = escapeshellarg("C:\\Program Files\\Java\\jdk1.8.0_202\\bin\\");
 	}
 	function encriptar($dato)
 	{
@@ -3222,7 +3222,6 @@ function generar_xml_retencion($cabecera,$detalle)
 
   function firmar_documento($nom_doc,$entidad,$empresa,$pass,$p12)
     {	
-
  	    $firmador = dirname(__DIR__).'/SRI/firmar/firmador.jar';
  	    $url_generados=dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Generados/';
  	    $url_firmados =dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$empresa.'/Firmados/';
@@ -3333,6 +3332,8 @@ function generar_xml_retencion($cabecera,$detalle)
 
 
     	$command = "python ".$enviar_sri." 1 ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion; 
+
+    	// print_r($command);die();
     	$output = shell_exec($command);
     	try {
     		if($output!=null && $output!='')

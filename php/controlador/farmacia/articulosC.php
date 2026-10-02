@@ -1,4 +1,5 @@
-<?php 
+<?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 $_SESSION['INGRESO']['modulo_']='99';
 include (dirname(__DIR__,2).'/modelo/farmacia/pacienteM.php');
 include (dirname(__DIR__,2).'/modelo/farmacia/ingreso_descargosM.php');

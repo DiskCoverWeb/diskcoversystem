@@ -1,4 +1,5 @@
-<?php  
+<?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 require_once(dirname(__DIR__,2)."/modelo/facturacion/importar_desde_excelM.php");
 
 $controlador = new importar_desde_excel();

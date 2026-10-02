@@ -86,6 +86,10 @@ function estado_licencia($f3)
 	<!--JS Adicionales-->
 	<script src="../../dist/js/js_globales.js"></script>	
 	<script src="../../assets/js/jquery.min.js"></script>
+	<script>
+		window.sessionLoginUrl = <?php echo json_encode(dirname(dirname($_SERVER['SCRIPT_NAME'])) . '/vista/login.php'); ?>;
+	</script>
+	<script src="../../dist/js/session-expired.js"></script>
 	<script src="../../dist/js/sweetalert2@11.js"></script>
 	
 	<title>Diskcover system - Modulos</title>

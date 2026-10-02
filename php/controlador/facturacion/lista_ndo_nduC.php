@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 $tipo = 2; //Se usa para saber que debe regresar dos carpetas en chequear_seguridad
 require_once(dirname(__DIR__, 2) . "/db/chequear_seguridad.php");
 require_once(dirname(__DIR__, 2) . "/modelo/facturacion/lista_ndo_nduM.php");

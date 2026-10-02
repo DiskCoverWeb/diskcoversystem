@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 require_once(dirname(__DIR__,2)."/modelo/facturacion/lista_notas_creditoM.php");
 require_once(dirname(__DIR__,2)."/modelo/facturacion/punto_ventaM.php");
 require_once(dirname(__DIR__,2)."/modelo/facturacion/notas_creditoM.php");

@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 include(dirname(__DIR__,2).'/funciones/funciones.php');
 $controlador = new FCierre_CajaC();
 if (isset($_GET['CargarDCCuenta'])) {

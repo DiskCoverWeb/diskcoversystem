@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 include(dirname(__DIR__,2).'/modelo/inventario/categoriasM.php');
 
 $controlador = new categoriasC();

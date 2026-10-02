@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 error_reporting(-1);
 //include(dirname(__DIR__).'/funciones/funciones.php');//
 include(dirname(__DIR__,2).'/db/variables_globales.php');//

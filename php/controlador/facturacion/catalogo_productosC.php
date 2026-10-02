@@ -1,4 +1,5 @@
-<?php 
+<?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
 require_once(dirname(__DIR__,2)."/modelo/facturacion/catalogo_productosM.php");
 require_once(dirname(__DIR__,3)."/lib/fpdf/generar_codigo_barras.php");
 require_once(dirname(__DIR__,3)."/lib/phpqrcode/qrlib.php");

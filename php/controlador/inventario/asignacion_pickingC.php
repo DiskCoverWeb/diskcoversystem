@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
  // DESARROLLADOR     : Javier Farinango
  // FECHA CREACION    : 02/04/2025
  // FECHA MODIFICACION: 02/04/2025 - 02/04/

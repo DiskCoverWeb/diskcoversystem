@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__, 2) . '/db/session_guard.php';
  // DESARROLLADOR      : Walter Vaca Prieto
  // FECHA CREACION    : 08/09/2022
  // FECHA MODIFICACION: 08/09/2022 - 15/10/2024

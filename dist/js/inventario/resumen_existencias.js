@@ -53,20 +53,24 @@ let tablaKardex;
     });
 
 
-     $('#reporte_excel').click(function(){
+      $('#imprimir_excel').click(function(e) {
+            e.preventDefault();
 
-            var data = $('#form_filtros').serialize();
-            // var jsonDatos = encodeURIComponent(data);
-            var url = '../controlador/inventario/resumen_existenciasC.php?reporte_excel&datos=' + jsonDatos;
-            window.open(url, '_blank');
-     });
+            // Configurar el formulario para que se envíe por POST a una nueva pestaña
+            $('#form_filtros')
+                .attr('action', '../controlador/inventario/resumen_existenciasC.php?reporte_excel=true')
+                .attr('method', 'POST')
+                .attr('target', '_blank')
+                .submit();
+        });
+
 
      $('#imprimir_pdf').click(function(e) {
             e.preventDefault();
 
             // Configurar el formulario para que se envíe por POST a una nueva pestaña
             $('#form_filtros')
-                .attr('action', '../controlador/inventario/resumen_existenciasC.php?reporte_PDF=1')
+                .attr('action', '../controlador/inventario/resumen_existenciasC.php?reporte_PDF=true')
                 .attr('method', 'POST')
                 .attr('target', '_blank')
                 .submit();
