@@ -258,6 +258,12 @@ class resumen_existenciasM
 
 	function Resumen_Lote($FechaIni,$FechaFin,$SQL_Tipo_Busqueda)
 	{
+        if($FechaIni=='' && $FechaFin=='')
+        {
+            $FechaIni= date('Y-m-d'); 
+            $FechaFin = date('Y-m-d');   
+        }
+
 		$sql = "SELECT TK.Codigo_Inv, CP.Producto, TK.CodBodega, TK.Lote_No, TK.Fecha_Fab, TK.Fecha_Exp, CP.Reg_Sanitario, 
        TK.Modelo, TK.Procedencia, TK.Serie_No, SUM(TK.Entrada) As Entradas, SUM(TK.Salida) As Salidas, 
        SUM(TK.Entrada-TK.Salida) As Stock_Lote,  AVG(Valor_Unitario) As Valor_Unit, 
@@ -273,7 +279,7 @@ class resumen_existenciasM
        GROUP BY TK.Codigo_Inv, CP.Producto, TK.CodBodega, TK.Lote_No, TK.Fecha_Fab, TK.Fecha_Exp, CP.Reg_Sanitario, 
        TK.Modelo, TK.Procedencia, TK.Serie_No 
        ORDER BY TK.Codigo_Inv, TK.Lote_No ";
-      // print_r($sql);die();
+    //   print_r($sql);die();
 
 	    return $this->db->datos($sql);
 	}

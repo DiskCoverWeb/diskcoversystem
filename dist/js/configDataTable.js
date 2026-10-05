@@ -9,7 +9,7 @@ $(document).ready(function() {
         var columnasTexto = [
             "RUC_CI","RUC","TELEFONO","AUTORIZACION", "FACTURA", "CODIGO", 
             'MATRICULA','CI_RUC','TELEFONO',
-            "PRODUCTO", "ITEM", "A_NO", "ID", "NOMBRE", "DESCRIPCION",'ORDEN','SEMANA'
+            "PRODUCTO", "ITEM", "A_NO", "ID", "NOMBRE", "DESCRIPCION",'ORDEN','SEMANA','CODBODEGA','AUTORIZACION'
         ];
 
         var palabrasClaveFecha = ["FECHA", "DATE", "FEC_", "CREATED_AT", "UPDATED_AT"];
