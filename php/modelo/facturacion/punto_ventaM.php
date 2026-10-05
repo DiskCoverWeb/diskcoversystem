@@ -530,6 +530,7 @@ class punto_ventaM
     WHERE F.Serie='" . $ser . "' 
     AND Factura='" . $cod . "' 
     AND CodigoC='" . $ci . "' 
+    AND TC = 'FA'
     AND F.Item = '" . $_SESSION['INGRESO']['item'] . "' ";
     if ($periodo == false || $periodo == '.') {
       $sql .= " AND F.Periodo =  '" . $_SESSION['INGRESO']['periodo'] . "' ";
@@ -538,6 +539,7 @@ class punto_ventaM
     }
 
     $datos_fac = $this->db->datos($sql);
+    // print_r($datos_fac);die();
 
     $datos_fac[0] = $TFA = Leer_Datos_FA_NV($datos_fac[0]);
     $sSQL = "SELECT DF.*, CP.Reg_Sanitario, CP.Marca, CP.Desc_Item, CP.Codigo_Barra As Cod_Barras

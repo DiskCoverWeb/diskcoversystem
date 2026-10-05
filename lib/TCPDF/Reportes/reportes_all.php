@@ -184,6 +184,7 @@ class MYPDF extends TCPDF
 	$this->SetX($cuardo_2_X);
 	$row_col = 72;
 	$numAutorizacion = "";
+	// print_r($this->datos[0]);die();
 	switch ($this->datos[0]['TC']) {
 		case 'LC':
 			$this->MultiCell($row_col, 2,'Liquidacion compra No.', $border, '', 0, 1, '', '', true);
@@ -208,6 +209,11 @@ class MYPDF extends TCPDF
 		case 'LC':
 			$this->MultiCell($row_col, 2,'Liquidacion compra No.', $border, '', 0, 1, '', '', true);
 			$documento = $this->datos[0]['Factura'];			
+			 $numAutorizacion = $this->datos[0]['Clave_Acceso'];
+			break;
+		case 'NDO':
+			$this->MultiCell($row_col, 2,'Factura No.', $border, '', 0, 1, '', '', true);
+			$documento = $this->datos[0]['Factura'];
 			 $numAutorizacion = $this->datos[0]['Clave_Acceso'];
 			break;
 		
