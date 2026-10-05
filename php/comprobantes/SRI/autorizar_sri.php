@@ -42,8 +42,8 @@ class autorizacion_sri
  	   if(isset($_SESSION['INGRESO']['Web_SRI_Recepcion'])){$this->linkSriRecepcion = $_SESSION['INGRESO']['Web_SRI_Recepcion'];}
 
 
-		 // $this->rutaJava8  = "";
-		$this->rutaJava8  = escapeshellarg("C:\\Program Files\\Java\\jdk1.8.0_202\\bin\\");
+		 $this->rutaJava8  = "";
+		// $this->rutaJava8  = escapeshellarg("C:\\Program Files\\Java\\jdk1.8.0_202\\bin\\");
 	}
 	function encriptar($dato)
 	{
