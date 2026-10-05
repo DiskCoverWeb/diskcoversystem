@@ -390,7 +390,7 @@ function buscar_producto()
 
 				if(stock<=0)
 				{
-					Swal.fire("Stock insuficienta ", $('#txt_cod_producto').val()+" (Stock: "+stock+")","info")
+					Swal.fire("Sin Stock  ", $('#txt_cod_producto').val()+" (Stock: "+stock+")","info")
 					return false
 
 				}else{
