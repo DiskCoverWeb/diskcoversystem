@@ -316,7 +316,7 @@ function Guardar_bodega(id)
     Swal.fire({
       title: 'Esta seguro?',
       text: "Se va a generar el comprobante "+$('#lbl_comprobante').text(),
-      type: 'warning',
+      icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
