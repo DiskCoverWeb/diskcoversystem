@@ -16,7 +16,7 @@ class reubicarM
 
     function lista_stock_ubicado($bodega=false,$cod_barras  =false,$grupo=false)
     {
-        $sql="select TOP(100) TK.*,Producto
+        $sql="select TOP(50) TK.*,Producto
             FROM Trans_Kardex TK
             INNER JOIN Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv
             where TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'

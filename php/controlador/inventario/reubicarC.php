@@ -221,9 +221,9 @@ class reubicarC
 	{
 
 
-		print_r($data_ubi);
-		print_r($data);
-		die();
+		// print_r($data_ubi);
+		// print_r($data);
+		// die();
 
 		$data = $data[0];
 		// Salida
