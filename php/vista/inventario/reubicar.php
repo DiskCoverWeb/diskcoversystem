@@ -57,7 +57,7 @@
 
 						</div>
 					</div>
-					<div class="col-sm-2">
+					<div class="col-sm-2 d-none">
 						<b class="fw-semibold">No comprobante</b>
 						<div class="input-group input-group-sm">		
 							<label id="lbl_comprobante">0000000</label>

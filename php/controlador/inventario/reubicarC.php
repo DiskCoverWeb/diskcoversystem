@@ -73,7 +73,7 @@ class reubicarC
     			$stock = $datos_inv['datos']['Stock'].' '.$datos_inv['datos']['Unidad'];
     			$datos[$key]['Stock'] = $stock;
     		}
-    		if($datos[$key]['Stock']<=0)
+    		if($datos[$key]['Stock']>=0)
     		{
     			$lista[$key] = $datos[$key]; 
     		}
