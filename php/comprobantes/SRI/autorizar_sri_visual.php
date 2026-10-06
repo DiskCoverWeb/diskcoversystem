@@ -627,7 +627,7 @@ class autoriza_sri
 		// $command = $this->rutaJava8."java -jar ".$enviar_sri." 1 ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion; 
    		 // print_r($command);die();
     	$command = "python ".$enviar_sri." 1 ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion; 
-    	print_r($command);die();
+    	// print_r($command);die();
    		$output = shell_exec($command);
    		if($output!=null && $output!='')
    		{
