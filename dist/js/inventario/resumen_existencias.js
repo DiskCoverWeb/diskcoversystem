@@ -206,7 +206,7 @@ function Resumen_QR()
 
         // console.log(response);
 
-        $('#myModal_espera').modal('hide');
+        setTimeout(()=>{   $('#myModal_espera').modal('hide');  }, 1000);
 
          // 1. Destruir la DataTable actual
             if ($.fn.DataTable.isDataTable('#tbl_existencias')) {
@@ -282,7 +282,7 @@ function Resumen_Barras()
 
 
         // console.log(response);
-            $('#myModal_espera').modal('hide');
+            setTimeout(()=>{   $('#myModal_espera').modal('hide');  }, 1000);
 
          // 1. Destruir la DataTable actual
             if ($.fn.DataTable.isDataTable('#tbl_existencias')) {
@@ -357,7 +357,7 @@ function Resumen_Lote()
 
 
         // console.log(response);
-            $('#myModal_espera').modal('hide');
+            setTimeout(()=>{   $('#myModal_espera').modal('hide');  }, 1000);
 
          // 1. Destruir la DataTable actual
             if ($.fn.DataTable.isDataTable('#tbl_existencias')) {
@@ -442,7 +442,7 @@ function Stock(StockSuperior)
 
         // console.log(response);
 
-        $('#myModal_espera').modal('hide');
+        setTimeout(()=>{   $('#myModal_espera').modal('hide');  }, 1000);
 
          // 1. Destruir la DataTable actual
             if ($.fn.DataTable.isDataTable('#tbl_existencias')) {
