@@ -217,10 +217,11 @@ class autoriza_sri
 	   		 		// print_r($resp);die();
 	   		}else
 	   		{
-	   			if($enviar_sri[4]=="70")
+	   			// print_r($enviar_sri);die();
+	   			if(isset($enviar_sri[4]) && $enviar_sri[4]=="70")
 	   			{
 	   				$resp =  $this->comprobar_xml_sri($Autorizacion,$this->linkSriAutorizacion);
-	   				print_r($resp);die();
+	   				// print_r($resp);die();
 	   		 		if($resp=='' || $resp==null)
 	   		 		{
 	   		 			return  array('respuesta'=>-1,"mensaje"=>"XML enviado, no comprobado por el SRI",'FechaAutorizacion'=>$fechaAutorizacion,"XML"=>$ArchivoXML);
@@ -626,6 +627,7 @@ class autoriza_sri
 		// $command = $this->rutaJava8."java -jar ".$enviar_sri." 1 ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion; 
    		 // print_r($command);die();
     	$command = "python ".$enviar_sri." 1 ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion; 
+    	print_r($command);die();
    		$output = shell_exec($command);
    		if($output!=null && $output!='')
    		{
