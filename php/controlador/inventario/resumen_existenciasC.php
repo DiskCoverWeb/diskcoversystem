@@ -475,11 +475,13 @@ class resumen_existenciasC
             $medidas = array(10,18,40,15,20,20,20,20,20,20,15,25,25);
             $alineado = array('L','L','L','L','R','R','R','R','R','R','R','L','L');
 
-                break;
-
-            
+                break;            
             default:
-                // code...
+             $lista  = $this->Listatabla($filtros);            
+                // $lista = $data['data'];
+             $medidas = array(10,28,60,15,20,20,20,20,20,20,30);
+             $alineado = array('L','L','L','L','R','R','R','R','R','R','R');
+
                 break;
         }
 
@@ -569,11 +571,13 @@ class resumen_existenciasC
             $medidas = array(10,18,40,15,20,20,20,20,20,20,15,25,25);
             $alineado = array('L','L','L','L','R','R','R','R','R','R','R','L','L');
 
-                break;
-
-            
+                break;            
             default:
-                // code...
+               $lista  = $this->Listatabla($filtros);            
+                // $lista = $data['data'];
+             $medidas = array(10,28,60,15,20,20,20,20,20,20,30);
+             $alineado = array('L','L','L','L','R','R','R','R','R','R','R');
+
                 break;
         }
 
