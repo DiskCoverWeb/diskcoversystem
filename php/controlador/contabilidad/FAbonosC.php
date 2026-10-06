@@ -441,6 +441,7 @@ class FAbonosC
 
 		$T = "P";
 		$SaldoDisp = $parametro['LabelPend'];
+		if($SaldoDisp=='NaN'){ $SaldoDisp = 0;}
 		if ($SaldoDisp <= 0) {
 			$T = "C";
 			$SaldoDisp = 0;
