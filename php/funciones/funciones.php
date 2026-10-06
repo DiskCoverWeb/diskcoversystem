@@ -11978,6 +11978,10 @@ function CambioCodigoKardex($Codigo) {
 }
 function Reporte_Resumen_Existencias_SP($MBFechaInicial, $MBFechaFinal, $CodigoBodega)
 {
+  if($MBFechaFinal=='' && $MBFechaInicial=='')
+  {
+    $MBFechaFinal=date('Y-m-d'); $MBFechaInicial=date('Y-m-d');
+  }
   $FechaIniSP = BuscarFecha($MBFechaInicial);
   $FechaFinSP = BuscarFecha($MBFechaFinal);
 

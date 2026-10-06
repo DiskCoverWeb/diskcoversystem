@@ -213,6 +213,10 @@ class resumen_existenciasM
 	}
 	function Resumen_QR($FechaIni,$FechaFin)
 	{
+        if($FechaIni=='' && $FechaFin=='')
+        {
+            $FechaIni=date('Y-m-d'); $FechaFin=date('Y-m-d');
+        }
 		$sql = "SELECT Codigo_Barra, 
        	SUM(Entrada) As Entradas, SUM(Salida) As Salidas, 
        	SUM(Entrada-Salida) As Stock_QR, AVG(Valor_Unitario) As Valor_Unit, 

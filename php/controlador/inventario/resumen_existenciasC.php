@@ -92,6 +92,7 @@ if(isset($_GET['reporte_PDF']))
             'DCInv'=>  isset($_POST['DCTInv']) ? $_POST['DCTInv']:'',
             'tipo_consulta'=>$_POST['tipo_consulta'],
             'DCBodega'=> isset($_POST['DCBodega']) ? $_POST['DCBodega']:'',
+            'CheqGrupo'=> isset($_POST['CheqGrupo']) ? $_POST['CheqGrupo']:'false',
         );
         echo json_encode($controlador->reporte_PDF($parametros));
     }else{
@@ -124,6 +125,7 @@ if(isset($_GET['reporte_excel']))
             'DCInv'=>  isset($_POST['DCTInv']) ? $_POST['DCTInv']:'',
             'tipo_consulta'=>$_POST['tipo_consulta'],
             'DCBodega'=> isset($_POST['DCBodega']) ? $_POST['DCBodega']:'',
+            'CheqGrupo'=> isset($_POST['CheqGrupo']) ? $_POST['CheqGrupo']:'false',
         );
         echo json_encode($controlador->reporte_excel($parametros));
     }else{
@@ -441,16 +443,40 @@ class resumen_existenciasC
     function reporte_PDF($filtros)
     {
         $lista =array();
+        $medidas = array();
+        $alineado = array();
         // print_r($filtros);die();
         switch ($filtros['tipo_consulta']) {
             case 'QR':
             $data = $this->Resumen_QR($filtros);
+            $medidas = array(20,49,35,50,20,18,18,18,18,25);
+            $alineado = array('L','L','L','L','R','R','R','R','R','R');
             $lista = $data['data'];
                 break;
             case 'BARRAS':
             $data = $this->Resumen_Barras($filtros);
+            $medidas = array(20,49,35,50,20,18,18,18,18,25);
+            $alineado = array('L','L','L','L','R','R','R','R','R','R');
+
             $lista = $data['data'];
                 break;
+            case 'LOTE':
+            $data = $this->Resumen_Lote($filtros);
+            $lista = $data['data'];
+            $medidas = array(20,35,35,15,18,18,20,15,18,15,15,15,15,15,15);
+            $alineado = array('L','L','L','L','L','L','L','L','R','R','R','R','R','R','R');
+
+                break;
+            case 'AGRUPADO':
+            case 'STOCK':
+            $data = $this->Stock($filtros);
+
+            $lista = $data['data'];
+            $medidas = array(10,18,40,15,20,20,20,20,20,20,15,25,25);
+            $alineado = array('L','L','L','L','R','R','R','R','R','R','R','L','L');
+
+                break;
+
             
             default:
                 // code...
@@ -466,8 +492,8 @@ class resumen_existenciasC
 
 
         $tablaHTML = array();
-        $tablaHTML[0]['medidas']=array(20,49,35,50,20,18,18,18,18,25);
-        $tablaHTML[0]['alineado']=array('L','L','L','L','R','R','R','R','R','R');
+        $tablaHTML[0]['medidas']=$medidas;
+        $tablaHTML[0]['alineado']=$alineado;
         $tablaHTML[0]['datos']=$head;
         $tablaHTML[0]['estilo']='BI';
         $tablaHTML[0]['borde'] = '1';
@@ -477,7 +503,12 @@ class resumen_existenciasC
 
             $body = array();
             foreach ($head as $key2 => $value2) {
-                array_push($body, $value[$value2]);
+                if(!is_object($value[$value2]))
+                {
+                    array_push($body, $value[$value2]);
+                }else{
+                array_push($body, $value[$value2]->format('Y-m-d'));
+                }
             }
 
 
@@ -485,13 +516,13 @@ class resumen_existenciasC
             $tablaHTML[$i]['medidas']= $tablaHTML[0]['medidas'];
             $tablaHTML[$i]['alineado']= $tablaHTML[0]['alineado'];
             $tablaHTML[$i]['datos']= $body;
-            $tablaHTML[$i]['estilo']='BI';
+            // $tablaHTML[$i]['estilo']='BI';
             $tablaHTML[$i]['borde'] = '1';
 
             $i++;
         }
 
-        $this->pdf->cabecera_reporte_MC($titulo='ss',$tablaHTML,$contenido=false,$image=false,$filtros['inicial'],$filtros['final'],$sizetable=10,$mostrar=true,25,'L');
+        $this->pdf->cabecera_reporte_MC('R E S U M E N   D E   E X I S T E N C I A S',$tablaHTML,$contenido=false,$image=false,$filtros['inicial'],$filtros['final'],$sizetable=10,$mostrar=true,25,'L');
 
 
         print_r($data);die();
@@ -505,20 +536,47 @@ class resumen_existenciasC
 
          $lista =array();
         // print_r($filtros);die();
+        $lista =array();
+        $medidas = array();
+        $alineado = array();
+        // print_r($filtros);die();
         switch ($filtros['tipo_consulta']) {
             case 'QR':
             $data = $this->Resumen_QR($filtros);
+            $medidas = array(20,49,35,50,20,18,18,18,18,25);
+            $alineado = array('L','L','L','L','R','R','R','R','R','R');
             $lista = $data['data'];
                 break;
             case 'BARRAS':
             $data = $this->Resumen_Barras($filtros);
+            $medidas = array(20,49,35,50,20,18,18,18,18,25);
+            $alineado = array('L','L','L','L','R','R','R','R','R','R');
+
             $lista = $data['data'];
                 break;
+            case 'LOTE':
+            $data = $this->Resumen_Lote($filtros);
+            $lista = $data['data'];
+            $medidas = array(20,35,35,15,18,18,20,15,18,15,15,15,15,15,15);
+            $alineado = array('L','L','L','L','L','L','L','L','R','R','R','R','R','R','R');
+
+                break;
+            case 'AGRUPADO':
+            case 'STOCK':
+            $data = $this->Stock($filtros);
+
+            $lista = $data['data'];
+            $medidas = array(10,18,40,15,20,20,20,20,20,20,15,25,25);
+            $alineado = array('L','L','L','L','R','R','R','R','R','R','R','L','L');
+
+                break;
+
             
             default:
                 // code...
                 break;
         }
+
 
         // print_r($lista);die();
 
@@ -529,7 +587,7 @@ class resumen_existenciasC
 
 
         $tablaHTML = array();
-        $tablaHTML[0]['medidas']=array(20,49,35,50,20,18,18,18,18,25);
+        $tablaHTML[0]['medidas']=$medidas;
         $tablaHTML[0]['datos']=$head;        
         $tablaHTML[0]['tipo'] ='C';
 
@@ -538,7 +596,12 @@ class resumen_existenciasC
 
             $body = array();
             foreach ($head as $key2 => $value2) {
-                array_push($body, $value[$value2]);
+                if(!is_object($value[$value2]))
+                {
+                    array_push($body, $value[$value2]);
+                }else{
+                array_push($body, $value[$value2]->format('Y-m-d'));
+                }
             }
 
             $tablaHTML[$i]['medidas']= $tablaHTML[0]['medidas'];
@@ -547,7 +610,7 @@ class resumen_existenciasC
             $i++;
         }
         
-        excel_generico($titulo='hola reporte',$tablaHTML,$url=false);
+        excel_generico('R E S U M E N   D E   E X I S T E N C I A S',$tablaHTML,$url=false);
     }
 }
 ?>

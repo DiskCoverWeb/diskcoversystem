@@ -189,6 +189,7 @@ function DCSubModulo(){
 
 function Resumen_QR()
 {
+    $('#myModal_espera').modal('show');
 
     $('#tipo_consulta').val('QR')
     var parametros = {
@@ -204,6 +205,8 @@ function Resumen_QR()
 
 
         // console.log(response);
+
+        $('#myModal_espera').modal('hide');
 
          // 1. Destruir la DataTable actual
             if ($.fn.DataTable.isDataTable('#tbl_existencias')) {
@@ -254,6 +257,8 @@ function Resumen_QR()
 function Resumen_Barras()
 {
 
+
+    $('#myModal_espera').modal('show');
     $('#tipo_consulta').val('BARRAS')
     var parametros = {
         'inicial':$('#txt_inicial').val(),
@@ -277,6 +282,7 @@ function Resumen_Barras()
 
 
         // console.log(response);
+            $('#myModal_espera').modal('hide');
 
          // 1. Destruir la DataTable actual
             if ($.fn.DataTable.isDataTable('#tbl_existencias')) {
@@ -326,6 +332,8 @@ function Resumen_Barras()
 
 function Resumen_Lote()
 {
+
+    $('#myModal_espera').modal('show');
     $('#tipo_consulta').val('LOTE')
      var parametros = {
         'inicial':$('#txt_inicial').val(),
@@ -349,6 +357,7 @@ function Resumen_Lote()
 
 
         // console.log(response);
+            $('#myModal_espera').modal('hide');
 
          // 1. Destruir la DataTable actual
             if ($.fn.DataTable.isDataTable('#tbl_existencias')) {
@@ -399,8 +408,15 @@ function Resumen_Lote()
 
 function Stock(StockSuperior)
 {
+    // console.log(StockSuperior)
 
-    $('#tipo_consulta').val('STOCK')
+    $('#myModal_espera').modal('show');
+    if(StockSuperior)
+    {
+        $('#tipo_consulta').val('STOCK')
+    }else{
+        $('#tipo_consulta').val('AGRUPADO');
+    }
      var parametros = {
         'inicial':$('#txt_inicial').val(),
         'final':$('#txt_final').val(),
@@ -425,6 +441,8 @@ function Stock(StockSuperior)
 
 
         // console.log(response);
+
+        $('#myModal_espera').modal('hide');
 
          // 1. Destruir la DataTable actual
             if ($.fn.DataTable.isDataTable('#tbl_existencias')) {

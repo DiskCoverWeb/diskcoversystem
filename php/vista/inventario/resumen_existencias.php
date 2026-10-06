@@ -23,7 +23,7 @@
 				<button type="button" class="btn btn-outline-secondary" title="Listar" id="btn_guardar" onclick="Stock(true)" >
 				  <img src="../../img/png/list.png" height="32px">
 				</button>
-					<button type="button" class="btn btn-outline-secondary" title="Resumen de existencia agrupado" onclick="">
+					<button type="button" class="btn btn-outline-secondary" title="Resumen de existencia agrupado" onclick="Stock(false)">
 					<img src="../../img/png/archivero2.png" height="32px">
 				</button>
 			 	<button type="button" class="btn btn-outline-secondary" title="Resumen de existencias por lotes" onclick="Resumen_Lote()">
