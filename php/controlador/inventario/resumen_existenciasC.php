@@ -449,8 +449,8 @@ class resumen_existenciasC
         switch ($filtros['tipo_consulta']) {
             case 'QR':
             $data = $this->Resumen_QR($filtros);
-            $medidas = array(20,49,35,50,20,18,18,18,18,25);
-            $alineado = array('L','L','L','L','R','R','R','R','R','R');
+            $medidas = array(50,35,35,35,35,35,18,18,18,25);
+            $alineado = array('L','R','R','R','R','R','R','R','R','R');
             $lista = $data['data'];
                 break;
             case 'BARRAS':
@@ -545,7 +545,7 @@ class resumen_existenciasC
         switch ($filtros['tipo_consulta']) {
             case 'QR':
             $data = $this->Resumen_QR($filtros);
-            $medidas = array(20,49,35,50,20,18,18,18,18,25);
+            $medidas = array(50,35,35,50,20,18,18,18,18,25);
             $alineado = array('L','L','L','L','R','R','R','R','R','R');
             $lista = $data['data'];
                 break;
