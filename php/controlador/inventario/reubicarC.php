@@ -76,7 +76,7 @@ class reubicarC
     		if($datos_inv['Existe_Codigo']==1)
     		{
     			$stock = $datos_inv['Stock'].' '.$datos_inv['Unidad'];
-    			$datos[$key]['Stock'] = $stock;
+    			$datos[$key]['Stock'] = $datos_inv['Stock'];
     		}
     		if($datos[$key]['Stock']>0)
     		{
