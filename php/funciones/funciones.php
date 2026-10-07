@@ -534,6 +534,41 @@ function Leer_Codigo_Inv_SP($BuscarCodigo,$FechaInventario,$CodBodega,$CodMarca,
 
 }
 
+function sp_Leer_Codigo_Kardex($BuscarCodigo,$FechaInventario,$CodBodega,$CodMarca)
+{
+
+  //devuelve datos de sp
+    $conn = new db();
+    $FechaKardex = $FechaInventario;
+    // $CodigoDeInv = G_NINGUNO;
+    $JSON_OutPut = '';
+    // Iniciar_Stored_Procedure "", MiSQL, MiCmd, MiReg
+    // MiCmd.CommandText = "sp_Leer_Codigo_Inv"
+
+     $parametros = array(
+      array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+      array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+      array(&$BuscarCodigo, SQLSRV_PARAM_IN),
+      array(&$FechaKardex, SQLSRV_PARAM_IN),
+      array(&$CodBodega, SQLSRV_PARAM_IN),
+      array(&$CodMarca, SQLSRV_PARAM_IN),
+      array(&$JSON_OutPut, SQLSRV_PARAM_INOUT)
+      );     
+
+     // print_r($parametros);die();
+     $sql="EXEC sp_Leer_Codigo_Kardex @Item=?, @Periodo=?, @BuscarCodigo=?, @FechaInventario=?, @CodBodega=?,@CodMarca=?,@JSON_OutPut=? ";
+     // print_r($_SESSION['INGRESO']);die();}
+      $respuesta = $conn->ejecutar_procesos_almacenados($sql,$parametros);
+      if($respuesta==1)
+      {
+        return $JSON_OutPut;
+      }
+      return $JSON_OutPut;  
+
+
+}
+
+
 
 function Fecha_Del_AT($ATMes, $ATAno)
 {
@@ -7768,6 +7803,7 @@ function Leer_Codigo_Inv($CodigoDeInv,$FechaInventario,$CodBodega='',$CodMarca='
  return $Leer_Codigo_Inv = array('respueta'=>$Codigo_Ok,'datos'=>$DatInv);
 
 }
+
 
 function BuscarFecha($FechaStr)
 {

@@ -44,6 +44,7 @@ class reubicarC
     	$bodega = $parametros['bodegas'];
     	$cod_art = $parametros['cod_articulo'];
     	$datos = $this->modelo->lista_stock_ubicado($bodega,$cod_art);
+    	// print_r($datos);die();
     	$tr = '';
 
     	$lista = array();
@@ -64,13 +65,17 @@ class reubicarC
 			// }
 
     		$stock = 0;
-    		$datos_inv = Leer_Codigo_Inv($value['Codigo_Inv'],date('Y-m-d'),$value['CodBodega']);
-    		// print_r($datos_inv);die();
+    		// print_r($value);die();
+
+    		$data =  sp_Leer_Codigo_Kardex($value['Codigo_Barra'],date('Y-m-d'),$value['CodBodega'],'');
+    		$datos_inv = json_decode($data,true);
+
+    		// print_r($datos_inv);
     		$datos[$key]['Stock'] = 0;    		
     		$datos[$key]['Ruta'] = $rutas_txt;
-    		if($datos_inv['respueta']==1)
+    		if($datos_inv['Existe_Codigo']==1)
     		{
-    			$stock = $datos_inv['datos']['Stock'].' '.$datos_inv['datos']['Unidad'];
+    			$stock = $datos_inv['Stock'].' '.$datos_inv['Unidad'];
     			$datos[$key]['Stock'] = $stock;
     		}
     		if($datos[$key]['Stock']>0)
@@ -79,6 +84,8 @@ class reubicarC
     		}
     	}
     	// print_r($this->rutas);die();
+
+    	// die();
     	return $lista;
     	// print_r($datos);die();
     }
