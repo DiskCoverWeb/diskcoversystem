@@ -176,7 +176,7 @@ class autoriza_sri
 	   		if($enviar_sri[0]==1)
 	   		{
 	   			// print_r('expression');die();
-	   			// sleep(8);
+	   			sleep(3);
    		 		$resp =  $this->comprobar_xml_sri($Autorizacion,$this->linkSriAutorizacion);
    		 		if($resp=='' || $resp==null)
    		 		{
