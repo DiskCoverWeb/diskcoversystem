@@ -483,7 +483,7 @@ class egreso_alimentosC
 			{
 				$datos[$key]['Stock'] = $datos_stock['datos']['Stock'];
 			}
-			if($parametros['TC'] == 'P')
+			if(isset($parametros['TC']) &&  $parametros['TC'] == 'P')
 			{
 				$datos[$key]['SubModulo'] = '<select class="form-select form-select-sm w-100 select2_dinamico" id="ddl_subcta_'.$value['ID'].'" name="ddl_subcta_'.$value['ID'].'" onchange="validar_por_submodulo(\''.$value['ID'].'\')">
 							<option value="">Seleccione modulo</option>
