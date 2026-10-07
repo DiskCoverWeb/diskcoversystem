@@ -48,6 +48,7 @@ class reubicarC
     	$tr = '';
 
     	$lista = array();
+    	$i = 1;
     	foreach ($datos as $key => $value) {
 
     		// // busca en el listado de rutas
@@ -80,7 +81,8 @@ class reubicarC
     		}
     		if($datos[$key]['Stock']>0)
     		{
-    			$lista[$key] = $datos[$key]; 
+    			$lista[$i] = $datos[$key]; 
+    			$i++;
     		}
     	}
     	// print_r($this->rutas);die();
