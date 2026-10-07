@@ -1,12 +1,31 @@
 import sys
 import os
 import base64
+import tempfile
 from zeep import Client
+from zeep.cache import SqliteCache
 from zeep.transports import Transport
 import requests
 import json
 import re
 from lxml import etree
+
+SRI_WSDL_TIMEOUT = 15
+SRI_OPERATION_TIMEOUT = 60
+SRI_WSDL_CACHE_TTL = 86400
+
+
+def crear_cliente_sri(wsdl):
+    session = requests.Session()
+    cache_path = os.path.join(tempfile.gettempdir(), "diskcoversystem_zeep_cache.db")
+    transport = Transport(
+        session=session,
+        cache=SqliteCache(path=cache_path, timeout=SRI_WSDL_CACHE_TTL),
+        timeout=SRI_WSDL_TIMEOUT,
+        operation_timeout=SRI_OPERATION_TIMEOUT,
+    )
+    return Client(wsdl=wsdl, transport=transport)
+
 
 # 1. Definición de la URL del Web Service de Recepción (Producción o Pruebas)
 # Producción: https://cel.sri.gob.ec/comprobantes-electronicos-ws/RecepcionComprobantesOffline?wsdl
@@ -112,6 +131,8 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
         print(f"Error: No se encuentra el archivo en {ruta_xml_firmado}")
         return None
 
+    clave_acceso = os.path.splitext(os.path.basename(ruta_xml_firmado))[0]
+    estado = "ERROR"
     try:
         # 2. Leer el archivo XML firmado como bytes
         result = {}
@@ -121,9 +142,7 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
             xml_texto = xml_file.read()
 
         # 3. Configurar el cliente SOAP con timeout para evitar bloqueos
-        session = requests.Session()
-        session.timeout = 15  # Timeout de 15 segundos
-        client = Client(wsdl=WSDL_RECEPCION, transport=Transport(session=session))
+        client = crear_cliente_sri(WSDL_RECEPCION)
 
         # 4. Invocar el método 'validarComprobante' pasando los bytes del XML
         # El SRI requiere que el parámetro sea un arreglo de bytes (byte[])
@@ -191,7 +210,7 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
 
     except Exception as e:
 
-        result = {}        
+        result = {}
         result[0] = -1
         result[1] = clave_acceso;
         result[2] = estado;        
@@ -212,9 +231,10 @@ def verificar_autorizacion(clave_acceso,WSDL_AUTORIZACION,ruta_xml_autorizado,ru
     if not clave_acceso or len(clave_acceso) != 49:
         return {"estado": "ERROR", "mensaje": "La clave de acceso debe tener exactamente 49 dígitos."}
 
+    aut = None
     try:
         # 2. Conexión al servicio de Autorización
-        cliente = Client(WSDL_AUTORIZACION)
+        cliente = crear_cliente_sri(WSDL_AUTORIZACION)
         respuesta = cliente.service.autorizacionComprobante(clave_acceso)
         # print(respuesta)
 
@@ -264,31 +284,29 @@ def verificar_autorizacion(clave_acceso,WSDL_AUTORIZACION,ruta_xml_autorizado,ru
         # print(aut.mensajes.mensaje)
         # return None
         errores = []
+        mensajes = []
         if hasattr(aut, 'mensajes') and aut.mensajes:
-            # print('entra')
-            # print(aut.mensajes)
-            for m in aut.mensajes.mensaje:
-                detalle = getattr(m, 'informacionAdicional', m.mensaje)
-                errores.append(f"{m.mensaje} ({detalle})")
-
+            mensajes = aut.mensajes.mensaje
+            if not isinstance(mensajes, list):
+                mensajes = [mensajes]
+            for mensaje in mensajes:
+                detalle = getattr(mensaje, 'informacionAdicional', '') or mensaje.mensaje
+                errores.append(f"{mensaje.mensaje} ({detalle})")
 
         contenido_xml_sin = "\n".join([linea.strip() for linea in contenido_xml.splitlines() if linea.strip()])
-        xml_auto = f"""<?xml version="1.0" encoding="UTF-8"?>
-<autorizacion>
-    <estado>{estado}</estado>
-    <fechaAutorizacion>{str(aut.fechaAutorizacion)}</fechaAutorizacion>
-    <comprobante><![CDATA[{contenido_xml_sin}]]></comprobante>
-    <mensajes>
-    <mensaje>
-      <mensaje>
-        <identificador>{aut.mensajes.mensaje.identificador}</identificador>
-        <mensaje>{ut.mensajes.mensaje.mensaje}</mensaje>
-        <informacionAdicional>{detalle}</informacionAdicional>
-        <tipo>{ut.mensajes.mensaje.tipo}</tipo>
-      </mensaje>
-    </mensaje>
-  </mensajes>
-</autorizacion>"""
+        raiz = etree.Element("autorizacion")
+        etree.SubElement(raiz, "estado").text = estado
+        etree.SubElement(raiz, "fechaAutorizacion").text = str(aut.fechaAutorizacion)
+        etree.SubElement(raiz, "comprobante").text = etree.CDATA(contenido_xml_sin)
+        mensajes_xml = etree.SubElement(raiz, "mensajes")
+        for mensaje in mensajes:
+            mensaje_xml = etree.SubElement(mensajes_xml, "mensaje")
+            for campo in ("identificador", "mensaje", "informacionAdicional", "tipo"):
+                valor = getattr(mensaje, campo, "")
+                etree.SubElement(mensaje_xml, campo).text = str(valor or "")
+        xml_auto = etree.tostring(
+            raiz, encoding="utf-8", xml_declaration=True, pretty_print=True
+        ).decode("utf-8")
         guardar_xml_en_carpeta(xml_auto, ruta_xml_no_autorizado, clave_acceso+".xml")
         return {
             "0":-1,
@@ -300,34 +318,46 @@ def verificar_autorizacion(clave_acceso,WSDL_AUTORIZACION,ruta_xml_autorizado,ru
         }
 
     except Exception as e:
-        # return {"estado": "ERROR", "mensaje": f"Error de conexión con el SRI: {str(e)}"}
-        contenido_xml_sin = "\n".join([linea.strip() for linea in contenido_xml.splitlines() if linea.strip()])
-        xml_auto = f"""<?xml version="1.0" encoding="UTF-8"?>
-<autorizacion>
-    <estado>{estado}</estado>
-    <fechaAutorizacion>{str(aut.fechaAutorizacion)}</fechaAutorizacion>
-    <comprobante><![CDATA[{contenido_xml_sin}]]></comprobante>
-    <mensajes>
-    <mensaje>
-      <mensaje>
-        <identificador>{aut.mensajes.mensaje[0].identificador}</identificador>
-        <mensaje>{ut.mensajes.mensaje[0].mensaje}</mensaje>
-        <informacionAdicional>{ut.mensajes.mensaje[0].informacionAdicional}</informacionAdicional>
-        <tipo>{ut.mensajes.mensaje[0].tipo}</tipo>
-      </mensaje>
-    </mensaje>
-  </mensajes>
-</autorizacion>"""
-        guardar_xml_en_carpeta(xml_auto, ruta_xml_no_autorizado, clave_acceso+".xml")
+        if aut is not None:
+            mensajes = []
+            try:
+                mensajes_respuesta = getattr(aut, "mensajes", None)
+                if mensajes_respuesta:
+                    mensajes = mensajes_respuesta.mensaje
+                    if not isinstance(mensajes, list):
+                        mensajes = [mensajes]
+            except Exception:
+                mensajes = []
+
+            raiz = etree.Element("autorizacion")
+            etree.SubElement(raiz, "estado").text = getattr(aut, "estado", "ERROR")
+            etree.SubElement(raiz, "fechaAutorizacion").text = str(
+                getattr(aut, "fechaAutorizacion", "")
+            )
+            comprobante = getattr(aut, "comprobante", "")
+            contenido_xml_sin = "\n".join(
+                linea.strip() for linea in comprobante.splitlines() if linea.strip()
+            )
+            etree.SubElement(raiz, "comprobante").text = etree.CDATA(contenido_xml_sin)
+            mensajes_xml = etree.SubElement(raiz, "mensajes")
+            for mensaje in mensajes:
+                mensaje_xml = etree.SubElement(mensajes_xml, "mensaje")
+                for campo in ("identificador", "mensaje", "informacionAdicional", "tipo"):
+                    valor = getattr(mensaje, campo, "")
+                    etree.SubElement(mensaje_xml, campo).text = str(valor or "")
+            xml_auto = etree.tostring(
+                raiz, encoding="utf-8", xml_declaration=True, pretty_print=True
+            ).decode("utf-8")
+            guardar_xml_en_carpeta(xml_auto, ruta_xml_no_autorizado, clave_acceso + ".xml")
 
         return {
-                "0":-1,
-                "1": clave_acceso,
-                "2": "ERROR",
-                "3": f"Error de conexión con el SRI: {str(e)}",
-                "4": str(aut.fechaAutorizacion),
-                "5": aut.ambiente
-            }
+            "0": -1,
+            "1": clave_acceso,
+            "2": "ERROR",
+            "3": f"Error de conexión con el SRI: {str(e)}",
+            "4": "",
+            "5": "",
+        }
 
 
 ################ funcion para verificar el xml firmado  por clave de acceso ###################
