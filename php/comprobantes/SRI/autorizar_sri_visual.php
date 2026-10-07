@@ -593,10 +593,14 @@ class autoriza_sri
 	   		// print_r($output);die();		
 	   		$output = mb_convert_encoding($output, 'UTF-8', 'ISO-8859-1');
 			$output = json_decode($output,true); // <== para que la respuesta se haga un array
-			if( isset($output[2]) && $output[2]=='AUTORIZADO' || $veces_envio>=3)
+			if(!isset($output[2]) || $output[2]!='SIN_REGISTRO' || $veces_envio>=3)
 			{
 				$comprobado = false;
-			}	
+			}
+			else
+			{
+				sleep(1);
+			}
 			$veces_envio = $veces_envio+1;
  	    }  		 
    		
