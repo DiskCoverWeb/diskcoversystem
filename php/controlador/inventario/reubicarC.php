@@ -48,7 +48,7 @@ class reubicarC
     	$tr = '';
 
     	$lista = array();
-    	$i = 1;
+    	$i = 0;
     	foreach ($datos as $key => $value) {
 
     		// // busca en el listado de rutas
@@ -86,7 +86,7 @@ class reubicarC
     		}
     	}
     	// print_r($this->rutas);die();
-
+// print_r($lista);die();
     	// die();
     	return $lista;
     	// print_r($datos);die();

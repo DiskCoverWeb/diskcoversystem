@@ -55,6 +55,7 @@ $('#txt_cod_barras').keydown( function(e) {
               { data: 'Entrada',},
               { data: null,
                  render: function(data, type, item) {
+                    // return data.Fecha_DUI
                     botons =  formatoDate(data.Fecha_DUI.date);                  
                     return botons;                    
                   }
