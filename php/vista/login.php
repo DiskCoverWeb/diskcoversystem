@@ -50,7 +50,7 @@
 											<input type="hidden" name="txt_entidad_id" id="txt_entidad_id">
 		   								<input type="hidden" name="txt_item" id="txt_item">
 											<div class="col-12">
-												<label for="inputEntidad" class="form-label">Entidad</label>
+												<label for="inputEntidad" class="form-label">RUC/NIC</label>
 												<input type="text" class="form-control" placeholder="Entidad a la que pertenece" onblur="validar_entidad()" name="txt_entidad" id="txt_entidad">
 											</div>
 											<div class="col-12">
