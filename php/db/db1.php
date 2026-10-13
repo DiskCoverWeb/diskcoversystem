@@ -96,8 +96,9 @@ class db
 
 			  
 
-				$connectionInfo = array("Database"=>$this->database, "UID" => $this->usuario,"PWD" => $this->password,"CharacterSet" => "UTF-8","Encrypt" => false);
+				$connectionInfo = array("Database"=>$this->database, "UID" => $this->usuario,"PWD" => $this->password,"CharacterSet" => "UTF-8","Encrypt" => true,"TrustServerCertificate" => true);
 				// print_r($connectionInfo);die();
+				// print_r($this->servidor.', '.$this->puerto);die();
 				$cid = sqlsrv_connect($this->servidor.', '.$this->puerto, $connectionInfo); //returns false
 				if( $cid === false )
 				   {
