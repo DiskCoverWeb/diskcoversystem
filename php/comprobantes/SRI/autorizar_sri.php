@@ -3284,7 +3284,7 @@ function generar_xml_retencion($cabecera,$detalle)
  	    $veces_envio = 1;
  	    while ($comprobado) {
 
- 	    	$command = "python ".$comprobar_sri." 2 ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion; 
+ 	    	$command = "python3.12 ".$comprobar_sri." 2 ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion; 
  	    	$output = shell_exec($command);   
 
 	   		// print_r($output);die();		
@@ -3292,10 +3292,14 @@ function generar_xml_retencion($cabecera,$detalle)
 
 	   			$output = mb_convert_encoding($output, 'UTF-8', 'ISO-8859-1');
 				$output = json_decode($output,true); // <== para que la respuesta se haga un array
-				if($output[2]=='AUTORIZADO' || $veces_envio>=3)
+				if(!isset($output[2]) || $output[2]!='SIN_REGISTRO' || $veces_envio>=3)
 				{
 					$comprobado = false;
-				}	
+				}
+				else
+				{
+					sleep(1);
+				}
 				$veces_envio = $veces_envio+1;			
 	   			
 	   		} catch (Exception $e) {
@@ -3331,7 +3335,7 @@ function generar_xml_retencion($cabecera,$detalle)
     	}
 
 
-    	$command = "python ".$enviar_sri." 1 ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion; 
+    	$command = "python3.12 ".$enviar_sri." 1 ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion; 
 
     	// print_r($command);die();
     	$output = shell_exec($command);
