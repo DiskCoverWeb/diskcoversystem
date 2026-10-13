@@ -585,8 +585,8 @@ class autoriza_sri
  	    $veces_envio = 1;
  	    while ($comprobado) {
  	    	// $command = $this->rutaJava8."java -jar ".$comprobar_sri." 2 ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion; 
- 	    	$command = "python3.12 ".$comprobar_sri." 2 ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion; 
- 	    	print_r($command);die();
+ 	    	$command = "python ".$comprobar_sri." 2 ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion; 
+ 	    	// print_r($command);die();
  	    	
 	   		$output = shell_exec($command);  
 	   		// print_r($command);die(); 
@@ -631,7 +631,7 @@ class autoriza_sri
 		// $command = $this->rutaJava8."java -jar ".$enviar_sri." 1 ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion; 
    		 // print_r($command);die();
     	$command = "python ".$enviar_sri." 1 ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion; 
-    	// print_r($command);die();
+    	print_r($command);die();
    		$output = shell_exec($command);
    		if($output!=null && $output!='')
    		{
