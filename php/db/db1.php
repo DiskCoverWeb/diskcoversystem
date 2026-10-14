@@ -451,7 +451,7 @@ class db
     	$host = $this->ipconfig;
     }
 		$server=''.$host.', '.$Puerto;
-		$connectionInfo = array("Database"=>$base, "UID" => $user,"PWD" => $pass,"CharacterSet" => "UTF-8");
+		$connectionInfo = array("Database"=>$base, "UID" => $user,"PWD" => $pass,"CharacterSet" => "UTF-8","Encrypt" => true,"TrustServerCertificate" => true);
 	  $cid = sqlsrv_connect($server, $connectionInfo); //returns false
 		if( $cid === false )
 		{
@@ -482,7 +482,7 @@ class db
     	$host = $this->ipconfig;
     }
 		$server=''.$host.', '.$Puerto;
-		$connectionInfo = array("Database"=>$base, "UID" => $user,"PWD" => $pass,"CharacterSet" => "UTF-8");
+		$connectionInfo = array("Database"=>$base, "UID" => $user,"PWD" => $pass,"CharacterSet" => "UTF-8","Encrypt" => true,"TrustServerCertificate" => true);
 	  $cid = sqlsrv_connect($server, $connectionInfo); //returns false
 		if( $cid === false )
 		{
