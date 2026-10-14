@@ -287,10 +287,16 @@ class EnviarVisual
 	function EnvioEmailVisualNew($parametros)
 	{
 
+		// $ftp_server = "erp.diskcoversystem.com";
+		// $ftp_user = "ftpuser";
+		// $ftp_pass = "ftp2023User";
+		// $ftp_port = 21; // Cambia al puerto que necesites
+
 		$ftp_server = "erp.diskcoversystem.com";
-		$ftp_user = "ftpuser";
-		$ftp_pass = "ftp2023User";
-		$ftp_port = 21; // Cambia al puerto que necesites
+		$ftp_user = "userftp";
+		$ftp_pass = "ftp2025Ftp";
+		$ftp_port = 10021; // Cambia al puerto que necesites
+
 
 		$remote_file = '/files/AddAttachment/';
 		$temp_file = 'ftp_folder_visual/';
