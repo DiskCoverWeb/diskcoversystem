@@ -295,7 +295,7 @@ class EnviarVisual
 		$ftp_server = "erp.diskcoversystem.com";
 		$ftp_user = "userftp";
 		$ftp_pass = "ftp2025Ftp";
-		$ftp_port = 10021; // Cambia al puerto que necesites
+		$ftp_port = 21; // Cambia al puerto que necesites
 
 
 		$remote_file = '/files/AddAttachment/';
