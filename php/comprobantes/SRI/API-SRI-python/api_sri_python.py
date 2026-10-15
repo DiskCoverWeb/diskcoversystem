@@ -351,7 +351,7 @@ def verificar_autorizacion(clave_acceso,WSDL_AUTORIZACION,ruta_xml_autorizado,ru
             guardar_xml_en_carpeta(xml_auto, ruta_xml_no_autorizado, clave_acceso + ".xml")
 
         return {
-            "0": -1,
+            "0": -5,
             "1": clave_acceso,
             "2": "ERROR",
             "3": f"Error de conexión con el SRI: {str(e)}",
