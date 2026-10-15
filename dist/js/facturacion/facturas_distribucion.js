@@ -1094,6 +1094,31 @@ function generar_factura()
 
 
 				})
+			} else if (data.respuesta[0] == -5) {
+				Swal.fire({
+					icon: 'info',
+					title: 'No se pudo autorizar la  Factura Generada',
+					confirmButtonText: 'Ok!',
+					allowOutsideClick: false,
+				}).then(function () {
+						
+						// imprimir baucher	
+					  	nombre_pdf = [data.pdf+'.pdf'];
+                    	clave_Acceso = [data.clave+'.xml'];
+						// enviar_email_comprobantes(nombre_pdf,clave_Acceso);
+						var  id = data.factura
+						var serie =   $('#LblSerie').text(); //data[0].serie
+						var ci =  data.codigoc
+						var aut =  data.auto
+						var tc =  'NDO';
+						Ver_nd(id,serie,ci,aut,tc);
+		
+						$('#imprimir_nd').removeAttr('disabled');
+						var url = '../../TEMP/' + data.pdf + '.pdf';							
+						window.open(url, '_blank');
+
+
+				})
 			} else if (data.respuesta[0] == -1) {
 				if(data.text=='' || data.text == null)
 				{
@@ -1105,8 +1130,7 @@ function generar_factura()
 						allowOutsideClick: false,
 					}).then(function () {
 						// location.reload();
-					})
-				
+					})				
 					tipo_error_sri(data.clave);
 				}else{
 				Swal.fire({
