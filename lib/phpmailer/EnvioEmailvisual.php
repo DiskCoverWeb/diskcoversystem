@@ -189,8 +189,8 @@ class EnviarVisual
 		// print_r($archivos);die();
 		//proceso para envio de archivo por ftp 
 		$ftp_host = "erp.diskcoversystem.com";
-		$ftp_user = "ftpuser";
-		$ftp_pass = "ftp2023User";
+		$ftp_user = "userftp";
+		$ftp_pass = "user2025Ftp";
 		$ftp_port = 21; // Cambia al puerto que necesites
 
 		$remote_file = '/files/AddAttachment/';
