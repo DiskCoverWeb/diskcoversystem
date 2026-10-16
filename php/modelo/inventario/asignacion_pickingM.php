@@ -236,7 +236,7 @@ class asignacion_pickingM
                 if($fecha)
                 {
                     //fecha_A es la fecha de asignacion
-                    $sql.=" AND TC.Fecha_A = '".$fecha."'";
+                    $sql.=" AND TC.Fecha_A >= '".$fecha."'";
                 }
                 // print_r($sql);die();
         return $this->db->datos($sql);    
