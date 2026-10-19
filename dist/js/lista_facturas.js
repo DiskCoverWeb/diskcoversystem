@@ -325,10 +325,11 @@ $(document).ready(function()
             tipo_error_sri(data[1]);
           }else
           {
+            var msj = data.text[3];
             Swal.fire({
              icon: 'error',
              title: 'XML DEVUELTO',
-             html: `<div style="width: 100%; color:black;font-weight: 400;font-size: 1.525em;">${data[3]}</div>`
+             html: `<div style="width: 100%; color:black;font-weight: 400;font-size: 1.525em;">${msj}</div>`
            }).then(function (){
               tipo_error_sri(data[1]);
            });
