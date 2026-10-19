@@ -2029,7 +2029,7 @@ function TVcatalogo(nl='',cod='',auto='',serie='',fact='')
         lineaValNuevos[$('#TxtIDLinea').val()] = param_linea_nuevo;
 
     }
-    
+    $('#btn_descargar').prop('disabled',false);
     //Para insertar nueva linea
     if($('#TxtIDLinea').val() == '.'){
         let param_linea_nuevo = parametrizarCampos(false);
@@ -2232,4 +2232,19 @@ function buscarEmpresa()
             }, 2000);
         }
     })
+}
+
+function descargar_certificado() {
+    var nombreArchivo = $('#TxtEXTP12').val();
+    fetch('/php/comprobantes/certificados')
+        .then(response => response.blob())
+        .then(blob => {
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = nombreArchivo;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        })
+        .catch(error => console.error('Error en la descarga:', error));
 }

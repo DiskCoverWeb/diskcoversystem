@@ -258,6 +258,7 @@ date_default_timezone_set('America/Guayaquil');  //print_r($_SESSION);die();//pr
 														<div class="input-group">
 
 															<input type="text" name="TxtEXTP12" id="TxtEXTP12" class="form-control form-control-sm" value="" >
+															<button id="btn_descargar" type="button" class="btn btn-sm btn-primary" disabled onclick="descargar_certificado()"><i class="bx bx-cloud-download"></i></button>
 															<span class="input-group-addon">
 																<input type="file" class="btn btn-sm"  id="file_firma" data-placeholder="Elegir imágen..." name="file_firma" />
 															</span>
