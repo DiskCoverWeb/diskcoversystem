@@ -169,16 +169,18 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
             # print("El comprobante fue DEVUELTO por el SRI con las siguientes observaciones:")
             # Recorrer los errores/observaciones devueltos
 
+              # print(respuesta);die();
+
             if hasattr(respuesta, 'comprobantes') and respuesta.comprobantes:
                 for comp in respuesta.comprobantes.comprobante:
                     if hasattr(comp, 'mensajes') and comp.mensajes:
                         detalle_mensajes = "";
                         detalle_xml_mensaje = "";
                         for msg in comp.mensajes.mensaje:
-                            identificador = getattr(msg, 'identificador', 'N/A')
-                            mensaje = getattr(msg, 'mensaje', 'Sin mensaje')
-                            tipo = getattr(msg, 'tipo', 'N/A')
-                            info_adicional = getattr(msg, 'informacionAdicional', 'N/A')
+                            identificador = getattr(msg, 'identificador', 'N/A') or "N/A"
+                            mensaje = getattr(msg, 'mensaje', 'Sin mensaje') or "Sin mensaje"
+                            tipo = getattr(msg, 'tipo', 'N/A') or "N/A"
+                            info_adicional = getattr(msg, 'informacionAdicional', 'N/A') or "N/A"
 
                             result[4] = identificador
                             detalle_mensajes = mensaje +' '+info_adicional
@@ -212,9 +214,9 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
 
         result = {}
         result[0] = -1
-        result[1] = clave_acceso;
-        result[2] = estado;        
-        result[3] = f"Error al comunicar con el servicio de Recepción del SRI: {e}"  
+        result[1] = clave_acceso
+        result[2] = estado   
+        result[3] = f"Error al comunicar con el servicio de Recepcion del SRI: {str(e)}"
 
         # print(f"Error al comunicar con el servicio de Recepción del SRI: {e}")
         return result
