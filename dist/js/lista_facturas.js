@@ -316,8 +316,9 @@ $(document).ready(function()
         })
       }else if(data[0]==-1)
       {
+        console.log(data.text);
         if(data[0]==2 || data.text==null)
-          {
+        {
 
           Swal.fire('XML devuleto','XML DEVUELTO','error').then(function(){ 
             // var url=  '../../TEMP/'+data.pdf+'.pdf';    window.open(url, '_blank');             
@@ -350,7 +351,7 @@ $(document).ready(function()
         {
            Swal.fire('Revise CI_RUC de factura en base','Cliente no encontrado','info');
          }else{
-          Swal.fire('XML devuelto por:'+data.text,'','error');  
+          Swal.fire('XML devuelto por:'+data.text[3],'','error');  
         }
       }
 
