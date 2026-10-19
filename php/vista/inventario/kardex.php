@@ -25,6 +25,12 @@
 			<button type="button" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Presenta el Resumen de Codigos de Barra" id="Kardex" onclick="consulta_kardex();">
 				<img src="../../img/png/archivo3.png">
 			</button>
+			<button type="button" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Kardex por Codigo QR" id="Kardex_Total_QR" onclick="Consultar_Tipo_Kardex(true, true);">
+				<img src="../../img/png/qr_code.png">
+			</button>
+			<button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Eliminar comprobantes en cero del rango de fechas" id="Eliminar_Kardex_Cero" onclick="Eliminar_Kardex_Cero();">
+				<i class="bx bx-trash"></i>
+			</button>
 			<button type="button" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Descargar PDF Kardex de un Producto" id="Imprimir_Kardex" onclick="generarPDF();">
 				<img src="../../img/png/pdf.png">
 			</button>
@@ -58,25 +64,24 @@
           <div class="row mb-2">
             <div class="input-group input-group-sm">
               <div class="input-group-text">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" name="CheqBod" id="CheqBod" value="1">
-                  <label class="form-check-label" for="CheqBod">
-                    <b>Bodega:</b>
-                  </label>
+                <span class="me-2"><b>Filtrar:</b></span>
+                <div class="form-check form-check-inline mb-0">
+                  <input class="form-check-input" type="radio" name="ModoConsulta" id="OpcTodos" value="TODOS" checked onchange="actualizarModoConsulta();">
+                  <label class="form-check-label" for="OpcTodos">Ninguno</label>
+                </div>
+                <div class="form-check form-check-inline mb-0">
+                  <input class="form-check-input" type="radio" name="ModoConsulta" id="OpcBodega" value="BODEGA" onchange="actualizarModoConsulta();">
+                  <label class="form-check-label" for="OpcBodega">Bodega</label>
+                </div>
+                <div class="form-check form-check-inline mb-0">
+                  <input class="form-check-input" type="radio" name="ModoConsulta" id="OpcCodigoBarra" value="BARRA" onchange="actualizarModoConsulta();">
+                  <label class="form-check-label" for="OpcCodigoBarra">Código barra</label>
                 </div>
               </div>
-              <select class="form-select form-select-sm" id="DCBodega" name="DCBodega" style="padding: 0;">
-                <option value=''>** Seleccionar Bodega**</option>
+              <select class="form-select form-select-sm" id="DCBodega" name="DCBodega" style="padding: 0;" disabled>
+                <option value=''>** Seleccionar **</option>
               </select>
             </div>
-            <!-- <div class="col-sm-3 padding-all" style="max-width:   80px;">
-              <label><input id="CheqBod" name="CheqBod" tabindex="2" value="1" type="checkbox"><b>Bodega:</b></label>    
-            </div>
-            <div class="col-sm-9 padding-all" style="max-width: 330px;">
-              <select class="form-control input-sm" tabindex="3" id="DCBodega" name="DCBodega">
-                <option value=''>** Seleccionar Bodega**</option>
-              </select>
-            </div> -->
           </div>
           <div class="row">
             <div class="col-sm-6">
@@ -159,16 +164,18 @@
             <th>Saldo</th>
             <th>Valor_Unitario</th>
             <th>Valor_Total</th>
+            <th>Fecha_Exp</th>
             <th>TC</th>
             <th>Serie</th>
             <th>Factura</th>
             <th>Cta_Inv</th>
             <th>Contra_Cta</th>
+            <th>Temperatura</th>
             <th>Serie_No</th>
             <th>Codigo_Barra</th>
             <th>Lote_No</th>
             <th>CI_RUC_CC</th>
-            <!-- <th>Marca_Tipo_Proceso</th> -->
+            <th>Marca_Tipo_Proceso</th>
             <th>Detalle</th>
             <th>Beneficiario_Centro_Costo</th>
             <th>Orden_No</th>

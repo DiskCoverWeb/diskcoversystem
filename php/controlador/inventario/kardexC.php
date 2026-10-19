@@ -6,6 +6,7 @@ if(!class_exists('cabecera_pdf'))
 {
   require(dirname(__DIR__,3).'/lib/fpdf/cabecera_pdf.php');
 }
+require_once(dirname(__DIR__,3).'/lib/fpdf/generar_codigo_barras.php');
 
 $controlador = new kardexC();
 if(isset($_GET["generarExcelKardex"])){
@@ -37,13 +38,31 @@ if(isset($_GET['bodegas']))
   if (isset($_GET['q'])) {
     $query = $_GET['q'];
   }
-  echo json_encode($controlador->bodegas($query));
+  $tipo = isset($_GET['tipo']) ? $_GET['tipo'] : 'BODEGA';
+  echo json_encode($controlador->bodegas($query, $tipo));
 }
 
 if(isset($_GET['Consultar_Tipo_Kardex']))
 {
     $controlador->CargaInicial($_POST);
   	echo json_encode($controlador->Consultar_Tipo_De_Kardex($_GET['EsKardexIndividual'],$_POST));
+}
+
+if(isset($_GET['Kardex_Total_QR']))
+{
+    $controlador->CargaInicial($_POST);
+    echo json_encode($controlador->Kardex_Total_QR($_POST));
+}
+
+if(isset($_GET['Eliminar_Kardex_Cero']))
+{
+    echo json_encode($controlador->Eliminar_Kardex_Cero($_POST));
+}
+
+if(isset($_GET['imprimirCodigoBarras']))
+{
+    $controlador->imprimirCodigoBarras($_GET);
+    exit();
 }
 
 if(isset($_GET['consulta_kardex']))
@@ -86,10 +105,12 @@ class kardexC
 {
 	private $modelo;
 	private $pdf;
+  private $barras;
 	function __construct()
 	{
 		$this->modelo = new kardexM();
 		$this->pdf = new cabecera_pdf();
+    $this->barras = new generar_codigo_barras();
 	}
 
 	function ListarProductos($tipo,$codigoProducto,$query=false){
@@ -115,20 +136,21 @@ class kardexC
     }
 	}
 
-	function bodegas($query=false){
-		$datos = $this->modelo->bodegas($query);
+	function bodegas($query=false, $tipo='BODEGA'){
+		$datos = $this->modelo->bodegas($query, $tipo);
 		
     $lis = array();
     foreach ($datos as $key => $value) {
-      //$sep = explode(' ', $value['NomProd']);
-      $lis[] = array('id' => $value['CodBod'], 'text' => mb_convert_encoding($value['CodBod'], 'UTF-8')." - ".mb_convert_encoding($value['Bodega'], 'UTF-8'), 'datos' => $value);
+      $codigo = $value['Codigo'];
+      $nombre = $value['Nombre'];
+      $lis[] = array('id' => $codigo, 'text' => mb_convert_encoding($codigo, 'UTF-8')." - ".mb_convert_encoding($nombre, 'UTF-8'), 'datos' => $value);
     }
-    // print_r($lis);die();
     return $lis;
 	}
 
 	function Consultar_Tipo_De_Kardex($EsKardexIndividual,$parametros){
 		extract($parametros);
+    $EsKardexIndividual = in_array($EsKardexIndividual, [true, 'true', 1, '1'], true);
 		$error = false;
 		$FechaValida = FechaValida($MBoxFechaI);
 		if($FechaValida["ErrorFecha"]){
@@ -150,7 +172,8 @@ class kardexC
     }
     $GrupoInv = trim($DCTInv);
     $Codigo = $LabelCodigo;
-    $Codigo1 = trim($DCBodega);
+    $Codigo1 = isset($DCBodega) ? trim($DCBodega) : '';
+    $ModoConsulta = isset($ModoConsulta) ? $ModoConsulta : 'TODOS';
     if ($Codigo == "") {
         $Codigo = ".";
     }
@@ -159,7 +182,7 @@ class kardexC
     }
   
     
-    $datos = $this->modelo->Consultar_Tipo_De_Kardex($Codigo, $Codigo1, $FechaIni, $FechaFin, $EsKardexIndividual, $GrupoInv);
+    $datos = $this->modelo->Consultar_Tipo_De_Kardex($Codigo, $Codigo1, $FechaIni, $FechaFin, $EsKardexIndividual, $GrupoInv, $ModoConsulta);
     $AdoKardex = $datos['data'];
 
     if ($EsKardexIndividual) {
@@ -201,14 +224,15 @@ class kardexC
         $FechaIni = BuscarFecha($MBoxFechaI);
         $FechaFin = BuscarFecha($MBoxFechaF);
         $Codigo = $LabelCodigo;
-        $Codigo1 = trim($DCBodega);
+        $Codigo1 = isset($DCBodega) ? trim($DCBodega) : '';
+        $ModoConsulta = isset($ModoConsulta) ? $ModoConsulta : 'TODOS';
         $Debe = 0;
         $Haber = 0;
         if ($Codigo == "") {
             $Codigo = ".";
         }
 
-        $DGKardex = $this->modelo->Consultar_Kardex($Codigo, $Codigo1, $FechaIni,$FechaFin);
+        $DGKardex = $this->modelo->Consultar_Kardex($Codigo, $Codigo1, $FechaIni, $FechaFin, $ModoConsulta);
         
 		
         //$_SESSION['DGKardex']['sSQL'] = $sSQL ;
@@ -228,6 +252,69 @@ class kardexC
         return array('data' => $DGKardex['data'], 'LabelExistencia'=> $LabelExitencia);
 		//return compact('error','DGKardex','LabelExitencia');
 	}
+
+  function Kardex_Total_QR($parametros){
+    $FechaValida = FechaValida($parametros['MBoxFechaI']);
+    if($FechaValida["ErrorFecha"]){
+      return ['error' => true, 'mensaje' => $FechaValida["MsgBox"]];
+    }
+    $FechaValida = FechaValida($parametros['MBoxFechaF']);
+    if($FechaValida["ErrorFecha"]){
+      return ['error' => true, 'mensaje' => $FechaValida["MsgBox"]];
+    }
+
+    $modoConsulta = isset($parametros['ModoConsulta']) ? $parametros['ModoConsulta'] : 'TODOS';
+    $codigo = isset($parametros['DCBodega']) ? trim($parametros['DCBodega']) : '';
+    $datos = $this->modelo->Kardex_Total_QR(
+      BuscarFecha($parametros['MBoxFechaI']),
+      BuscarFecha($parametros['MBoxFechaF']),
+      $codigo,
+      $modoConsulta
+    );
+
+    $existencia = 0;
+    foreach ($datos['data'] as $fila) {
+      $existencia += $fila['Entrada'] - $fila['Salida'];
+    }
+
+    return ['data' => $datos['data'], 'LabelExistencia' => number_format($existencia, 2)];
+  }
+
+  function Eliminar_Kardex_Cero($parametros){
+    $FechaValida = FechaValida($parametros['MBoxFechaI']);
+    if($FechaValida["ErrorFecha"]){
+      return ['rps' => false, 'mensaje' => $FechaValida["MsgBox"]];
+    }
+    $FechaValida = FechaValida($parametros['MBoxFechaF']);
+    if($FechaValida["ErrorFecha"]){
+      return ['rps' => false, 'mensaje' => $FechaValida["MsgBox"]];
+    }
+
+    $resultado = $this->modelo->Eliminar_Kardex_Cero(
+      BuscarFecha($parametros['MBoxFechaI']),
+      BuscarFecha($parametros['MBoxFechaF'])
+    );
+    if($resultado !== 1){
+      return ['rps' => false, 'mensaje' => 'No fue posible eliminar los registros.'];
+    }
+    return ['rps' => true, 'mensaje' => 'Proceso terminado, vuelva a listar el Kardex.'];
+  }
+
+  function imprimirCodigoBarras($parametros){
+    $idReg = isset($parametros['ID_Reg']) ? intval($parametros['ID_Reg']) : 0;
+    $cantidad = isset($parametros['Cantidad']) ? intval($parametros['Cantidad']) : 0;
+    if($idReg <= 0 || $cantidad <= 0 || $cantidad > 1000){
+      http_response_code(400);
+      exit('Seleccione un registro válido y una cantidad entre 1 y 1000.');
+    }
+
+    $datos = $this->modelo->DatosEtiquetaKardex($idReg);
+    if(count($datos) === 0){
+      http_response_code(404);
+      exit('No se encontró el producto para imprimir.');
+    }
+    $this->barras->generar_barras($cantidad, $datos[0]);
+  }
 
 	function funcionInicio(){
 		$this->modelo->funcionInicio();
@@ -332,6 +419,52 @@ class kardexC
 
         extract($parametros);
         $query = $_SESSION['DGKardex']['sSQL'];
+        if (strpos($query, 'FROM Trans_Kardex As K') !== false) {
+            $result = $this->modelo->SelectDB($query);
+            if(count($result) <= 0){
+              die("Regrese a la pantalla anterior y cargue la informacion antes de imprimir el pdf");
+            }
+
+            $columnas = array('Codigo_Inv', 'Codigo_Barra', 'Entradas', 'Salidas', 'Stock_Kardex');
+            $tablaHTML = array();
+            $tablaHTML[0] = array(
+              'medidas' => array(30, 70, 30, 30, 35),
+              'alineado' => array('L', 'L', 'R', 'R', 'R'),
+              'datos' => $columnas,
+              'estilo' => 'B',
+              'borde' => 'B'
+            );
+            foreach ($result as $key => $row) {
+              $tablaHTML[$key + 1] = array(
+                'medidas' => $tablaHTML[0]['medidas'],
+                'alineado' => $tablaHTML[0]['alineado'],
+                'datos' => array(
+                  $row['Codigo_Inv'],
+                  $row['Codigo_Barra'],
+                  number_format((float)$row['Entradas'], 2, '.', ''),
+                  number_format((float)$row['Salidas'], 2, '.', ''),
+                  number_format((float)$row['Stock_Kardex'], 2, '.', '')
+                ),
+                'estilo' => 'I',
+                'borde' => $key === count($result) - 1 ? 'LRB' : 'LR'
+              );
+            }
+
+            $pdf = new cabecera_pdf();
+            $pdf->cabecera_reporte_MC(
+              'RESUMEN DE CODIGOS DE BARRA',
+              $tablaHTML,
+              $contenido=false,
+              $image=false,
+              $MBoxFechaI,
+              $MBoxFechaF,
+              8,
+              true,
+              orientacion: 'L',
+              mostrar_cero: true
+            );
+            return;
+        }
         // Extraer la sección entre "SELECT" y "WHERE" usando una expresión regular
         $pattern = "/SELECT(.*?)FROM/s";
         $matches = [];
@@ -422,10 +555,14 @@ class kardexC
 
     function CargaInicial($parametros)
     {
+      // print_r($parametros);die();
         extract($parametros);
         $FechaIni = BuscarFecha($MBoxFechaI);
         $FechaFin = BuscarFecha($MBoxFechaF);
-        $Codigo1 = trim(@$DCBodega);
+        $Codigo1 = "";
+        if(isset($DCBodega)){
+            $Codigo1 = trim($DCBodega);
+        }
         if ($Codigo1 == "") {
             $Codigo1 = ".";
         }

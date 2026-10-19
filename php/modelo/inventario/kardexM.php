@@ -31,10 +31,9 @@ class kardexM
           AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' ";
 
         if($query){
-          $sSQL .= "AND Codigo_Inv LIKE '%".$query."%' OR Producto LIKE '%".$query."%' ";
+          $sSQL .= "AND (Codigo_Inv LIKE '%".$query."%' OR Producto LIKE '%".$query."%') ";
         }
         $sSQL .= "AND TC = 'I' 
-          AND X = 'M' 
           ORDER BY Codigo_Inv ";
         break;
 
@@ -50,7 +49,6 @@ class kardexM
         }
 
         $sSQL .= "AND TC = 'P' 
-          AND X = 'M' 
           AND Cta_Inventario <> '.' 
           AND Cta_Inventario <> '0' 
           ORDER BY Producto,Codigo_Inv ";
@@ -87,7 +85,7 @@ class kardexM
     }
 }
 
-  function Consultar_Kardex($Codigo, $Codigo1, $FechaIni, $FechaFin){
+  function Consultar_Kardex($Codigo, $Codigo1, $FechaIni, $FechaFin, $ModoConsulta){
     $sSQL  =  "SELECT K.Codigo_Inv, K.Codigo_Barra, SUM(Entrada) As Entradas, SUM(Salida) As Salidas, SUM(Entrada-Salida) As Stock_Kardex 
               FROM Trans_Kardex As K, Comprobantes As C 
               WHERE K.Fecha BETWEEN '".$FechaIni."' AND '".$FechaFin."' 
@@ -95,7 +93,7 @@ class kardexM
               AND K.T = '".G_NORMAL."' 
               AND K.Item = '".$_SESSION['INGRESO']['item']."' 
               AND K.Periodo = '".$_SESSION['INGRESO']['periodo']."'";
-    if (isset($CheqBod) && $CheqBod=='1') {
+    if ($ModoConsulta === 'BODEGA') {
       $sSQL  .= "AND K.CodBodega = '".$Codigo1."' ";
     }
     $sSQL  .= "AND K.TP = C.TP 
@@ -106,19 +104,32 @@ class kardexM
             GROUP BY K.Codigo_Inv, K.Codigo_Barra
             HAVING SUM(Entrada-Salida) >=1 
             ORDER BY K.Codigo_Inv, K.Codigo_Barra ";
+    $_SESSION['DGKardex']['sSQL'] = $sSQL;
     return grilla_generica_new($sSQL);
   }
 
 
-  function bodegas($query=false){
-    $sql="SELECT Bodega, CodBod
-          FROM Catalogo_Bodegas 
-          WHERE Item = '".$_SESSION['INGRESO']['item']."'
-          AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
-    if($query){
-      $sql .= "AND CodBod LIKE '%".$query."%' OR Bodega LIKE '%".$query."%' ";
+  function bodegas($query=false, $tipo='BODEGA'){
+    if ($tipo === 'BARRA') {
+      $sql = "SELECT Codigo_Barra AS Codigo, Codigo_Barra AS Nombre
+              FROM Trans_Kardex
+              WHERE Item = '".$_SESSION['INGRESO']['item']."'
+              AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+              AND Entrada > 0 ";
+      if($query){
+        $sql .= "AND Codigo_Barra LIKE '%".$query."%' ";
+      }
+      $sql .= "GROUP BY Codigo_Barra ORDER BY Codigo_Barra";
+    } else {
+      $sql="SELECT Bodega AS Nombre, CodBod AS Codigo
+            FROM Catalogo_Bodegas
+            WHERE Item = '".$_SESSION['INGRESO']['item']."'
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."' ";
+      if($query){
+        $sql .= "AND (CodBod LIKE '%".$query."%' OR Bodega LIKE '%".$query."%') ";
+      }
+      $sql .= "ORDER BY CodBod";
     }
-    $sql .= "ORDER BY CodBod";
     return $this->db->datos($sql);
   }
 
@@ -233,11 +244,18 @@ class kardexM
     return $this->db->String_Sql($sSQL);
   }
 
-  function Consultar_Tipo_De_Kardex($Codigo, $Codigo1, $FechaIni, $FechaFin, $EsKardexIndividual, $GrupoInv){
-    $sSQL = "SELECT TK.Codigo_Inv, CP.Producto, CP.Unidad, TK.CodBodega AS Bodega, TK.Fecha, TK.TP, TK.Numero, TK.Entrada, TK.Salida, TK.Existencia AS Stock, TK.Costo, " .
-            "TK.Total AS Saldo, TK.Valor_Unitario, TK.Valor_Total, TK.TC, TK.Serie, TK.Factura, TK.Cta_Inv, TK.Contra_Cta, TK.Serie_No, TK.Codigo_Barra, TK.Lote_No, " .
-            "TK.Codigo_Tra AS CI_RUC_CC, TK.Detalle, TK.Centro_Costo AS Beneficiario_Centro_Costo, TK.Orden_No, TK.ID " .
-            "FROM Trans_Kardex AS TK, Catalogo_Productos AS CP " .
+  function Consultar_Tipo_De_Kardex($Codigo, $Codigo1, $FechaIni, $FechaFin, $EsKardexIndividual, $GrupoInv, $ModoConsulta){
+    if ($ModoConsulta === 'BARRA') {
+      $stock = 'TK.Stock_Barra';
+    } elseif ($ModoConsulta === 'BODEGA') {
+      $stock = 'TK.Stock_Bod';
+    } else {
+      $stock = 'TK.Existencia';
+    }
+    $sSQL = "SELECT TK.Codigo_Inv, CP.Producto, CP.Unidad, TK.CodBodega AS Bodega, TK.Codigo_Barra, TK.Fecha, TK.TP, TK.Numero, TK.Entrada, TK.Salida, " . $stock . " AS Stock, TK.Costo, " .
+            "TK.Total AS Saldo, TK.Valor_Unitario, TK.Valor_Total, TK.Fecha_Exp, TK.TC, TK.Serie, TK.Factura, TK.Cta_Inv, TK.Contra_Cta, CAST(NULL AS varchar(20)) AS Temperatura, TK.Serie_No, TK.Lote_No, " .
+            "TK.Codigo_Tra AS CI_RUC_CC, CM.Marca AS Marca_Tipo_Proceso, TK.Detalle, TK.Centro_Costo AS Beneficiario_Centro_Costo, TK.Orden_No, TK.ID " .
+            "FROM Trans_Kardex AS TK, Catalogo_Productos AS CP, Catalogo_Marcas AS CM " .
             "WHERE TK.Item = '" . $_SESSION['INGRESO']['item'] . "' " .
             "AND TK.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' " .
             "AND TK.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' " .
@@ -249,20 +267,47 @@ class kardexM
             $sSQL = $sSQL . "AND TK.Codigo_Inv LIKE '" . $GrupoInv . "%' ";
         }
     }
-    if (isset($CheqBod) && $CheqBod == 1) {
-        $sSQL = $sSQL . "AND TK.CodBodega = '" . $Codigo1 . "' ";
+    if ($ModoConsulta === 'BODEGA') {
+        $sSQL = $sSQL . "AND TK.CodBodega LIKE '" . $Codigo1 . "%' ";
+    } elseif ($ModoConsulta === 'BARRA') {
+        $sSQL = $sSQL . "AND TK.Codigo_Barra = '" . $Codigo1 . "' ";
     }
     $sSQL = $sSQL .
             "AND TK.Item = CP.Item " .
-            //"AND TK.Item = CM.Item " .
+            "AND TK.Item = CM.Item " .
             "AND TK.Periodo = CP.Periodo " .
-            //"AND TK.Periodo = CM.Periodo " .
+            "AND TK.Periodo = CM.Periodo " .
             "AND TK.Codigo_Inv = CP.Codigo_Inv " .
-            //"AND TK.CodMarca = CM.CodMar " .
+            "AND TK.CodMarca = CM.CodMar " .
             "ORDER BY TK.Codigo_Inv, TK.Fecha,TK.Entrada DESC,TK.Salida,TK.TP,TK.Numero,TK.ID ";
     $_SESSION['DGKardex']['sSQL'] = $sSQL ;
     return grilla_generica_new($sSQL);
     //$SQLDec = "TK.Costo " . strval($Dec_Costo) . "| TK.Valor_Unitario " . strval($Dec_Costo) . "|,TK.Valor_Total 2|.";
+  }
+
+  function Kardex_Total_QR($FechaIni, $FechaFin, $Codigo1, $ModoConsulta){
+    $stock = $ModoConsulta === 'BARRA' ? 'TK.Stock_Barra' : ($ModoConsulta === 'BODEGA' ? 'TK.Stock_Bod' : 'TK.Existencia');
+    $sSQL = "SELECT TK.Codigo_Inv, CP.Producto, CP.Unidad, TK.CodBodega AS Bodega, TK.Codigo_Barra, TK.Fecha, TK.TP, TK.Numero, TK.Entrada, TK.Salida, " . $stock . " AS Stock, " .
+            "TK.Costo, TK.Total AS Saldo, TK.Valor_Unitario, TK.Valor_Total, TK.Fecha_Exp, TK.TC, TK.Serie, TK.Factura, TK.Cta_Inv, TK.Contra_Cta, " .
+            "TC.Porc_C AS Temperatura, TK.Serie_No, TK.Lote_No, TK.Codigo_Tra AS CI_RUC_CC, CM.Marca AS Marca_Tipo_Proceso, TK.Detalle, " .
+            "TK.Centro_Costo AS Beneficiario_Centro_Costo, TK.Orden_No, TK.ID " .
+            "FROM Trans_Kardex AS TK, Catalogo_Productos AS CP, Catalogo_Marcas AS CM, Trans_Correos AS TC " .
+            "WHERE TK.Item = '" . $_SESSION['INGRESO']['item'] . "' " .
+            "AND TK.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "' " .
+            "AND TK.Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "' " .
+            "AND TK.T = '" . G_NORMAL . "' ";
+    if ($ModoConsulta === 'BODEGA') {
+      $sSQL .= "AND TK.CodBodega LIKE '" . $Codigo1 . "%' ";
+    } elseif ($ModoConsulta === 'BARRA') {
+      $sSQL .= "AND TK.Codigo_Barra = '" . $Codigo1 . "' ";
+    }
+    $sSQL .= "AND TK.Item = CP.Item AND TK.Periodo = CP.Periodo AND TK.Codigo_Inv = CP.Codigo_Inv " .
+             "AND TK.Item = CM.Item AND TK.Periodo = CM.Periodo AND TK.CodMarca = CM.CodMar " .
+             "AND TK.Item = TC.Item AND TK.Periodo = TC.Periodo " .
+             "AND TC.Envio_No = SUBSTRING(TK.Codigo_Barra, 1, LEN(TC.Envio_No)) " .
+             "ORDER BY TK.CodBodega, TK.Codigo_Inv, TK.Fecha, TK.Entrada DESC, TK.Salida, TK.TP, TK.Numero, TK.ID";
+    $_SESSION['DGKardex']['sSQL'] = $sSQL;
+    return grilla_generica_new($sSQL);
   }
 
   function kardex_total($desde,$hasta,$codigo,$CheqBod,$bodega){
@@ -374,6 +419,28 @@ class kardexM
         "SET Centro_Costo = '.' " .
         "WHERE Centro_Costo IS NULL";
     Ejecutar_SQL_SP($sSQL);
+  }
+
+  function Eliminar_Kardex_Cero($FechaIni, $FechaFin){
+    $sSQL = "DELETE FROM Trans_Kardex
+             WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
+             AND Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'
+             AND Fecha BETWEEN '" . $FechaIni . "' AND '" . $FechaFin . "'
+             AND Numero = 0";
+    return $this->db->String_Sql($sSQL);
+  }
+
+  function DatosEtiquetaKardex($ID_Reg){
+    $sSQL = "SELECT TK.Codigo_Barra, CP.Producto, CP.PVP
+             FROM Trans_Kardex AS TK
+             INNER JOIN Catalogo_Productos AS CP
+               ON CP.Item = TK.Item
+              AND CP.Periodo = TK.Periodo
+              AND CP.Codigo_Inv = TK.Codigo_Inv
+             WHERE TK.ID = " . intval($ID_Reg) . "
+             AND TK.Item = '" . $_SESSION['INGRESO']['item'] . "'
+             AND TK.Periodo = '" . $_SESSION['INGRESO']['periodo'] . "'";
+    return $this->db->datos($sSQL);
   }
 } 
 ?>

@@ -10,9 +10,10 @@ $(document).ready(function()
     scrollX: true,
     paging:false,
     searching:false,
+    pageLength: 100,
     info:false,
-    scrollY: 330,
-    scrollCollapse: true,
+    // scrollY: 330,
+    // scrollCollapse: true,
   };
 
   tbl_DGKardex = $('#tbl_DGKardex').DataTable(param_datatable);
@@ -22,7 +23,7 @@ $(document).ready(function()
   document.title = "Diskcover | EXISTENCIA DE INVENTARIO";
 
   autocomplete_dctinv();
-  autocomplete_bodega();
+  actualizarModoConsulta();
 
   $('#DCTInv').on('select2:select', function (e) {
     var data = e.params.data;
@@ -55,13 +56,13 @@ function autocomplete_dctinv(){
   });
 }
 
-function autocomplete_bodega(){
+function autocomplete_bodega(tipo){
   $('#DCBodega').select2({
-    placeholder: '** Seleccionar Bodega**',
+    placeholder: tipo === 'BARRA' ? '** Seleccionar Código de barra**' : '** Seleccionar Bodega**',
     dropdownParent: $('#FormKardex'),
     width: '80%',
     ajax: {
-        url: '../controlador/inventario/kardexC.php?bodegas=true',
+        url: '../controlador/inventario/kardexC.php?bodegas=true&tipo='+encodeURIComponent(tipo),
         dataType: 'json',
         delay: 250,
         processResults: function (data) {
@@ -72,6 +73,21 @@ function autocomplete_bodega(){
         cache: true
     }
   });
+}
+
+function actualizarModoConsulta(){
+  var modo = $('input[name="ModoConsulta"]:checked').val() || 'TODOS';
+  var $filtro = $('#DCBodega');
+
+  if ($filtro.hasClass('select2-hidden-accessible')) {
+    $filtro.select2('destroy');
+  }
+  $filtro.empty().append(new Option('** Seleccionar **', ''));
+  $filtro.val('').prop('disabled', modo === 'TODOS');
+
+  if (modo !== 'TODOS') {
+    autocomplete_bodega(modo);
+  }
 }
 
 function cambiarProducto(){
@@ -94,8 +110,13 @@ function cambiarProducto(){
 }
 
 function productoFinal(){
-  //console.log('HOla');
-  let codigoProducto = $("#DCInv").val()[0];
+  let seleccion = $("#DCInv").val();
+  if (!seleccion || seleccion.length === 0) {
+    $("#LabelCodigo, #LabelUnidad, #LabelMinimo, #LabelMaximo, #NombreProducto").val('');
+    $("#LabelExitencia").val('0.00');
+    return;
+  }
+  let codigoProducto = seleccion[0];
   let producto = codigoProducto.split("/");
   let LabelCodigo = producto[0];
   let LabelMinimo = producto[1];
@@ -110,13 +131,15 @@ function productoFinal(){
   $("#NombreProducto").val(NombreProducto);
 }
 
-function Consultar_Tipo_Kardex(EsKardexIndividual){//revisada
+function Consultar_Tipo_Kardex(EsKardexIndividual, porQR=false){//revisada
   $('#myModal_espera').modal('show');
 
   $('#DGKardex').show();
   $('#DGKardexRes').hide();
   tbl_DGKardex.destroy();
   tbl_DGKardex = $('#tbl_DGKardex').DataTable({
+    
+    pageLength: 100,
     // responsive: true,
     language: {
         url: 'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json'
@@ -125,12 +148,18 @@ function Consultar_Tipo_Kardex(EsKardexIndividual){//revisada
         { targets: [8,9,10,11,12,13], className: 'text-end' } // Alinea las columnas 0, 2 y 4 a la derecha
     ],*/
     ajax: {
-        url: '../controlador/inventario/kardexC.php?Consultar_Tipo_Kardex=true&EsKardexIndividual='+EsKardexIndividual,
+        url: porQR
+          ? '../controlador/inventario/kardexC.php?Kardex_Total_QR=true'
+          : '../controlador/inventario/kardexC.php?Consultar_Tipo_Kardex=true&EsKardexIndividual='+EsKardexIndividual,
         type: 'POST',  // Cambia el método a POST    
         data: function(d) {
             return $("#FormKardex").serialize();
         }, dataSrc: function(json) {
           $('#myModal_espera').modal('hide');
+          if (json.error) {
+            Swal.fire({ icon: 'warning', title: 'Consulta no disponible', text: json.mensaje });
+            return [];
+          }
           $('#LabelExitencia').val(json.LabelExistencia); 
           return json.data;
         }                     
@@ -141,14 +170,15 @@ function Consultar_Tipo_Kardex(EsKardexIndividual){//revisada
     //     info:false,
     fixedHeader: true,
     //responsive: true,
-    scrollY: '330px',
-    scrollCollapse: true,
+    // scrollY: '330px',
+    // scrollCollapse: true,
     columns: [
         { data: null,
           render: function(data, type, item) {
-            botons = `<button type="button" class="btn btn-sm btn-warning" onclick="Cambiar_Articulo('${data.Producto}', '${data.ID}', '${data.TC}', '${data.Serie}', '${data.Factura}', '${data.Codigo_Inv}');"><i class="bx bx-refresh" style="font-size:11pt"></i></button>
-                      <button type="button" class="btn btn-sm btn-info" onclick="Cambia_Codigo_de_Barra('${data.Producto}', '${data.ID}', '${data.TC}', '${data.Serie}', '${data.Factura}', '${data.Codigo_Inv}');"><i class="fa fa-barcode" style="font-size:11pt"></i></button>
-                      <button type="button" class="btn btn-sm btn-success" onclick="Cambia_la_Serie('${data.Producto}', '${data.ID}', '${data.TC}', '${data.Serie}', '${data.Factura}', '${data.Codigo_Inv}');"><i class="fa fa-retweet" style="font-size:11pt"></i></button>`;
+            botons = `<button type="button" class="btn btn-sm btn-warning pe-0" onclick="Cambiar_Articulo('${data.Producto}', '${data.ID}', '${data.TC}', '${data.Serie}', '${data.Factura}', '${data.Codigo_Inv}');"><i class="bx bx-refresh"></i></button>
+                      <button type="button" class="btn btn-sm btn-info pe-0" onclick="Cambia_Codigo_de_Barra('${data.Producto}', '${data.ID}', '${data.TC}', '${data.Serie}', '${data.Factura}', '${data.Codigo_Inv}');"><i class="fa fa-barcode"></i></button>
+                      <button type="button" class="btn btn-sm btn-success pe-0" onclick="Cambia_la_Serie('${data.Producto}', '${data.ID}', '${data.TC}', '${data.Serie}', '${data.Factura}', '${data.Codigo_Inv}');"><i class="fa fa-retweet"></i></button>
+                      <button type="button" class="btn btn-sm btn-danger pe-0" onclick="Imprime_Codigos_de_Barra(this);"><i class="bx bx-printer"></i></button>`;
 
             return botons;                    
           },
@@ -179,16 +209,22 @@ function Consultar_Tipo_Kardex(EsKardexIndividual){//revisada
               return data ? parseFloat(data).toFixed(2) : '';
           }
         },
+        { data: 'Fecha_Exp', width:'100px',
+          render: function(data) {
+            return data && data.date ? new Date(data.date).toLocaleDateString() : '';
+          }
+        },
         { data: 'TC' , width:'60px'},
         { data: 'Serie' , width:'80px'},
         { data: 'Factura' , width:'70px', className: 'text-end'},
         { data: 'Cta_Inv' , width:'100px'},
         { data: 'Contra_Cta' , width:'100px'},
+        { data: 'Temperatura' , width:'100px'},
         { data: 'Serie_No' , width:'70px'},
         { data: 'Codigo_Barra' , width:'100px'},
         { data: 'Lote_No' , width:'100px'},
         { data: 'CI_RUC_CC' , width:'100px'},
-        //{ data: 'Marca_Tipo_Proceso' , width:'100px'},
+        { data: 'Marca_Tipo_Proceso' , width:'150px'},
         { data: 'Detalle' , width:'100px'},
         { data: 'Beneficiario_Centro_Costo' , width:'250px'},
         { data: 'Orden_No' , width:'150px'},
@@ -294,8 +330,75 @@ function generarExcelKardex(){ //revisada
   window.open(url, '_blank');
 }
 
-function Imprime_Codigos_de_Barra(){
-  alert(' no programado');
+function Eliminar_Kardex_Cero(){
+  Swal.fire({
+    icon: 'warning',
+    title: '¿Eliminar comprobantes en cero?',
+    text: 'Se eliminarán los registros con número 0 entre las fechas seleccionadas.',
+    showCancelButton: true,
+    confirmButtonText: 'Eliminar',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (!result.value) {
+      return;
+    }
+    $.ajax({
+      type: 'POST',
+      dataType: 'json',
+      url: '../controlador/inventario/kardexC.php?Eliminar_Kardex_Cero=true',
+      data: $('#FormKardex').serialize(),
+      success: function(response){
+        Swal.fire({
+          icon: response.rps ? 'success' : 'error',
+          title: response.rps ? 'Proceso terminado' : 'No se pudo completar',
+          text: response.mensaje
+        });
+      },
+      error: function(){
+        Swal.fire('Error', 'Ocurrió un error al eliminar los registros.', 'error');
+      }
+    });
+  });
+}
+
+function Imprime_Codigos_de_Barra(button){
+  var fila = tbl_DGKardex.row($(button).closest('tr')).data();
+  if (!fila) {
+    Swal.fire('Error', 'No fue posible leer el producto seleccionado.', 'error');
+    return;
+  }
+  var ventanaImpresion = window.open('', '_blank');
+  if (!ventanaImpresion) {
+    Swal.fire('Aviso', 'Permita las ventanas emergentes para generar el PDF.', 'warning');
+    return;
+  }
+  var cantidadSugerida = Math.max(1, Math.floor(Number(fila.Stock) || 1));
+  Swal.fire({
+    title: 'Cantidad de códigos a imprimir',
+    input: 'number',
+    inputValue: cantidadSugerida,
+    inputAttributes: { min: 1, max: 1000, step: 1 },
+    showCancelButton: true,
+    confirmButtonText: 'Generar PDF',
+    cancelButtonText: 'Cancelar',
+    preConfirm: function(cantidad){
+      var valor = Number(cantidad);
+      if (!Number.isInteger(valor) || valor < 1 || valor > 1000) {
+        Swal.showValidationMessage('Ingrese una cantidad entre 1 y 1000.');
+        return false;
+      }
+      return valor;
+    }
+  }).then(function(result){
+    if (result.value) {
+      var url = '../controlador/inventario/kardexC.php?imprimirCodigoBarras=true'
+        + '&ID_Reg=' + encodeURIComponent(fila.ID)
+        + '&Cantidad=' + encodeURIComponent(result.value);
+      ventanaImpresion.location = url;
+    } else {
+      ventanaImpresion.close();
+    }
+  });
 }
 
 function Cambia_la_Serie(Producto, ID_Reg, TC, Serie, Factura, CodigoInv) {//revisada
