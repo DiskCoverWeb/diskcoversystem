@@ -158,7 +158,7 @@ class autoriza_sri
    		 			$xml = simplexml_load_string($ArchivoXML);
    		 			$fechaAutorizacion =  (string)$xml->fechaAutorizacion;
 					
-          			return array("respuesta"=>1,"mensaje"=>"XML autorizado","FechaAutorizacion"=>$fechaAutorizacion,"XML"=>$ArchivoXML);
+          			return array("respuesta"=>1,"mensaje"=>"AUTORIZADO","FechaAutorizacion"=>$fechaAutorizacion,"XML"=>$ArchivoXML);
 	   	 	}
 
           	if($parametros['RUTA']!='' && $parametros['PASS']!='')
@@ -196,7 +196,7 @@ class autoriza_sri
 					
 					$ArchivoXML = str_replace(array("\r\n", "\r", "\t"), '', $ArchivoXML);
    		 			// $ArchivoXML = str_replace('"', "'",$ArchivoXML);
-   		 			return  array('respuesta'=>1,"mensaje"=>"XML autorizado",'FechaAutorizacion'=>$fechaAutorizacion,"XML"=>$ArchivoXML);
+   		 			return  array('respuesta'=>1,"mensaje"=>"AUTORIZADO",'FechaAutorizacion'=>$fechaAutorizacion,"XML"=>$ArchivoXML);
    		 			
    		 		}else
    		 		{
@@ -215,7 +215,7 @@ class autoriza_sri
 
 					$ArchivoXML = str_replace(array("\r\n", "\r", "\t"), '', $ArchivoXML);
    		 			// $ArchivoXML = str_replace('"', "'",$ArchivoXML);
-   		 			return  array('respuesta'=>-1,"mensaje"=>"XML NO autorizado","FechaAutorizacion"=>"","XML"=>$ArchivoXML);
+   		 			return  array('respuesta'=>-1,"mensaje"=>"XML NO AUTORIZADO","FechaAutorizacion"=>"","XML"=>$ArchivoXML);
    		 		}
 	   		 		// print_r($resp);die();
 	   		}else
