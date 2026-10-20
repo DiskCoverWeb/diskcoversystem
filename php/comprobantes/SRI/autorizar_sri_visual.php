@@ -224,7 +224,7 @@ class autoriza_sri
 	   			if(isset($enviar_sri[4]) && $enviar_sri[4]=="70")
 	   			{
 	   				$resp =  $this->comprobar_xml_sri($Autorizacion,$this->linkSriAutorizacion);
-	   				
+
 	   				// print_r($resp);die();
 	   		 		if($resp=='' || $resp==null)
 	   		 		{
@@ -241,7 +241,7 @@ class autoriza_sri
 						
 						$ArchivoXML = str_replace(array("\r\n", "\r", "\t"), '', $ArchivoXML);
 	   		 			// $ArchivoXML = str_replace('"', "'",$ArchivoXML);
-	   		 			return  array('respuesta'=>1,"mensaje"=>"XML autorizado",'FechaAutorizacion'=>$fechaAutorizacion,"XML"=>$ArchivoXML);
+	   		 			return  array('respuesta'=>1,"mensaje"=>"Autorizado",'FechaAutorizacion'=>$fechaAutorizacion,"XML"=>$ArchivoXML);
 	   		 			
 	   		 		}else
 	   		 		{
@@ -260,7 +260,7 @@ class autoriza_sri
 
 						$ArchivoXML = str_replace(array("\r\n", "\r", "\t"), '', $ArchivoXML);
 	   		 			// $ArchivoXML = str_replace('"', "'",$ArchivoXML);
-	   		 			return  array('respuesta'=>-1,"mensaje"=>"XML NO autorizado","FechaAutorizacion"=>"","XML"=>$ArchivoXML);
+	   		 			return  array('respuesta'=>-1,"mensaje"=>"XML NO AUTORIZADO","FechaAutorizacion"=>"","XML"=>$ArchivoXML);
 	   		 		}
 
 
