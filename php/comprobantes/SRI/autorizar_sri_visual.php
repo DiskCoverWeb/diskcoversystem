@@ -178,6 +178,9 @@ class autoriza_sri
 	   			// print_r('expression');die();
 	   			sleep(3);
    		 		$resp =  $this->comprobar_xml_sri($Autorizacion,$this->linkSriAutorizacion);
+	   			sleep(3);
+   		 		$resp =  $this->comprobar_xml_sri($Autorizacion,$this->linkSriAutorizacion);
+
    		 		if($resp=='' || $resp==null)
    		 		{
    		 			return  array('respuesta'=>-1,"mensaje"=>"XML enviado, no comprobado por el SRI",'FechaAutorizacion'=>$fechaAutorizacion,"XML"=>$ArchivoXML);
@@ -221,6 +224,7 @@ class autoriza_sri
 	   			if(isset($enviar_sri[4]) && $enviar_sri[4]=="70")
 	   			{
 	   				$resp =  $this->comprobar_xml_sri($Autorizacion,$this->linkSriAutorizacion);
+	   				
 	   				// print_r($resp);die();
 	   		 		if($resp=='' || $resp==null)
 	   		 		{
