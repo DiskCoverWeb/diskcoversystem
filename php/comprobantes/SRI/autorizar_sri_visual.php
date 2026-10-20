@@ -140,7 +140,7 @@ class autoriza_sri
 
 		if(trim($parametros['XML'])=='')
 		{
-			return -1;
+			return  array('respuesta'=>-1,"mensaje"=>"XML no encontrado");
 		}else
 		{
 			$xml = $parametros['XML'];
