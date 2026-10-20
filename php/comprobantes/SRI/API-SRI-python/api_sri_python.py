@@ -189,7 +189,7 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
                             detalle_xml_mensaje = f""" <estado>{estado}</estado>
     <comprobantes>
         <comprobante>
-            <claveAcceso>0608202601175783157100120010020000061571234567815</claveAcceso>
+            <claveAcceso>{clave_acceso}</claveAcceso>
             <mensajes>
                 <mensaje>
                     <identificador>{identificador}</identificador>
