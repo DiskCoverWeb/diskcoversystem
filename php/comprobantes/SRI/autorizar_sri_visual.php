@@ -221,7 +221,7 @@ class autoriza_sri
 	   		}else
 	   		{
 	   			// print_r($enviar_sri);die();
-	   			if(isset($enviar_sri[4]) && $enviar_sri[4]=="70")
+	   			if(isset($enviar_sri[0]) && $enviar_sri[0]==0)
 	   			{
 	   				$resp =  $this->comprobar_xml_sri($Autorizacion,$this->linkSriAutorizacion);
 

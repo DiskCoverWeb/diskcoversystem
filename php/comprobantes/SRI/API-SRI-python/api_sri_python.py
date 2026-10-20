@@ -181,7 +181,7 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
                             mensaje = getattr(msg, 'mensaje', 'Sin mensaje') or "Sin mensaje"
                             tipo = getattr(msg, 'tipo', 'N/A') or "N/A"
                             info_adicional = getattr(msg, 'informacionAdicional', 'N/A') or "N/A"
-                            if(identificador=='58' or identificador=='70'):
+                            if(identificador=='58' or identificador=='70' or identificador=='43'):
                                 result[0] = 0
 
                             result[4] = identificador
