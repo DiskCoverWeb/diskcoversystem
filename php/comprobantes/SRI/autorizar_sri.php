@@ -346,9 +346,9 @@ class autorizacion_sri
 			   		 	if(isset($enviar_sri[0]) && $enviar_sri[0]==1)
 			   		 	{
 			   		 		//una vez enviado comprobamos el estado de la factura
-			   		 		sleep(2);
+			   		 		sleep(3);
 			   		 		$resp =  $this->comprobar_xml_sri($cabecera['ClaveAcceso'],$this->linkSriAutorizacion);
-			   		 		sleep(2);
+			   		 		sleep(3);
 			   		 		$resp =  $this->comprobar_xml_sri($cabecera['ClaveAcceso'],$this->linkSriAutorizacion);
 			   		 		
 			   		 		if($resp[0]==1)
