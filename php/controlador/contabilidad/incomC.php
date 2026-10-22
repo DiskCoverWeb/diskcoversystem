@@ -2424,7 +2424,7 @@ function ExistenMovimientos($parametros)
 	     {
 	     	if($numero_cheque[0]['Ultimo_Chep']!='')
 	     	{
-	     	 	$TextCheque = generaCeros($numero_cheque[0]['Ultimo_Chep']+1,8);
+	     	 	$TextCheque = generaCeros(intval($numero_cheque[0]['Ultimo_Chep'])+1,8);
 	     	}
 	     }
 	     return $TextCheque;
