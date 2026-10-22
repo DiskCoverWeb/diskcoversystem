@@ -29,24 +29,24 @@ def crear_cliente_sri(wsdl):
     return Client(wsdl=wsdl, transport=transport)
 
 def verificar_enlace(url):
-  try:
-    # Usamos timeout para evitar que el script se quede colgado si el servidor no responde
-    # Primero intentamos con una petición HEAD (es más rápida porque no descarga el contenido)
-    response = requests.head(url, timeout=5, allow_redirects=True)
+    try:
+        # Usamos timeout para evitar que el script se quede colgado si el servidor no responde
+        # Primero intentamos con una petición HEAD (es más rápida porque no descarga el contenido)
+        response = requests.head(url, timeout=5, allow_redirects=True)
 
-    # Si el servidor no soporta HEAD o da un error de método no permitido, probamos con GET
-    if response.status_code == 405:
-      response = requests.get(url, timeout=5, allow_redirects=True)
+        # Si el servidor no soporta HEAD o da un error de método no permitido, probamos con GET
+        if response.status_code == 405:
+            response = requests.get(url, timeout=5, allow_redirects=True)
 
-    # Verificamos si el código de estado está en el rango de éxito (200-299)
-    if 200 <= response.status_code < 300:
-      return True, response.status_code
-    else:
-      return False, response.status_code
+        # Verificamos si el código de estado está en el rango de éxito (200-299)
+        if 200 <= response.status_code < 300:
+          return True, response.status_code
+        else:
+          return False, response.status_code
 
-  except RequestException as e:
-    # Captura errores de conexión, DNS, timeouts, etc.
-    return False, str(e)
+    except RequestException as e:
+        # Captura errores de conexión, DNS, timeouts, etc.
+        return False, str(e)
 
 
 # 1. Definición de la URL del Web Service de Recepción (Producción o Pruebas)
@@ -164,7 +164,8 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
             xml_texto = xml_file.read()
 
         activo, resultado = verificar_enlace(WSDL_RECEPCION);
-        if no activo:
+
+        if not activo:
             # print(f"El enlace está INACTIVO o falló. Motivo: {resultado}");
             result[1] = clave_acceso
             result[2] = "fuera de linea"
@@ -272,7 +273,7 @@ def verificar_autorizacion(clave_acceso,WSDL_AUTORIZACION,ruta_xml_autorizado,ru
     try:
         
         activo, resultado = verificar_enlace(WSDL_AUTORIZACION);
-        if no activo:
+        if not activo:
             # print(f"El enlace está INACTIVO o falló. Motivo: {resultado}");
             result[1] = clave_acceso
             result[2] = "fuera de linea"
