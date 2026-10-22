@@ -5,10 +5,12 @@ import tempfile
 from zeep import Client
 from zeep.cache import SqliteCache
 from zeep.transports import Transport
-import requests
 import json
 import re
 from lxml import etree
+
+import requests
+from requests.exceptions import RequestException
 
 SRI_WSDL_TIMEOUT = 15
 SRI_OPERATION_TIMEOUT = 20
@@ -25,6 +27,26 @@ def crear_cliente_sri(wsdl):
         operation_timeout=SRI_OPERATION_TIMEOUT,
     )
     return Client(wsdl=wsdl, transport=transport)
+
+def verificar_enlace(url):
+  try:
+    # Usamos timeout para evitar que el script se quede colgado si el servidor no responde
+    # Primero intentamos con una petición HEAD (es más rápida porque no descarga el contenido)
+    response = requests.head(url, timeout=5, allow_redirects=True)
+
+    # Si el servidor no soporta HEAD o da un error de método no permitido, probamos con GET
+    if response.status_code == 405:
+      response = requests.get(url, timeout=5, allow_redirects=True)
+
+    # Verificamos si el código de estado está en el rango de éxito (200-299)
+    if 200 <= response.status_code < 300:
+      return True, response.status_code
+    else:
+      return False, response.status_code
+
+  except RequestException as e:
+    # Captura errores de conexión, DNS, timeouts, etc.
+    return False, str(e)
 
 
 # 1. Definición de la URL del Web Service de Recepción (Producción o Pruebas)
@@ -141,6 +163,17 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
         with open(ruta_xml_firmado, "r", encoding="utf-8") as xml_file:
             xml_texto = xml_file.read()
 
+        activo, resultado = verificar_enlace(WSDL_RECEPCION);
+        if no activo:
+            # print(f"El enlace está INACTIVO o falló. Motivo: {resultado}");
+            result[1] = clave_acceso
+            result[2] = "fuera de linea"
+            result[0]= 99            
+            result[3] = "Servidor fuera de linea, intente mas tarde autorizar el documento, aun asi se procedera a grabar el comprobante"
+            result[4] = f"{resultado}"
+            return result
+
+
         # 3. Configurar el cliente SOAP con timeout para evitar bloqueos
         client = crear_cliente_sri(WSDL_RECEPCION)
 
@@ -237,6 +270,17 @@ def verificar_autorizacion(clave_acceso,WSDL_AUTORIZACION,ruta_xml_autorizado,ru
 
     aut = None
     try:
+        
+        activo, resultado = verificar_enlace(WSDL_AUTORIZACION);
+        if no activo:
+            # print(f"El enlace está INACTIVO o falló. Motivo: {resultado}");
+            result[1] = clave_acceso
+            result[2] = "fuera de linea"
+            result[0]= 99            
+            result[3] = "Servidor fuera de linea, intente mas tarde autorizar el documento, aun asi se procedera a grabar el comprobante"
+            result[4] = f"{resultado}"
+            return result
+
         # 2. Conexión al servicio de Autorización
         cliente = crear_cliente_sri(WSDL_AUTORIZACION)
         respuesta = cliente.service.autorizacionComprobante(clave_acceso)
