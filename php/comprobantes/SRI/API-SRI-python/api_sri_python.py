@@ -163,15 +163,15 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
         with open(ruta_xml_firmado, "r", encoding="utf-8") as xml_file:
             xml_texto = xml_file.read()
 
-        activo, resultado = verificar_enlace(WSDL_RECEPCION);
-        if no activo:
-            # print(f"El enlace está INACTIVO o falló. Motivo: {resultado}");
-            result[1] = clave_acceso
-            result[2] = "fuera de linea"
-            result[0]= 99            
-            result[3] = "Servidor fuera de linea, intente mas tarde autorizar el documento, aun asi se procedera a grabar el comprobante"
-            result[4] = f"{resultado}"
-            return result
+        # activo, resultado = verificar_enlace(WSDL_RECEPCION);
+        # if no activo:
+        #     # print(f"El enlace está INACTIVO o falló. Motivo: {resultado}");
+        #     result[1] = clave_acceso
+        #     result[2] = "fuera de linea"
+        #     result[0]= 99            
+        #     result[3] = "Servidor fuera de linea, intente mas tarde autorizar el documento, aun asi se procedera a grabar el comprobante"
+        #     result[4] = f"{resultado}"
+        #     return result
 
 
         # 3. Configurar el cliente SOAP con timeout para evitar bloqueos
@@ -271,15 +271,15 @@ def verificar_autorizacion(clave_acceso,WSDL_AUTORIZACION,ruta_xml_autorizado,ru
     aut = None
     try:
         
-        activo, resultado = verificar_enlace(WSDL_AUTORIZACION);
-        if no activo:
-            # print(f"El enlace está INACTIVO o falló. Motivo: {resultado}");
-            result[1] = clave_acceso
-            result[2] = "fuera de linea"
-            result[0]= 99            
-            result[3] = "Servidor fuera de linea, intente mas tarde autorizar el documento, aun asi se procedera a grabar el comprobante"
-            result[4] = f"{resultado}"
-            return result
+        # activo, resultado = verificar_enlace(WSDL_AUTORIZACION);
+        # if no activo:
+        #     # print(f"El enlace está INACTIVO o falló. Motivo: {resultado}");
+        #     result[1] = clave_acceso
+        #     result[2] = "fuera de linea"
+        #     result[0]= 99            
+        #     result[3] = "Servidor fuera de linea, intente mas tarde autorizar el documento, aun asi se procedera a grabar el comprobante"
+        #     result[4] = f"{resultado}"
+        #     return result
 
         # 2. Conexión al servicio de Autorización
         cliente = crear_cliente_sri(WSDL_AUTORIZACION)
