@@ -267,7 +267,13 @@ class resumen_existenciasC
         $Total = 0;
 
         $QTipoInv = false;
-        $Cod_Bodega = G_NINGUNO;
+
+        if(!isset($parametros['DCBodega']) && $parametros['DCBodega']=='')
+        {
+            $Cod_Bodega = G_NINGUNO;
+        }else{
+         $Cod_Bodega = $parametros['DCBodega'];
+        }
         Control_Procesos("I", "Proceso Stock de Inventario, del ".$parametros['inicial'].' al '.$parametros['final']);
         Reporte_Resumen_Existencias_SP($parametros['inicial'],$parametros['final'],$Cod_Bodega);
 
@@ -288,10 +294,13 @@ class resumen_existenciasC
         $data =  $this->modelo->Stock($parametros['CheqMonto'],$parametros['TxtMonto']);
 
       }else{
+      
          $Opcion = 1;
          $SQL_Tipo_Busqueda_CP = $this->SQL_Tipo_Busqueda_CP($parametros);
          $data = $this->modelo->Stock_Catalogo_Productos($parametros['CheqGrupo'],$SQL_Tipo_Busqueda_CP);
-    }
+      }
+
+      // print_r($data);die();
 
     foreach ($data as $key => $value) {
         $Debitos +=  number_format($value["Entradas"] * $value["Costo_Unit"], 2,'.','');
