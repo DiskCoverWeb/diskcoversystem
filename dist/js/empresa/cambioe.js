@@ -962,11 +962,16 @@ async function datos_empresa()
             $('#prov').val(empresa2.CProv);
         });
 
-        // console.log(numero);
+        console.log(empresa2);
         if (empresa2.Ciudad!='.') {
            ciudad_l(empresa2.CProv,function(){
                 // $('#ddl_ciudad').val(empresa2.Ciudad);
-                $('#ddl_ciudad option:contains("' + empresa2.Ciudad + '")').prop('selected', true);
+                // $('#ddl_ciudad option:contains("' + empresa2.Ciudad + '")').prop('selected', true);
+                $('#ddl_ciudad option').filter(function () {
+                    return $(this).text().trim() === empresa2.Ciudad.trim();
+                }).prop('selected', true);
+
+
             })
         } else {		
             ciudad_l(empresa2.CProv,function(){
