@@ -296,10 +296,12 @@ class db
 		return $fila;
 
 
-		}else
+		}
+		else
 		{
 		       $conn = $this->SQLServer();
 		       // print_r('expression');die();
+		       // sqlsrv_query($conn, "SET NOCOUNT ON; SET ARITHABORT ON; SET ANSI_NULLS ON; SET QUOTED_IDENTIFIER ON;");
            $stmt = sqlsrv_prepare($conn, $sql, $parametros);
 		       // print_r('expression');die();
            $res = sqlsrv_execute($stmt);
@@ -434,7 +436,7 @@ class db
     	$host = $this->ipconfig;
     }
    	 $server=''.$host.', '.$Puerto;
-		$connectionInfo = array("Database"=>$base, "UID" => $user,"PWD" => $pass,"CharacterSet" => "UTF-8");
+		$connectionInfo = array("Database"=>$base, "UID" => $user,"PWD" => $pass,"CharacterSet" => "UTF-8","Encrypt" => true,"TrustServerCertificate" => true);
 	    $cid = sqlsrv_connect($server, $connectionInfo); //returns false
 		if( $cid === false )
 			{
