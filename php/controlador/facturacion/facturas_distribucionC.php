@@ -1717,8 +1717,15 @@ class facturas_distribucion
 
 
 			$resp = $this->GenerarFacturaUni($parametros);
-			
-			$this->modelo->ActualizarCodigoFactura($parametros['TC'] . "_SERIE_" . $parametros['serie'],$Factura_No);
+
+			if(isset($resp['respuesta'][0]) && $resp['respuesta'][0]==1) 
+			{
+				// print_r($resp);die();	
+				$this->modelo->ActualizarCodigoFactura($parametros['TC'] . "_SERIE_" . $parametros['serie'],$Factura_No);
+			}else{
+				return array('text'=>'no se pudo generar la factura');
+			}
+
 		// }
 
 			// die();
@@ -2318,7 +2325,11 @@ class facturas_distribucion
 
     function buscar_linea($parametros)
 	{
-		$datos = $this->modelo->pedido_seleccionado($parametros,$parametros['id']);
+		$datos = array();
+		if(isset($parametros['id']))
+		{
+			$datos = $this->modelo->pedido_seleccionado($parametros,$parametros['id']);
+		}
 		return $datos;
 		// print_r($datos);die();
 	}

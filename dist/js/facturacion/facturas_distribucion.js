@@ -313,6 +313,7 @@ function recalcular_todo()
 
 function valores_por_defecto(id)
 {
+	if(id=='' || id==null){ id=0;}
 	var parametros =
 	{
 		'id': id,
