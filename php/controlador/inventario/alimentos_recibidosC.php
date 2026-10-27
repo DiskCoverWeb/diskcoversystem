@@ -1077,6 +1077,8 @@ class alimentos_recibidosC
 			$datos[$key]['notificaciones'] = $alerta;
 			
 		}
+
+		// print_r($datos);die();
 		return $datos;
 	}
 
@@ -1094,6 +1096,7 @@ class alimentos_recibidosC
 			if($value['T']=='R' || $value['T']=='I'){$proceso = 'Ingreso';}
 			if($value['T']=='C'){$proceso = 'Clasificacion';}
 			if($value['T']=='N'){$proceso = 'Almacenamiento';}
+			if($value['T']=='N' && $value['Recibo_No']!=0){$proceso = 'Procesado';}
 
 			$noti = $this->modelo->listar_notificaciones($_SESSION['INGRESO']['CodigoU'],'P',false,$value['Envio_No']);
 			$alerta = '';
@@ -1118,6 +1121,8 @@ class alimentos_recibidosC
 		
 		}
 
+		// print_r($datos);die();
+
 		return $datos;
 		// print_r($datos);die();
 	}
@@ -1125,11 +1130,13 @@ class alimentos_recibidosC
 
 	function eliminar_pedido($data)
 	{
+		// print_r($data);die();
 		$id = $data['ID'];
-		$data = $this->modelo-> Trans_correos_by_id($id);
+		$data = $this->modelo->Trans_correos_by_id($id);
+		// print_r($data);die();
 		if(count($data)>0)
 		{
-			$trans = $this->modelo->cargar_motivo_lista(false,false,$data[0]['Envio_No']);
+			$trans = $this->modelo->cargar_motivo_lista_sin_usuario(false,false,$data[0]['Envio_No']);
 			if(count($trans)==0)
 			{			
 				// print_r($trans);die();
@@ -1394,6 +1401,12 @@ class alimentos_recibidosC
                 	if($this->ingresar_trans_kardex_entrada($parametros['txt_codigo'],$num_comprobante)==1)
                 	{
                 		 	// mayorizar_inventario_sp();
+
+                			SetAdoAddNew('Trans_Correos');
+							SetAdoFields('Recibo_No',$num_comprobante);		
+							SetAdoFieldsWhere('ID',$parametros['txt_id']);
+							SetAdoUpdateGeneric();
+
                 			return array('resp'=>1,'com'=>$num_comprobante);
                 		
                 	}else

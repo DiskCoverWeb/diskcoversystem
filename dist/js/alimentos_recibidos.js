@@ -158,10 +158,15 @@ $(document).ready(function () {
               { data: 'proceso' },
               { data: null,
                  render: function(data, type, item) {
-                    return `
-                     <button type="button" title="Imprimir Etiqueta" class="btn-sm btn-warning btn" onclick="imprimir_pedido_pdf('${data.Envio_No}','${data.CodigoP}')"><i class="bx bx-printer m-0"></i></button>
-                    <button type="button" title="Editar Pedido" class="btn-sm btn-primary btn" onclick="editar_pedido('${data.ID}')"><i class="bx bx-pencil m-0"></i></button>
-                    <button type="button" title="Eliminar Pedido" class="btn-sm btn-danger btn" onclick="eliminar_pedido('${data.ID}')"><i class="bx bx-trash m-0"></i></button>`;                    
+                  if(data.Recibo_No==0)
+                  {
+                      return `
+                       <button type="button" title="Imprimir Etiqueta" class="btn-sm btn-warning btn" onclick="imprimir_pedido_pdf('${data.Envio_No}','${data.CodigoP}')"><i class="bx bx-printer m-0"></i></button>
+                      <button type="button" title="Editar Pedido" class="btn-sm btn-primary btn" onclick="editar_pedido('${data.ID}')"><i class="bx bx-pencil m-0"></i></button>
+                      <button type="button" title="Eliminar Pedido" class="btn-sm btn-danger btn" onclick="eliminar_pedido('${data.ID}')"><i class="bx bx-trash m-0"></i></button>`;                    
+                    }else{
+                      return '';
+                    }
                   }
               },
               

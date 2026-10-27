@@ -127,7 +127,7 @@ class alimentos_recibidosM
 
 	function buscar_transCorreos_procesados_all($cod=false,$fecha=false,$fechah=false,$id=false)
 	{
-		$sql = "select DISTINCT TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No,C.Actividad,TC.Llamadas    
+		$sql = "select DISTINCT TC.ID,TC.T,TC.Mensaje,TC.Fecha_P,TC.Fecha,TC.CodigoP,TC.Cod_C,CP.Proceso,TC.TOTAL,TC.Envio_No,C.Cliente,C.CI_RUC,C.Cod_Ejec,TC.Porc_C,TC.Cod_R,CP.Cta_Debe,CP.Cta_Haber,Giro_No,C.Actividad,TC.Llamadas,TC.Recibo_No    
 		from Trans_Correos TC
 		inner join Clientes C on TC.CodigoP = C.Codigo 
 		INNER JOIN Catalogo_Proceso CP ON TC.Cod_C = CP.TP
@@ -685,8 +685,38 @@ class alimentos_recibidosM
 			{
 				$sql.=" AND TK.Orden_No='".$orden."'";
 			}
+
+			// print_r($sql);die();
 		return $this->db->datos($sql);
 	}
+
+	function cargar_motivo_lista_sin_usuario($query=false,$id=false,$orden=false)
+	{		
+		$sql = "SELECT TK.*,C.Cliente,CP.Producto,CP.Unidad 
+			FROM Trans_Kardex TK
+			INNER JOIN Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv 
+			INNER JOIN Clientes C on TK.Codigo_P = C.Codigo
+			WHERE TK.Item = '".$_SESSION['INGRESO']['item']."'
+			AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
+			AND TK.Item = CP.Item
+			AND TK.Periodo = CP.Periodo ";
+			if($query)
+			{
+				$sql.=" AND TK.Codigo_Barra='".$query."'";
+			}
+			if($id)
+			{
+				$sql.=" AND TK.ID='".$id."'";
+			}
+			if($orden)
+			{
+				$sql.=" AND TK.Orden_No='".$orden."'";
+			}
+
+			// print_r($sql);die();
+		return $this->db->datos($sql);
+	}
+
 
 	
 	function placas_auto($tipo)
