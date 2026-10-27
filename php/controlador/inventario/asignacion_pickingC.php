@@ -571,12 +571,21 @@ class asignacion_pickingC
 
 
         // print_r($cant_ing);
+        // print_r("-");
         // print_r($stock);
+        // die();
         
         // print_r($parametros);
         // die();
-        if($cant_ing<=$stock)
+
+        $cant = round((float)$cant_ing, 4);
+        $stock = round((float)$stock, 4);
+
+        // print_r($cant);print_r('-'); print_r($stock);die();
+
+        if(floatval($cant)<= floatval($stock))
         {
+            // print_r('expression');die();
 
             $linea_kardex = $this->modelo->buscar_trans_kardex($parametros['codigoProducto']);
             if(count($linea_kardex)==0)
