@@ -1723,7 +1723,8 @@ class facturas_distribucion
 				// print_r($resp);die();	
 				$this->modelo->ActualizarCodigoFactura($parametros['TC'] . "_SERIE_" . $parametros['serie'],$Factura_No);
 			}else{
-				return array('text'=>'no se pudo generar la factura');
+				$resp['text'] = $resp['respuesta'][3];				 
+				return $resp;
 			}
 
 		// }
