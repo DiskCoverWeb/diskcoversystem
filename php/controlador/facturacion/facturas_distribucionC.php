@@ -1717,14 +1717,11 @@ class facturas_distribucion
 
 
 			$resp = $this->GenerarFacturaUni($parametros);
+			$this->modelo->ActualizarCodigoFactura($parametros['TC'] . "_SERIE_" . $parametros['serie'],$Factura_No);
 
-			if(isset($resp['respuesta'][0]) && $resp['respuesta'][0]==1) 
+			if(!isset($resp['respuesta'][0]) && $resp['respuesta'][0]!=1) 
 			{
-				// print_r($resp);die();	
-				$this->modelo->ActualizarCodigoFactura($parametros['TC'] . "_SERIE_" . $parametros['serie'],$Factura_No);
-			}else{
-				$resp['text'] = $resp['respuesta'][3];				 
-				return $resp;
+				$resp['text'] = $resp['respuesta'][3];	
 			}
 
 		// }
