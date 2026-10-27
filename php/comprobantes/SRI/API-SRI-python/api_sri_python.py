@@ -77,7 +77,7 @@ def guardar_xml_en_carpeta(contenido_xml, carpeta_destino, nombre_archivo):
         return True
 
     except Exception as e:
-        print(f"Error al guardar el XML: {e}")
+        print(f"Error al guardar el XML: {e}", file=sys.stderr)
         return False
 
 
@@ -253,6 +253,7 @@ def enviar_comprobante_firmado(ruta_xml_firmado,ruta_xml_enviado,ruta_xml_rechaz
         result[1] = clave_acceso
         result[2] = estado   
         result[3] = f"Error al comunicar con el servicio de Recepcion del SRI: {str(e)}"
+        result[4] = ""
 
         # print(f"Error al comunicar con el servicio de Recepción del SRI: {e}")
         return result
@@ -318,7 +319,15 @@ def verificar_autorizacion(clave_acceso,WSDL_AUTORIZACION,ruta_xml_autorizado,ru
     <comprobante><![CDATA[{contenido_xml_sin}]]></comprobante>
     <mensajes/>
 </autorizacion>"""
-            guardar_xml_en_carpeta(xml_auto, ruta_xml_autorizado, clave_acceso+".xml")
+            if not guardar_xml_en_carpeta(xml_auto, ruta_xml_autorizado, clave_acceso+".xml"):
+                return {
+                    "0": -5,
+                    "1": clave_acceso,
+                    "2": "ERROR",
+                    "3": "El comprobante fue autorizado por el SRI, pero no se pudo guardar el XML autorizado.",
+                    "4": str(aut.fechaAutorizacion),
+                    "5": aut.ambiente
+                }
             return {
                 "0":1,
                 "1": aut.numeroAutorizacion,

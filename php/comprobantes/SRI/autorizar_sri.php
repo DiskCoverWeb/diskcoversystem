@@ -165,6 +165,14 @@ class autorizacion_sri
 		 	}		 	
 		 }
 				//datos de factura
+
+		 // print_r($cabecera['serie']);
+		 // print_r('-');
+		 // print_r($cabecera['factura']);
+		 // print_r('-');
+		 // print_r($cabecera['tc']);
+
+		 // die();
 	    		$datos_fac = $this->datos_factura($cabecera['serie'],$cabecera['factura'],$cabecera['tc']);
 	    		// print_r($datos_fac);die();
 	    		if(count($datos_fac)==0)
@@ -355,6 +363,9 @@ class autorizacion_sri
 			   		 		{
 			   		 			// print('dd');
 			   		 			$resp_act = $this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion'],$cabecera['Fecha'],$datos_fac[0]['CodigoC']);
+                                if ($resp_act !== 1) {
+                                    return $resp_act;
+                                }
 			   		 			return  $resp;
 			   		 		}
 			   		 		return $resp;
@@ -367,6 +378,9 @@ class autorizacion_sri
 			   		 			if($resp[0]==1)
 			   		 			{
 			   		 				$resp_actu = $this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion'],$cabecera['Fecha'],$datos_fac[0]['CodigoC']);
+                                    if ($resp_actu !== 1) {
+                                        return $resp_actu;
+                                    }
 			   		 			}
 			   		 			return $resp;
 			   		 		}else{
@@ -381,8 +395,12 @@ class autorizacion_sri
 	           	 }
 	           }else
 	           {
-	           	//RETORNA SI FALLA EL GENERAR EL XML o si ya esta en la carpeta de autorizados
-	           	$this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion'],$cabecera['Fecha'],$datos_fac[0]['CodigoC']);
+                if ($xml === 'Documento ya autorizado') {
+                    $resp_actu = $this->actualizar_datos_CE($cabecera['ClaveAcceso'],$cabecera['tc'],$cabecera['serie'],$cabecera['factura'],$cabecera['Entidad'],$cabecera['Autorizacion'],$cabecera['Fecha'],$datos_fac[0]['CodigoC']);
+                    if ($resp_actu !== 1) {
+                        return $resp_actu;
+                    }
+                }
 	           	return $xml;
 	           }
 
@@ -3451,6 +3469,19 @@ function generar_xml_retencion($cabecera,$detalle)
     	   {
     		 $fecha = date("Y-m-d", strtotime(str_replace('/','-',$fecha_emi)));
     	    }
+			$url_autorizado = dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$_SESSION['INGRESO']['item'].'/Autorizados/'.$autorizacion.'.xml';
+			$cadena2 = @file_get_contents($url_autorizado);
+			if($cadena2 === false || $cadena2 === '')
+			{
+				return array(
+					0 => -1,
+					1 => $autorizacion,
+					2 => 'ERROR',
+					3 => 'No se pudo leer el XML autorizado. Verifique que el archivo exista y sea legible.'
+				);
+			}
+			$cadena2 = str_replace('ï»¿', '', $cadena2);
+
 			$con = $this->db->conexion();
 			$sql ="UPDATE Facturas SET Autorizacion='".$autorizacion."',Clave_Acceso='".$autorizacion."' 
 			WHERE Item = '".$_SESSION['INGRESO']['item']."' 
@@ -3512,30 +3543,6 @@ function generar_xml_retencion($cabecera,$detalle)
             
 
 			//creamos trans_documentos
-			//echo $ban1[2];
-			$url_autorizado =dirname(__DIR__).'/entidades/entidad_'.$entidad."/CE".$_SESSION['INGRESO']['item'].'/Autorizados/'.$autorizacion.'.xml';
-
-			$archivo = fopen($url_autorizado,"rb");
-			if( $archivo == false ) 
-			{
-				echo "Error al abrir el archivo";
-			}
-			else
-			{
-				rewind($archivo);   // Volvemos a situar el puntero al principio del archivo
-				$cadena2 = fread($archivo, filesize($url_autorizado));  // Leemos hasta el final del archivo
-				$cadena2 = str_replace('ï»¿', '', $cadena2);
-
-				if( $cadena2 == false )
-					echo "Error al leer el archivo";
-				else
-				{
-					//echo "<p>\$contenido1 es: [".$cadena1."]</p>";
-					//echo "<p>\$contenido2 es: [".$cadena2."]</p>";
-				}
-			}
-			// Cerrar el archivo:
-			fclose($archivo);
 			$sql="INSERT INTO Trans_Documentos
 		    (Item,Periodo,Clave_Acceso,Documento_Autorizado,TD,Serie,Documento,Fecha,X)
 			 VALUES
@@ -3828,6 +3835,7 @@ function Actualizar_factura($CI_RUC,$FacturaNo,$serie)
 		SetAdoFields('Razon_Social',$cliente['Razon_Social']);
 		SetAdoFields('Direccion_RS',$cliente['DireccionC']);
 		SetAdoFields('Telefono_RS',$cliente['TelefonoC']);
+		SetAdoFields('T','P');
 
 		SetAdoFieldsWhere('Serie',$serie);
 		SetAdoFieldsWhere('Factura',$FacturaNo);
