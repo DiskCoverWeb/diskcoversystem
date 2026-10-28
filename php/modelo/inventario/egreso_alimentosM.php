@@ -89,10 +89,13 @@ class egreso_alimentosM
 
 	function buscar_producto_egreso($query=false,$id=false)
 	{
-		$sql = "SELECT TK.*,C.Cliente,CP.Producto,CP.Unidad 
-			FROM Trans_Kardex TK
-			INNER JOIN Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv 
-			INNER JOIN Clientes C on TK.Codigo_P = C.Codigo
+		$sql = "SELECT TK.*,C.Cliente,CP.Producto,CP.Unidad,CPO.Proceso as area,CPO1.Proceso as motivo 
+				FROM Trans_Kardex TK 
+				INNER JOIN Catalogo_Productos CP on TK.Codigo_Inv = CP.Codigo_Inv 
+				INNER JOIN Clientes C on TK.Codigo_P = C.Codigo 
+				INNER JOIN Catalogo_Proceso CPO ON TK.Codigo_Tra = CPO.Cmds AND CPO.Item = TK.Item 
+				INNER JOIN Catalogo_Proceso CPO1 ON TK.Modelo = CPO1.Cmds AND CPO1.Item = TK.Item 
+
 			WHERE TK.Item = '".$_SESSION['INGRESO']['item']."'
 			AND TK.Periodo = '".$_SESSION['INGRESO']['periodo']."'
 			AND TK.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
@@ -192,7 +195,7 @@ class egreso_alimentosM
 				$sql.=" AND TK.Fecha between '".$desde."' aND '".$hasta."'";
 			}
 			$sql.=" GROUP by CC.TC,Orden_No,TK.Fecha,TK.Detalle,procedencia,CPO.Cmds,CPO1.Cmds ";
-			// print_r($sql);die();
+			print_r($sql);die();
 		return $this->db->datos($sql);
 	}
 

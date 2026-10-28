@@ -238,7 +238,12 @@ function validar_ingreso()
 		// data:{parametros:parametros},
 	   dataType:'json',
 		success: function(data)
-		{
+		{			
+			console.log(data);
+
+			$('#ddl_areas').append($('<option>',{value:  data[0].Codigo_Tra, text: data[0].area,selected: true }));
+      $('#ddl_motivo').append($('<option>',{value:  data[0].Modelo, text: data[0].motivo,selected: true }));
+      $('#txt_detalle').val(data[0].Detalle);
 
 			lista_egreso();	 
 			if(data.length > 0)
@@ -283,6 +288,11 @@ function eliminar_egreso(id)
 
 function eliminar_egreso_all()
 {
+
+	$('#ddl_areas').empty();
+  $('#ddl_motivo').empty();
+  $('#txt_detalle').val('');
+
  $.ajax({
 	type: "POST",
    url:   '../controlador/inventario/egreso_alimentosC.php?eliminar_egreso_all=true',
