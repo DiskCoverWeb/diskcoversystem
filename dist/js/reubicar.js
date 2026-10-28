@@ -52,7 +52,7 @@ $('#txt_cod_barras').keydown( function(e) {
              
               { data: 'Codigo_Barra' },
               { data: 'Producto' },
-              { data: 'Entrada',},
+              { data: 'Stock',},
               { data: null,
                  render: function(data, type, item) {
                     // return data.Fecha_DUI

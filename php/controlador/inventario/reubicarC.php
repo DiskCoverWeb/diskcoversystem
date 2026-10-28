@@ -70,14 +70,20 @@ class reubicarC
 
     		$data =  sp_Leer_Codigo_Kardex($value['Codigo_Barra'],date('Y-m-d'),$value['CodBodega'],'');
     		$datos_inv = json_decode($data,true);
+
+    		// print_r($datos_inv);
+    		// print_r($value['CodBodega']);
+
     		$datos_inv['CodBodega'] = $value['CodBodega'];
     		// print_r($datos_inv);
 
     		// print_r($datos_inv);
     		$datos[$key]['Stock'] = 0;    		
     		$datos[$key]['Ruta'] = $rutas_txt;
-    		if($datos_inv['Existe_Codigo']==1)
+    		if(count($datos_inv)>0)
     		{
+    			// print_r('sss');die();
+    			// print_r($datos_inv);die();
     			$stock = $datos_inv['Stock'].' '.$datos_inv['Unidad'];
     			$datos[$key]['Stock'] = $datos_inv['Stock'];
     		}
@@ -86,6 +92,8 @@ class reubicarC
     			$lista[$i] = $datos[$key]; 
     			$i++;
     		}
+
+    		// print_r($lista);die();
     	}
     	// print_r($this->rutas);die();
 // print_r($lista);die();
