@@ -50,7 +50,7 @@ $(document).ready(function () {
                 })
 
 
-                $('#txt_cantitad_ing').val(total_ing);
+                $('#txt_cantitad_ing').val(total_ing.toFixed(4));
 
                  $('#tbl_body tbody').append(`
                     <tr>
