@@ -11,6 +11,18 @@
 var tbl_pedidos_all ;
 var tbl_procesados_all;
 $(document).ready(function () {
+
+
+  document.getElementById('txt_cant').addEventListener('input', function (e) {
+        let valor = this.value;
+        let partes = valor.split('.');
+        
+        // Si existe parte decimal y tiene más de 2 dígitos, la recortamos
+        if (partes.length > 1 && partes[1].length > 2) {
+            this.value = partes[0] + '.' + partes[1].substring(0, 2);
+        }
+    });
+  
     
     preguntas_transporte();
     
@@ -689,7 +701,7 @@ function cambiar_cantidad()
           }
   });
 //	var can = $('#txt_cantidad2').val();
-    $('#txt_cantidad2').val(total);
+    $('#txt_cantidad2').val(total.toFixed(2));
 }
 
 function cerrar_modal_cant()
