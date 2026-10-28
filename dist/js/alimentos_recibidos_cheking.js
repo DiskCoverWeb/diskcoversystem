@@ -974,6 +974,9 @@ function limpiar_nuevo_producto()
  $('#txt_min').val('');
  $('#txt_reg_sanitario').val('');
  $('#txt_cod_barras').val('');
+ $('#txt_serie').val('.');
+ $('#txt_factura').val('.');
+
 }
 
 function contabilizar()
