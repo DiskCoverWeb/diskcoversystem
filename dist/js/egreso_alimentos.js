@@ -102,32 +102,32 @@ enumerateCameras();
 
 
 
-function verificarDatosEnTabla() {
-    const tabla = document.getElementById('tbl_asignados_all');
-    if (!tabla) return false;
+// function verificarDatosEnTabla() {
+//     const tabla = document.getElementById('tbl_asignados_all');
+//     if (!tabla) return false;
     
-    // Contamos cuántas filas hay en el cuerpo de la tabla (tbody)
-    const filas = tabla.querySelectorAll('tbody tr');
-    return filas.length > 0;
-}
+//     // Contamos cuántas filas hay en el cuerpo de la tabla (tbody)
+//     const filas = tabla.querySelectorAll('tbody tr');
+//     return filas.length > 0;
+// }
 
-// 1. CÓDIGO AL CARGAR O RECARGAR LA PÁGINA
-window.addEventListener('DOMContentLoaded', () => {
-    if (verificarDatosEnTabla()) {
-        alert('¡Atención! Hay datos registrados en la tabla.');
-    }
-});
+// // 1. CÓDIGO AL CARGAR O RECARGAR LA PÁGINA
+// window.addEventListener('DOMContentLoaded', () => {
+//     if (verificarDatosEnTabla()) {
+//         alert('¡Atención! Hay datos registrados en la tabla.');
+//     }
+// });
 
-// 2. CÓDIGO AL INTENTAR CAMBIAR DE PÁGINA, CERRAR O RECARGAR
-window.addEventListener('beforeunload', (evento) => {
-    if (verificarDatosEnTabla()) {
-        // Por seguridad, los navegadores modernos ya no permiten 
-        // mostrar un texto personalizado en esta alerta, pero sí 
-        // mostrarán la ventana nativa de advertencia de salida.
-        evento.preventDefault();
-        evento.returnValue = ''; // Estándar obligatorio para navegadores
-    }
-});
+// // 2. CÓDIGO AL INTENTAR CAMBIAR DE PÁGINA, CERRAR O RECARGAR
+// window.addEventListener('beforeunload', (evento) => {
+//     if (verificarDatosEnTabla()) {
+//         // Por seguridad, los navegadores modernos ya no permiten 
+//         // mostrar un texto personalizado en esta alerta, pero sí 
+//         // mostrarán la ventana nativa de advertencia de salida.
+//         evento.preventDefault();
+//         evento.returnValue = ''; // Estándar obligatorio para navegadores
+//     }
+// });
 
 
 
