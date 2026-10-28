@@ -42,6 +42,15 @@ $(document).ready(function () {
               },
               dataSrc: function(json) {
                 $('#txt_cant_total').val(json.cant_total);
+                var total_ing = 0;
+                json.tabla.forEach(function(item,i){
+
+                // console.log(item.Entrada);
+                  total_ing+= parseFloat(item.Entrada)
+                })
+
+
+                $('#txt_cantitad_ing').val(total_ing);
 
                  $('#tbl_body tbody').append(`
                     <tr>
@@ -226,22 +235,30 @@ function pedidosPorQR(codigo){
 
 function guardar()
 {
-  var todos = 1;
-   $('.rbl_conta').each(function() {
-    const checkbox = $(this);
-    const isChecked = checkbox.prop('checked'); 
-    if (!isChecked) {
-        todos = 0;
-    }
-});
+  var cant = parseFloat( $('#txt_cant').val());
+  var cant_ing =  parseFloat( $('#txt_cantitad_ing').val());
+  if(cant==cant_ing)
+  {
+      var todos = 1;
+       $('.rbl_conta').each(function() {
+        const checkbox = $(this);
+        const isChecked = checkbox.prop('checked'); 
+        if (!isChecked) {
+            todos = 0;
+        }
+    });
 
-  if(todos==0)
-  {
-      Swal.fire('Asegurese de que todos los productos esten seleccionados','','info');
-      return false;
-  }else
-  {
-      contabilizar();
+      if(todos==0)
+      {
+          Swal.fire('Asegurese de que todos los productos esten seleccionados','','info');
+          return false;
+      }else
+      {
+          contabilizar();
+      }
+  }else{
+    Swal.fire("La cantidad clasificada no coincide con el total de la recepcion","","info")
+    return false;
   }
 }
 

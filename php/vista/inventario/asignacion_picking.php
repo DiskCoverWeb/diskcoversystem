@@ -248,6 +248,7 @@
 				<div class="col-sm-2">
 					<b>Cantidad</b>
 					<input type="number" name="cant" id="cant" class="form-control form-control-sm">
+					<input type="hidden" name="txt_cantidad_ingresada" id="txt_cantidad_ingresada" class="form-control form-control-sm">
 				</div>
 				<div class="col-sm-2">
 					<input type="hidden" name="txt_tipoCompra" id="txt_tipoCompra" class="form-control form-control-sm">

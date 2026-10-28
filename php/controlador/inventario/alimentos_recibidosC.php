@@ -1187,6 +1187,22 @@ class alimentos_recibidosC
 		$lineas_kardex = $this->modelo->cargar_pedidos_trans($parametros['txt_codigo_edi']);
 		$lineas_pedidos = $this->modelo->cargar_pedidos_trans_pedidos($parametros['txt_codigo_edi']);
 
+		$pedido = $this->modelo->Trans_correos($new_cod);
+		if(count($pedido)>0)
+		{
+			$usuario_bene = $pedido[0]['CodigoU'];
+			$usuario_modi = $_SESSION['INGRESO']['CodigoU'];
+			if($usuario_bene != $usuario_modi)
+			{
+				return -2;
+			}
+		}
+
+		// print_r($pedido);
+		// print_r($codigo);
+		// print_r($lineas_kardex);
+		// print_r($lineas_pedidos);die();
+
 		foreach ($lineas_kardex as $key => $value) {
 
 			$cod_barras = str_replace($parametros['txt_codigo_edi'],$new_cod,$value['Codigo_Barra']);

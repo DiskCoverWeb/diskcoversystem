@@ -110,6 +110,8 @@
 							<label for="txt_cant" class="col-sm-6 px-0 col-form-label text-end"><b>CANTIDAD:</b></label>
 							<div class="col-sm-6">
 								<input type="number" class="form-control form-control-sm" id="txt_cant" name="txt_cant" readonly>	
+								<input type="hidden" class="form-control form-control-sm" id="txt_cantitad_ing" name="txt_cantitad_ing" readonly>	
+
 							</div>
 						</div>
 						<div class="row">

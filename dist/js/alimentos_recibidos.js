@@ -832,6 +832,8 @@ function guardar_edicion()
                           cargar_datos_procesados();
                           cargar_datos();
                   });
+              }else if(data==-2){
+                Swal.fire("no tiene permiso para poder editar esta recepcion","usted no es el usuario que creo este ingreso","info")
               }
               
               $('#modal_editar_pedido').modal('hide');		
