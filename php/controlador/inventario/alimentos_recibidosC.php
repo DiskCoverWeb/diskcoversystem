@@ -1092,10 +1092,10 @@ class alimentos_recibidosC
 		$tr= '';
 		foreach ($datos as $key => $value) {
 			$proceso = 'Clasificacion';
-			if($value['T']=='P'){$proceso = 'Checking';}
+			if($value['T']=='P'){$proceso = 'Clasificacion';}
 			if($value['T']=='R' || $value['T']=='I'){$proceso = 'Ingreso';}
 			if($value['T']=='C'){$proceso = ' Almacenamiento';}
-			if($value['T']=='N'){$proceso = 'Clasificacion';}
+			if($value['T']=='N'){$proceso = 'Checking';}
 			if($value['T']=='N' && $value['Recibo_No']!=0){$proceso = 'Procesado';}
 
 			$noti = $this->modelo->listar_notificaciones($_SESSION['INGRESO']['CodigoU'],'P',false,$value['Envio_No']);
