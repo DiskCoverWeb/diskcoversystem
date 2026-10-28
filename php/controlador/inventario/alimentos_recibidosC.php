@@ -1285,8 +1285,8 @@ class alimentos_recibidosC
 
 		//actualizar numero de factura y serie
 
-		if($parametros['txt_serie'] == ''){$parametros['txt_serie'] = '.';}
-		if($parametros['txt_factura'] == ''){$parametros['txt_factura'] = '.';}
+		if(isset($parametros['txt_serie']) && $parametros['txt_serie'] == ''){$parametros['txt_serie'] = '.';}
+		if(isset($parametros['txt_factura']) && $parametros['txt_factura'] == ''){$parametros['txt_factura'] = '.';}
 		
 		SetAdoAddNew('Trans_Kardex');
 		SetAdoFields('Serie',$parametros['txt_serie']);	
@@ -1315,13 +1315,14 @@ class alimentos_recibidosC
                     'sub'=> $sub[0]['Codigo'], //Codigo se trae catalogo subcuenta o ruc del proveedor en caso de que se este ingresando
                     'sub2'=>$cuenta[0]['Cuenta'],//nombre del beneficiario
                     'fecha_sc'=>$value['Fecha_Fab']->format('Y-m-d'), //fecha 
-                    'fac2'=>0,
+                    'fac2'=>$parametros['txt_factura'],
                     'mes'=> 0,
                     'valorn'=> round($value['total'],2),//valor de sub cuenta 
                     'moneda'=> 1, /// moneda 1
                     'Trans'=>$sub[0]['Cliente'],//detalle que se trae del asiento
                     'T_N'=> '99',
-                    't'=> $cuenta[0]['TC'],                        
+                    't'=> $cuenta[0]['TC'],
+                    'serie'=>$parametros['txt_serie'],                 
                   );
 
                 $this->ing_des->generar_asientos_SC($dataSub);

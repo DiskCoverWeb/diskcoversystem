@@ -198,8 +198,11 @@
 		<div class="row mb-2" id="pnl_factura" style="display:none;">
 			
 			<div class="col-sm-2">
-				<label for="inputEmail3"><b>Gavetas</b></label>
-				<input type="text" class="form-control form-control-sm" id="txt_serie" name="txt_serie">	
+				<!-- <label for="inputEmail3"><b>Gavetas</b></label> -->
+				<!-- <input type="text" class="form-control form-control-sm" id="txt_gavetas" name="txt_gavetas">	 -->
+
+				<br>
+				<label for="inputEmail3"><b>Numero de factura compra</b></label>
 			</div>			
 			<div class="col-sm-2">
 				<label><b>Serie</b></label>
