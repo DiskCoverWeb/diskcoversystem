@@ -534,7 +534,7 @@ function Leer_Codigo_Inv_SP($BuscarCodigo,$FechaInventario,$CodBodega,$CodMarca,
 
 }
 
-function sp_Leer_Codigo_Kardex($BuscarCodigo,$FechaInventario,$CodBodega,$CodMarca)
+function sp_Leer_Codigo_Kardex($BuscarCodigo,$FechaInventario,$CodBodega,$CodMarca='')
 {
 
   //devuelve datos de sp
@@ -12023,6 +12023,8 @@ function Reporte_Resumen_Existencias_SP($MBFechaInicial, $MBFechaFinal, $CodigoB
 
   if($FechaIniSP<=$FechaFinSP){
     $conn = new db();
+   
+    
     $parametros = array(
       array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
       array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
