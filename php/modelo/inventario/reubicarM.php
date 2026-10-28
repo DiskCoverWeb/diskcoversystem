@@ -40,6 +40,7 @@ class reubicarM
                 $sql.=" AND CP.Codigo_Inv = '".$grupo."' ";
 
             }
+            $sql.=" ORDER BY TK.ID DESC";
 
             // print_r($sql);die();
         return $this->db->datos($sql);
@@ -64,15 +65,16 @@ class reubicarM
                 WHERE Item = '".$_SESSION['INGRESO']['item']."'
                 AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
                 AND Codigo_Barra = '".$Codigo_Barra."'
-                GROUP BY CodBodega, Codigo_Barra, Codigo_Inv";
+                GROUP BY CodBodega, Codigo_Barra, Codigo_Inv
+                 HAVING SUM(Entrada) - SUM(Salida) <> 0;";
                 // print_r($sql);die();
 
         return $this->db->datos($sql);
     }
 
-    function Leer_Codigo_Inv_SP($codigo)
+    function Leer_Codigo_Inv_SP($codigo,$codBodega)
     {
-        return Leer_Codigo_Inv($codigo,date('Y-m-d'));
+        return sp_Leer_Codigo_Kardex($codigo,date('Y-m-d'),$codBodega);
     }
 
 } 

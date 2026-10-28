@@ -70,6 +70,8 @@ class reubicarC
 
     		$data =  sp_Leer_Codigo_Kardex($value['Codigo_Barra'],date('Y-m-d'),$value['CodBodega'],'');
     		$datos_inv = json_decode($data,true);
+    		$datos_inv['CodBodega'] = $value['CodBodega'];
+    		// print_r($datos_inv);
 
     		// print_r($datos_inv);
     		$datos[$key]['Stock'] = 0;    		
@@ -119,9 +121,10 @@ class reubicarC
 		// $Codigo_barra = $this->
 		$data_ubi = $this->modelo->lista_stock_ubicado(false,$parametros['codBarra']);
 		$data = $this->modelo->kardexAReubicar($parametros['codBarra']);
-		$inv = $this->modelo->Leer_Codigo_Inv_SP($data[0]['Codigo_Inv']);
+		$inv = $this->modelo->Leer_Codigo_Inv_SP($data[0]['Codigo_Inv'],$data_ubi[0]['CodBodega']);
 		$data[0]['newBodega'] = $parametros['newBodega'];
-		$data_inv = $inv['datos'];
+		$data_inv = json_decode($inv,true);
+		// print_r($parametros['newBodega'].'-'.$data_ubi[0]['CodBodega']);die();
 
 		if(trim($parametros['newBodega'])== trim($data_ubi[0]['CodBodega']))
 		{
@@ -129,7 +132,8 @@ class reubicarC
 		}
 
 		// print_r($data_ubi);
-		// print_r($data);die();
+		// print_r($data);
+		// print_r($data_inv);die();
 
 
 		// die();
@@ -179,6 +183,9 @@ class reubicarC
 			$haber+=$value['HABER'];
 		}
 		$fecha = date('Y-m-d');
+
+		// print_r($debe.'-'.$haber);die();
+
 		if(strval($debe)==strval($haber))
 		{
 			if($debe !=0 && $haber!=0)
