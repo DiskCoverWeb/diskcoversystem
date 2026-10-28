@@ -195,7 +195,7 @@ class egreso_alimentosM
 				$sql.=" AND TK.Fecha between '".$desde."' aND '".$hasta."'";
 			}
 			$sql.=" GROUP by CC.TC,Orden_No,TK.Fecha,TK.Detalle,procedencia,CPO.Cmds,CPO1.Cmds ";
-			print_r($sql);die();
+			// print_r($sql);die();
 		return $this->db->datos($sql);
 	}
 
