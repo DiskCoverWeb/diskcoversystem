@@ -239,15 +239,16 @@ function validar_ingreso()
 	   dataType:'json',
 		success: function(data)
 		{			
-			console.log(data);
+
+			lista_egreso();	 
+			if(data.length > 0)
+			{ 
 
 			$('#ddl_areas').append($('<option>',{value:  data[0].Codigo_Tra, text: data[0].area,selected: true }));
       $('#ddl_motivo').append($('<option>',{value:  data[0].Modelo, text: data[0].motivo,selected: true }));
       $('#txt_detalle').val(data[0].Detalle);
 
-			lista_egreso();	 
-			if(data.length > 0)
-			{ 
+
 				Swal.fire({
 					title: 'Datos encontrados?',
 					text: "Se encontraron datos sin guardar desea cargarlos?",
