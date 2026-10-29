@@ -24,7 +24,7 @@ class enviar_emails
 
 
   // funcion de envios enviando datos por correo (funciona)
-  function enviar_email($archivos = false, $to_correo = "", $cuerpo_correo = "", $titulo_correo = "", $HTML = false)
+  function enviar_email($archivos = false, $to_correo = "", $cuerpo_correo = ".", $titulo_correo = "", $HTML = false)
   {
 
     // print_r('ingresa');die();
@@ -72,6 +72,7 @@ class enviar_emails
           $mail->SMTPAuth = true; //Enable SMTP authentication
           $mail->Username = $empresaGeneral[0]['Email_Conexion']; //SMTP username
           $mail->Password = $empresaGeneral[0]['Email_Clave'];
+          // print_r($mail);die();
           if ($server_externo == 0) //SMTP password
           {
             if ($empresaGeneral[0]['smtp_SSL'] == 1) {
