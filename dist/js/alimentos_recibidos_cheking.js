@@ -153,7 +153,7 @@ console.log(data);
           $('#txt_ci').val(data.CI_RUC); // save selected id to input
           $('#txt_donante').val(data.Cliente); // save selected id to input
           $('#txt_tipo').val(data.Actividad); // save selected id to input
-          $('#txt_cant').val(data.TOTAL.toFixed(2)); // save selected id to input
+          $('#txt_cant').val(parseFloat(data.TOTAL).toFixed(2)); // save selected id to input
           $('#txt_comentario').val(data.Mensaje); // save selected id to input
           $('#txt_comentario_clas').val(data.Llamadas); // save selected id to input
           $('#txt_ejec').val(data.Cod_Ejec); // save selected id to input
