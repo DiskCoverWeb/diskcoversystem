@@ -115,7 +115,7 @@
                     </div>
                     <div class="col-lg-12 col-md-6 col-sm-12 mt-1">
                     	<div class="input-group input-group-sm"> 
-	                        <textarea class="form-control form-control-sm" placeholder="comentario general de clasificación..." id="comeGeneAsig" name="comeGeneAsig" rows="1" style="resize: none;"></textarea>                           
+	                        <textarea class="form-control form-control-sm" placeholder="comentario general de asignacion..." id="comeGeneAsig" name="comeGeneAsig" rows="1" style="resize: none;"></textarea>                           
 	                        <button type="button" class="btn btn-success btn-sm btn-block"><i class="fa fa-save"></i>
 	                        </button>
                         </div>                         
