@@ -176,8 +176,8 @@ function Consultar_Tipo_Kardex(EsKardexIndividual, porQR=false){//revisada
         { data: null,
           render: function(data, type, item) {
             botons = `<button type="button" class="btn btn-sm btn-warning pe-0" onclick="Cambiar_Articulo('${data.Producto}', '${data.ID}', '${data.TC}', '${data.Serie}', '${data.Factura}', '${data.Codigo_Inv}');"><i class="bx bx-refresh"></i></button>
-                      <button type="button" class="btn btn-sm btn-info pe-0" onclick="Cambia_Codigo_de_Barra('${data.Producto}', '${data.ID}', '${data.TC}', '${data.Serie}', '${data.Factura}', '${data.Codigo_Inv}');"><i class="fa fa-barcode"></i></button>
-                      <button type="button" class="btn btn-sm btn-success pe-0" onclick="Cambia_la_Serie('${data.Producto}', '${data.ID}', '${data.TC}', '${data.Serie}', '${data.Factura}', '${data.Codigo_Inv}');"><i class="fa fa-retweet"></i></button>
+                      <button type="button" class="btn btn-sm btn-info pe-0" onclick="Cambia_Codigo_de_Barra('${data.Producto}', '${data.ID}', '${data.TC}', '${data.Serie}', '${data.Factura}', '${data.Codigo_Inv}');"><i class="bx bx-barcode"></i></button>
+                      <button type="button" class="btn btn-sm btn-success pe-0" onclick="Cambia_la_Serie('${data.Producto}', '${data.ID}', '${data.TC}', '${data.Serie}', '${data.Factura}', '${data.Codigo_Inv}');"><i class="bx bx-retweet"></i></button>
                       <button type="button" class="btn btn-sm btn-danger pe-0" onclick="Imprime_Codigos_de_Barra(this);"><i class="bx bx-printer"></i></button>`;
 
             return botons;                    

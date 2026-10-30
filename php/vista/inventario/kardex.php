@@ -28,8 +28,10 @@
 			<button type="button" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Kardex por Codigo QR" id="Kardex_Total_QR" onclick="Consultar_Tipo_Kardex(true, true);">
 				<img src="../../img/png/qr_code.png">
 			</button>
-			<button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Eliminar comprobantes en cero del rango de fechas" id="Eliminar_Kardex_Cero" onclick="Eliminar_Kardex_Cero();">
-				<i class="bx bx-trash"></i>
+			<button type="button" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Eliminar comprobantes en cero del rango de fechas" id="Eliminar_Kardex_Cero" onclick="Eliminar_Kardex_Cero();">
+
+        <img src="../../img/png/eliminar.png">
+				<!-- <i class="bx bx-trash"></i> -->
 			</button>
 			<button type="button" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Descargar PDF Kardex de un Producto" id="Imprimir_Kardex" onclick="generarPDF();">
 				<img src="../../img/png/pdf.png">
