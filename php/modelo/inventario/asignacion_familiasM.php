@@ -163,7 +163,8 @@ class asignacion_familiasM
     {
         $sql = "SELECT ".Full_Fields('Clientes')."
               FROM Clientes
-              WHERE Grupo = '".$grupo."'";
+              WHERE CodigoA = '87.02'
+              AND Grupo = '".$grupo."'";
 
               // print_r($sql);die();
         return $this->db->datos($sql);
