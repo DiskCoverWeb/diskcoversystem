@@ -262,9 +262,14 @@ function excel_generico($titulo,$datos=false,$url=false)
 							$sheet->setCellValue($let.''.$num, $value1);
 
 							// Aplicar formato numérico con 2 decimales
+							// $sheet->getStyle($let.''.$num)
+							// 	->getNumberFormat()
+							// 	->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
+
 							$sheet->getStyle($let.''.$num)
-								->getNumberFormat()
-								->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
+								->getNumberFormat('0.0000');
+								// ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
+
 						} else {
 							$sheet->setCellValueExplicit($let.''.$num, $value1, DataType::TYPE_STRING);
 						}
