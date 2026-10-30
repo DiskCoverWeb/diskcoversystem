@@ -10,7 +10,7 @@ require_once(dirname(__DIR__,3).'/lib/fpdf/generar_codigo_barras.php');
 
 $controlador = new kardexC();
 if(isset($_GET["generarExcelKardex"])){
-    $controlador->CargaInicial($_GET);
+    // $controlador->CargaInicial($_GET);
     echo json_decode($controlador->generarExcelKardex($_GET));
     exit();
 }else
@@ -180,10 +180,12 @@ class kardexC
     if ($GrupoInv == "") {
         $GrupoInv = "*";
     }
-  
+
+    // print_r('expression');die();  
     
     $datos = $this->modelo->Consultar_Tipo_De_Kardex($Codigo, $Codigo1, $FechaIni, $FechaFin, $EsKardexIndividual, $GrupoInv, $ModoConsulta);
-    $AdoKardex = $datos['data'];
+    $AdoKardex = $datos; 
+      // $datos['data'];
 
     if ($EsKardexIndividual) {
       if (count($AdoKardex) > 0) {
@@ -207,7 +209,7 @@ class kardexC
     }
     //print_r($sSQL);die();
     $DGKardex = $datos;
-		return array('data' => $DGKardex['data'], 'LabelExistencia'=> $LabelExitencia);
+		return array('data' => $DGKardex, 'LabelExistencia'=> $LabelExitencia);
 	}
 
 	function Consultar_Kardex($parametros){
@@ -567,7 +569,7 @@ class kardexC
             $Codigo1 = ".";
         }
 
-        $this->modelo->CargaInicial($FechaIni, $FechaFin);
+        // $this->modelo->CargaInicial($FechaIni, $FechaFin);
     }
 
 }
