@@ -80,7 +80,7 @@ function logo_ruta()
 	  return $src;
 }
 
-function excel_generico($titulo,$datos=false,$url=false)
+function excel_generico($titulo,$datos=false,$url=false,$decimales=false)
 {
 	//diskcover_002/TEMP/EMPRESA_;
 	if(!$url){
@@ -261,13 +261,22 @@ function excel_generico($titulo,$datos=false,$url=false)
 						if (isset($etiquetas[$key1]) && (strpos($etiquetas[$key1], 'codigo') === false  && strpos($etiquetas[$key1], 'cta') === false) && (strpos($value1, '.')) !== false ){
 							$sheet->setCellValue($let.''.$num, $value1);
 
-							// Aplicar formato numérico con 2 decimales
-							// $sheet->getStyle($let.''.$num)
-							// 	->getNumberFormat()
-							// 	->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
+							if($decimales)
+							{
+								$numdec = str_repeat('0',$decimales);
+								$formato = '0.'.$numdec;
+								// print_r($formato);die();
+								$sheet->getStyle($let.''.$num)
+								->getNumberFormat($formato);						
 
+							}else{
+								// Aplicar formato numérico con 2 decimales
 							$sheet->getStyle($let.''.$num)
-								->getNumberFormat('0.0000');
+								->getNumberFormat()
+								->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
+							}
+
+							
 								// ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
 
 						} else {
