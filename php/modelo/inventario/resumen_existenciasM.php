@@ -219,14 +219,14 @@ class resumen_existenciasM
         }
 		$sql = "SELECT Codigo_Barra, 
        	SUM(Entrada) As Entradas, SUM(Salida) As Salidas, 
-       	SUM(Entrada-Salida) As Stock_QR, AVG(Valor_Unitario) As Valor_Unit, 
+       	(SUM(Entrada)-SUM(Salida)) As Stock_QR, AVG(Valor_Unitario) As Valor_Unit, 
        	((SUM(Entrada)-SUM(Salida)) * AVG(Valor_Unitario)) As Total_Inventario 
        	FROM Trans_Kardex 
        	WHERE Item = '" . $_SESSION['INGRESO']['item'] . "' 
        	AND Periodo = '".$_SESSION['INGRESO']['periodo']."' 
        	AND Fecha BETWEEN '".$FechaIni."' and '".$FechaFin."'
        	GROUP BY Codigo_Barra 
-       	HAVING SUM(Entrada-Salida) <> 0 
+       	HAVING (SUM(Entrada)-SUM(Salida)) <> 0 
        	ORDER BY Codigo_Barra ";
 
 	    return $this->db->datos($sql);
