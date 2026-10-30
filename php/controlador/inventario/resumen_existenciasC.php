@@ -611,7 +611,12 @@ class resumen_existenciasC
             foreach ($head as $key2 => $value2) {
                 if(!is_object($value[$value2]))
                 {
-                    array_push($body, $value[$value2]);
+                    if(!is_numeric($value[$value2]))
+                    {
+                        array_push($body, $value[$value2]);
+                    }else{
+                        array_push($body, number_format($value[$value2],2,'.',''));
+                    }
                 }else{
                 array_push($body, $value[$value2]->format('Y-m-d'));
                 }
