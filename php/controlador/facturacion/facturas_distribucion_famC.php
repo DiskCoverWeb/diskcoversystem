@@ -967,8 +967,10 @@ class facturas_distribucion_fam
 
 	function finalizarFactura($parametros)
 	{
+		// print_r($parametros);die()
 		SetAdoAddNew("Detalle_Factura");
 		SetAdoFields("T",'N');
+		SetAdoFieldsWhere('T','KF');
 		SetAdoFieldsWhere('Orden_No',$parametros['orden']);
 		return  SetAdoUpdateGeneric();
 		    

@@ -569,7 +569,7 @@
 		 Swal.fire({
               title: 'Esta seguro?',
               text: "Esta usted seguro de finalizar todo el proceso de facturacion!",
-              type: 'warning',
+              icon: 'warning',
               showCancelButton: true,
               confirmButtonColor: '#3085d6',
               cancelButtonColor: '#d33',
