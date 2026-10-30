@@ -6141,7 +6141,7 @@ function LeerCta($CodigoCta ) //optimizado
 function costo_venta($codigo_inv,$codigoBarras=false,$Cmds=false)  // optimizado
   {
     $conn = new db();
-    $sql = "SELECT  SUM(Entrada-Salida) as 'Existencia' 
+    $sql = "SELECT  (SUM(Entrada)-SUM(Salida)) as 'Existencia' 
     FROM Trans_Kardex
     WHERE Fecha <= '".date('Y-m-d')."'
     AND Codigo_Inv = '".$codigo_inv."'
