@@ -615,7 +615,7 @@ class resumen_existenciasC
                     {
                         array_push($body, $value[$value2]);
                     }else{
-                        array_push($body, number_format($value[$value2],2,'.',''));
+                        array_push($body, number_format($value[$value2],4,'.',''));
                     }
                 }else{
                 array_push($body, $value[$value2]->format('Y-m-d'));
