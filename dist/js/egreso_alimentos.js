@@ -34,7 +34,7 @@ $(document).ready(function () {
   areas();  
   motivo_egreso()	
   notificaciones();
-enumerateCameras();
+	enumerateCameras();
 
   tbl_asignados_all = $('#tbl_asignados_all').DataTable({
 		searching: false,
@@ -810,13 +810,14 @@ function cerrarCamaraFoto()
 }
 
 function enumerateCameras() {
+	console.log('lista camar')
 	var op ='';
     navigator.mediaDevices.enumerateDevices()
         .then(devices => {
             const cameras = devices.filter(device => device.kind === 'videoinput');
            
             cameras.forEach((camera, index) => {
-            	// console.log(camera.deviceId);
+            	console.log(camera);
                 op+='<option value="'+camera.deviceId+'">Camara '+(index+1)+'</option>'
             });
             // console.log(cameras);
