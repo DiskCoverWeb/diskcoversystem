@@ -36,6 +36,8 @@ $(document).ready(function () {
   notificaciones();
 	enumerateCameras();
 
+	navigator.permissions.query({ name: 'camera' }).then(status => console.log(status.state));
+
   tbl_asignados_all = $('#tbl_asignados_all').DataTable({
 		searching: false,
 		responsive: true,
