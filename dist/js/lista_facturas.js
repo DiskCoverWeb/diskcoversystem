@@ -296,64 +296,105 @@ $(document).ready(function()
       dataType: 'json',
        success:  function (data) {       
 
-      setTimeout(()=>{
-        $('#myModal_espera').modal('hide');
-      }, 500)
-      console.log(data);
-      if(data[0]==1)
-      { 
-        Swal.fire({
-          icon:'success',
-          title: 'Factura Procesada y Autorizada',
-          confirmButtonText: 'Ok!',
-          allowOutsideClick: false,
-        }).then(function(){
+      setTimeout(()=>{   $('#myModal_espera').modal('hide');   }, 500)
 
-            nombre_pdf = [data['pdf']+'.pdf'];
-            clave_Acceso = [data[1]+'.xml'];
-            enviar_email_comprobantes(nombre_pdf,clave_Acceso,email);
+      console.log(data)
 
-        })
-      }else if(data[0]==-1)
+      if(data.respuesta==-1)
       {
-        console.log(data.text);
-        if(data[0]==2 || data.text==null)
-        {
+          //entra aqui cuando falla firmar o algo con xml
+          Swal.fire("Ocurrio un problema",data.Factura[3],"info")
 
-          Swal.fire('XML devuleto','XML DEVUELTO','error').then(function(){ 
+      }else if(data.respuesta==1)
+      {
+
+        var respFactura = data.Factura[0];
+
+        switch(respFactura)
+        {
+          case 1:
+             Swal.fire({
+                icon:'success',
+                title: 'Factura Procesada y Autorizada',
+                confirmButtonText: 'Ok!',
+                allowOutsideClick: false,
+              }).then(function(){
+
+                nombre_pdf = [data.pdf+'.pdf'];
+                clave_Acceso = [data.clave+'.xml'];
+                enviar_email_comprobantes(nombre_pdf,clave_Acceso,email);
+                tbl_facturas_all.ajax.reload(null, false);
+
+              })
+           break;
+          case -1:
+            Swal.fire('XML devuleto','XML DEVUELTO','error').then(function(){ 
             // var url=  '../../TEMP/'+data.pdf+'.pdf';    window.open(url, '_blank');             
-          }); 
-            tipo_error_sri(data[1]);
-          }else
-          {
-            var msj = data.text[3];
-            Swal.fire({
-             icon: 'error',
-             title: 'XML DEVUELTO',
-             html: `<div style="width: 100%; color:black;font-weight: 400;font-size: 1.525em;">${msj}</div>`
-           }).then(function (){
-              tipo_error_sri(data[1]);
-           });
-
-          }
-      }else if(data[0]==2)
-      {
-        tipo_error_comprobante(clave)
-        Swal.fire('XML devuelto','','error'); 
-        tipo_error_sri(data.clave);
-      }
-      else if(data[0]==4)
-      {
-        Swal.fire('SRI intermitente intente mas tarde','','info');  
-      }else
-      {
-        if(data==-1)
-        {
-           Swal.fire('Revise CI_RUC de factura en base','Cliente no encontrado','info');
-         }else{
-          Swal.fire('XML devuelto por:'+data.text[3],'','error');  
+            }); 
+            tipo_error_sri(data.clave);
+            break;
         }
+
+      }else{
+        Swal.fire("Ocurrio un error inesperado, por favor contacte a soporte.",'','info');
       }
+
+
+      // console.log(data);
+      // if(data[0]==1)
+      // { 
+      //   Swal.fire({
+      //     icon:'success',
+      //     title: 'Factura Procesada y Autorizada',
+      //     confirmButtonText: 'Ok!',
+      //     allowOutsideClick: false,
+      //   }).then(function(){
+
+      //       nombre_pdf = [data['pdf']+'.pdf'];
+      //       clave_Acceso = [data[1]+'.xml'];
+      //       enviar_email_comprobantes(nombre_pdf,clave_Acceso,email);
+
+      //   })
+      // }else if(data[0]==-1)
+      // {
+      //   console.log(data.text);
+      //   if(data[0]==2 || data.text==null)
+      //   {
+
+      //     Swal.fire('XML devuleto','XML DEVUELTO','error').then(function(){ 
+      //       // var url=  '../../TEMP/'+data.pdf+'.pdf';    window.open(url, '_blank');             
+      //     }); 
+      //       tipo_error_sri(data[1]);
+      //     }else
+      //     {
+      //       var msj = data.text[3];
+      //       Swal.fire({
+      //        icon: 'error',
+      //        title: 'XML DEVUELTO',
+      //        html: `<div style="width: 100%; color:black;font-weight: 400;font-size: 1.525em;">${msj}</div>`
+      //      }).then(function (){
+      //         tipo_error_sri(data[1]);
+      //      });
+
+      //     }
+      // }else if(data[0]==2)
+      // {
+      //   tipo_error_comprobante(clave)
+      //   Swal.fire('XML devuelto','','error'); 
+      //   tipo_error_sri(data.clave);
+      // }
+      // else if(data[0]==4)
+      // {
+      //   Swal.fire('SRI intermitente intente mas tarde','','info');  
+      // }else
+      // {
+      //   if(data==-1)
+      //   {
+      //      Swal.fire('Revise CI_RUC de factura en base','Cliente no encontrado','info');
+      //    }else{
+      //     Swal.fire('XML devuelto por:'+data.text[3],'','error');  
+      //   }
+      // }
 
 
       },
