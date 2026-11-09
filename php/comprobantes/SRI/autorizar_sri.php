@@ -3361,7 +3361,7 @@ function generar_xml_retencion($cabecera,$detalle)
 
     	$command = "python ".$enviar_sri." 1 ".$clave_acceso." ".$ruta_firmados." ".$ruta_enviados." ".$ruta_rechazados." ".$url_recepcion; 
 
-    	// print_r($command);die();
+    	print_r($command);die();
     	$output = shell_exec($command);
     	try {
     		if($output!=null && $output!='')
