@@ -1100,10 +1100,12 @@ class punto_ventaC
 			$linea = str_replace('ns2:', '', $linea);
 			$xml = simplexml_load_string($linea);
 
-			$codigo = $xml->respuestaSolicitud->comprobantes->comprobante->mensajes->mensaje->identificador;
-			$mensaje = $xml->respuestaSolicitud->comprobantes->comprobante->mensajes->mensaje->mensaje;
-			$adicional = $xml->respuestaSolicitud->comprobantes->comprobante->mensajes->mensaje->informacionAdicional;
-			$estado = $xml->respuestaSolicitud->estado;
+			// print_r($xml);die();
+
+			$codigo = $xml->comprobantes->comprobante->mensajes->mensaje->identificador;
+			$mensaje = $xml->comprobantes->comprobante->mensajes->mensaje->mensaje;
+			$adicional = $xml->comprobantes->comprobante->mensajes->mensaje->informacionAdicional;
+			$estado = $xml->estado;
 			$fecha = '';
 			// print_r($mensaje);die();
 			return array('estado' => $estado, 'codigo' => $codigo, 'mensaje' => $mensaje, 'adicional' => $adicional, 'fecha' => $fecha);

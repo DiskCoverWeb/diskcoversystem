@@ -865,7 +865,7 @@ class lista_facturasC
 		$imp = '';
 		if (isset($resp[0]) && $resp[0] == 1) {
 			$resp['pdf'] = $imp;
-			return $resp;
+			return array('respuesta' => 1, 'pdf' => $imp, 'text' => $resp, 'clave' => $clave,'Factura'=>$resp);
 		} else {
 			try {
 				if (json_encode($resp) == false) { //si retorna false puede ser por la codificación debido a caracteres especiales, como tildes.
@@ -873,7 +873,7 @@ class lista_facturasC
 				}
 			} catch (Exception $e) {
 			}
-			return array('respuesta' => -1, 'pdf' => $imp, 'text' => $resp, 'clave' => $clave);
+			return array('respuesta' => -1, 'pdf' => $imp, 'text' => $resp, 'clave' => $clave,'Factura'=>$resp);
 		}
 
 		// return $res;
