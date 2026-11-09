@@ -1,29 +1,29 @@
 import sys
 import os
-import base64
-import tempfile
-from zeep import Client
-from zeep.transports import Transport
 import json
-import re
+import tempfile
+import getpass  # <-- NUEVO: Para obtener el usuario actual
+from zeep import Client
+from zeep.cache import SqliteCache
+from zeep.transports import Transport
 from lxml import etree
-
 import requests
 from requests.exceptions import RequestException
 
 SRI_WSDL_TIMEOUT = 15
-SRI_OPERATION_TIMEOUT = 0
+SRI_OPERATION_TIMEOUT = 20
+SRI_WSDL_CACHE_TTL = 86400
 
 
 def crear_cliente_sri(wsdl):
-    """
-    Crea un cliente Zeep fresco por cada solicitud, sin caché en disco 
-    y con una nueva sesión HTTP independiente.
-    """
     session = requests.Session()
+    # CORRECCIÓN: Agregar el nombre del usuario al archivo de caché para evitar conflictos de permisos
+    usuario_actual = getpass.getuser()
+    cache_path = os.path.join(tempfile.gettempdir(), f"diskcoversystem_zeep_cache_{usuario_actual}.db")
+    
     transport = Transport(
         session=session,
-        cache=None,  # Se elimina SqliteCache para forzar una consulta limpia por cada llamada
+        cache=SqliteCache(path=cache_path, timeout=SRI_WSDL_CACHE_TTL),
         timeout=SRI_WSDL_TIMEOUT,
         operation_timeout=SRI_OPERATION_TIMEOUT,
     )
@@ -37,47 +37,33 @@ def verificar_enlace(url):
             if 200 <= response.status_code < 300:
                 return True, response.status_code
             return False, response.status_code
-
     except RequestException as e:
         # Captura errores de conexión, DNS, timeouts, etc.
         return False, str(e)
 
 
-################ función para guardar el xml en carpeta ###################################
-
 def guardar_xml_en_carpeta(contenido_xml, carpeta_destino, nombre_archivo):
     try:
-        # 1. Crear la carpeta si aún no existe
         os.makedirs(carpeta_destino, exist_ok=True)
-
-        # 2. Construir la ruta completa del archivo
         ruta_completa = os.path.join(carpeta_destino, nombre_archivo)
-
-        # 3. Guardar la variable XML en el archivo (usando encoding UTF-8)
         with open(ruta_completa, "w", encoding="utf-8") as archivo:
             archivo.write(contenido_xml)
         return True
-
     except Exception as e:
         print(f"Error al guardar el XML: {e}", file=sys.stderr)
         return False
 
 
-################ función para enviar el xml firmado por ruta de archivo ###################
-
 def enviar_comprobante_firmado(ruta_xml_firmado, ruta_xml_enviado, ruta_xml_rechazados, WSDL_RECEPCION):
-    """
-    Lee un archivo XML firmado, lo convierte a bytes 
-    y lo envía al Servicio Web de Recepción del SRI con una sesión limpia.
-    """
     if not os.path.exists(ruta_xml_firmado):
         print(f"Error: No se encuentra el archivo en {ruta_xml_firmado}")
         return None
 
     clave_acceso = os.path.splitext(os.path.basename(ruta_xml_firmado))[0]
     estado = "ERROR"
+    result = {}
+    
     try:
-        result = {}
         with open(ruta_xml_firmado, "rb") as xml_file:
             xml_bytes = xml_file.read()
         with open(ruta_xml_firmado, "r", encoding="utf-8") as xml_file:
@@ -86,74 +72,77 @@ def enviar_comprobante_firmado(ruta_xml_firmado, ruta_xml_enviado, ruta_xml_rech
         activo, resultado = verificar_enlace(WSDL_RECEPCION)
 
         if not activo:
+            result[0] = 99            
             result[1] = clave_acceso
             result[2] = "fuera de linea"
-            result[0] = 99            
             result[3] = "Servidor fuera de linea, intente mas tarde autorizar el documento, aun asi se procedera a grabar el comprobante"
             result[4] = f"{resultado}"
             return result
 
-        # Se instancia el cliente con una conexión completamente nueva
         client = crear_cliente_sri(WSDL_RECEPCION)
-
         respuesta = client.service.validarComprobante(xml_bytes)
 
         estado = respuesta.estado
-
         result[1] = clave_acceso
         result[2] = estado
+        
         if estado == "RECIBIDA":            
-            guardar_xml_en_carpeta(xml_texto, ruta_xml_enviado, clave_acceso + ".xml")
+            guardar_xml_en_carpeta(xml_texto, ruta_xml_enviado, clave_acceso+".xml")
             result[0] = 1            
             result[3] = "El comprobante fue recibido correctamente y está pendiente de autorización."
             result[4] = ""
         
         elif estado == "DEVUELTA":
             result[0] = -1
-
             if hasattr(respuesta, 'comprobantes') and respuesta.comprobantes:
+                mensajes_acumulados = []
+                xml_mensajes_nodos = ""
+                
+                # CORRECCIÓN: Acumular todos los mensajes en lugar de sobrescribirlos
                 for comp in respuesta.comprobantes.comprobante:
                     if hasattr(comp, 'mensajes') and comp.mensajes:
-                        detalle_mensajes = ""
-                        detalle_xml_mensaje = ""
                         for msg in comp.mensajes.mensaje:
                             identificador = getattr(msg, 'identificador', 'N/A') or "N/A"
                             mensaje = getattr(msg, 'mensaje', 'Sin mensaje') or "Sin mensaje"
                             tipo = getattr(msg, 'tipo', 'N/A') or "N/A"
                             info_adicional = getattr(msg, 'informacionAdicional', 'N/A') or "N/A"
+                            
                             if identificador in ('58', '70', '43'):
                                 result[0] = 0
 
-                            result[4] = identificador
-                            detalle_mensajes = mensaje + ' ' + info_adicional
-                            detalle_xml_mensaje = f""" <estado>{estado}</estado>
+                            result[4] = identificador # Mantenemos el último identificador por compatibilidad
+                            mensajes_acumulados.append(f"{mensaje} {info_adicional}")
+                            
+                            xml_mensajes_nodos += f"""
+                    <mensaje>
+                        <identificador>{identificador}</identificador>
+                        <mensaje>{mensaje}</mensaje>
+                        <informacionAdicional>{info_adicional}</informacionAdicional>
+                        <tipo>{tipo}</tipo>
+                    </mensaje>"""
+                
+                if mensajes_acumulados:
+                    root = etree.fromstring(xml_bytes)
+                    detalle_xml_mensaje = f"""<estado>{estado}</estado>
     <comprobantes>
         <comprobante>
             <claveAcceso>{clave_acceso}</claveAcceso>
-            <mensajes>
-                <mensaje>
-                    <identificador>{identificador}</identificador>
-                    <mensaje>{mensaje}</mensaje>
-                    <informacionAdicional>{info_adicional}</informacionAdicional>
-                    <tipo>{tipo}</tipo>
-                </mensaje>
+            <mensajes>{xml_mensajes_nodos}
             </mensajes>
         </comprobante>
     </comprobantes>"""
-
-                    root = etree.fromstring(xml_bytes)
+                    
                     fragmento_doc = etree.fromstring(f"<root>{detalle_xml_mensaje}</root>".encode('utf-8'))
                     for elemento in fragmento_doc:
                         root.append(elemento)
+                        
                     xml_final_texto = etree.tostring(root, encoding="utf-8", pretty_print=True).decode("utf-8")
-
-                    result[3] = "El comprobante fue DEVUELTO por el SRI con las siguientes observaciones:" + detalle_mensajes                
-                    guardar_xml_en_carpeta(xml_final_texto, ruta_xml_rechazados, clave_acceso + ".xml")
+                    result[3] = "El comprobante fue DEVUELTO por el SRI. Observaciones: " + " | ".join(mensajes_acumulados)
+                    guardar_xml_en_carpeta(xml_final_texto, ruta_xml_rechazados, clave_acceso+".xml")
 
         return result
 
     except Exception as e:
-        result = {}
         result[0] = -1
         result[1] = clave_acceso
         result[2] = estado   
@@ -162,38 +151,40 @@ def enviar_comprobante_firmado(ruta_xml_firmado, ruta_xml_enviado, ruta_xml_rech
         return result
 
 
-################ función para verificar el xml firmado por clave de acceso ###################
-
 def verificar_autorizacion(clave_acceso, WSDL_AUTORIZACION, ruta_xml_autorizado, ruta_xml_no_autorizado):
+    # 1. Validación simple de la clave de acceso
     if not clave_acceso or len(clave_acceso) != 49:
-        return {"estado": "ERROR", "mensaje": "La clave de acceso debe tener exactamente 49 dígitos."}
+        return {"0": -1, "1": clave_acceso, "2": "ERROR", "3": "La clave de acceso debe tener exactamente 49 dígitos.", "4": "", "5": ""}
 
     aut = None
+    # CORRECCIÓN: Inicializar el diccionario result para evitar NameError si el enlace falla
+    result = {}
+    
     try:
         activo, resultado = verificar_enlace(WSDL_AUTORIZACION)
+        
         if not activo:
-            result = {}
+            result[0] = 99            
             result[1] = clave_acceso
             result[2] = "fuera de linea"
-            result[0] = 99            
             result[3] = "Servidor fuera de linea, intente mas tarde autorizar el documento, aun asi se procedera a grabar el comprobante"
             result[4] = f"{resultado}"
+            result[5] = ""
             return result
 
-        # Conexión limpia al servicio de Autorización sin caché local
         cliente = crear_cliente_sri(WSDL_AUTORIZACION)
         respuesta = cliente.service.autorizacionComprobante(clave_acceso)
 
         autorizaciones = respuesta.autorizaciones
+        
         if not autorizaciones or not autorizaciones.autorizacion:
-            return {
-                "0": -1,
-                "1": clave_acceso,
-                "2": "SIN_REGISTRO",
-                "3": "No se encontraron registros para esta clave de acceso.",
-                "4": "",
-                "5": "",
-            }
+            return {"0": -1,
+                    "1": clave_acceso,
+                    "2": "SIN_REGISTRO",
+                    "3": "No se encontraron registros para esta clave de acceso.",
+                    "4": "",
+                    "5": "",
+                }
 
         aut = autorizaciones.autorizacion[0]
         estado = aut.estado
@@ -209,22 +200,15 @@ def verificar_autorizacion(clave_acceso, WSDL_AUTORIZACION, ruta_xml_autorizado,
     <comprobante><![CDATA[{contenido_xml_sin}]]></comprobante>
     <mensajes/>
 </autorizacion>"""
-            if not guardar_xml_en_carpeta(xml_auto, ruta_xml_autorizado, clave_acceso + ".xml"):
+            if not guardar_xml_en_carpeta(xml_auto, ruta_xml_autorizado, clave_acceso+".xml"):
                 return {
-                    "0": -5,
-                    "1": clave_acceso,
-                    "2": "ERROR",
+                    "0": -5, "1": clave_acceso, "2": "ERROR",
                     "3": "El comprobante fue autorizado por el SRI, pero no se pudo guardar el XML autorizado.",
-                    "4": str(aut.fechaAutorizacion),
-                    "5": aut.ambiente
+                    "4": str(aut.fechaAutorizacion), "5": aut.ambiente
                 }
             return {
-                "0": 1,
-                "1": aut.numeroAutorizacion,
-                "2": "AUTORIZADO",
-                "3": "El comprobante fue autorizado",
-                "4": str(aut.fechaAutorizacion),
-                "5": aut.ambiente
+                "0": 1, "1": aut.numeroAutorizacion, "2": "AUTORIZADO",
+                "3": "El comprobante fue autorizado", "4": str(aut.fechaAutorizacion), "5": aut.ambiente
             }
         
         errores = []
@@ -248,17 +232,14 @@ def verificar_autorizacion(clave_acceso, WSDL_AUTORIZACION, ruta_xml_autorizado,
             for campo in ("identificador", "mensaje", "informacionAdicional", "tipo"):
                 valor = getattr(mensaje, campo, "")
                 etree.SubElement(mensaje_xml, campo).text = str(valor or "")
-        xml_auto = etree.tostring(
-            raiz, encoding="utf-8", xml_declaration=True, pretty_print=True
-        ).decode("utf-8")
-        guardar_xml_en_carpeta(xml_auto, ruta_xml_no_autorizado, clave_acceso + ".xml")
+                
+        xml_auto = etree.tostring(raiz, encoding="utf-8", xml_declaration=True, pretty_print=True).decode("utf-8")
+        guardar_xml_en_carpeta(xml_auto, ruta_xml_no_autorizado, clave_acceso+".xml")
+        
         return {
-            "0": -1,
-            "1": clave_acceso,
-            "2": estado,
+            "0": -1, "1": clave_acceso, "2": estado,
             "3": " - ".join(errores) if errores else "Sin detalle de mensajes.",
-            "4": str(aut.fechaAutorizacion),
-            "5": aut.ambiente
+            "4": str(aut.fechaAutorizacion), "5": aut.ambiente
         }
 
     except Exception as e:
@@ -275,13 +256,9 @@ def verificar_autorizacion(clave_acceso, WSDL_AUTORIZACION, ruta_xml_autorizado,
 
             raiz = etree.Element("autorizacion")
             etree.SubElement(raiz, "estado").text = getattr(aut, "estado", "ERROR")
-            etree.SubElement(raiz, "fechaAutorizacion").text = str(
-                getattr(aut, "fechaAutorizacion", "")
-            )
+            etree.SubElement(raiz, "fechaAutorizacion").text = str(getattr(aut, "fechaAutorizacion", ""))
             comprobante = getattr(aut, "comprobante", "")
-            contenido_xml_sin = "\n".join(
-                linea.strip() for linea in comprobante.splitlines() if linea.strip()
-            )
+            contenido_xml_sin = "\n".join(linea.strip() for linea in comprobante.splitlines() if linea.strip())
             etree.SubElement(raiz, "comprobante").text = etree.CDATA(contenido_xml_sin)
             mensajes_xml = etree.SubElement(raiz, "mensajes")
             for mensaje in mensajes:
@@ -289,39 +266,70 @@ def verificar_autorizacion(clave_acceso, WSDL_AUTORIZACION, ruta_xml_autorizado,
                 for campo in ("identificador", "mensaje", "informacionAdicional", "tipo"):
                     valor = getattr(mensaje, campo, "")
                     etree.SubElement(mensaje_xml, campo).text = str(valor or "")
-            xml_auto = etree.tostring(
-                raiz, encoding="utf-8", xml_declaration=True, pretty_print=True
-            ).decode("utf-8")
+            xml_auto = etree.tostring(raiz, encoding="utf-8", xml_declaration=True, pretty_print=True).decode("utf-8")
             guardar_xml_en_carpeta(xml_auto, ruta_xml_no_autorizado, clave_acceso + ".xml")
 
         return {
-            "0": -5,
-            "1": clave_acceso,
-            "2": "ERROR",
-            "3": f"Error de conexión con el SRI: {str(e)}",
-            "4": "",
-            "5": "",
+            "0": -5, "1": clave_acceso, "2": "ERROR",
+            "3": f"Error de conexión con el SRI: {str(e)}", "4": "", "5": "",
         }
+
+
+# CORRECCIÓN: Función descomentada y adaptada para usar crear_cliente_sri
+def descargar_xml_autorizado(clave_acceso, carpeta_destino, WSDL_AUTORIZACION):
+    try:
+        client = crear_cliente_sri(WSDL_AUTORIZACION)
+        respuesta = client.service.autorizacionComprobante(claveAccesoComprobante=clave_acceso)
+        
+        autorizaciones = respuesta.autorizaciones
+        if not autorizaciones or not hasattr(autorizaciones, 'autorizacion') or len(autorizaciones.autorizacion) == 0:
+            return {"exito": False, "mensaje": "No se encontraron autorizaciones para la clave de acceso proporcionada."}
+
+        autorizacion = autorizaciones.autorizacion[0]
+        estado = getattr(autorizacion, 'estado', 'DESCONOCIDO')
+
+        if estado == "AUTORIZADO":
+            xml_contenido = autorizacion.comprobante
+            os.makedirs(carpeta_destino, exist_ok=True)
+            ruta_xml = os.path.join(carpeta_destino, f"{clave_acceso}.xml")
+            with open(ruta_xml, "w", encoding="utf-8") as file:
+                file.write(xml_contenido)
+
+            return {
+                "exito": True,
+                "estado": estado,
+                "numeroAutorizacion": getattr(autorizacion, 'numeroAutorizacion', 'N/A'),
+                "fechaAutorizacion": str(getattr(autorizacion, 'fechaAutorizacion', '')),
+                "ruta_guardado": ruta_xml,
+                "msj": "XML Autorizado descargado y guardado con éxito."
+            }
+        else:
+            return {"exito": False, "estado": estado, "mensaje": f"El comprobante no está AUTORIZADO. Estado actual: {estado}"}
+
+    except Exception as e:
+        return {"exito": False, "mensaje": f"Error al consultar el SRI: {str(e)}"}
 
 
 # --- EJEMPLO DE EJECUCIÓN ---
 if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print(json.dumps({"error": "Faltan argumentos. Uso: python script.py <tipo> <clave_acceso> ..."}))
+        sys.exit(1)
+
     tipo = sys.argv[1].strip()
     clave_acceso = sys.argv[2].strip()
     
     result = {}
     if tipo == "1":
-        ######## enviar comprobante #########
         ruta_xml_firmado = sys.argv[3].strip()
         ruta_xml_enviado = sys.argv[4].strip()
         ruta_xml_rechazados = sys.argv[5].strip()
-
-        archivo_xml = ruta_xml_firmado + clave_acceso + ".xml"
         WSDL_RECEPCION = sys.argv[6].strip()
+        
+        archivo_xml = os.path.join(ruta_xml_firmado, clave_acceso + ".xml")
         result = enviar_comprobante_firmado(archivo_xml, ruta_xml_enviado, ruta_xml_rechazados, WSDL_RECEPCION)
         
     elif tipo == "2":
-        ######## validar comprobante #########
         ruta_xml_autorizado = sys.argv[3].strip()
         ruta_xml_no_autorizado = sys.argv[4].strip()
         WSDL_AUTORIZACION = sys.argv[5].strip()
