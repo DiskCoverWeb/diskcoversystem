@@ -667,8 +667,10 @@ class alimentos_recibidosC
 	   SetAdoFields('A_No',$parametro['A_No']+1);
 	   SetAdoFields('Fecha',date('Y-m-d',strtotime($parametro['txt_fecha'])));
 	   SetAdoFields('Valor_Total',number_format($producto[0]['PVP']*$parametro['txt_cantidad'],2,'.',''));
+	   SetAdoFields('Total',number_format($producto[0]['PVP']*$parametro['txt_cantidad'],2,'.',''));
 	   SetAdoFields('CANTIDAD',$parametro['txt_cantidad']);
 	   SetAdoFields('Valor_Unitario',number_format($producto[0]['PVP'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
+	   SetAdoFields('Costo',number_format($producto[0]['PVP'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
 	   SetAdoFields('TP',".");
 	   SetAdoFields('Codigo_Barra',$codigo_barras);
 	   SetAdoFields('CodBodega',-1);
