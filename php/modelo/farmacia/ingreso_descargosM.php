@@ -1113,8 +1113,8 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
            ,".$parametros['moneda']."
            ,".$parametros['T_N']."
            ,".$SC_No."
-           ,null
-           ,null
+           ,'".$fecha_actual."'
+           ,'".$fecha_actual."'
            ,0
            ,'".$_SESSION['INGRESO']['item']."'
            ,'".$_SESSION['INGRESO']['CodigoU']."')";
