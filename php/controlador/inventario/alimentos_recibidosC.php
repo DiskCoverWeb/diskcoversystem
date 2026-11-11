@@ -1301,7 +1301,7 @@ class alimentos_recibidosC
 		$detalle = $parametros['txt_concepto_comp'];
 
 		if(isset($parametros['txt_serie']) && $parametros['txt_serie'] != ''  && $parametros['txt_serie'] != '.'){ $detalle.=' - FC:'.$parametros['txt_serie']; }
-		if(isset($parametros['txt_factura']) && $parametros['txt_factura'] != ''  && $parametros['txt_factura'] != '.'){ $detalle.='-'.generaCeros($parametros['txt_factura']);}
+		if(isset($parametros['txt_factura']) && $parametros['txt_factura'] != ''  && $parametros['txt_factura'] != '.'){ $detalle.='-'.generaCeros($parametros['txt_factura']);}else{ $parametros['txt_factura']  = date('Ymd');}
 
 		// print_r($detalle);die();
 
@@ -1329,9 +1329,10 @@ class alimentos_recibidosC
                     't'=> $cuenta[0]['TC'],
                     'serie'=>$parametros['txt_serie'],                 
                   );
-                $this->ing_des->generar_asientos_SC($dataSub);
+			// print_r($cuenta)
+			// print_r($dataSub);die();
+            $r =  $this->ing_des->generar_asientos_SC($dataSub);
 		}
-
 
 			// print_r($parametros);die();
 

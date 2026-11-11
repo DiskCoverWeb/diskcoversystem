@@ -1035,7 +1035,7 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 	{
 		$serie ='001001';
 		// $cid = $this->conn;
-		if(isset($parametros['serie']))
+		if(isset($parametros['serie']) && $parametros['serie']!='.' && $parametros['serie']!='')
 		{
 				$serie =$parametros['serie'];
 		}
@@ -1100,7 +1100,7 @@ order by CP.Codigo_Inv,CP.Producto,CP.TC,CP.Valor_Total,CP.Unidad,CP.Cta_Inventa
 			VALUES
            ('".$cod."'
            ,'".$parametros['sub2']."'
-           ,'".$fact2."'
+           ,".$fact2."
            ,'".$serie."'
            ,0
            ,'".$parametros['tic']."'
