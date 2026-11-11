@@ -1300,6 +1300,11 @@ class alimentos_recibidosC
 		$fecha = $parametros['txt_fecha'];
 		$detalle = $parametros['txt_concepto_comp'];
 
+		if(isset($parametros['txt_serie']) && $parametros['txt_serie'] != ''  && $parametros['txt_serie'] != '.'){ $detalle.=' - '.$parametros['txt_serie']; }
+		if(isset($parametros['txt_factura']) && $parametros['txt_factura'] != ''  && $parametros['txt_factura'] != '.'){ $detalle.='-'.generaCeros($parametros['txt_factura']);}
+
+		// print_r($detalle);die();
+
 		// print_r($parametros);
 		// print_r($asientos_SC);die();
 
