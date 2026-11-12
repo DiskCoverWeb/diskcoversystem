@@ -53,6 +53,7 @@
               <div class="table-responsive">
                 <table class="table w-100" id="tbl_lista_solicitud_ord">
                   <thead>
+                     <th></th>
                      <th>No</th>
                      <th>Contratista</th>
                      <th>Orden de trabajo</th>
@@ -62,6 +63,7 @@
                   </thead>
                   <tbody>
                     <tr>
+                      <td></td>
                       <td></td>
                       <td></td>
                       <td></td>
