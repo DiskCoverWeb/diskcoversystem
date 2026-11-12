@@ -327,8 +327,8 @@ class contrato_trabajo_detalle_constC
                       <td>'.$value['CI_RUC'].'</td>
                       <td>'.$value['Actividad'].'</td>
                       <td>'.$edad->y.'</td>
-                      <td>'.$value['Fecha']->format('Y-m-d').'</td>
-                      <td>'.$value['Fecha_Cad']->format('Y-m-d').'</td>  
+                      <td>'.$value['Fecha_Ini']->format('Y-m-d').'</td>
+                      <td>'.$value['Fecha_Fin']->format('Y-m-d').'</td>  
                     </tr>';
                                  
                                  
