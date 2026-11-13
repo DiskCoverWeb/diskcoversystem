@@ -12,7 +12,7 @@ require_once (dirname(__DIR__, 2) . "/funciones/funciones.php");
     DESCIPCIÓN		: Modelo ListarGrupos
 */
 
-class ListarGruposM
+class listar_clientes_grupoM
 {
     private $db;
 
@@ -27,13 +27,19 @@ class ListarGruposM
     {
         $sql = "SELECT Grupo
                 FROM Clientes
-                WHERE FA <> 0";
-        if ($_SESSION['INGRESO']['Mas_Grupos']) {
-            $sql .= " AND DirNumero = '" . $_SESSION['INGRESO']['item'] . "'";
+                WHERE FA <> 0 AND Grupo IS NOT NULL AND Grupo <> '' AND Grupo <> '.' ";
+        if (!empty($_SESSION['INGRESO']['Mas_Grupos'])) {
+            $item = $_SESSION['INGRESO']['item'];
+            $sql .= " AND (DirNumero = '{$item}' OR DirNumero = '" . intval($item) . "') ";
         }
-        $sql .= "GROUP BY Grupo
+        $sql .= " GROUP BY Grupo
                 ORDER BY Grupo";
-        return $this->db->datos($sql);
+        $res = $this->db->datos($sql);
+        if (($res === -1 || !is_array($res) || count($res) === 0) && !empty($_SESSION['INGRESO']['Mas_Grupos'])) {
+            $sqlFallback = "SELECT Grupo FROM Clientes WHERE FA <> 0 AND Grupo IS NOT NULL AND Grupo <> '' AND Grupo <> '.' GROUP BY Grupo ORDER BY Grupo";
+            $res = $this->db->datos($sqlFallback);
+        }
+        return ($res === -1 || !is_array($res)) ? [] : $res;
     }
 
     public function DCTipoPago()
@@ -89,56 +95,91 @@ class ListarGruposM
 
     public function Listar_Grupo($parametros)
     {
-        if ($parametros['PorDireccion']) {
-            $sql = "SELECT TOP 100 Direccion
+        $cTipo = $parametros['CTipoConsulta'] ?? '';
+        $porDireccion = (!empty($parametros['PorDireccion']) && $parametros['PorDireccion'] != '0' && $parametros['PorDireccion'] !== 'false')
+            || $cTipo === '1' || $cTipo === 'Listar por Direccion' || $cTipo === 'Listar por Dirección';
+        $porGrupo = (!empty($parametros['PorGrupo']) && $parametros['PorGrupo'] != '0' && $parametros['PorGrupo'] !== 'false')
+            || $cTipo === '0' || $cTipo === 'Listar por Grupo';
+
+        if ($porDireccion && !$porGrupo) {
+            $sql = "SELECT Direccion
                     FROM Clientes
-                    WHERE FA <> 0";
-            if ($_SESSION['INGRESO']['Mas_Grupos']) {
-                $sql .= " AND DirNumero = '" . $_SESSION['INGRESO']['item'] . "'";
+                    WHERE FA <> 0 AND Direccion IS NOT NULL AND Direccion <> '' AND Direccion <> '.'";
+            if (!empty($_SESSION['INGRESO']['Mas_Grupos'])) {
+                $item = $_SESSION['INGRESO']['item'];
+                $sql .= " AND (DirNumero = '{$item}' OR DirNumero = '" . intval($item) . "')";
             }
-            $sql .= "GROUP BY Direccion
+            $sql .= " GROUP BY Direccion
                     ORDER BY Direccion";
-            return $this->db->datos($sql);
-        } else {
-            $sql = "SELECT TOP 100 Grupo
-                    FROM Clientes
-                    WHERE FA <> 0";
-            if ($_SESSION['INGRESO']['Mas_Grupos']) {
-                $sql .= " AND DirNumero = '" . $_SESSION['INGRESO']['item'] . "'";
+            $res = $this->db->datos($sql);
+            if (($res === -1 || !is_array($res) || count($res) === 0) && !empty($_SESSION['INGRESO']['Mas_Grupos'])) {
+                $sqlFallback = "SELECT Direccion FROM Clientes WHERE FA <> 0 AND Direccion IS NOT NULL AND Direccion <> '' AND Direccion <> '.' GROUP BY Direccion ORDER BY Direccion";
+                $res = $this->db->datos($sqlFallback);
             }
-            $sql .= "GROUP BY Grupo
+            return ($res === -1 || !is_array($res)) ? [] : $res;
+        } else {
+            $sql = "SELECT Grupo
+                    FROM Clientes
+                    WHERE FA <> 0 AND Grupo IS NOT NULL AND Grupo <> '' AND Grupo <> '.'";
+            if (!empty($_SESSION['INGRESO']['Mas_Grupos'])) {
+                $item = $_SESSION['INGRESO']['item'];
+                $sql .= " AND (DirNumero = '{$item}' OR DirNumero = '" . intval($item) . "')";
+            }
+            $sql .= " GROUP BY Grupo
                     ORDER BY Grupo";
-            return $this->db->datos($sql);
+            $res = $this->db->datos($sql);
+            if (($res === -1 || !is_array($res) || count($res) === 0) && !empty($_SESSION['INGRESO']['Mas_Grupos'])) {
+                $sqlFallback = "SELECT Grupo FROM Clientes WHERE FA <> 0 AND Grupo IS NOT NULL AND Grupo <> '' AND Grupo <> '.' GROUP BY Grupo ORDER BY Grupo";
+                $res = $this->db->datos($sqlFallback);
+            }
+            return ($res === -1 || !is_array($res)) ? [] : $res;
         }
     }
 
     public function Listar_Clientes_Grupo($parametros)
     {
         $titulo = "";
-        $sql = "SELECT TOP 100 T,Cliente,Grupo,Direccion,Codigo,CI_RUC,Email,Email2,Fecha_N,Representante,TD_R, CI_RUC_R,DireccionT,Telefono_R,TelefonoT,EmailR,Saldo_Pendiente
+        $cTipo = $parametros['CTipoConsulta'] ?? '';
+        $porGrupo = (!empty($parametros['PorGrupo']) && $parametros['PorGrupo'] != '0' && $parametros['PorGrupo'] !== 'false');
+        $porDireccion = (!empty($parametros['PorDireccion']) && $parametros['PorDireccion'] != '0' && $parametros['PorDireccion'] !== 'false');
+        $cheqRangos = (!empty($parametros['CheqRangos']) && $parametros['CheqRangos'] != '0' && $parametros['CheqRangos'] !== 'false');
+
+        // Si es Listar Todos o si ni porGrupo ni porDireccion estan activos, no filtrar por grupo ni direccion
+        if ($cTipo === '2' || $cTipo === 'Listar Todos' || (!$porGrupo && !$porDireccion && !$cheqRangos)) {
+            $porGrupo = false;
+            $porDireccion = false;
+        }
+
+        $sql = "SELECT T,Cliente,Grupo,Direccion,Codigo,CI_RUC,Email,Email2,Fecha_N,Representante,TD_R, CI_RUC_R,DireccionT,Telefono_R,TelefonoT,EmailR,Saldo_Pendiente
                 FROM Clientes
                 WHERE Cliente <> '.' ";
-        if ($_SESSION['INGRESO']['Mas_Grupos']) {
-            $sql .= " AND DirNumero = '" . $_SESSION['INGRESO']['item'] . "'";
+        if (!empty($_SESSION['INGRESO']['Mas_Grupos'])) {
+            $item = $_SESSION['INGRESO']['item'];
+            $sql .= " AND (DirNumero = '{$item}' OR DirNumero = '" . intval($item) . "')";
         }
-        if ($parametros['CheqRangos'] <> 0) {
+        if ($cheqRangos && !empty($parametros['Codigo1']) && !empty($parametros['Codigo2']) && $parametros['Codigo1'] !== 'Todos') {
             $sql .= " AND Grupo BETWEEN '" . $parametros['Codigo1'] . "' AND '" . $parametros['Codigo2'] . "'";
+            $titulo = "LISTADO DE CLIENTES";
         } else {
-            if ($parametros['PorGrupo']) {
-                $titulo = "LISTADO DE CLIENTES (Grupo No. " . $parametros['DCCliente'] . ")";
-                $sql .= " AND Grupo = '" . $parametros['DCCliente'] . "'";
-            } else if ($parametros['PorDireccion']) {
-                $titulo = "LISTADO DE CLIENTES (Direccion: " . $parametros['DCCliente'] . ")";
-                $sql .= " AND Direccion = '" . $parametros['DCCliente'] . "'";
+            if ($porGrupo && !empty($parametros['DCCliente']) && $parametros['DCCliente'] !== 'Todos') {
+                $grupoVal = $parametros['DCCliente'];
+                $titulo = "LISTADO DE CLIENTES (Grupo No. " . $grupoVal . ")";
+                $sql .= " AND Grupo = '" . $grupoVal . "'";
+            } else if ($porDireccion && !empty($parametros['DCCliente']) && $parametros['DCCliente'] !== 'Todos') {
+                $dirVal = $parametros['DCCliente'];
+                $titulo = "LISTADO DE CLIENTES (Direccion: " . $dirVal . ")";
+                $sql .= " AND Direccion = '" . $dirVal . "'";
             } else {
                 $titulo = "LISTADO DE CLIENTES";
             }
         }
-        $sql .= "AND FA <> 0
+        $sql .= " AND FA <> 0
                 ORDER BY Grupo,Cliente";
         $AdoQuery = $this->db->datos($sql);
-        $datos = grilla_generica_new($sql, 'Clientes', '', $titulo, false, false, false, 1, 1, 1, 100);
-        return array('datos' => $datos, 'AdoQuery' => $AdoQuery);
+        if ($AdoQuery === -1 || !is_array($AdoQuery)) {
+            $AdoQuery = [];
+        }
+        return array('datos' => '', 'AdoQuery' => $AdoQuery);
     }
 
     public function Listar_Deuda_Por_Api($parametros, $FechaTope)
@@ -195,20 +236,28 @@ class ListarGruposM
         }
         $sql .= "ORDER BY Grupo, Cliente";
         $AdoQuery = $this->db->datos($sql);
-        $datos = grilla_generica_new($sql, 'Clientes', '', 'LISTADO DE CLIENTES', false, false, false, 1, 1, 1, 100);
+        if ($AdoQuery === -1 || !is_array($AdoQuery)) {
+            $AdoQuery = [];
+        }
+        $datos = (count($AdoQuery) > 1000) ? '' : tablaGenerica($AdoQuery);
         return array('datos' => $datos, 'AdoQuery' => $AdoQuery);
     }
 
     public function Pensiones_Mensuales_Anio($ListaCampos)
     {
-        $sql = "SELECT TOP 100 " . $ListaCampos . " 
+        if (empty($ListaCampos) || trim($ListaCampos) === '.') {
+            $ListaCampos = '*';
+        }
+        $sql = "SELECT " . $ListaCampos . " 
                 FROM Reporte_CxC_Cuotas
                 WHERE Item = '" . $_SESSION['INGRESO']['item'] . "'
                 AND CodigoU = '" . $_SESSION['INGRESO']['CodigoU'] . "'
                 ORDER BY GrupoNo,Cliente";
-        //print_r($sql);die();
         $AdoQuery = $this->db->datos($sql);
-        $datos = grilla_generica_new($sql, 'Reporte_CxC_Cuotas', '', 'PENSIONES MENSUALES DEL AÑO', false, false, false, 1, 1, 1, 100);
+        if ($AdoQuery === -1 || !is_array($AdoQuery)) {
+            $AdoQuery = [];
+        }
+        $datos = (count($AdoQuery) > 1000) ? '' : tablaGenerica($AdoQuery);
         return array('datos' => $datos, 'AdoQuery' => $AdoQuery);
     }
 
@@ -232,7 +281,10 @@ class ListarGruposM
                  ORDER BY C.Grupo,C.Cliente,CF.Num_Mes";
         //print_r($sql);die();
         $AdoQuery = $this->db->datos($sql);
-        $datos = grilla_generica_new($sql, 'Clientes_Facturacion', '', 'LISTADO DE BECADOS', false, false, false, 1, 1, 1, 100);
+        if ($AdoQuery === -1 || !is_array($AdoQuery)) {
+            $AdoQuery = [];
+        }
+        $datos = (count($AdoQuery) > 1000) ? '' : tablaGenerica($AdoQuery);
         return array('datos' => $datos, 'AdoQuery' => $AdoQuery);
     }
 
@@ -266,7 +318,10 @@ class ListarGruposM
                  GROUP BY C.Grupo,C.Cliente,C.Direccion,C.Email
                  ORDER BY C.Grupo,C.Cliente";
         $AdoQuery = $this->db->datos($sql);
-        $datos = grilla_generica_new($sql, 'Clientes', '', 'NOMINA DE ALUMNOS', false, false, false, 1, 1, 1, 100);
+        if ($AdoQuery === -1 || !is_array($AdoQuery)) {
+            $AdoQuery = [];
+        }
+        $datos = (count($AdoQuery) > 1000) ? '' : tablaGenerica($AdoQuery);
         return array('datos' => $datos, 'AdoQuery' => $AdoQuery);
     }
 
@@ -301,7 +356,10 @@ class ListarGruposM
                 ORDER BY CF.Periodo,CF.GrupoNo,CP.Producto";
         //print_r($sql);die();
         $AdoQuery = $this->db->datos($sql);
-        $datos = grilla_generica_new($sql, 'Clientes_Facturacion', '', 'RESUMEN DE PENSIONES DEL MES', false, false, false, 1, 1, 1, 100);
+        if ($AdoQuery === -1 || !is_array($AdoQuery)) {
+            $AdoQuery = [];
+        }
+        $datos = (count($AdoQuery) > 1000) ? '' : tablaGenerica($AdoQuery);
         return array('datos' => $datos, 'AdoQuery' => $AdoQuery);
     }
 

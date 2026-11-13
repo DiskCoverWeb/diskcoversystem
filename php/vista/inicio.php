@@ -281,7 +281,7 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) {
 					break;
 	
 				case 'listar_clientes_grupo':
-					require_once("facturacion/ListarGrupos.php");
+					require_once("facturacion/listar_clientes_grupo.php");
 					break;
 
 				case 'importaciones_excel':

@@ -752,6 +752,9 @@ function variables_sistema($EmpresaEntidad, $NombreEmp, $ItemEmp)
         //return validacionAcceso($empresa[0]['Empresa'], $_SESSION['INGRESO']['Mail'], $_SESSION['INGRESO']['Clave']);
         //FIN VALIDAMOS SI EL USUARIO TIENE PERMISO DE ACCESO AL SISTEMA
 
+        $loginMod = new loginM();
+        $loginMod->sincronizar_foto_usuario_mysql();
+
     } else {
         $modelo = new usuario_model();
         $empresa = $modelo->getEmpresasId_sin_sqlserver($cod[0]);

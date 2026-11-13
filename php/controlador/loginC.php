@@ -162,6 +162,7 @@ class loginC
 		      	}
 
 		      	$resp = $this->variables_sistema($parametro['entidad'], $parametro['item']);
+		      	$this->modelo->sincronizar_foto_usuario_mysql();
 		      	// print_r($resp);die();
 		      	if($resp['rps'])
 		      	{
@@ -200,6 +201,7 @@ class loginC
 		      	}
 		      	// print_r($datos);die();
 		      	$resp = $this->variables_sistema($parametro['entidad'], $parametro['item']);
+		      	$this->modelo->sincronizar_foto_usuario_mysql();
 		      	// print_r($resp);die();
 		      	if($resp['rps']==1)
 		      	{
@@ -412,7 +414,9 @@ class loginC
 	         // print_r($empresa);die();
 
 	    	//INICIO VALIDAMOS SI EL USUARIO TIENE PERMISO DE ACCESO AL SISTEMA
+	        $this->modelo->sincronizar_foto_usuario_mysql();
 	        $dataAcc = $this->modelo->validacionAcceso($empresa[0]['Empresa'], $_SESSION['INGRESO']['Mail'], $_SESSION['INGRESO']['Clave']);
+	        $this->modelo->sincronizar_foto_usuario_mysql();
 
 	        return $dataAcc;
 

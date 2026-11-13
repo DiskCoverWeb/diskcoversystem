@@ -6,6 +6,33 @@ $(document).ready(function(){
         });
 });
 
+function reabrir_seleccion_empresa() {
+	var entidad = $("#txt_entidad").val();
+	if (entidad !== undefined && entidad !== null) {
+		entidad = entidad.trim();
+	} else {
+		entidad = '';
+	}
+
+	if (!entidad) {
+		$("#txt_entidad").focus();
+		Swal.fire({
+			icon: 'info',
+			title: 'RUC/NIC Entidad',
+			text: 'Por favor, ingrese primero el RUC o NIC de la entidad para seleccionar su empresa.',
+			confirmButtonColor: '#0d6efd'
+		});
+		return;
+	}
+
+	// Si las empresas ya están cargadas en el modal para esta entidad, abrir directamente
+	if ($('#tbl_empresas .company-card').length > 0 && $('#lbl_ruc').text() === entidad) {
+		$('#mis_empresas').modal('show');
+	} else {
+		validar_entidad();
+	}
+}
+
 function validar_entidad()
   { 
 	var entidad = $("#txt_entidad").val();
@@ -49,8 +76,7 @@ function validar_entidad()
         	}
 			var newImgSrc = response[0].Logo + "?timestamp=" + new Date().getTime();
         	$('#img_logo').attr('src',newImgSrc);
-        	$('#img_logo').css('width','35%');
-        	$('#img_logo').css('border-radius','5px');
+        	$('#img_logo').css({'max-height': '68px', 'max-width': '240px', 'width': 'auto', 'border-radius': '6px'});
         	$('#txt_entidad_id').val(response[0].entidad);
         	$('#txt_cartera').val('0');
 
@@ -58,28 +84,43 @@ function validar_entidad()
         }else if(response.length>1)
         {
         	 $('#lbl_ruc').text(entidad);
+        	 if ($('#lbl_total_empresas').length) {
+        	 	 $('#lbl_total_empresas').text(response.length + ' empresas disponibles');
+        	 }
         	 tr = '';
         	 response.forEach(function(item, i) {
-				// Añadir un timestamp o un identificador único a la URL de la imagen para evitar la caché
 				var uniqueImgSrc = item.Logo + '?v=' + new Date().getTime();
+				var itemNombre = item.Nombre ? item.Nombre.replace(/'/g, "\\'") : '';
+				var itemRazon = item.Razon_Social ? item.Razon_Social.replace(/'/g, "\\'") : '';
 
-				// tr += '<tr><td><img style="height: 73px;width: 190px;" src="' + uniqueImgSrc + '"></td><td><button class="btn btn-block btn-default" onclick="seleccionar_empresa(\'' + item.Nombre + '\',\'' + item.Razon_Social + '\',\'' + uniqueImgSrc + '\',\'' + item.entidad + '\',\'' + item.Item + '\')">' + item.Razon_Social + '<br>' + item.Nombre + '<br>' + item.ci + '</button></td></tr>';
-				tr+= '<div class="customers-list-item d-flex align-items-center border-bottom p-2 cursor-pointer" onclick="seleccionar_empresa(\'' + item.Nombre + '\',\'' + item.Razon_Social + '\',\'' + uniqueImgSrc + '\',\'' + item.entidad + '\',\'' + item.Item + '\')">'
-						+'<div class="p-2">'
-							+'<img src="' + uniqueImgSrc + '" height="46px" width="92px" alt="" />'
-						+'</div>'
-						+'<div class="ms-2">'
-							+'<h6 class="mb-1 font-14">' + item.Razon_Social + '</h6>'
-							+'<p class="mb-0 font-13 text-secondary">' + item.Nombre + '</p>'
-							+'<p class="mb-0 font-13 text-secondary">' + item.ci + '</p>'
-						+'</div>'
-					+'</div>';
-
-        	 	// console.log(item)
-			})
-
-        	 	// console.log(item)
+				tr += '<div class="company-card card mb-2 p-2 p-md-3 cursor-pointer shadow-xs" '
+					+ 'onclick="seleccionar_empresa(\'' + itemNombre + '\',\'' + itemRazon + '\',\'' + uniqueImgSrc + '\',\'' + item.entidad + '\',\'' + item.Item + '\')">'
+					+ '<div class="d-flex align-items-center justify-content-between flex-wrap gap-2">'
+						+ '<div class="d-flex align-items-center gap-3">'
+							+ '<div class="company-logo-frame">'
+								+ '<img src="' + uniqueImgSrc + '" alt="Logo" onerror="this.src=\'../../img/jpg/logo.jpg\';" />'
+							+ '</div>'
+							+ '<div>'
+								+ '<h6 class="mb-1 fw-bold text-dark font-14">' + item.Razon_Social + '</h6>'
+								+ '<p class="mb-1 font-13 text-secondary d-flex align-items-center gap-1">'
+									+ '<i class="bx bx-store-alt text-primary"></i> ' + item.Nombre
+								+ '</p>'
+								+ '<div class="d-flex align-items-center gap-2 flex-wrap">'
+									+ '<span class="badge bg-light text-secondary border font-11"><i class="bx bx-id-card me-1"></i>RUC: ' + item.ci + '</span>'
+									+ '<span class="badge bg-primary-subtle text-primary border border-primary-subtle font-11">Item: ' + item.Item + '</span>'
+								+ '</div>'
+							+ '</div>'
+						+ '</div>'
+						+ '<div class="ms-auto">'
+							+ '<button type="button" class="btn btn-sm btn-outline-primary btn-select-company rounded-pill px-3 fw-bold d-flex align-items-center gap-1 shadow-sm">'
+								+ '<i class="bx bx-check-circle"></i> <span>Seleccionar</span>'
+							+ '</button>'
+						+ '</div>'
+					+ '</div>'
+				+ '</div>';
+			});
         	 $('#tbl_empresas').html(tr);
+        	 $('#txt_buscar_empresa').val('');
         	 $('#mis_empresas').modal('show');
         }else
         {
@@ -99,6 +140,7 @@ function validar_entidad()
   function seleccionar_empresa(Nombre,Razon_Social,Logo,entidad,item)
   {
   		$('#mis_empresas').modal('hide');
+  		$('#lnk_volver_elegir').removeClass('d-none');
 
   	 	$('#txt_item').val(item);
 	  	if(Nombre == Razon_Social)
@@ -114,8 +156,7 @@ function validar_entidad()
 	  	}
 
 	  	$('#img_logo').attr('src',Logo);
-	  	$('#img_logo').css('width','35%');
-	  	$('#img_logo').css('border-radius','5px');
+	  	$('#img_logo').css({'max-height': '68px', 'max-width': '240px', 'width': 'auto', 'border-radius': '6px'});
 	  	$('#txt_entidad_id').val(entidad);
 	  	$('#txt_cartera').val('0');
 	  	$('#txt_correo').focus();
@@ -413,4 +454,16 @@ function validar_entidad()
       }
     });
 
-  }	
+  }
+
+function filtrarEmpresasModal(query) {
+	var q = (query || '').toLowerCase().trim();
+	$('.company-card').each(function() {
+		var text = $(this).text().toLowerCase();
+		if (text.indexOf(q) !== -1) {
+			$(this).show();
+		} else {
+			$(this).hide();
+		}
+	});
+}	

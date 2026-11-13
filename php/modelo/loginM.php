@@ -518,8 +518,77 @@ class loginM
 	function editar_foto($img)
 	{
 		$_SESSION['INGRESO']['Foto'] = $img;
-		$sql = "UPDATE acceso_usuarios SET Foto='".$img."' WHERE CI_NIC='".$_SESSION['INGRESO']['CodigoU']."'";
-		return $this->db->String_Sql($sql, 'MY SQL');
+		$codigoU = $_SESSION['INGRESO']['CodigoU'] ?? ($_SESSION['INGRESO']['Id'] ?? '');
+		$usuario = $_SESSION['INGRESO']['Mail'] ?? ($_SESSION['INGRESO']['usuario'] ?? '');
+
+		$sql = "UPDATE acceso_usuarios SET Foto='".$img."' WHERE CI_NIC='".$codigoU."'";
+		$res = $this->db->String_Sql($sql, 'MY SQL');
+
+		// Actualizamos también en la empresa en la que se encuentra logueado (SQL Server)
+		try {
+			if (!empty($codigoU)) {
+				$where = "Codigo = '".$codigoU."'";
+				if (!empty($usuario)) {
+					$where .= " OR Usuario = '".$usuario."'";
+				}
+				$codigoSinCero = ltrim($codigoU, '0');
+				if (!empty($codigoSinCero) && $codigoSinCero !== $codigoU) {
+					$where .= " OR Codigo = '".$codigoSinCero."'";
+				}
+				$sqlEmpresa = "UPDATE Accesos SET Foto = '".$img."' WHERE " . $where;
+				if (isset($_SESSION['INGRESO']['Tipo_Base']) && ($_SESSION['INGRESO']['Tipo_Base'] == 'MY SQL' || $_SESSION['INGRESO']['Tipo_Base'] == 'My SQL')) {
+					$this->db->String_Sql($sqlEmpresa, 'MY SQL');
+				} else {
+					$this->db->String_Sql($sqlEmpresa);
+				}
+			}
+		} catch (\Throwable $th) {
+		}
+
+		return $res;
+	}
+
+	function sincronizar_foto_usuario_mysql($codigoU = null, $usuario = null)
+	{
+		try {
+			if (!$codigoU) {
+				$codigoU = $_SESSION['INGRESO']['CodigoU'] ?? ($_SESSION['INGRESO']['Id'] ?? null);
+			}
+			if (!$usuario) {
+				$usuario = $_SESSION['INGRESO']['Mail'] ?? ($_SESSION['INGRESO']['usuario'] ?? null);
+			}
+			if (empty($codigoU)) {
+				return false;
+			}
+
+			// Consultamos la foto más reciente guardada en MySQL (acceso_usuarios) por CI_NIC (identificador único)
+			$sqlMysql = "SELECT Foto FROM acceso_usuarios WHERE CI_NIC = '".$codigoU."' LIMIT 1";
+			$resMysql = $this->db->datos($sqlMysql, 'MY SQL');
+
+			if (!empty($resMysql) && isset($resMysql[0]['Foto']) && $resMysql[0]['Foto'] != '.' && !empty($resMysql[0]['Foto'])) {
+				$fotoActual = $resMysql[0]['Foto'];
+				$_SESSION['INGRESO']['Foto'] = $fotoActual;
+
+				// Actualizamos en la tabla Accesos de la base de la empresa actual (SQL Server)
+				$where = "Codigo = '".$codigoU."'";
+				if (!empty($usuario)) {
+					$where .= " OR Usuario = '".$usuario."'";
+				}
+				$codigoSinCero = ltrim($codigoU, '0');
+				if (!empty($codigoSinCero) && $codigoSinCero !== $codigoU) {
+					$where .= " OR Codigo = '".$codigoSinCero."'";
+				}
+				$sqlEmpresa = "UPDATE Accesos SET Foto = '".$fotoActual."' WHERE " . $where;
+				if (isset($_SESSION['INGRESO']['Tipo_Base']) && ($_SESSION['INGRESO']['Tipo_Base'] == 'MY SQL' || $_SESSION['INGRESO']['Tipo_Base'] == 'My SQL')) {
+					$this->db->String_Sql($sqlEmpresa, 'MY SQL');
+				} else {
+					$this->db->String_Sql($sqlEmpresa);
+				}
+				return true;
+			}
+		} catch (\Throwable $th) {
+		}
+		return false;
 	}
 
 	function buscar_cliente_cartera($cartera_usu=false,$cartera_pass=false,$empresa=[])
@@ -657,6 +726,7 @@ class loginM
 			    $Fecha_CE = $dataMysql['@FechaCE'];
 
 			    $data = sp_Iniciar_Datos_Default($NumEmpresa, $Periodo_Contable, $Dolar, $RUCEmpresa, $CodigoUsuario, $Fecha_CE, $NumModulo);
+			    $this->sincronizar_foto_usuario_mysql();
 
 			    // Resultado del SP del MySQL
 			    $ListaFacturas = "";
@@ -721,9 +791,9 @@ class loginM
 
 			        return array('rps' => -3, "mensaje" => $ListaFacturas);
 			    }else{
-
-			    return array('rps' => true);
-			}
+			        $this->sincronizar_foto_usuario_mysql();
+			        return array('rps' => true);
+			    }
 			}else
 			{
 				return  $NumEmpresa = G_NINGUNO;

@@ -171,6 +171,11 @@ if (isset($_GET['Eliminar_Rubros_Facturacion'])) {
     echo json_encode($controlador->Eliminar_Rubros_Facturacion());
 }
 
+if (isset($_GET['Retirar_Beneficiarios'])) {
+    $parametros = $_POST['parametros'];
+    echo json_encode($controlador->Retirar_Beneficiarios($parametros));
+}
+
 
 
 class ListarGruposC

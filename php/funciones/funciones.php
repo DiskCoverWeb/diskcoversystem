@@ -13231,30 +13231,37 @@ function Reporte_CxC_Cuotas_SP($GrupoINo, $GrupoFNo, $MBFechaInicial, $MBFechaCo
     $FechaIni = $FechaFin;
   }
   $conn = new db();
-    $parametros = array(
-      array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
-      array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
-      array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
-      array(&$EjercicioFiscal, SQLSRV_PARAM_IN),
-      array(&$FechaIni, SQLSRV_PARAM_IN),
-      array(&$FechaFin, SQLSRV_PARAM_IN),
-      array(&$GrupoINo, SQLSRV_PARAM_IN),
-      array(&$GrupoFNo, SQLSRV_PARAM_IN),
-      array(&$Resumido, SQLSRV_PARAM_IN),
+  $ListaDeCampos = str_repeat(' ', 2048);
+  $SubTotal = 0;
+  $TotalAnticipo = 0;
+  $TotalCxC = 0;
+  $parametros = array(
+    array(&$_SESSION['INGRESO']['item'], SQLSRV_PARAM_IN),
+    array(&$_SESSION['INGRESO']['periodo'], SQLSRV_PARAM_IN),
+    array(&$_SESSION['INGRESO']['CodigoU'], SQLSRV_PARAM_IN),
+    array(&$EjercicioFiscal, SQLSRV_PARAM_IN),
+    array(&$FechaIni, SQLSRV_PARAM_IN),
+    array(&$FechaFin, SQLSRV_PARAM_IN),
+    array(&$GrupoINo, SQLSRV_PARAM_IN),
+    array(&$GrupoFNo, SQLSRV_PARAM_IN),
+    array(&$Resumido, SQLSRV_PARAM_IN),
 
-      array(&$SubTotal, SQLSRV_PARAM_OUT),
-      array(&$TotalAnticipo, SQLSRV_PARAM_OUT),
-      array(&$TotalCxC, SQLSRV_PARAM_OUT),
-      array(&$ListaDeCampos, SQLSRV_PARAM_OUT)
-    );
-    $sql = "EXEC sp_Reporte_CxC_Cuotas @Item=?, @Periodo=?, @CodigoUsuario=?, 
-    @EjercicioFiscal=?, @FechaInicio=?, @FechaCorte=?, @GrupoINo=?, @GrupoFNo=?, 
-    @Resumido=?, @SubTotal=?, @TotalAnticipo=?, @TotalCxC=?, @ListaCampos=?";
-    $data= $conn->ejecutar_procesos_almacenados($sql,$parametros);
-    
-    return compact('SubTotal', 'TotalAnticipo', 'TotalCxC', 'ListaDeCampos');
-
-
+    array(&$SubTotal, SQLSRV_PARAM_OUT),
+    array(&$TotalAnticipo, SQLSRV_PARAM_OUT),
+    array(&$TotalCxC, SQLSRV_PARAM_OUT),
+    array(&$ListaDeCampos, SQLSRV_PARAM_OUT, null, SQLSRV_SQLTYPE_VARCHAR(2048))
+  );
+  $sql = "EXEC sp_Reporte_CxC_Cuotas ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+  try {
+    $data = $conn->ejecutar_procesos_almacenados($sql, $parametros);
+  } catch (Exception $e) {
+    // Captura en caso de error
+  }
+  $ListaDeCampos = trim($ListaDeCampos);
+  if (empty($ListaDeCampos) || $ListaDeCampos === '.') {
+    $ListaDeCampos = '*';
+  }
+  return compact('SubTotal', 'TotalAnticipo', 'TotalCxC', 'ListaDeCampos');
 }
 
 function InsertarAsientosC($Adodc){
