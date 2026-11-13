@@ -109,6 +109,13 @@
           columns: [
               { data: null, // Columna autoincremental
                     render: function (data, type, row, meta) {
+                          return `
+                       <button type="button" title="Editar Pedido" class="btn btn-primary btn-sm p-0 m-0" onclick="regresar_pedido('${data.ID}')"><i class="bx bx-pen m-0"></i></button>`;         
+                  
+                    }
+              },
+              { data: null, // Columna autoincremental
+                    render: function (data, type, row, meta) {
                         return meta.row + 1; // meta.row es el índice de la fila
                     }
               },

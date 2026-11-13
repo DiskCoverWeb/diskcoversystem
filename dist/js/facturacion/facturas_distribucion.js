@@ -1066,101 +1066,163 @@ function generar_factura()
 		data: { parametros:parametros},
 		dataType: 'json',
 		success: function (data) {
-		setTimeout(()=>{
-			$('#myModal_espera').modal('hide');
-		}, 1000)
+		setTimeout(()=>{  $('#myModal_espera').modal('hide');  }, 1000)
 			console.log(data);
-			if (data.respuesta[0] == 1) {
-				Swal.fire({
-					icon: 'success',
-					title: 'Factura Generada',
-					confirmButtonText: 'Ok!',
-					allowOutsideClick: false,
-				}).then(function () {
-						
-						// imprimir baucher	
-					  	nombre_pdf = [data.pdf+'.pdf'];
-                    	clave_Acceso = [data.clave+'.xml'];
-						enviar_email_comprobantes(nombre_pdf,clave_Acceso);
-						var  id = data.factura
-						var serie =   $('#LblSerie').text(); //data[0].serie
-						var ci =  data.codigoc
-						var aut =  data.auto
-						var tc =  'NDO';
-						Ver_nd(id,serie,ci,aut,tc);
-		
-						$('#imprimir_nd').removeAttr('disabled');
-						var url = '../../TEMP/' + data.pdf + '.pdf';							
-						window.open(url, '_blank');
 
-
-				})
-			} else if (data.respuesta[0] == -5) {
-				Swal.fire({
-					icon: 'info',
-					title: 'No se pudo autorizar la  Factura Generada',
-					confirmButtonText: 'Ok!',
-					allowOutsideClick: false,
-				}).then(function () {
-						
-						// imprimir baucher	
-					  	nombre_pdf = [data.pdf+'.pdf'];
-                    	clave_Acceso = [data.clave+'.xml'];
-						// enviar_email_comprobantes(nombre_pdf,clave_Acceso);
-						var  id = data.factura
-						var serie =   $('#LblSerie').text(); //data[0].serie
-						var ci =  data.codigoc
-						var aut =  data.auto
-						var tc =  'NDO';
-						Ver_nd(id,serie,ci,aut,tc);
-		
-						$('#imprimir_nd').removeAttr('disabled');
-						var url = '../../TEMP/' + data.pdf + '.pdf';							
-						window.open(url, '_blank');
-
-
-				})
-			} else if (data.respuesta[0] == -1) {
-				if(data.text=='' || data.text == null)
+			if(data.respuesta.length==0)
+			{
+				// no hay una respuesta
+			}else if(data.respuesta.length>0){
+				// en el caso de que la respuesta del sri nos de algo 
+				var resp = data.respuesta[0];
+				switch(resp)
 				{
-					Swal.fire({
-						icon: 'error',
-						title: 'XML devuelto',
-						text:'Error al generar XML o al firmar',
-						confirmButtonText: 'Ok!',
-						allowOutsideClick: false,
-					}).then(function () {
-						// location.reload();
-					})				
-					tipo_error_sri(data.clave);
-				}else{
-				Swal.fire({
-						icon: 'error',
-						title: data.text,
-						confirmButtonText: 'Ok!',
-						allowOutsideClick: false,
-					}).then(function () {
-						location.reload();
-					})
+					case 1:
+						Swal.fire({	icon: 'success',title: 'Factura Generada',confirmButtonText: 'Ok!',	allowOutsideClick: false,}).then(
+							function () {	
+							  	nombre_pdf = [data.pdf+'.pdf'];
+		                    	clave_Acceso = [data.clave+'.xml'];
+								enviar_email_comprobantes(nombre_pdf,clave_Acceso);
+								var  id = data.factura
+								var serie =   $('#LblSerie').text(); //data[0].serie
+								var ci =  data.codigoc
+								var aut =  data.auto
+								var tc =  'NDO';
+								Ver_nd(id,serie,ci,aut,tc);
+								$('#imprimir_nd').removeAttr('disabled');
+								var url = '../../TEMP/' + data.pdf + '.pdf';							
+								window.open(url, '_blank');
+						})
+						break;
+					case -1:
+						Swal.fire({
+							icon: 'error',
+							title: 'XML devuelto',
+							text:'Error al generar XML o al firmar',
+							confirmButtonText: 'Ok!',
+							allowOutsideClick: false,
+						}).then(function () {
+							// location.reload();
+						})				
+						tipo_error_sri(data.clave);
+
+
+						break;
+					case -4:
+						// cuando son errores de firma
+						Swal.fire({
+							icon: 'error',
+							title: 'XML devuelto',
+							text:'Error al generar XML o al firmar',
+							confirmButtonText: 'Ok!',
+							allowOutsideClick: false,
+						}).then(function () {
+							// location.reload();
+						})				
+						tipo_error_sri(data.clave);
+
+
+						break;
+
+					default:
+						break;
+
 				}
-			} else if (data.respuesta == 2) {
-				// Swal.fire('XML devuelto', '', 'error');
-				Swal.fire({
-					icon: 'error',
-					title: 'XML devuelto',
-					text:'Error al generar XML o al firmar',
-					confirmButtonText: 'Ok!',
-					allowOutsideClick: false,
-				}).then(function () {
-					location.reload();
-				})
-			
-				tipo_error_sri(data.clave);
-			}else if (data.respuesta == 4) {
-				Swal.fire('SRI intermitente intente mas tarde', '', 'info');
-			} else {
-				Swal.fire(data.text, '', 'error');
 			}
+
+
+
+			// if (data.respuesta[0] == 1) {
+			// 	Swal.fire({
+			// 		icon: 'success',
+			// 		title: 'Factura Generada',
+			// 		confirmButtonText: 'Ok!',
+			// 		allowOutsideClick: false,
+			// 	}).then(function () {
+						
+			// 			// imprimir baucher	
+			// 		  	nombre_pdf = [data.pdf+'.pdf'];
+            //         	clave_Acceso = [data.clave+'.xml'];
+			// 			enviar_email_comprobantes(nombre_pdf,clave_Acceso);
+			// 			var  id = data.factura
+			// 			var serie =   $('#LblSerie').text(); //data[0].serie
+			// 			var ci =  data.codigoc
+			// 			var aut =  data.auto
+			// 			var tc =  'NDO';
+			// 			Ver_nd(id,serie,ci,aut,tc);
+		
+			// 			$('#imprimir_nd').removeAttr('disabled');
+			// 			var url = '../../TEMP/' + data.pdf + '.pdf';							
+			// 			window.open(url, '_blank');
+
+
+			// 	})
+			// } else if (data.respuesta[0] == -5) {
+			// 	Swal.fire({
+			// 		icon: 'info',
+			// 		title: 'No se pudo autorizar la  Factura Generada',
+			// 		confirmButtonText: 'Ok!',
+			// 		allowOutsideClick: false,
+			// 	}).then(function () {
+						
+			// 			// imprimir baucher	
+			// 		  	nombre_pdf = [data.pdf+'.pdf'];
+            //         	clave_Acceso = [data.clave+'.xml'];
+			// 			// enviar_email_comprobantes(nombre_pdf,clave_Acceso);
+			// 			var  id = data.factura
+			// 			var serie =   $('#LblSerie').text(); //data[0].serie
+			// 			var ci =  data.codigoc
+			// 			var aut =  data.auto
+			// 			var tc =  'NDO';
+			// 			Ver_nd(id,serie,ci,aut,tc);
+		
+			// 			$('#imprimir_nd').removeAttr('disabled');
+			// 			var url = '../../TEMP/' + data.pdf + '.pdf';							
+			// 			window.open(url, '_blank');
+
+
+			// 	})
+			// } else if (data.respuesta[0] == -1) {
+			// 	if(data.text=='' || data.text == null)
+			// 	{
+			// 		Swal.fire({
+			// 			icon: 'error',
+			// 			title: 'XML devuelto',
+			// 			text:'Error al generar XML o al firmar',
+			// 			confirmButtonText: 'Ok!',
+			// 			allowOutsideClick: false,
+			// 		}).then(function () {
+			// 			// location.reload();
+			// 		})				
+			// 		tipo_error_sri(data.clave);
+			// 	}else{
+			// 	Swal.fire({
+			// 			icon: 'error',
+			// 			title: data.text,
+			// 			confirmButtonText: 'Ok!',
+			// 			allowOutsideClick: false,
+			// 		}).then(function () {
+			// 			location.reload();
+			// 		})
+			// 	}
+			// } else if (data.respuesta == 2) {
+			// 	// Swal.fire('XML devuelto', '', 'error');
+			// 	Swal.fire({
+			// 		icon: 'error',
+			// 		title: 'XML devuelto',
+			// 		text:'Error al generar XML o al firmar',
+			// 		confirmButtonText: 'Ok!',
+			// 		allowOutsideClick: false,
+			// 	}).then(function () {
+			// 		location.reload();
+			// 	})
+			
+			// 	tipo_error_sri(data.clave);
+			// }else if (data.respuesta == 4) {
+			// 	Swal.fire('SRI intermitente intente mas tarde', '', 'info');
+			// } else {
+			// 	Swal.fire(data.text, '', 'error');
+			// }
 		},
       error: function(xhr, status, error){
         	console.error("Error en la solicitud: ", xhr, status, error);

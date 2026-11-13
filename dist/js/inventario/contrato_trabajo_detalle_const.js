@@ -231,8 +231,8 @@ function contratistas()
                 var mas_per = 'NO';
                 $('#lbl_proyecto').text(response[0].proyecto);
                 $('#lbl_contratista').text(response[0].Cliente)
-                if(response[0].Cargo_Mat==1){mate = 'SI';}
-                if(response[0].Mas_Persona==1){mate = 'SI';}
+                if(response[0].Cargo_Mat=='1'){mate = 'SI';}
+                if(response[0].Mas_Persona=='1'){mas_per = 'SI';}
                 $('#lbl_material').text(mate)
                 $('#lbl_mas_personas').text(mas_per);
                 $('#lbl_nombre_contrato').text(response[0].Nombre_Contrato)

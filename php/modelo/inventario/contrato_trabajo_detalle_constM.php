@@ -219,7 +219,7 @@ class contrato_trabajo_detalle_constM
     function lista_personal_contrato($orden)
     {
 
-        $sql = "SELECT E.ID,E.Codigo,Cliente,CI_RUC,Actividad,Fecha_N,Fecha,Fecha_Cad
+        $sql = "SELECT E.ID,E.Codigo,Cliente,CI_RUC,Actividad,Fecha_N,E.Fecha_Ini,Fecha,E.Fecha_Fin,Fecha_Cad
                 FROM Entidad_CxP_Contrato E
                 INNER JOIN Clientes C ON E.Codigo = C.Codigo
                 WHERE Item = '".$_SESSION['INGRESO']['item']."'

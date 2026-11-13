@@ -155,7 +155,12 @@ function Consultar_Tipo_Kardex(EsKardexIndividual, porQR=false){//revisada
         data: function(d) {
             return $("#FormKardex").serialize();
         }, dataSrc: function(json) {
-          $('#myModal_espera').modal('hide');
+          // $('#myModal_espera').modal('hide');
+
+          setTimeout(()=>{
+            $('#myModal_espera').modal('hide');
+          }, 1000);
+          
           if (json.error) {
             Swal.fire({ icon: 'warning', title: 'Consulta no disponible', text: json.mensaje });
             return [];

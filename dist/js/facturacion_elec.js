@@ -731,7 +731,7 @@ function generar_factura() {
                     enviar_email_comprobantes(nombre_pdf,clave_Acceso);
                 })
 
-            }else if(data.Factura[0]==1 && data.Guia_remision[0]==0)
+            }else if(data.Factura[0]==1 && data.Guia_remision[0]==-1)
             {
                     //factura con guia remision devuelta
                  Swal.fire({
@@ -772,18 +772,23 @@ function generar_factura() {
                 Swal.fire({
                     icon: 'error',
                     title: 'Factura no autorizada',
+                    text:data.Factura[3],
                     confirmButtonText: 'Ok!',
                     allowOutsideClick: false,
                 }).then(function() {
+                    // console.log('ss')
                     tipo_error_sri(data.Factura[1])
                 })
             }else if(data.Factura[0] == -5){
-                 Swal.fire(data.Factura[1],'','error').then(function() {
+                 Swal.fire(data.Factura[3],'','error').then(function() {
                     location.reload();            
                 })
-            }else
+            }else if(data.Factura[0] == -4)
             {
-                Swal.fire('Error inesperado consulte con su proveedor','','error').then(function() {
+                Swal.fire('Error al firmar documento',data.Factura[3],'error')
+             }else
+            {
+                Swal.fire('Error inesperado consulte con su proveedor',data.Factura[3],'error').then(function() {
                     location.reload();            
                 })
              }
@@ -977,6 +982,7 @@ function tipo_error_sri(clave) {
         success: function(data) {
 
             console.log(data);
+            console.log('qqq')
             $('#myModal_sri_error').modal('show');
             $('#sri_estado').text(data.estado[0]);
             $('#sri_codigo').text(data.codigo[0]);

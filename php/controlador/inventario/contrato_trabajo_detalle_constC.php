@@ -318,15 +318,17 @@ class contrato_trabajo_detalle_constC
             $fechaActual = new DateTime(date('Y-m-d'));
             $edad = $fechaActual->diff($fechaNacimiento);
 
+            // print_r($edad);die();
+
             $lista.= '<tr>                    
                       <td><button class="btn btn-danger btn-sm pe-1" onclick="eliminar_personal('.$value['ID'].')"><i class="bx bx-trash"></i></button></td>
                       <td>'.($key+1).'</td>
                       <td>'.$value['Cliente'].'</td>
                       <td>'.$value['CI_RUC'].'</td>
                       <td>'.$value['Actividad'].'</td>
-                      <td>'.$edad->d.'</td>
-                      <td>'.$value['Fecha']->format('Y-m-d').'</td>
-                      <td>'.$value['Fecha_Cad']->format('Y-m-d').'</td>  
+                      <td>'.$edad->y.'</td>
+                      <td>'.$value['Fecha_Ini']->format('Y-m-d').'</td>
+                      <td>'.$value['Fecha_Fin']->format('Y-m-d').'</td>  
                     </tr>';
                                  
                                  

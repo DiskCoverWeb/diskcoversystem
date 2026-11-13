@@ -281,7 +281,10 @@ class kardexM
             "AND TK.CodMarca = CM.CodMar " .
             "ORDER BY TK.Codigo_Inv, TK.Fecha,TK.Entrada DESC,TK.Salida,TK.TP,TK.Numero,TK.ID ";
     $_SESSION['DGKardex']['sSQL'] = $sSQL ;
-    return grilla_generica_new($sSQL);
+
+    return $this->db->datos($sSQL);
+
+    // return grilla_generica_new($sSQL);
     //$SQLDec = "TK.Costo " . strval($Dec_Costo) . "| TK.Valor_Unitario " . strval($Dec_Costo) . "|,TK.Valor_Total 2|.";
   }
 
@@ -307,7 +310,9 @@ class kardexM
              "AND TC.Envio_No = SUBSTRING(TK.Codigo_Barra, 1, LEN(TC.Envio_No)) " .
              "ORDER BY TK.CodBodega, TK.Codigo_Inv, TK.Fecha, TK.Entrada DESC, TK.Salida, TK.TP, TK.Numero, TK.ID";
     $_SESSION['DGKardex']['sSQL'] = $sSQL;
-    return grilla_generica_new($sSQL);
+
+    $this->db->datos($sql);
+    // return grilla_generica_new($sSQL);
   }
 
   function kardex_total($desde,$hasta,$codigo,$CheqBod,$bodega){

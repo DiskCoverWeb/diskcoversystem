@@ -88,6 +88,9 @@ class autorizacion_sri
 	    //-2 no existe la factura
 	    //-3 la conexion al sri no esta optima
 	    // texto del erro en forma de matris
+	    // -4 errores por firmado
+
+
 		$cabecera['ambiente']=$_SESSION['INGRESO']['Ambiente'];
 	    $cabecera['ruta_ce']=$_SESSION['INGRESO']['Ruta_Certificado'];
 	    $cabecera['clave_ce']=$_SESSION['INGRESO']['Clave_Certificado'];
@@ -343,7 +346,7 @@ class autorizacion_sri
 	           	 	$_SESSION['INGRESO']['Ruta_Certificado']);
 	           	 // print($firma);die();
 	           	 
-	           	 if($firma==1)
+	           	 if(isset($firma[0]) && $firma[0]==1)
 	           	 {	           	 
 	           	 	
 			   		 	$enviar_sri = $this->enviar_xml_sri(
@@ -656,7 +659,7 @@ class autorizacion_sri
 	       	 	$_SESSION['INGRESO']['Clave_Certificado'],
 	       	 	$_SESSION['INGRESO']['Ruta_Certificado']);
 	       	 // print($firma);die();
-	       	 if($firma==1)
+	       	 if(isset($firma[0]) && $firma[0]==1)
 	       	 {
 	       	 	// $validar_autorizado = $this->comprobar_xml_sri(
 	       	 	// 	$aut,
@@ -838,7 +841,7 @@ class autorizacion_sri
 	           	 	$_SESSION['INGRESO']['Clave_Certificado'],
 	           	 	$_SESSION['INGRESO']['Ruta_Certificado']);
 	           	 // print($firma);die();
-	           	 if($firma==1)
+	           	 if(isset($firma[0]) && $firma[0]==1)
 	           	 {
 	           	 	
 			   		 	$enviar_sri = $this->enviar_xml_sri(
@@ -1017,7 +1020,7 @@ class autorizacion_sri
 	           	 	$_SESSION['INGRESO']['Clave_Certificado'],
 	           	 	$_SESSION['INGRESO']['Ruta_Certificado']);
 	           	 // print($firma);die();
-	           	 if($firma==1)
+	           	 if(isset($firma[0]) && $firma[0]==1)
 	           	 {
 	           	 	$validar_autorizado = $this->comprobar_xml_sri(
 	           	 		$TFA['ClaveAcceso'],
@@ -1189,7 +1192,7 @@ class autorizacion_sri
 	           	 	$_SESSION['INGRESO']['Clave_Certificado'],
 	           	 	$_SESSION['INGRESO']['Ruta_Certificado']);
 	           	 // print($firma);die();
-	           	 if($firma==1)
+	           	 if(isset($firma[0]) && $firma[0]==1)
 	           	 {
 	           	 	// $validar_autorizado = $this->comprobar_xml_sri(
 	           	 	// 	$TFA['ClaveAcceso_GR'],
@@ -2762,7 +2765,7 @@ function Autorizar_retencion($parametros)
 	           	 	$_SESSION['INGRESO']['Clave_Certificado'],
 	           	 	$_SESSION['INGRESO']['Ruta_Certificado']);
 	           	 // print($firma);die();
-	           	 if($firma==1)
+	           	 if(isset($firma[0]) && $firma[0]==1)
 	           	 {
 	           	 	
 			   		 	$enviar_sri = $this->enviar_xml_sri(
@@ -3261,20 +3264,20 @@ function generar_xml_retencion($cabecera,$detalle)
 	        	// print_r($f);die();
 	        	if(count($f)<6 && !empty($f))
 		 		{
-		 			return 1;		 		
+		 			return array(1,'firmado');		 		
 		 		}else
 		 		{		 			
-		 			$respuesta = 'Error al generar XML o al firmar';
+		 			$respuesta = array(-4,$nom_doc,'Firmador','Error al generar XML o al firmar revisar clave y certificado');
 		 			return $respuesta;          
 		        }
 		    }else
 		    {
-		    	$respuesta = 'XML generado no encontrado patch:'.$url_generados.$nom_doc.".xml";
+		    	$respuesta =  array(-4,$nom_doc,'Firmador','XML generado no encontrado patch:'.$url_generados.$nom_doc.".xml");
 	 			return $respuesta;
 		    }
 	 	   }else
 	 	   {
-	 	   		$respuesta = 'No se han encontrado Certificados';
+	 	   		$respuesta =  array(-4,$nom_doc,'Firmador','No se han encontrado Certificados');
 	 			return $respuesta;
 	 	   }
 
@@ -3307,7 +3310,7 @@ function generar_xml_retencion($cabecera,$detalle)
 
  	    	$command = "python ".$comprobar_sri." 2 ".$clave_acceso." ".$url_autorizado." ".$url_No_autorizados." ".$link_autorizacion; 
  	    	$output = shell_exec($command);   
-
+// print_r($command);die();
 	   		// print_r($output);die();		
 	   		try {
 
@@ -3365,6 +3368,10 @@ function generar_xml_retencion($cabecera,$detalle)
 	   		{
 	   			$output = mb_convert_encoding($output, 'UTF-8', 'ISO-8859-1');
 	   		}
+
+
+	   		// print_r($output);
+	   		// die();
 	   		$output = json_decode($output,true);
 	   		// print_r($output);die();
 	   		return $output;

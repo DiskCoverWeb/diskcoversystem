@@ -381,7 +381,7 @@ function isMobileDevice() {
 		<div class="modal-content" style="background-color:antiquewhite;">
 			<div class="modal-header bg-primary">
 				<h4 class="modal-title text-white">Tomar Foto</h4>
-				<button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button>
+				<!-- <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button> -->
 			</div>
 			<div class="modal-body">
 				<div class="col-sm-12">

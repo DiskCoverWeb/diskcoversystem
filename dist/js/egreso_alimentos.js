@@ -34,7 +34,8 @@ $(document).ready(function () {
   areas();  
   motivo_egreso()	
   notificaciones();
-enumerateCameras();
+	enumerateCameras();
+
 
   tbl_asignados_all = $('#tbl_asignados_all').DataTable({
 		searching: false,
@@ -93,13 +94,51 @@ enumerateCameras();
 	});
 
 	$('#modal_camara').on('shown.bs.modal', function () {
+
+
+	navigator.permissions.query({ name: 'camera' }).then(status => {
+		if(status.state=='prompt' || status.state=='denied'){ 
+			solicitarPermisoCamara()
+		}else{
+			cam = $('#ddl_camaras_f').val();
+			console.log(cam);
+			activarCamara(cam);
+		}
+	});
 		// enumerateCameras();
-		cam = $('#ddl_camaras_f').val();
-		console.log(cam);
-		activarCamara(cam);
+		
 	})
 })
 
+
+
+async function solicitarPermisoCamara() {
+    try {
+        // 1. Forzar la aparición del aviso de permiso.
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+        // 2. Si el usuario acepta, el permiso ya está concedido.
+        console.log("Permiso concedido. Estado:", "granted");
+
+        // 3. Detener la cámara inmediatamente para liberar el hardware.
+        stream.getTracks().forEach(track => track.stop());
+
+        // 4. Ahora puedes llamar a enumerateCameras() con seguridad.
+        enumerateCameras()
+	        cam = $('#ddl_camaras_f').val();
+				console.log(cam);
+				await activarCamara(cam);
+
+    } catch (err) {
+        // 5. Manejar el caso en que el usuario deniegue el permiso.
+        if (err.name === 'NotAllowedError') {
+            console.error("El usuario ha denegado el permiso de cámara.");
+            alert("Para usar la cámara, necesitas conceder el permiso en la configuración del navegador.");
+        } else {
+            console.error("Error al solicitar la cámara:", err);
+        }
+    }
+}
 
 
 // function verificarDatosEnTabla() {
@@ -810,13 +849,14 @@ function cerrarCamaraFoto()
 }
 
 function enumerateCameras() {
+	console.log('lista camar')
 	var op ='';
     navigator.mediaDevices.enumerateDevices()
         .then(devices => {
             const cameras = devices.filter(device => device.kind === 'videoinput');
            
             cameras.forEach((camera, index) => {
-            	// console.log(camera.deviceId);
+            	console.log(camera);
                 op+='<option value="'+camera.deviceId+'">Camara '+(index+1)+'</option>'
             });
             // console.log(cameras);
@@ -861,6 +901,7 @@ function activarCamara(cameraId){
 	.catch((err) => {
 		Swal.fire('Ocurrio un error al activar la camara', '', 'error');
 		console.error(`An error occurred: ${err}`);
+		$('#modal_camara').modal('hide')
 	});
 
     video.addEventListener(

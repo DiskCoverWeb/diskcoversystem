@@ -400,15 +400,61 @@ class kardexC
     function generarExcelKardex($parametros){
         if(isset($_SESSION['DGKardex']['sSQL'])){
             extract($parametros);
-            $titulo = 'Kardex del '.BuscarFecha($MBoxFechaI).' al '. BuscarFecha($MBoxFechaF);
+            $titulo = 'K a r d e x   d e l  '.BuscarFecha($MBoxFechaI).'  a l  '. BuscarFecha($MBoxFechaF);
             $sSQL   = $_SESSION['DGKardex']['sSQL'];
             $result = $this->modelo->SelectDB($sSQL);
-            //print_r($replacedQuery);die();
-            if(count($result) <= 0){
-              die("Regrese a la pantalla anterior y cargue la informacion antes de imprimir el pdf");
+
+            $head = array();
+            foreach ($result[0] as $key => $value) {
+                array_push($head, $key);
             }
-            $medidas = array(12,30,15,12,18,9,12,12,12,12,12,15,15,15,10,20,20,15,15,20,25,15,15,20,25,25,15,15,9);
-            return exportar_excel_generico_SQl($titulo,$sSQL, $medidas, fecha_sin_hora:true);
+
+
+            $medidas = array(12,30,15,12,18,9,12,12,12,12,12,15,15,15,10,20,20,15,15,20,25,15,15,20,25,25,15,15,9,29);
+            $tablaHTML = array();
+            $tablaHTML[0]['medidas']=$medidas;
+            $tablaHTML[0]['datos']=$head;        
+            $tablaHTML[0]['tipo'] ='C';
+
+            $i =  1;
+            foreach ($result as $key => $value) {
+
+                $body = array();
+                foreach ($head as $key2 => $value2) {
+                    if(!is_object($value[$value2]))
+                    {
+                        if(!is_numeric($value[$value2]))
+                        {
+                            array_push($body, $value[$value2]);
+                        }else{
+                          if(is_int($value[$value2]))
+                          {
+                            array_push($body,$value[$value2]);
+                          }else{                            
+                            array_push($body, number_format($value[$value2],4,'.',''));
+                          }
+                        }
+                    }else{
+                    array_push($body, $value[$value2]->format('Y-m-d'));
+                    }
+                }
+
+                $tablaHTML[$i]['medidas']= $tablaHTML[0]['medidas'];
+                $tablaHTML[$i]['datos']= $body;
+
+                $i++;
+            }
+
+
+            // // print_r($result);die();
+            // //print_r($replacedQuery);die();
+            // if(count($result) <= 0){
+            //   die("Regrese a la pantalla anterior y cargue la informacion antes de imprimir el pdf");
+            // }
+            // // return exportar_excel_generico_SQl($titulo,$sSQL, $medidas, fecha_sin_hora:true);
+
+            excel_generico($titulo,$tablaHTML,$url=false);
+
         }else{
             die("Primero debe cargar la informacion");
         }
@@ -485,8 +531,8 @@ class kardexC
         foreach ($result[0] as $key => $value) {
             array_push($campos,$key);
         }
-        $medi =array(8,17,9,28,90,13,12,23,18,15,19,18);
-        $medip =array(8,17,9,28,90,13,12,23,18,15,19,18);
+        $medi =array(38,27,9,18,60,13,12,23,18,15,19,18);
+        $medip =array(28,17,9,28,90,13,12,23,18,15,19,18);
 
         $pdf = new cabecera_pdf();  
         $titulo = "CONTROL DE EXISTENCIAS";
@@ -494,17 +540,17 @@ class kardexC
         $sizetable =8;
         $tablaHTML = array();
 
-        $tablaHTML[0]['medidas']=array(30, 30);
+        $tablaHTML[0]['medidas']=array(30, 240);
         $tablaHTML[0]['alineado']=array('L', 'L');
         $tablaHTML[0]['datos']=array($LabelCodigo,$LabelUnidad);
         $tablaHTML[0]['estilo']='I';
-        $tablaHTML[0]['borde'] = '0';
+        $tablaHTML[0]['borde'] = '1';
 
-        $tablaHTML[1]['medidas']=array(150);
+        $tablaHTML[1]['medidas']=array(270);
         $tablaHTML[1]['alineado']=array('L');
         $tablaHTML[1]['datos']=array($NombreProducto);
         $tablaHTML[1]['estilo']='I';
-        $tablaHTML[1]['borde'] = '0';
+        $tablaHTML[1]['borde'] = '1';
 
         $tablaHTML[2]['medidas']=array(100);
         $tablaHTML[2]['alineado']=array('L');
@@ -513,10 +559,10 @@ class kardexC
         $tablaHTML[2]['borde'] = '0';
 
         $tablaHTML[3]['medidas']=$medi;
-        $tablaHTML[3]['alineado']=array('L','C','C','R','L','R','R','R','R','R','R','R');
+        $tablaHTML[3]['alineado']=array('L','L','L','R','L','R','R','R','R','R','R','R');
         $tablaHTML[3]['datos']=$campos;
         $tablaHTML[3]['estilo']='B';
-        $tablaHTML[3]['borde'] = 'B';
+        $tablaHTML[3]['borde'] = '1';
         $pos = 4;
 
         $TipoDoc = "";

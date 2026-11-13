@@ -667,8 +667,10 @@ class alimentos_recibidosC
 	   SetAdoFields('A_No',$parametro['A_No']+1);
 	   SetAdoFields('Fecha',date('Y-m-d',strtotime($parametro['txt_fecha'])));
 	   SetAdoFields('Valor_Total',number_format($producto[0]['PVP']*$parametro['txt_cantidad'],2,'.',''));
+	   SetAdoFields('Total',number_format($producto[0]['PVP']*$parametro['txt_cantidad'],2,'.',''));
 	   SetAdoFields('CANTIDAD',$parametro['txt_cantidad']);
 	   SetAdoFields('Valor_Unitario',number_format($producto[0]['PVP'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
+	   SetAdoFields('Costo',number_format($producto[0]['PVP'],$_SESSION['INGRESO']['Dec_PVP'],'.',''));
 	   SetAdoFields('TP',".");
 	   SetAdoFields('Codigo_Barra',$codigo_barras);
 	   SetAdoFields('CodBodega',-1);
@@ -1300,6 +1302,11 @@ class alimentos_recibidosC
 		$fecha = $parametros['txt_fecha'];
 		$detalle = $parametros['txt_concepto_comp'];
 
+		if(isset($parametros['txt_serie']) && $parametros['txt_serie'] != ''  && $parametros['txt_serie'] != '.'){ $detalle.=' - FC:'.$parametros['txt_serie']; }
+		if(isset($parametros['txt_factura']) && $parametros['txt_factura'] != ''  && $parametros['txt_factura'] != '.'){ $detalle.='-'.generaCeros($parametros['txt_factura']);}else{ $parametros['txt_factura']  = date('Ymd');}
+
+		// print_r($detalle);die();
+
 		// print_r($parametros);
 		// print_r($asientos_SC);die();
 
@@ -1324,9 +1331,12 @@ class alimentos_recibidosC
                     't'=> $cuenta[0]['TC'],
                     'serie'=>$parametros['txt_serie'],                 
                   );
-
-                $this->ing_des->generar_asientos_SC($dataSub);
+			// print_r($cuenta)
+			// print_r($dataSub);die();
+            $r =  $this->ing_des->generar_asientos_SC($dataSub);
 		}
+
+			// print_r($parametros);die();
 
 		   // asiento para el haber
 		$asiento_haber  = $this->ing_des->datos_asiento_haber_trans($parametros['txt_codigo'],$parametros['txt_fecha']);
@@ -1401,7 +1411,7 @@ class alimentos_recibidosC
 			if($debe !=0 && $haber!=0)
 			{
 				 $parametro_comprobante = array(
-        	        'ru'=> '000000000', //codigo del cliente que sale co el ruc del beneficiario codigo
+        	        'ru'=> $parametros['txt_codigo_p'], //codigo del cliente que sale co el ruc del beneficiario codigo
         	        'tip'=>'CD',//tipo de cuenta contable cd, etc
         	        "fecha1"=> $fecha,// fecha actual 2020-09-21
         	        'concepto'=>$detalle, //detalle de la transaccion realida
