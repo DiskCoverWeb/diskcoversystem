@@ -213,27 +213,34 @@ class modalesC
 		// print_r($datos);die();
 		if($datos['Tipo_Beneficiario']!= "R" && strlen($datos['CI'])== 13)
 		{
-			$res = file_get_contents("https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=".$ci);
-			if($res==true)
+			// $res = file_get_contents("https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=".$ci);
+			// if($res==true)
+			// {
+			// 	$res2 = file_get_contents("https://srienlinea.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos2.jspa?accion=siguiente&ruc=".$ci);
+			// 	$res2 = explode('<table class="formulario">',$res2); //divide en tabla formulario que viene en el html
+			// 	$res2 = $res2[1]; //solo toma de tabla formulario para abajo
+			// 	$res2 = explode('</table>', $res2); //divide cuando lña tabla termina 
+			// 	$res2 = $res2[0]; //se selecciona solo la parte primera que seran los tr
+			// 	$res2 = str_replace('<tr>','', $res2); //remplazamos todos los tr
+
+			// 	$datos =  explode('</tr>', $res2);  //dividimos por el final del tr
+
+			// 	// if($datos[2])
+
+			// 	// // $res2 =json_encode($res2);
+			// 	// print_r($datos);die();
+
+
+			// 	$tipo = explode('\'">', $datos[11]);
+			// 	$tipo = str_replace(array('</a>','</td>'),'', $tipo[1]);
+
+
+				$res2 = file_get_contents("https://erp.diskcoversystem.com/php/comprobantes/SRI/consulta_ruc_sri.php?ruc=".$ci);
+				$data = json_decode($res2,true);
+			if($data['ok'])
 			{
-				$res2 = file_get_contents("https://srienlinea.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos2.jspa?accion=siguiente&ruc=".$ci);
-				$res2 = explode('<table class="formulario">',$res2); //divide en tabla formulario que viene en el html
-				$res2 = $res2[1]; //solo toma de tabla formulario para abajo
-				$res2 = explode('</table>', $res2); //divide cuando lña tabla termina 
-				$res2 = $res2[0]; //se selecciona solo la parte primera que seran los tr
-				$res2 = str_replace('<tr>','', $res2); //remplazamos todos los tr
 
-				$datos =  explode('</tr>', $res2);  //dividimos por el final del tr
-
-				// if($datos[2])
-
-				// // $res2 =json_encode($res2);
-				// print_r($datos);die();
-
-
-				$tipo = explode('\'">', $datos[11]);
-				$tipo = str_replace(array('</a>','</td>'),'', $tipo[1]);
-
+				$tipo = $data['tipoContribuyente'];
 				return array('Codigo'=>substr($ci, 0,10),'Tipo'=>'R','Dig_ver'=>substr($ci, 10,1),'Ruc_Natu'=>trim($tipo),'CI'=> $ci);
 
 			}else
@@ -426,6 +433,8 @@ function li2Array($html,$elemento="li"){
 
 	function validar_sri($ci)
 	{
+
+		print_r($ci);die();
 		$res = file_get_contents("https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=".$ci);
 			if($res==true)
 			{
@@ -608,25 +617,14 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
 	function validar_sri_cliente($NumRUC)
 	{
-		$urlEsUnRUC = "https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/existePorNumeroRuc?numeroRuc=" . $NumRUC;
-
-		// Inicializa cURL para la primera solicitud
-		$ch1 = curl_init($urlEsUnRUC);
-		curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch1, CURLOPT_ENCODING, 'UTF-8');
-
+		
 		try {
-		    // Ejecuta la primera solicitud cURL
-		    $res = curl_exec($ch1);
-
-		    // Verifica si hubo un error de cURL
-		    if ($res === false) {
-		    	return $r = array('res'=>0,'msg'=>'NO FUE POSIBLE VALIDAR EL RUC');
-		    }
-
+		   
 		    // Verifica si el resultado indica que el RUC existe
-		    if ($res == "true") {
-		        $urlDatosDelRUC = "https://srienlinea.sri.gob.ec/facturacion-internet/consultas/publico/ruc-datos2.jspa?accion=siguiente&ruc=" . $NumRUC;
+		    // if ($res == "true") {
+		        $urlDatosDelRUC = "https://erp.diskcoversystem.com/php/comprobantes/SRI/consulta_ruc_sri.php?ruc=" . $NumRUC;
+
+		        // print_r($urlDatosDelRUC);die();
 
 		        // Inicializa cURL para la segunda solicitud
 		        $ch2 = curl_init($urlDatosDelRUC);
@@ -640,60 +638,61 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		        if ($res2 === false) {
 		            return $r = array('res'=>0,'msg'=>'NO FUE POSIBLE VALIDAR EL RUC');
 		        }
+		        $data = json_decode($res2,true);
+
+		        // print_r($data);die();
+		        // print_r($res2);die();
 
 		        $xml = str_replace('"', "'", $res2);
-					$cont = strpos($xml, "<table class='formulario'>");
+				  $cont = strpos($xml, "<table class='formulario'>");
 
-					if ($cont > 1) {
-					    $xml = substr($xml, $cont);
-					    $cont = strpos($xml, "</table>");
-					    $xml = substr($xml, 0, $cont + 8);
-					    $xml = trim($xml);
-					    $xml = str_replace(["<td colspan='2' class='lineaSep' />","<td colspan='2'> </td>"], "", $xml);
-					    $cont = 0;
-					    $vNodos = array();
-					    while (strlen($xml) > 0) {
-					        $vNodos[] = null;
-					        $iniNodo = strpos($xml, "<td>");
-					        $finNodo = strpos($xml, "</td>");
-					        if ($iniNodo > 0 && $finNodo > 0 && $iniNodo < $finNodo) {
-					            @$vNodos[$cont] = substr($xml, $iniNodo + 4, $finNodo - $iniNodo - 4);
-					            @$vNodos[$cont] = str_replace(array("\r\n", "\r", "\n", "\t", "&nbsp;", "</a>", "<a class='link2' href='javascript:sociedad();'", "onclick='forma.ruc.value='" . $NumRUC . "''>"), "", $vNodos[$cont]);
-					            $vNodos[$cont] = trim(strtoupper($vNodos[$cont]));
-					            $xml = substr($xml, $finNodo + 4);
-					        } else {
-					            $xml = "";
-					        }
+					if ($data['ok']) {
+					    // $xml = substr($xml, $cont);
+					    // $cont = strpos($xml, "</table>");
+					    // $xml = substr($xml, 0, $cont + 8);
+					    // $xml = trim($xml);
+					    // $xml = str_replace(["<td colspan='2' class='lineaSep' />","<td colspan='2'> </td>"], "", $xml);
+					    // $cont = 0;
+					    // $vNodos = array();
+					    // while (strlen($xml) > 0) {
+					    //     $vNodos[] = null;
+					    //     $iniNodo = strpos($xml, "<td>");
+					    //     $finNodo = strpos($xml, "</td>");
+					    //     if ($iniNodo > 0 && $finNodo > 0 && $iniNodo < $finNodo) {
+					    //         @$vNodos[$cont] = substr($xml, $iniNodo + 4, $finNodo - $iniNodo - 4);
+					    //         @$vNodos[$cont] = str_replace(array("\r\n", "\r", "\n", "\t", "&nbsp;", "</a>", "<a class='link2' href='javascript:sociedad();'", "onclick='forma.ruc.value='" . $NumRUC . "''>"), "", $vNodos[$cont]);
+					    //         $vNodos[$cont] = trim(strtoupper($vNodos[$cont]));
+					    //         $xml = substr($xml, $finNodo + 4);
+					    //     } else {
+					    //         $xml = "";
+					    //     }
 
-					        $cont++;
-					    }
+					    //     $cont++;
+					    // }
+
+						// print_r($data);die();
 					    $result = new stdClass();
-					    $result->RazonSocial = @trim($vNodos[0]);
-					    $result->RUC_SRI = @trim($vNodos[1]);
-					    $result->NombreComercial = @trim($vNodos[2]);
-					    $result->Estado = @trim($vNodos[3]);
-					    $result->ClaseRUC = @trim($vNodos[4]);
-					    $result->TipoRUC = @trim($vNodos[5]);
-					    $cont = 6;
+					    $result->RazonSocial = @trim($data['razonSocial']);
+					    $result->RUC_SRI = @trim($data['numeroRuc']);
+					    $result->NombreComercial = @trim($data['razonSocial']);
+					    $result->Estado = @trim($data['estadoContribuyenteRuc']);
+					    $result->ClaseRUC = @trim($data['tipoContribuyente']);
+					    $result->TipoRUC = @trim($data['regimen']);
+					    // $cont = 6;
+  						$result->Obligado = trim($data['obligadoLlevarContabilidad']);
+					      
 
-					    if (isset($vNodos[$cont]) && strlen(trim($vNodos[$cont])) == 2) {
-					        $result->Obligado = trim($vNodos[$cont]);
-					        $cont++;
-					    }else{
-					    	$result->Obligado = "SI";
-					    }
-
-					    $result->ActividadEconomica = @trim($vNodos[$cont]);
+					    $result->ActividadEconomica = @trim($data['actividadEconomicaPrincipal']);
 					    $cont++;
-					    $result->FechaInicio = @trim($vNodos[$cont]);
+					    $result->FechaInicio = @trim($data['fechaInicioActividades']);
 					    $cont++;
-					    $result->FechaCese = @trim($vNodos[$cont]);
+					    $result->FechaCese = @trim($data['fechaCese']);
 					    $cont++;
-					    $result->FechaReinicio = @trim($vNodos[$cont]);
+					    $result->FechaReinicio = @trim($data['fechaReinicioActividades']);
 					    $cont++;
-					    $result->FechaActualizacion = @trim($vNodos[$cont]);
+					    $result->FechaActualizacion = @trim($data['fechaActualizacion']);
 					    $cont++;
-					    $result->Categoria = @trim($vNodos[$cont]);
+					    $result->Categoria = @trim($data['categoria']);
 					}
 					$mensajes ="";
 					if (!is_null($result->RUC_SRI) && strlen($result->RUC_SRI) > 1) $mensajes .= "<p><b>R.U.C.:</b> " . $result->RUC_SRI . "</p>";
@@ -722,16 +721,16 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 					
 					
 		        return array('res' => 1, 'tbl' => $mensajes,'data' => $result);
-		    } else {
-		        return array('res' => 0, 'msg' => 'NO ES RUC VALIDO');
-		    }
+		    // } else {
+		    //     return array('res' => 0, 'msg' => 'NO ES RUC VALIDO');
+		    // }
 
 		} catch (Exception $e) {
 		    // Maneja la excepción generada por cURL
 		    return array('res' => 0, 'msg'=>'NO FUE POSIBLE VALIDAR EL RUC');
 		} finally {
 		    // Cierra las sesiones cURL
-		    curl_close($ch1);
+		    // curl_close($ch1);
 		    if (isset($ch2)) {
 		        curl_close($ch2);
 		    }
