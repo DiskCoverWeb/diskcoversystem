@@ -177,7 +177,7 @@ $rucInfoModal = !empty($_SESSION['INGRESO']['RUC']) && $_SESSION['INGRESO']['RUC
 </div>
 
 <!-- Modal Cámara Web -->
-<div class="modal fade" id="modal_camara" tabindex="-1" aria-labelledby="modalCamaraLabel" aria-hidden="true" style="z-index: 1060;">
+<div class="modal fade" id="modal_camara_perfil" tabindex="-1" aria-labelledby="modalCamaraLabel" aria-hidden="true" style="z-index: 1060;">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
             <div class="modal-header bg-primary text-white py-2">
@@ -349,7 +349,7 @@ $rucInfoModal = !empty($_SESSION['INGRESO']['RUC']) && $_SESSION['INGRESO']['RUC
         $('#camara_loading_modal').show();
         $('#camara_error_modal').hide();
 
-        var modalCamEl = document.getElementById('modal_camara');
+        var modalCamEl = document.getElementById('modal_camara_perfil');
         var modalCam = bootstrap.Modal.getOrCreateInstance(modalCamEl, { backdrop: 'static', keyboard: false });
         modalCam.show();
 
@@ -382,7 +382,7 @@ $rucInfoModal = !empty($_SESSION['INGRESO']['RUC']) && $_SESSION['INGRESO']['RUC
 
     function cerrar_modal_camara_perfil() {
         detener_stream_camara_perfil();
-        var modalEl = document.getElementById('modal_camara');
+        var modalEl = document.getElementById('modal_camara_perfil');
         var modalInstance = bootstrap.Modal.getInstance(modalEl);
         if (modalInstance) modalInstance.hide();
         if (modalPerfilInstanceGlobal) {
@@ -466,7 +466,7 @@ $rucInfoModal = !empty($_SESSION['INGRESO']['RUC']) && $_SESSION['INGRESO']['RUC
                         if (typeof Swal !== 'undefined') Swal.fire('Error', 'Error al procesar la foto.', 'error');
                     } else {
                         detener_stream_camara_perfil();
-                        var modalEl = document.getElementById('modal_camara');
+                        var modalEl = document.getElementById('modal_camara_perfil');
                         var modalInstance = bootstrap.Modal.getInstance(modalEl);
                         if (modalInstance) modalInstance.hide();
                         if (modalPerfilInstanceGlobal) modalPerfilInstanceGlobal.show();
@@ -495,7 +495,7 @@ $rucInfoModal = !empty($_SESSION['INGRESO']['RUC']) && $_SESSION['INGRESO']['RUC
     }
 
     $(document).ready(function() {
-        $('#modal_camara').on('hidden.bs.modal', function () {
+        $('#modal_camara_perfil').on('hidden.bs.modal', function () {
             detener_stream_camara_perfil();
         });
     });

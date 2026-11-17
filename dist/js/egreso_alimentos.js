@@ -897,6 +897,10 @@ function activarCamara(cameraId){
 		currentStream = stream;
 		video.srcObject = stream;
 		video.play();
+
+		$('#carga_camara').addClass('d-none');
+      // document.getElementById('contenedor_camera').style.display = 'flex';
+
 	})
 	.catch((err) => {
 		Swal.fire('Ocurrio un error al activar la camara', '', 'error');
