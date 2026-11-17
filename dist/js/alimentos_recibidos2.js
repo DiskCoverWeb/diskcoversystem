@@ -1149,6 +1149,7 @@ function autocoplet_ingreso()
     if ($.fn.DataTable.isDataTable('#tbl_body')) {
       $('#tbl_body').DataTable().destroy();
     }
+    
     var parametros=
     {
        num_ped:$('#txt_codigo').val(),
