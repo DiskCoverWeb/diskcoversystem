@@ -5539,7 +5539,7 @@ function generar_comprobantes($parametros) //revision parece repetida
       //buscamos codigo
       $sql="  SELECT Codigo
           FROM Clientes
-          WHERE((CI_RUC = '".$parametros['ru']."')) ";
+          WHERE CI_RUC = '".$parametros['ru']."' OR Codigo = '".$parametros['ru']."' ";
           // print_r($sql);die();
       $stmt = sqlsrv_query( $cid, $sql);
       if( $stmt === false)  
