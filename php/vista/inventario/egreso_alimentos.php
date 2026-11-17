@@ -376,41 +376,79 @@ function isMobileDevice() {
   </div>
 </div>
 
-<div id="modal_camara" class="modal fade"  role="dialog" data-bs-keyboard="false" data-bs-backdrop="static">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content" style="background-color:antiquewhite;">
-			<div class="modal-header bg-primary">
-				<h4 class="modal-title text-white">Tomar Foto</h4>
-				<!-- <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button> -->
-			</div>
-			<div class="modal-body">
-				<div class="col-sm-12">
-          <select class="form-select" id="ddl_camaras_f" name="ddl_camaras_f" onchange="cambiarCamaraF(this.value)">
-            <!-- <option value="0">Camara 1</option>                 -->
-          </select>               
-        </div> 
-				<div id="carga_camara">
-					<div style="height: 100%;width: 100%;display:flex;justify-content:center;align-items:center;">
-						<img src="../../img/gif/loader4.1.gif" width="20%">
-					</div>
-				</div>
-				<div class="row justify-content-center" id="contenedor_camera" style="display: none; position: relative;">
-					<div class="col-sm-12 text-center">
-							<video id="video" style="width:100%" >La camara no está funcional actualmente.</video>						
-					</div>
-					<div class="col-sm-6 text-center">
-							<button id="btnTomarFoto" class="btn btn-light">Tomar foto</button>
-					</div>
-					<div class="col-sm-6 text-center">
-							<button class="btn btn-danger" onclick="cerrarCamaraFoto()">cancelar</button>						
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<div id="modal_camara" class="modal fade" role="dialog"
+     data-bs-keyboard="false" data-bs-backdrop="static">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+
+      <!-- Header -->
+      <div class="modal-header bg-primary bg-gradient border-0 py-3 px-4">
+        <h5 class="modal-title text-white fw-semibold d-flex align-items-center gap-2">
+          <i class="bi bi-camera-video-fill"></i> Tomar Foto
+        </h5>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body bg-body-tertiary p-4">
+
+        <!-- Selector de cámara -->
+        <div class="mb-3">
+          <label for="ddl_camaras_f"
+                 class="form-label small fw-semibold text-secondary mb-1">
+            <i class="bi bi-camera"></i> Selecciona una cámara
+          </label>
+          <select class="form-select rounded-3 shadow-sm"
+                  id="ddl_camaras_f" name="ddl_camaras_f"
+                  onchange="cambiarCamaraF(this.value)">
+            <!-- <option value="0">Camara 1</option> -->
+          </select>
+        </div>
+
+        <!-- Loader -->
+        <div id="carga_camara"
+             class="d-flex flex-column justify-content-center align-items-center
+                    bg-white border border-2 border-dashed rounded-4 py-5 mb-2">
+          <img src="../../img/gif/loader4.1.gif" alt="Cargando cámara..."
+               class="w-25" style="max-width:80px;">
+          <p class="mb-0 mt-3 text-secondary small">Iniciando cámara…</p>
+        </div>
+
+        <!-- Cámara -->
+        <div class="row g-3 justify-content-center"
+             id="contenedor_camera" style="display: none;">
+
+          <!-- Marco del video -->
+          <div class="col-12">
+            <div class="ratio ratio-16x9 bg-black rounded-4 overflow-hidden shadow">
+              <video id="video" class="w-100 h-100" style="object-fit: cover;">
+                La camara no está funcional actualmente.
+              </video>
+            </div>
+          </div>
+
+          <!-- Acciones -->
+         
+
+          <div class="col-6 col-sm-5">
+            <button class="btn btn-outline-danger btn-lg w-100 rounded-pill fw-semibold"
+                    onclick="cerrarCamaraFoto()">
+              <i class="bi bi-x-lg"></i> Cancelar
+            </button>
+          </div>
+           <div class="col-6 col-sm-5">
+            <button id="btnTomarFoto"
+                    class="btn btn-primary btn-lg w-100 rounded-pill shadow-sm fw-semibold">
+              <i class="bi bi-camera-fill"></i> Tomar foto
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div id="modal_foto" class="modal fade"  role="dialog" data-bs-keyboard="false" data-bs-backdrop="static">
+<!-- <div id="modal_foto" class="modal fade"  role="dialog" data-bs-keyboard="false" data-bs-backdrop="static">
 	<div class="modal-dialog modal-xl">
 		<div class="modal-content" style="background-color:antiquewhite;">
 			<div class="modal-body">
@@ -426,6 +464,64 @@ function isMobileDevice() {
 			</div>
 		</div>
 	</div>
+</div> -->
+
+<div id="modal_foto" class="modal fade" role="dialog"
+     data-bs-keyboard="false" data-bs-backdrop="static">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+
+      <!-- Header -->
+      <div class="modal-header bg-success bg-gradient border-0 py-3 px-4">
+        <h5 class="modal-title text-white fw-semibold d-flex align-items-center gap-2">
+          <i class="bi bi-image-fill"></i> Vista previa de la foto
+        </h5>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body bg-body-tertiary p-4 text-center">
+
+        <!-- Canvas oculto (para captura) -->
+        <canvas id="canvas" class="d-none"></canvas>
+
+        <!-- Contenedor de la foto -->
+        <div class="d-inline-block position-relative rounded-4 overflow-hidden shadow"
+             style="max-width: 720px; width: 100%; background: #000;">
+          <img id="photo"
+               alt="La foto tomada aparecerá aquí."
+               class="img-fluid d-block w-100"
+               style="object-fit: contain;">
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer bg-white border-top-0 py-3 px-4
+                  d-flex flex-column flex-sm-row gap-2 justify-content-end">
+
+        <button type="button"
+                class="btn btn-outline-danger rounded-pill px-4 fw-semibold order-3 order-sm-1"
+                data-bs-dismiss="modal"
+                onclick="cerrarCamaraFoto();">
+          <i class="bi bi-x-lg"></i> Cerrar
+        </button>
+
+        <button type="button"
+                class="btn btn-outline-secondary rounded-pill px-4 fw-semibold order-2"
+                onclick="bootstrap.Modal.getInstance(document.getElementById('modal_foto')).hide();
+                         bootstrap.Modal.getInstance(document.getElementById('modal_camara')).show();">
+          <i class="bi bi-arrow-counterclockwise"></i> Volver a tomar
+        </button>
+
+        <button type="button"
+                class="btn btn-success rounded-pill px-4 fw-semibold order-1 order-sm-3"
+                onclick="adjuntarFoto()">
+          <i class="bi bi-check2-circle"></i> Adjuntar
+        </button>
+
+      </div>
+    </div>
+  </div>
 </div>
 
  <script src="../../dist/js/arbol_bodegas/arbol_bodega.js"></script>
