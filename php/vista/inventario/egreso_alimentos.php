@@ -407,7 +407,7 @@ function isMobileDevice() {
         <!-- Loader -->
         <div id="carga_camara"
              class="d-flex flex-column justify-content-center align-items-center
-                    bg-white border border-2 border-dashed rounded-4 py-5 mb-2">
+                    bg-white border border-2 border-dashed rounded-4 py-5 mb-2 d-none">
           <img src="../../img/gif/loader4.1.gif" alt="Cargando cámara..."
                class="w-25" style="max-width:80px;">
           <p class="mb-0 mt-3 text-secondary small">Iniciando cámara…</p>
