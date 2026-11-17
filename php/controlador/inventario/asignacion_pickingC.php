@@ -463,11 +463,18 @@ class asignacion_pickingC
             // }
             if($dias<=0){$color = '#ffff00';}else if ($dias<=8 && $dias>0) { $color = '#ff0000';}
 
-             $existencias = costo_venta($value['Codigo_Inv'],$value['Codigo_Barra'],$value['Cmds']);
+            $existencias = costo_venta($value['Codigo_Inv'],$value['Codigo_Barra'],$value['Cmds']);
+            $exsitencias_reserv  = costo_venta_trans_comisiones($value['Codigo_Inv'],$value['Codigo_Barra']); //<-- viene de trans_comisiones
+
+             // print_r($existencias);die();
+             $stock_real = number_format(($existencias[0]['Existencia']-$exsitencias_reserv[0]['Existencia']),2,'.','');
+
+          
              $stock = 0;
              if(count($existencias)>0)
              {
-                $stock = $existencias[0]['Existencia'];
+                $stock = $stock_real;
+                // $existencias[0]['Existencia'];
              }
              // print_r($existencias);die();
              if($stock>0)
@@ -496,8 +503,11 @@ class asignacion_pickingC
         $lista_producto = array();
         foreach ($datos as $key => $value) {
              $existencias = costo_venta($value['Codigo_Inv'],$value['Codigo_Barra']);
+
+             $exsitencias_reserv  = costo_venta_trans_comisiones($value['Codigo_Inv'],$value['Codigo_Barra']);
+
              // print_r($existencias);die();
-             $value['Stock'] = number_format($existencias[0]['Existencia'],2,'.','');
+             $value['Stock'] = number_format(($existencias[0]['Existencia']-$exsitencias_reserv[0]['Existencia']),2,'.','');
 
             if($parametros['grupo'] == $value['Codigo_Inv'])
             {

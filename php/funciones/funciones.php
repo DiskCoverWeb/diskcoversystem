@@ -6161,6 +6161,31 @@ function costo_venta($codigo_inv,$codigoBarras=false,$Cmds=false)  // optimizado
     return $datos;
 
   }
+
+  function costo_venta_trans_comisiones($codigo_inv,$codigoBarras=false,$Cmds=false)  // optimizado
+  {
+    $conn = new db();
+    $sql = "SELECT (SUM(Total)) as 'Existencia' 
+            FROM Trans_Comision 
+            WHERE Fecha <= '".date('Y-m-d')."'
+            AND Codigo_Inv = '".$codigo_inv."'
+            AND Item = '".$_SESSION['INGRESO']['item']."'
+            AND Periodo = '".$_SESSION['INGRESO']['periodo']."'
+            AND T <> 'A'
+            AND TP <> 'F'";
+            if($codigoBarras)
+              {
+                $sql.=" AND Codigo_Barra='".$codigoBarras."'";
+              }
+             if($Cmds)
+              {
+                $sql.=" AND Cmds='".$Cmds."'";
+              }
+    // print_r($sql);die();
+    $datos = $conn->datos($sql);
+    return $datos;
+
+  }
   
   function Leer_Seteos_Ctas($Det_Cta = "") // optimizado
   {
