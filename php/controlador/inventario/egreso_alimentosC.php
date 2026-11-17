@@ -424,9 +424,13 @@ class egreso_alimentosC
 		{
 			$area = $parametros['areas'];
 		}
-		// print_r($parametros);die();
+
+		$desde = false;
+		$hasta = false;
+		if(isset($parametros['desde'])){ $desde = $parametros['desde']; }
+		if(isset($parametros['hasta'])){ $hasta = $parametros['hasta']; }
 		$tr = '';
-		$datos = $this->modelo->lista_egreso_checking_devuelto(false,false,$area);
+		$datos = $this->modelo->lista_egreso_checking_devuelto(false,false,$area,$desde,$hasta);
 		foreach ($datos as $key => $value) {
 			$tr.='<tr>
 					<td>'.($key+1).'</td>
@@ -452,9 +456,9 @@ class egreso_alimentosC
 						
 					</td>
 					<td>
-					<button class="btn btn-primary"><i class="fa fa-save"></i></button>
+				<!--	<button class="btn btn-primary"><i class="fa fa-save"></i></button>
 					<button class="btn btn-primary"><i class="fa fa-trash"></i></button>
-					<button class="btn btn-primary"><i class="fa fa-pen"></i></button>
+					<button class="btn btn-primary"><i class="fa fa-pen"></i></button> -->
 					</td>
 				</tr>';
 			// $tr.='<tr>			

@@ -356,8 +356,8 @@ function isMobileDevice() {
 										<th><b>Area Egreso</b></th>
 										<th><b>Detalle Egreso</b></th>
 										<th><b>Motivo</b></th>
-										<th><b>Observacion</b></th>
-										<th></th>
+										<!-- <th><b>Observacion</b></th> -->
+										<!-- <th></th> -->
 									</thead>
 									<tbody>
 										

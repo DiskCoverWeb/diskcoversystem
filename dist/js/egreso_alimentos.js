@@ -680,7 +680,13 @@ function abrir_modal(op)
 
 function lista_egreso_checking()
 {	
-	tbl_check.destroy();
+	// tbl_check.destroy();
+
+	 // tbl_pedidos_all.ajax.reload(null, false);
+    if ($.fn.DataTable.isDataTable('#tbl_asignados_check')) {
+      $('#tbl_asignados_check').DataTable().destroy();
+    }
+    
 
 	tbl_check = $('#tbl_asignados_check').DataTable({
         // responsive: true,
@@ -744,15 +750,15 @@ function lista_egreso_checking()
 						</div>`;                    
 					}
 				},
-				{ data:  null },
-				{ data: null,
-				   render: function(data, type, item) {
-					  return `
-					  <button type="button" title="Guardar" class="btn-sm btn-success btn"><i class="bx bx-save m-0"></i></button>
-					  <button type="button" title="Eliminar" class="btn-sm btn-danger btn"><i class="bx bx-trash m-0"></i></button>
-					  <button type="button" title="Modificar" class="btn-sm btn-primary btn"><i class="bx bx-pencil m-0"></i></button>`;                    
-					}
-				},
+				// { data:  null },
+				// { data: null,
+				//    render: function(data, type, item) {
+				// 	  return `
+				// 	  <button type="button" title="Guardar" class="btn-sm btn-success btn"><i class="bx bx-save m-0"></i></button>
+				// 	  <button type="button" title="Eliminar" class="btn-sm btn-danger btn"><i class="bx bx-trash m-0"></i></button>
+				// 	  <button type="button" title="Modificar" class="btn-sm btn-primary btn"><i class="bx bx-pencil m-0"></i></button>`;                    
+				// 	}
+				// },
 				
 			],
     });
