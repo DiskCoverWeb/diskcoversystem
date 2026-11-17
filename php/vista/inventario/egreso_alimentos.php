@@ -130,7 +130,7 @@ function isMobileDevice() {
 					<div class="col-lg-3 col-md-6 col-sm-12">
 						<div class="row">
 							<div class="col-lg-6 col-md-6 col-sm-6">
-								<form enctype="multipart/form-data" id="form_img" method="post" style="width: inherit;">
+								<form enctype="multipart/form-data" id="form_img" method="post">
 									<div class="fileupload fileupload-new" data-provides="fileupload">
 										<span class="btn btn-light btn-file">
 										<img src="../../img/png/clip.png" style="width:20%">
