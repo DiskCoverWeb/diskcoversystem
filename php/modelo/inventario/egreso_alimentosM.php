@@ -248,7 +248,7 @@ class egreso_alimentosM
 				
 			}
 			$sql.=" GROUP by Orden_No,TK.Fecha,TK.Detalle,procedencia";
-			print_r($sql);die();
+			// print_r($sql);die();
 		return $this->db->datos($sql);
 	}
 
