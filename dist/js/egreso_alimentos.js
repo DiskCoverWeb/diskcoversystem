@@ -923,6 +923,10 @@ function activarCamara(cameraId){
 				// Firefox currently has a bug where the height can't be read from
 				// the video, so we will make assumptions if this happens.
 
+				setTimeout(()=>{
+		 			$('#carga_camara').addClass('d-none');
+        }, 1000);
+
 				if (isNaN(height)) {
 					height = width / (4 / 3);
 				}
