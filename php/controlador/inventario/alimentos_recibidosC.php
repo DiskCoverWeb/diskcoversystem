@@ -536,7 +536,7 @@ class alimentos_recibidosC
 		$datos = $this->modelo->detalle_ingreso(false,$query);
 		$bene = array();
 		foreach ($datos as $key => $value) {
-			$bene[] = array('id'=>$value['CI_RUC'],'text'=>$value['Cliente'],'data'=>$datos);
+			$bene[] = array('id'=>$value['Codigo'],'text'=>$value['Cliente'],'data'=>$datos);
 		}
 		return $bene;
 	}
