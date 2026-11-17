@@ -536,14 +536,14 @@ class alimentos_recibidosC
 		$datos = $this->modelo->detalle_ingreso(false,$query);
 		$bene = array();
 		foreach ($datos as $key => $value) {
-			$bene[] = array('id'=>$value['Codigo'],'text'=>$value['Cliente'],'data'=>$datos);
+			$bene[] = array('id'=>$value['CI_RUC'],'text'=>$value['Cliente'],'data'=>$datos);
 		}
 		return $bene;
 	}
 	function datos_ingreso($cod)
 	{
 		// print_r($id);die();
-		$datos = $this->modelo->detalle_ingreso($cod);
+		$datos = $this->modelo->detalle_ingreso(false,false,$cod);
 		return $datos[0];
 	}
 	function buscar($cod)
