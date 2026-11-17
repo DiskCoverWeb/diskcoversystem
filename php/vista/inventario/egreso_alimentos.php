@@ -129,7 +129,7 @@ function isMobileDevice() {
 					</div>
 					<div class="col-lg-3 col-md-6 col-sm-12">
 						<div class="row">
-							<div class="col-lg-6 col-md-6 col-sm-12">
+							<div class="col-lg-6 col-md-6 col-sm-6">
 								<form enctype="multipart/form-data" id="form_img" method="post" style="width: inherit;">
 									<div class="fileupload fileupload-new" data-provides="fileupload">
 										<span class="btn btn-light btn-file">
@@ -143,7 +143,7 @@ function isMobileDevice() {
 									</div>
 								</form>
 							</div>
-							<div class="col-lg-6 col-md-6 col-sm-12">
+							<div class="col-lg-6 col-md-6 col-sm-6">
 								<?php if (isMobileDevice()) { ?>
 								<button type="button" id="btn_photoupload" class="btn btn-light" onclick="$('#modal_camara').modal('show')">
 									<img src="../../img/png/camara.png" style="width:20%">
