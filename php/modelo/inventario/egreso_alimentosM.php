@@ -223,7 +223,7 @@ class egreso_alimentosM
 			AND TK.CodigoU = '".$_SESSION['INGRESO']['CodigoU']."'
 			AND TK.Item = CP.Item
 			AND TK.Periodo = CP.Periodo
-			AND TK.T ='R' ";
+			AND TK.T ='G' ";
 			if($query)
 			{
 				$sql.=" AND TK.Codigo_Barra='".$query."'";
@@ -248,7 +248,7 @@ class egreso_alimentosM
 				
 			}
 			$sql.=" GROUP by Orden_No,TK.Fecha,TK.Detalle,procedencia";
-			// print_r($sql);die();
+			print_r($sql);die();
 		return $this->db->datos($sql);
 	}
 
