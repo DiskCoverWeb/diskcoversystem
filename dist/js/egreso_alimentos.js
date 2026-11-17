@@ -898,7 +898,9 @@ function activarCamara(cameraId){
 		video.srcObject = stream;
 		video.play();
 
-		$('#carga_camara').addClass('d-none');
+		 setTimeout(()=>{
+		 			$('#carga_camara').addClass('d-none');
+        }, 1000);
       // document.getElementById('contenedor_camera').style.display = 'flex';
 
 	})
