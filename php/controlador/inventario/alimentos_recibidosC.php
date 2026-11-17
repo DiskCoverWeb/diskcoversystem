@@ -9,12 +9,13 @@ require_once(dirname(__DIR__,2)."/modelo/farmacia/ingreso_descargosM.php");
 /*
 -----------------nota importante en campo (T)----------------------
 I =>INGRESO NORMAL -> cabecera de ingreso 
-R =>EDITAR INGRESO
+R =>EDITAR INGRESO <- no se esta considerando en el proceso por el momento
 
 
 C => ESTA EN CLASIFICACION ->cambia en cabecera si esta en clasificacion
 P => PASA A ALMACENAMIENTO
 E => ALMACENADO Y PASADO A CHECKING
+N => cumple proceso completo y numero
 
 
 G => es para egresos
@@ -535,7 +536,7 @@ class alimentos_recibidosC
 		$datos = $this->modelo->detalle_ingreso(false,$query);
 		$bene = array();
 		foreach ($datos as $key => $value) {
-			$bene[] = array('id'=>$value['Codigo'],'text'=>$value['Cliente'],'data'=>$datos);
+			$bene[] = array('id'=>$value['CI_RUC'],'text'=>$value['Cliente'],'data'=>$datos);
 		}
 		return $bene;
 	}
