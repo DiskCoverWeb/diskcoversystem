@@ -8,12 +8,14 @@ require_once(dirname(__DIR__,2)."/modelo/farmacia/ingreso_descargosM.php");
 
 /*
 -----------------nota importante en campo (T)----------------------
-I =>INGRESO NORMAL
+I =>INGRESO NORMAL -> cabecera de ingreso 
 R =>EDITAR INGRESO
-P =>LISTO PARA CHECHING
-C =>ESTA EN CLASIFICACION
 
-E => YA ALMACENADO (APLICA A LINEAS)
+
+C => ESTA EN CLASIFICACION ->cambia en cabecera si esta en clasificacion
+P => PASA A ALMACENAMIENTO
+E => ALMACENADO Y PASADO A CHECKING
+
 
 G => es para egresos
 S => egresos
@@ -1093,12 +1095,41 @@ class alimentos_recibidosC
 		$datos = $this->modelo->buscar_transCorreos_procesados_all($query,$fecha,$fechah);
 		$tr= '';
 		foreach ($datos as $key => $value) {
-			$proceso = 'Clasificacion';
-			if($value['T']=='P'){$proceso = 'Clasificacion';}
-			if($value['T']=='R' || $value['T']=='I'){$proceso = 'Ingreso';}
-			if($value['T']=='C'){$proceso = ' Almacenamiento';}
-			if($value['T']=='N'){$proceso = 'Checking';}
-			if($value['T']=='N' && $value['Recibo_No']!=0){$proceso = 'Procesado';}
+			$proceso = '';
+			switch ($value['T']) {
+				case 'I':
+				case 'R':
+				$proceso = 'Ingreso';
+					break;
+				case 'E':
+				$proceso = 'Checking';
+					break;
+				case 'C':
+				$proceso = 'Clasificacion';
+					break;
+				case 'P':
+				$proceso = 'Almacenamiento';
+					break;
+				case 'N':
+					if($value['Recibo_No']!=0)
+					{
+						$proceso = 'Procesado';
+					}else{						
+						$proceso = 'Procesado fallido';
+					}
+					break;				
+				default:
+				$proceso = '';
+					break;
+			}
+
+			// $proceso = 'Clasificacion';
+			// if($value['T']=='P'){$proceso = 'ALmacenamiento';}
+			// if($value['T']=='R' || $value['T']=='I'){$proceso = 'Ingreso';}
+			// if($value['T']=='C'){$proceso = 'Clasificacion';}
+			// if($value['T']=='E'){$proceso = 'Checking';}
+			// if($value['T']=='N'){$proceso = 'fallo al procesar';}
+			// if($value['T']=='N' && $value['Recibo_No']!=0){$proceso = 'Procesado';}
 
 			$noti = $this->modelo->listar_notificaciones($_SESSION['INGRESO']['CodigoU'],'P',false,$value['Envio_No']);
 			$alerta = '';
