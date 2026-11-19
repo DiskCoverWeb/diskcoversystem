@@ -186,9 +186,13 @@ if(isset($_GET['contratistaDetalle']) && $_GET['contratistaDetalle']!=''){$contr
               <hr>
               <div class="row">
                 <div class="col-sm-12">
-                  Multas
+                  <b>Multas</b>
                   <input type="hidden" name="txt_centroCostos" id="txt_centroCostos">
                   <input type="hidden" name="txt_rubro" id="txt_rubro">
+                  <div class="col-sm-12">
+                    <b>Concepto comprobante multas</b>
+                    <textarea id="txt_concepto_multa" name="txt_concepto_multa" class="form-control form-control-sm"></textarea>
+                  </div>   
                   <div  class="table-responsive">
                     <table class="table table-hover">
                       <thead>
@@ -223,8 +227,9 @@ if(isset($_GET['contratistaDetalle']) && $_GET['contratistaDetalle']!=''){$contr
                 <hr>
                 <div class="col-sm-12">
                   <b>Observacion</b>
-                  <textarea id="txt_observacion" name="txt_observacion" class="form-control form-control-sm"></textarea>                  
+                  <textarea id="txt_observacion" name="txt_observacion" class="form-control form-control-sm"></textarea>
                 </div>           
+                 
               </div>
             </div>
              <div class="modal-footer">

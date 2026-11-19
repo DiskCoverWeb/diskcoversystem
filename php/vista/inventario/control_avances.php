@@ -180,7 +180,7 @@
                   <th>Sub Rubros</th>
                   <th>Unidad</th>
                   <th>Orden</th>
-                  <th>Ejecutado</th>
+                  <th>Cantidad ejecutado</th>
                   <th>Avance</th>
                   <th>Costo orden</th>
                   <th>Costo ejecutado</th>
@@ -269,8 +269,8 @@
                 </div>
                 <div class="col-sm-12">
                   <b>Observacion</b>
-                  <textarea id="txt_observacion" name="txt_observacion" class="form-control form-control-sm"></textarea>                  
-                </div>           
+                  <textarea id="txt_observacion" name="txt_observacion" class="form-control form-control-sm"></textarea>
+                </div>                          
               </div>
             </div>
              <div class="modal-footer">

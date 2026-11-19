@@ -154,7 +154,7 @@ class orden_ejecucionM
 
     }
 
-    function rubrosXcontratistaAll($query=false,$contratistaCod=false,$contrato=false,$Cta=false,$Nomes=false)
+    function rubrosXcontratistaAll($query=false,$contratistaCod=false,$contrato=false,$Cta=false,$Nomes=false,$semana=false)
     {
         $sql = "SELECT ERC.Item,ERC.Periodo,ERC.Rubro AS CodRubro,CC.Cuenta as Rubro,ERC.Sub_Rubro,Contratista,
                 No_Contrato,Centro_Costo as CodCentroCosto,CS.Detalle as CentroCosto,ERC.Cantidad,Unidad,PVP,ERC.Total,Cant_Ejec,
@@ -181,6 +181,10 @@ class orden_ejecucionM
                 if($Nomes){
                     $sql.=" AND MONTH(Fecha_Inicio_Ejec) = '".$Nomes."'";
                 }
+                if($semana)
+                {
+                    $sql.=" AND ERC.Semana = '".$semana."'";
+                }
 
                 // print_r($sql);die();
 
@@ -191,13 +195,14 @@ class orden_ejecucionM
     }
 
 
-    function rubros_contrato_general($query=false,$contratistaCod=false,$contrato=false,$Cta=false,$Nomes=false)
+    function rubros_contrato_general($query=false,$contratistaCod=false,$contrato=false,$Cta=false,$Nomes=false,$semana=false)
     {
         
         $sql="SELECT Orden_Trabajo,TCR.Cta,CC.Cuenta,TCR.Cantidad  
         From Trans_Contratistas_Rubros TCR 
         INNER JOIN Catalogo_Cuentas CC ON TCR.Cta = CC.Codigo AND TCR.Item = CC.Item AND TCR.Periodo = CC.Periodo 
         INNER JOIN Trans_Contratistas TC ON TCR.Orden_Trabajo = TC.No_Contrato AND TCR.Item = TC.Item AND TCR.Periodo = TC.Periodo 
+        INNER JOIN Entidad_Rubro_Contratista ERC ON TCR.Orden_Trabajo = ERC.No_Contrato  AND TCR.Item = ERC.Item AND TCR.Periodo = ERC.Periodo 
         WHERE TC.Item = '".$_SESSION['INGRESO']['item']."'
         AND TC.Periodo = '".$_SESSION['INGRESO']['periodo']."'";
 
@@ -218,6 +223,10 @@ class orden_ejecucionM
          if($Cta)
          {
             $sql.=" AND TCR.Cta = '".$Cta."'";
+         }
+         if($semana)
+         {
+            $sql.=" AND ERC.Semana = '".$semana."'";
          }
         $sql.=" GROUP BY Orden_Trabajo,TCR.Cta,CC.Cuenta,TCR.Cantidad";
 

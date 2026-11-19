@@ -170,6 +170,40 @@
 
   })
 
+  function regresar_pedido(id)
+  {
+     Swal.fire({
+        title: 'Esta seguro?',
+        text: "Esta usted de regresar a tipo de contrato para editar!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si!'
+      }).then((result) => {
+          regresar_a_tipo_contrato(id)        
+      })
+  }
+
+  function regresar_a_tipo_contrato(id)
+  {
+     var parametros = 
+     {
+        'id':id,
+     }
+      $.ajax({
+        data:  {parametros:parametros},
+        url:   '../controlador/inventario/orden_trabajo_constC.php?regresarcontrato=true',
+        type:  'post',
+        dataType: 'json',
+          success:  function (response) { 
+            tbl_pedidos_ordenes_all.ajax.reload(null, false);           
+        }
+      }); 
+  }
+
+
+
 
   function contratosXrubro()
   {

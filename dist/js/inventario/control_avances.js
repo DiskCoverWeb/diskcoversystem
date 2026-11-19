@@ -1,6 +1,7 @@
   var tbl_procesados_all = null;
   $(document).ready(function () {
     contratistas();
+    numero_semanas()
 
 
        tbl_procesados_all = $('#tbl_body_procesados').DataTable({
@@ -17,6 +18,7 @@
                     contrato:$('#ddl_Contrato').val(),
                     rubro:$('#ddl_Rubro').val(),
                     mes:$('#ddl_meses').val(),
+                    semana:$('#ddl_semana').val(),
                   };
                   return { parametros: parametros };
               },
@@ -242,3 +244,51 @@
   {
      tbl_procesados_all.ajax.reload(null, false);
   }
+
+  function numero_semanas()
+  {
+    const fecha = new Date();
+    
+    const anioActual = fecha.getFullYear();
+    const mesActual = fecha.getMonth() + 1;
+
+
+    const semanas = obtenerSemanasDelMes(anioActual, mesActual);
+
+    console.log(semanas);
+
+    var option = '<option value="">Seleccione semana </option>';
+    for (var i = 1; i <=52; i++) {
+
+        if(semanas.includes(i))
+        {
+          option+='<option value="'+i+'" style="font-weight: bold;">'+i+'</option>';
+        }else
+        {
+          option+='<option value="'+i+'">'+i+'</option>';        
+        }
+    }
+    $('#ddl_semana').html(option);
+  }
+
+  function obtenerSemanasDelMes(anio, mes) {
+      const inicio = new Date(anio, mes - 1, 1);
+      const fin = new Date(anio, mes, 0);
+      const semanas = [];
+
+      for (let fecha = inicio; fecha <= fin; fecha.setDate(fecha.getDate() + 1)) {
+          const semana = obtenerNumeroSemana(fecha);
+
+          if (!semanas.includes(semana)) {
+              semanas.push(semana);
+          }
+      }
+
+      return semanas;
+  }
+
+  function obtenerNumeroSemana(fecha) {
+      const inicio = new Date(fecha.getFullYear(), 0, 1);
+      return Math.ceil((((fecha - inicio) / 86400000) + inicio.getDay() + 1) / 7);
+  }
+

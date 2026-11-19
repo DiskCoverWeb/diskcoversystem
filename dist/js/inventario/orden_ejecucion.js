@@ -732,6 +732,8 @@ function guardar_subrubro_ejecucion_avance()
   var contratista =  $('#ddl_contratista').val();
   var ejecutado_total = $('#txt_total_ejecutado').val();
   var contrato = $('#ddl_Contrato').val();
+  var concepto = $('#txt_concepto').val();
+  var concepto_multa = $('#txt_concepto_multa').val();
 
   var lineas = [];
 
@@ -755,6 +757,8 @@ function guardar_subrubro_ejecucion_avance()
     'observacion':observacion,
     'contrato':contrato,
     'lineas': JSON.stringify(lineas),
+    'concepto':concepto,
+    'contrato_multa':concepto_multa,
   }
    $.ajax({
         type: "POST",
@@ -765,7 +769,13 @@ function guardar_subrubro_ejecucion_avance()
         {
           if(data.respuesta==1)
           {
-            Swal.fire("Comprobante "+data.comprobante+" generado",'','success').then(function(){
+            let comprobantes = 'Comprobante '+data.comprobante;
+            if(data.comprobante_multa!=0)
+            {
+              comprobantes+= '\n Comprobante Multa '+data.comprobante_multa;
+            }
+            comprobantes+=' generado';
+            Swal.fire(comprobantes,'','success').then(function(){
               $('#myModal_periodo_trabajo').modal('hide');
                 cargar_lista_subrubros()
             })
@@ -778,6 +788,12 @@ function guardar_subrubro_ejecucion_avance()
 
 function generar_comprobante(rubro,centroCostos,fechaInicio,fechaFin)
 {
+
+  var conce = $('#lbl_titulo').text();
+  console.log(conce)
+  
+  $('#txt_concepto_multa').val($('#txt_concepto').val() +' ( M u l t a)')
+
   let valores_llenos = 1;
   $('#txt_centroCostos').val(centroCostos)
   $('#txt_rubro').val(rubro)
@@ -804,6 +820,7 @@ function generar_comprobante(rubro,centroCostos,fechaInicio,fechaFin)
       // console.log(id)
       // console.log(input)  
   });
+
 
 
 

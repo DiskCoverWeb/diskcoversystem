@@ -124,8 +124,6 @@ require_once dirname(__DIR__, 2) . '/db/session_guard.php';
         echo json_encode($controlador->contratosXrubro($parametros));
     }
 
-
-
     if(isset($_GET['valores_default']))
     {
         $parametros = $_POST['parametros'];
@@ -138,7 +136,11 @@ require_once dirname(__DIR__, 2) . '/db/session_guard.php';
         echo json_encode($controlador->cargar_lista_contratos_ord($parametros));
     }
 
-
+    if(isset($_GET['regresarcontrato']))
+    {
+        $parametros = $_POST['parametros'];
+        echo json_encode($controlador->regresarcontrato($parametros));
+    }
 
 
     class orden_trabajo_constC
@@ -443,6 +445,15 @@ require_once dirname(__DIR__, 2) . '/db/session_guard.php';
         {
             return $this->modelo->detalleContratoAll(false,'A');
         }  
+
+        function regresarcontrato($parametros)
+        {
+            SetAdoAddNew("Trans_Contratistas");
+            SetAdoFields("T",".");
+
+            SetAdoFieldsWhere('ID',$parametros["id"]);
+            return SetAdoUpdateGeneric(); 
+        }
 
     }
 

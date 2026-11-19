@@ -209,11 +209,24 @@ class orden_ejecucionC
             $tbl.='<div class="col-sm-12">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h5>'.$value['Cuenta'].' - ('.$value['Detalle'].' )</h5>
+                            <h5 id="lbl_titulo">'.$value['Cuenta'].' - ('.$value['Detalle'].' )</h5>
+
                         </div>
                          <div class="col-sm-6 text-end">
                          <button type="button" class="btn btn-primary" onclick="generar_comprobante(\''.$value['Rubro'].'\',\''.$value['Centro_Costo'].'\',\''.$value['Fecha_Inicio']->format('Y-m-d').'\',\''.$value['Fecha_Fin']->format('Y-m-d').'\');">Generar Comprobante</button>
                         </div>
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6">
+                            <div class="input-group input-group-sm mb-3"> 
+                                <span class="input-group-text" id="inputGroup-sizing-sm"><b>Concepto comprobante</b></span>
+                                 <input id="txt_concepto" name="txt_concepto" class="form-control form-control-sm" value="'.$value['Cuenta'].' - ('.$value['Detalle'].' )" />
+
+                            </div>
+
+
+                          
+                         
+                        </div>    
                        
                         <div class="col-sm-12">
 
@@ -302,7 +315,77 @@ class orden_ejecucionC
         $cta_cp = LeerCta($cta_cxp);
         $cta_multas = LeerCta($cta_multa);
 
+        // print_r($parametros);die();
 
+        $numero_comprobante_multa = 0;
+
+        // genera un comprobante de multas en el caso de que exista
+        if($parametros['multa_total']>0){
+
+            $cuenta = $this->modelo->catalogo_cuentas($cta_cxc);     
+            // print_r($cuenta);die();   
+            $parametros_debe = array(
+                     "va" =>round($parametros['multa_total'],2),//valor que se trae del otal sumado
+                      "dconcepto1" =>'.',
+                      "codigo" => $cuenta[0]['Codigo'], // cuenta de codigo de 
+                      "cuenta" => $cuenta[0]['Cuenta'], // detalle de cuenta;
+                      "efectivo_as" =>date('Y-m-d'), // observacion si TC de catalogo de cuenta
+                      "chq_as" => 0,
+                      "moneda" => 1,
+                      "tipo_cue" => 1,
+                      "cotizacion" => 0,
+                      "con" => 0,// depende de moneda
+                      "t_no" => '111',
+            );
+            $this->ing_des->ingresar_asientos($parametros_debe);
+
+            $cuenta = $this->modelo->catalogo_cuentas($cta_multa);        
+                // print_r($cuenta);die();  
+                    $parametros_haber = array(
+                      "va" =>round($parametros['multa_total'],2),//valor que se trae del otal sumado
+                      "dconcepto1" =>'.',
+                      "codigo" => $cuenta[0]['Codigo'], // cuenta de codigo de 
+                      "cuenta" => $cuenta[0]['Cuenta'], // detalle de cuenta;
+                      "efectivo_as" =>date('Y-m-d'), // observacion si TC de catalogo de cuenta
+                      "chq_as" => 0,
+                      "moneda" => 1,
+                      "tipo_cue" => 2,
+                      "cotizacion" => 0,
+                      "con" => 0,// depende de moneda
+                      "t_no" => '111',
+            );
+            $re =   $this->ing_des->ingresar_asientos($parametros_haber); 
+
+            $cliente = json_decode(Leer_Datos_Cliente_SP($parametros['contratista']),true);
+
+            // print_r($cliente);die();
+            $data['NumModulo']='05';
+            $data['Item']=$_SESSION['INGRESO']['item'];
+            $data['Periodo']=$_SESSION['INGRESO']['periodo'];
+            $data['Usuario']=$_SESSION['INGRESO']['CodigoU'];
+            // $data['CodigoB'] = $cliente['CI_RUC'];
+            $data['Beneficiario']=$cliente['Cliente'];
+            $data['RUC_CI'] = $cliente['CI_RUC'];
+            $data['TD'] = $cliente['TD'];
+            $data["Telefono"] = $cliente['Telefono'];
+            $data["Direccion"] = $cliente['Direccion'];
+            $data["Email"] = $cliente['Email'];
+            $data['Concepto']=$parametros['contrato_multa'];
+            $data["T_No"] = '111';
+            $data_comprobante = $this->sp_generales->generar_comprobante($data); 
+
+            if(isset($data_comprobante['Ok_Save']) && $data_comprobante['Ok_Save']==1)
+            {
+                $parametros['Numero'] = $data_comprobante['Numero'];
+                $numero_comprobante_multa = $data_comprobante['Numero'];
+            }else{
+                return array('respuesta'=>-1,'comprobante'=>'0');
+            }
+
+
+        }
+
+        // genera el comprobantes
         // para subcuentas
         $cuenta = $this->modelo->catalogo_cuentas($parametros['rubro']);
         $sub = $this->modelo->Catalogo_SubCtas('G',$parametros['centroCosto']);
@@ -368,47 +451,6 @@ class orden_ejecucionC
         
         $re =   $this->ing_des->ingresar_asientos($parametros_haber); 
 
-
-        // en caso de que hayan multas
-        if($parametros['multa_total']>0){
-
-             $cuenta = $this->modelo->catalogo_cuentas($cta_cxc);     
-            // print_r($cuenta);die();   
-            $parametros_debe = array(
-                     "va" =>round($parametros['multa_total'],2),//valor que se trae del otal sumado
-                      "dconcepto1" =>'.',
-                      "codigo" => $cuenta[0]['Codigo'], // cuenta de codigo de 
-                      "cuenta" => $cuenta[0]['Cuenta'], // detalle de cuenta;
-                      "efectivo_as" =>date('Y-m-d'), // observacion si TC de catalogo de cuenta
-                      "chq_as" => 0,
-                      "moneda" => 1,
-                      "tipo_cue" => 1,
-                      "cotizacion" => 0,
-                      "con" => 0,// depende de moneda
-                      "t_no" => '111',
-            );
-            $this->ing_des->ingresar_asientos($parametros_debe);
-
-            $cuenta = $this->modelo->catalogo_cuentas($cta_multa);        
-                // print_r($cuenta);die();  
-                    $parametros_haber = array(
-                      "va" =>round($parametros['multa_total'],2),//valor que se trae del otal sumado
-                      "dconcepto1" =>'.',
-                      "codigo" => $cuenta[0]['Codigo'], // cuenta de codigo de 
-                      "cuenta" => $cuenta[0]['Cuenta'], // detalle de cuenta;
-                      "efectivo_as" =>date('Y-m-d'), // observacion si TC de catalogo de cuenta
-                      "chq_as" => 0,
-                      "moneda" => 1,
-                      "tipo_cue" => 2,
-                      "cotizacion" => 0,
-                      "con" => 0,// depende de moneda
-                      "t_no" => '111',
-            );
-            $re =   $this->ing_des->ingresar_asientos($parametros_haber); 
-
-        }
-
-
         $cliente = json_decode(Leer_Datos_Cliente_SP($parametros['contratista']),true);
 
         // print_r($cliente);die();
@@ -423,7 +465,7 @@ class orden_ejecucionC
         $data["Telefono"] = $cliente['Telefono'];
         $data["Direccion"] = $cliente['Direccion'];
         $data["Email"] = $cliente['Email'];
-        $data['Concepto']='prueba concepto json';
+        $data['Concepto']=$parametros['concepto'];
         $data["T_No"] = '111';
         $data_comprobante = $this->sp_generales->generar_comprobante($data); 
 
@@ -431,15 +473,12 @@ class orden_ejecucionC
         {
             $parametros['Numero'] = $data_comprobante['Numero'];
             $resp =  $this->finalizar_ejecucion($parametros);
-            return array('respuesta'=>1,'comprobante'=>$data_comprobante['Numero']);
+            return array('respuesta'=>1,'comprobante'=>$data_comprobante['Numero'],'comprobante_multa'=>$numero_comprobante_multa);
         }else{
             return array('respuesta'=>-1,'comprobante'=>'0');
         }
 
-        print_r($data_comprobante);die();
-
-
-
+        // print_r($data_comprobante);die();
     }
 
     function cargar_fecha_periodo($parametros)
@@ -540,7 +579,7 @@ class orden_ejecucionC
     function cargar_lista_subrubros_avance($parametros)
     {
         // print_r($parametros);die();
-        $data = $this->modelo->rubros_contrato_general(false,$parametros['contratista'],$parametros['contrato'],$parametros['rubro'],$parametros['mes']);
+        $data = $this->modelo->rubros_contrato_general(false,$parametros['contratista'],$parametros['contrato'],$parametros['rubro'],$parametros['mes'],$parametros['semana']);
 
         $total_cont = 0;
         foreach ($data as $key => $value) {
@@ -548,13 +587,17 @@ class orden_ejecucionC
         }
         // print_r($data);die();
 
-        $registros = $this->modelo->rubrosXcontratistaAll(false,$parametros['contratista'],$parametros['contrato'],$parametros['rubro'],$parametros['mes']);
+        $registros = $this->modelo->rubrosXcontratistaAll(false,$parametros['contratista'],$parametros['contrato'],$parametros['rubro'],$parametros['mes'],$parametros['semana']);
         $total = 0;
+        $porcentaje  = 0;
         foreach ($registros as $key => $value) {
             $total+= $value['Cant_Ejec'];
         }
 
-        $porcentaje = number_format( ($total*100)/$total_cont,2,'.','');
+        if($total_cont!=0)
+        {
+            $porcentaje = number_format( ($total*100)/$total_cont,2,'.','');
+        }
         $datos = array('lineas'=>$registros,'total_rubro'=>$total_cont,'total_procesado'=>$total,'porcentaje'=>$porcentaje.'%');
         // print_r($datos);die();
 
